@@ -1,18 +1,48 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
+// use Illuminate\Foundation\Inspiring;
 
-/*
-|--------------------------------------------------------------------------
-| Console Routes
-|--------------------------------------------------------------------------
-|
-| This file is where you may define all of your Closure based console
-| commands. Each Closure is bound to a command instance allowing a
-| simple approach to interacting with each command's IO methods.
-|
-*/
+// Artisan::command('inspire', function () {
+//     $this->comment(Inspiring::quote());
+// })->describe('Display an inspiring quote');
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->describe('Display an inspiring quote');
+
+// Create migration command for own directory
+Artisan::command('migrate:own {directory}',function($directory){
+	Artisan::call('migrate',['--path'=>'/database/migrations/'.$directory]);
+	$this->info('migrations/'.$directory.' directory migration success.');
+})->describe('Migrate '.$directory.' directory database.');
+
+Artisan::command('migrate:own:rollback {directory}',function($directory){
+	Artisan::call('migrate:rollback',['--path'=>'/database/migrations/'.$directory]);
+	$this->info('migrations/'.$directory.' directory rollback success.');
+})->describe('Rollback '.$directory.' directory database.');
+
+
+// Create migration command for tenant
+Artisan::command('migrate:hrms',function(){
+	Artisan::call('migrate',['--path'=>'/database/migrations/hrms']);
+	Artisan::call('migrate',['--path'=>'/database/migrations/hrms/relations']);
+	$this->info('migration success.');
+})->describe('Migrate hrms directory database.');
+
+Artisan::command('migrate:hrms:rollback',function(){
+	Artisan::call('migrate:rollback',['--path'=>'/database/migrations/hrms']);
+	Artisan::call('migrate:rollback',['--path'=>'/database/migrations/hrms/relations']);
+	$this->info('rollback success.');
+})->describe('Rollback hrms directory database.');
+
+
+
+// Create database connection command
+Artisan::command('db:connect {database?}',function($database=null){
+
+	$connection = (!empty($database))? 'mysql_hrms' : 'mysql';
+	$database = (!empty($database))? $database : env('DB_DATABASE', 'hrms');
+
+    \Config::set('database.default',$connection);
+    \Config::set('database.connections.'.$connection.'.database',$database);
+    \DB::reconnect();
+
+	$this->info('Database connection success.');
+})->describe('Dynamically db connection set.');

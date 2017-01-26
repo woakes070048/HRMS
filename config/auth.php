@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
+        'guard' => 'hrms',
+        'passwords' => 'hrms',
     ],
 
     /*
@@ -36,9 +36,14 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        'hrms' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'hrms',
+        ],
+
+        'setup' => [
+            'driver' => 'session',
+            'provider' => 'setup',
         ],
 
         'api' => [
@@ -65,15 +70,15 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'hrms' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'setup' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Setup\User::class,
+        ],
     ],
 
     /*
@@ -92,8 +97,14 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'hrms' => [
+            'provider' => 'hrms',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+
+        'setup' => [
+            'provider' => 'setup',
             'table' => 'password_resets',
             'expire' => 60,
         ],
