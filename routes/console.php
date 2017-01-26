@@ -11,12 +11,12 @@
 Artisan::command('migrate:own {directory}',function($directory){
 	Artisan::call('migrate',['--path'=>'/database/migrations/'.$directory]);
 	$this->info('migrations/'.$directory.' directory migration success.');
-})->describe('Migrate '.$directory.' directory database.');
+})->describe('Migrate own directory database.');
 
 Artisan::command('migrate:own:rollback {directory}',function($directory){
 	Artisan::call('migrate:rollback',['--path'=>'/database/migrations/'.$directory]);
 	$this->info('migrations/'.$directory.' directory rollback success.');
-})->describe('Rollback '.$directory.' directory database.');
+})->describe('Rollback own directory database.');
 
 
 // Create migration command for tenant
