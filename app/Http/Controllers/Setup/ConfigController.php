@@ -20,17 +20,27 @@ use Illuminate\Support\Facades\Artisan;
 
 class ConfigController extends Controller
 {
+    /**
+     * ConfigController constructor.
+     */
     public function __construct(){
     	$this->middleware('auth:setup');
     }
 
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index(){
     	Artisan::call('db:connect');
     	return view('setup.config');
     }
 
 
+    /**
+     * @param ConfigRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function config(ConfigRequest $request){
 
     	$database_name = $this->makeDatabaseName($request->company_name);
@@ -42,7 +52,6 @@ class ConfigController extends Controller
 	    			'company_name' => $request->company_name,
 	    			'company_address' => $request->company_address,
 	    			'database_name' => $database_name,
-	    			'application_key' => $request->application_key,
 	    		]);
 
 	    	UserEmails::create([
@@ -57,7 +66,10 @@ class ConfigController extends Controller
 	    			'password' => bcrypt($request->password),
 	    		]);
 
-			DB::statement('CREATE DATABASE IF NOT EXISTS '.$database_name);
+			if(!DB::statement('CREATE DATABASE IF NOT EXISTS '.$database_name)){
+                Artisan::call('db:connect');
+                DB::rollback();
+            }
 			
 	    	Artisan::call("db:connect", ['database'=> $database_name]);
 	    	Artisan::call("migrate:hrms");
@@ -88,6 +100,10 @@ class ConfigController extends Controller
     }
 
 
+    /**
+     * @param $database
+     * @return mixed
+     */
     private function makeDatabaseName($database){
     	if(stristr($database,' ')){
     		$database = str_replace(' ', '_', $database);

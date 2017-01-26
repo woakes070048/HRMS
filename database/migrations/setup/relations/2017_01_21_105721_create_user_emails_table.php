@@ -17,7 +17,7 @@ class CreateUserEmailsTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('config_id')->unsigned();
-            $table->string('email')->unique();
+            $table->string('email',65)->unique();
             $table->timestamps();
 
             $table->foreign('config_id')->references('id')->on('configs')->onDelete('restrict');

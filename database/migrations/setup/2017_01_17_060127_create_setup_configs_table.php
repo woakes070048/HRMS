@@ -16,10 +16,9 @@ class CreateSetupConfigsTable extends Migration
         Schema::create('configs', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('company_name');
-            $table->string('company_address');
-            $table->string('database_name')->unique();
-            $table->string('application_key')->unique();
+            $table->string('company_name',45);
+            $table->text('company_address');
+            $table->string('database_name',45)->unique();
             $table->tinyInteger('status')->default('1');
             $table->timestamps();
         });

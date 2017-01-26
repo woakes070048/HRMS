@@ -34,20 +34,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('application_key') ? ' has-error' : '' }}">
-                            <label for="application_key" class="col-md-4 control-label">Application Key</label>
-
-                            <div class="col-md-6">
-                                <input id="application_key" type="text" class="form-control" name="application_key" value="{{ old('application_key') }}" required>
-
-                                @if ($errors->has('application_key'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('application_key') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
                         <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
                             <label for="first_name" class="col-md-4 control-label">First Name</label>
 

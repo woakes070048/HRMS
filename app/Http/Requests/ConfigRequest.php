@@ -25,7 +25,6 @@ class ConfigRequest extends FormRequest
     {
         return [
             'company_name' => 'required|min:5|max:25|unique:configs',
-            'application_key' => 'required|min:8|max:200|alpha_num|unique:configs',
             'first_name' => 'required|alpha|alpha_dash',
             'last_name' => 'required|alpha|alpha_dash',
             'email' => 'required|email|unique:users',
