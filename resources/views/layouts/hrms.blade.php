@@ -471,6 +471,17 @@
                                     <div id="nav-tab2" class="tab-pane chat-widget" role="tabpanel">
                                         <div class="media">
                                             <div class="media-left">
+            <li>
+                <a href="{{ url('/setup/logout') }}"
+                   onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                    Logout
+                </a>
+
+                <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+                    {{ csrf_field() }}
+                </form>
+            </li>
                                                 <a href="#">
                                                     <img class="media-object" alt="64x64" src="assets/img/avatars/3.jpg">
                                                 </a>
@@ -1546,13 +1557,11 @@
 <!-- BEGIN: PAGE SCRIPTS -->
 
 <!-- jQuery -->
-<script src="vendor/jquery/jquery-1.11.1.min.js"></script>
-<script src="vendor/jquery/jquery_ui/jquery-ui.min.js"></script>
 
-<!-- Theme Javascript -->
-<script src="assets/js/utility/utility.js"></script>
-<script src="assets/js/demo/demo.js"></script>
-<script src="assets/js/main.js"></script>
+<script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
+<script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
+<script src="{{asset('js/hrms.js')}}"></script>
+
 <script type="text/javascript">
     jQuery(document).ready(function() {
 
