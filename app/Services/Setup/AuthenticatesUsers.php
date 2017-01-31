@@ -118,7 +118,7 @@ trait AuthenticatesUsers
      */
     protected function authenticated(Request $request, $user)
     {
-        //
+        Artisan::call("db:connect");
     }
 
     /**
@@ -132,7 +132,7 @@ trait AuthenticatesUsers
         return redirect()->back()
             ->withInput($request->only($this->username(), 'remember'))
             ->withErrors([
-                $this->username() => Lang::get('auth.failed'),
+                $this->accessError() => Lang::get('auth.failed'),
             ]);
     }
 
@@ -144,6 +144,14 @@ trait AuthenticatesUsers
     public function username()
     {
         return 'email';
+    }
+
+    /**
+     * @return string
+     */
+    public function accessError()
+    {
+        return 'unauthenticated';
     }
 
     /**

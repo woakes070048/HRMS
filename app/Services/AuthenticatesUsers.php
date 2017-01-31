@@ -40,7 +40,7 @@ trait AuthenticatesUsers
         $this->validateLogin($request);
 
         if(!$this->databaseConnectByEmail($request->email)){
-            return redirect()->back()->withErrors(['email'=>'These credentials do not match our records.']);
+            return redirect()->back()->withErrors([$this->accessError() =>Lang::get('auth.failed')]);
         }
 
         
@@ -68,7 +68,9 @@ trait AuthenticatesUsers
 
 
     public function databaseConnectByEmail($email){
-        $user = UserEmails::where('email',$email)->join('configs','configs.id','=','user_emails.config_id')->first();
+        $user = UserEmails::where('email',$email)
+            ->join('configs','configs.id','=','user_emails.config_id')
+            ->first();
 
         if(count($user)){
             Session(['database'=>$user->database_name]);
@@ -142,7 +144,9 @@ trait AuthenticatesUsers
      */
     protected function authenticated(Request $request, $user)
     {
-        Artisan::call("db:connect", ['database'=> Session('database')]);
+        if(Session('database')){
+            Artisan::call("db:connect", ['database'=> Session('database')]);
+        }
     }
 
     /**
@@ -156,7 +160,7 @@ trait AuthenticatesUsers
         return redirect()->back()
             ->withInput($request->only($this->username(), 'remember'))
             ->withErrors([
-                $this->username() => Lang::get('auth.failed'),
+                $this->accessError() => Lang::get('auth.failed'),
             ]);
     }
 
@@ -168,6 +172,14 @@ trait AuthenticatesUsers
     public function username()
     {
         return 'email';
+    }
+
+    /**
+     * @return string
+     */
+    public function accessError()
+    {
+        return 'unauthenticated';
     }
 
     /**

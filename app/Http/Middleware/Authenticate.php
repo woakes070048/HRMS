@@ -58,11 +58,11 @@ class Authenticate
             return $this->auth->authenticate();
         }
 
-//        echo Session('database');exit;
-
         foreach ($guards as $guard) {
             if($guard == 'hrms'){
-                Artisan::call("db:connect", ['database'=> Session('database')]);
+                if(Session('database')) {
+                    Artisan::call("db:connect", ['database' => Session('database')]);
+                }
             }
             
             if($guard == 'setup'){
