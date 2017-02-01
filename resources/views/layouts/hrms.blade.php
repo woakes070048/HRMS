@@ -8,14 +8,11 @@
     <meta name="author" content="IDDL">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="shortcut icon" href="{{asset('img/logo.png')}}">
     <!-- Font CSS (Via CDN) -->
     <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
-
     <!-- Theme CSS -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/hrms.css')}}">
-
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="{{asset('images/logo.png')}}">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -471,17 +468,6 @@
                                     <div id="nav-tab2" class="tab-pane chat-widget" role="tabpanel">
                                         <div class="media">
                                             <div class="media-left">
-            <li>
-                <a href="{{ url('/setup/logout') }}"
-                   onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                    Logout
-                </a>
-
-                <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
-                    {{ csrf_field() }}
-                </form>
-            </li>
                                                 <a href="#">
                                                     <img class="media-object" alt="64x64" src="assets/img/avatars/3.jpg">
                                                 </a>
@@ -730,32 +716,11 @@
             </li>
             <li class="dropdown menu-merge">
                 <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown">
-                    <img src="assets/img/avatars/1.jpg" alt="avatar" class="mw30 br64">
+                    <img src="{{asset('img/placeholder.png')}}" alt="avatar" class="mw30 br64">
                     <span class="hidden-xs pl15"> Michael .R </span>
                     <span class="caret caret-tp hidden-xs"></span>
                 </a>
                 <ul class="dropdown-menu list-group dropdown-persist w250" role="menu">
-                    <li class="dropdown-header clearfix">
-                        <div class="pull-left ml10">
-                            <select id="user-status">
-                                <optgroup label="Current Status:">
-                                    <option value="1-1">Away</option>
-                                    <option value="1-2">Offline</option>
-                                    <option value="1-3" selected="selected">Online</option>
-                                </optgroup>
-                            </select>
-                        </div>
-
-                        <div class="pull-right mr10">
-                            <select id="user-role">
-                                <optgroup label="Logged in As:">
-                                    <option value="1-1">Client</option>
-                                    <option value="1-2">Editor</option>
-                                    <option value="1-3" selected="selected">Admin</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                    </li>
                     <li class="list-group-item">
                         <a href="#" class="animated animated-short fadeInUp">
                             <span class="fa fa-envelope"></span> Messages
@@ -773,8 +738,12 @@
                             <span class="fa fa-gear"></span> Account Settings </a>
                     </li>
                     <li class="dropdown-footer">
-                        <a href="#" class="">
-                            <span class="fa fa-power-off pr5"></span> Logout </a>
+                        <a href="{{ url('/setup/logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                            <span class="fa fa-power-off pr5"></span> Logout
+                        </a>
+                        <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+                            {{ csrf_field() }}
+                        </form>
                     </li>
                 </ul>
             </li>
@@ -790,22 +759,6 @@
 
             <!-- Start: Sidebar Header -->
             <header class="sidebar-header">
-
-                <!-- Sidebar Widget - Author -->
-                <div class="sidebar-widget author-widget">
-                    <div class="media">
-                        <a class="media-left" href="#">
-                            <img src="assets/img/avatars/3.jpg" class="img-responsive">
-                        </a>
-                        <div class="media-body">
-                            <div class="media-links">
-                                <a href="#" class="sidebar-menu-toggle">User Menu -</a> <a href="pages_login(alt).html">Logout</a>
-                            </div>
-                            <div class="media-author">Michael Richards</div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Sidebar Widget - Menu (slidedown) -->
                 <div class="sidebar-widget menu-widget">
                     <div class="row text-center mbn">
@@ -1560,7 +1513,10 @@
 
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
-<script src="{{asset('js/hrms.js')}}"></script>
+
+<script src="{{asset('js/utility/utility.js')}}"></script>
+<script src="{{asset('js/demo/demo.js')}}"></script>
+<script src="{{asset('js/main.js')}}"></script>
 
 <script type="text/javascript">
     jQuery(document).ready(function() {

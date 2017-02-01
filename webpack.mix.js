@@ -15,8 +15,7 @@ mix.combine([
     'resources/assets/css/hrms/theme.css',
 ], 'public/css/hrms.css');
 
-mix.js([
-    'resources/assets/js/hrms/utility.js',
-    'resources/assets/js/hrms/demo.js',
-    'resources/assets/js/hrms/main.js',
-],'public/js/hrms.js');
+// mix.js([
+//     'resources/assets/js/hrms/jquery-1.11.1.min.js',
+//     'resources/assets/js/hrms/jquery-ui.min.js',
+// ],'public/js/hrms.js');
