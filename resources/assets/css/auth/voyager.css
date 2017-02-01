@@ -157,7 +157,7 @@
 }
 
 .page-login-v2:before {
-    background: url('../images/bg.jpg');
+    background: url('../img/bg.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position-x: -200px !important;
@@ -314,7 +314,7 @@ table a.btn-sm{
 #dashboard_bg{
   width:100%;
   height:100px;
-  background: url('../images/dashboard-bg.jpg');
+  background: url('../img/dashboard-bg.jpg');
   background-size:cover;
   position:absolute;
   top:0px;
