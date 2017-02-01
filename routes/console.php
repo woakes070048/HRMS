@@ -9,7 +9,7 @@
 
 // Create migration command for own directory
 Artisan::command('migrate:own {directory}',function($directory){
-	Artisan::call('migrate',['--path'=>'/database/migrations/'.$directory]);
+	Artisan::call('migrate',['--path'=>'database/migrations/'.$directory]);
 	$this->info('migrations/'.$directory.' directory migration success.');
 })->describe('Migrate own directory database.');
 

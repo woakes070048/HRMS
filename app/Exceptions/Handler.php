@@ -72,6 +72,12 @@ class Handler extends ExceptionHandler
                 if($guard == 'setup'){
                     return redirect()->guest('/setup/login');
                 }
+                elseif($guard == 'hrms'){
+                    return redirect()->guest('/login');
+                }
+                else{
+                    return redirect()->back();
+                }
             }
         }
 

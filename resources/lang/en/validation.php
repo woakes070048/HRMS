@@ -86,6 +86,8 @@ return [
     'uploaded'             => 'The :attribute failed to upload.',
     'url'                  => 'The :attribute format is invalid.',
 
+    'alpha_spaces'  => 'The :attribute may only contain letters and spaces.',
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -101,6 +103,8 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+
+
     ],
 
     /*
