@@ -40,7 +40,7 @@
                 <div id="remember_me">
                     <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : ''}}>
                     <span>Remember Me</span>
-                    <a href="{{ url('/password/reset') }}">
+                    <a href="{{ url('setup/password/reset') }}">
                         Forgot Your Password?
                     </a>
                 </div>
