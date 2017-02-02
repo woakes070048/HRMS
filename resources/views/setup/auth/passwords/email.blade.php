@@ -1,47 +1,45 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
-<!-- Main Content -->
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Reset Password</div>
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif
 
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/password/email') }}">
-                        {{ csrf_field() }}
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+    <div id="title_section">
+        <img class="logo-img" src="{{asset('img/logo.png')}}" alt="Logo Icon">
+        <div class="copy">
+            <h1>[ LAMBA</h1>
+            <p>Welcome to LAMBA. The Human Resource Management System from IDDL.</p>
+        </div>
+        <div style="clear:both"></div>
+    </div>
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Send Password Reset Link
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+    <div id="login_section">
+        <div class="content">
+            <h2>Reset Password(Setup)</h2>
+            
+            @if (session('status'))
+                <div class="alert alert-success">
+                    {{ session('status') }}
                 </div>
-            </div>
+            @endif
+
+            <div style="clear:both"></div>
+            <form id="login" class="form-horizontal" role="form" method="POST" action="{{ url('setup/password/email') }}">
+                {{ csrf_field() }}
+
+                <div class="{{ $errors->has('email') ? ' has-error' : '' }}">
+                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Email address" required>
+                    @if ($errors->has('email'))
+                        <span  class="error-login">
+                            {{ $errors->first('email') }}
+                        </span>
+                    @endif
+                </div>
+
+                <button class="btn btn-primary btn-login" id="voyager-login-btn">
+                    <span class="login_text"><i class="voyager-lock"></i> Send Password Reset Link</span>
+                </button>
+            </form>
         </div>
     </div>
-</div>
+
 @endsection

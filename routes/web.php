@@ -5,6 +5,12 @@ Route::group(['prefix'=>'/','namespace'=>'Auth'], function(){
 	Route::get('login','LoginController@showLoginForm');
 	Route::post('login', 'LoginController@login');
 	Route::post('logout', 'LoginController@logout');
+
+	//Password Reset Routes...
+	Route::get('password/reset', 'ForgotPasswordController@showLinkRequestForm');
+	Route::post('password/reset', 'ResetPasswordController@reset');
+	Route::get('password/reset/{token?}', 'ResetPasswordController@showResetForm');
+	Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail');
 });
 
 /***************** ...HRMS Dashboard Routes... ******************/
@@ -26,14 +32,19 @@ Route::group(['prefix'=>'/'], function(){
 // Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
 
-/************************************ ..Setup System Route.. ***************************************/
+/***************** ..Setup System Route... *******************/
 
 /***************** ...Setup Login Routes... ******************/
 Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
 	Route::get('login', 'LoginController@showLoginForm');
 	Route::post('login', 'LoginController@login');
-
 	Route::post('logout', 'LoginController@logout');
+
+	//Password Reset Routes...
+	Route::get('password/reset', 'ForgotPasswordController@showLinkRequestForm');
+	Route::post('password/reset', 'ResetPasswordController@reset');
+	Route::get('password/reset/{token?}', 'ResetPasswordController@showResetForm');
+	Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail');
 });
 
 
