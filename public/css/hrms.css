@@ -18831,7 +18831,7 @@ body.tray-rescale .tray-right:hover {
   top: 0;
   line-height: 37px;
   width: 38px;
-  font-size: 13px;
+  font-size: 15px;
   text-align: center;
   padding-left: 13px;
 }
@@ -18889,8 +18889,9 @@ body.tray-rescale .tray-right:hover {
 /* Sidebar-Menu Sub Level Item - Title */
 .sidebar-menu > li > ul > li > a > span:nth-child(1) {
   margin-right: 10px;
-  font-size: 11px;
+  font-size: 13px;
 }
+
 /* Sidebar-Menu Sub Level Item - Label */
 .sidebar-menu > li > ul > li > a > span.label {
   float: right;

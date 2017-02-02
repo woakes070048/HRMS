@@ -29,5 +29,24 @@ class User extends Authenticatable
     ];
 
 
+    public function getFirstNameAttribute($value){
+        return ucfirst($value);
+    }
+
+    public function getLastNameAttribute($value){
+        return ucfirst($value);
+    }
+
+
+    public function getFullNameAttribute(){
+        return ucfirst($this->first_name). ' ' .ucfirst($this->last_name);
+    }
+
+
+    public function getUserImageAttribute(){
+
+    }
+
+
 
 }
