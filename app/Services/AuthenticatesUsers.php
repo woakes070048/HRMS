@@ -116,6 +116,7 @@ trait AuthenticatesUsers
      */
     protected function credentials(Request $request)
     {
+        //$request->offsetSet('status',1);
         return $request->only($this->username(), 'password');
     }
 

@@ -25,6 +25,7 @@ class ConfigRequest extends FormRequest
     {
         return [
             'company_name' => 'required|alpha_spaces|min:5|max:25|unique:configs',
+            'package_name' => 'required',
             'first_name' => 'required|alpha|alpha_dash',
             'last_name' => 'required|alpha|alpha_dash',
             'email' => 'required|email|unique:users',

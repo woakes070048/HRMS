@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Setup;
 
-
 // model class
 use App\Models\User;
 use App\Models\Setup\UserEmails;
 use App\Models\Setup\Config;
+use App\Models\Setup\Package;
 use App\Models\Setup\User as SetupUser;
 
 // form validation class
@@ -28,15 +28,17 @@ class ConfigController extends Controller
     	$this->middleware('auth:setup');
     }
 
-
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(){
-    	Artisan::call('db:connect');
-    	return view('setup.config');
-    }
+    	
+        Artisan::call('db:connect');
 
+        $data['packages'] = Package::where('package_status',1)->get();
+
+    	return view('setup.config', $data);
+    }
 
     /**
      * @param ConfigRequest $request
@@ -55,6 +57,7 @@ class ConfigController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'mobile_number' => $request->mobile_number,
+                'user_type' => 2,
             ]);
 
 	    	$config = Config::create([

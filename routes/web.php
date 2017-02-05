@@ -1,5 +1,6 @@
 <?php
 
+// Route::get('testing', 'Auth\LoginController@testing');
 /***************** ...Setup Login Routes... ******************/
 Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
 	Route::get('login', 'LoginController@showLoginForm');
