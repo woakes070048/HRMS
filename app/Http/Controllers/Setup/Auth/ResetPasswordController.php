@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Setup\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ResetsPasswords;
+use App\Services\Setup\ResetsPasswords;
 
 class ResetPasswordController extends Controller
 {
-    /*
+    /*ResetPasswordController
     |--------------------------------------------------------------------------
     | Password Reset Controller
     |--------------------------------------------------------------------------
@@ -19,6 +19,7 @@ class ResetPasswordController extends Controller
     */
 
     use ResetsPasswords;
+    
 
     /**
      * Create a new controller instance.
@@ -27,6 +28,6 @@ class ResetPasswordController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware('guest:setup');
     }
 }
