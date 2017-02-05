@@ -34,4 +34,5 @@ class ForgotPasswordController extends Controller
     {
         $this->middleware('guest:hrms');
     }
+
 }
