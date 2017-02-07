@@ -1,6 +1,6 @@
 <?php
 
-// Route::get('testing', 'Auth\LoginController@testing');
+Route::get('testing', 'Auth\LoginController@testing');
 /***************** ...Setup Login Routes... ******************/
 Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
 	Route::get('login', 'LoginController@showLoginForm');
@@ -32,6 +32,7 @@ Route::group(['prefix'=>'setup','namespace'=>'Setup','middleware'=>'auth:setup']
 Route::group(['prefix'=>'config','namespace'=>'Setup'], function(){
 	Route::get('/', 'ConfigController@index');
 	Route::post('/', 'ConfigController@config');
+	Route::post('/get_package_info', 'ConfigController@get_package_info');
 });
 
 
