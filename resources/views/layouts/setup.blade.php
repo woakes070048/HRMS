@@ -1,85 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+    <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HRMS</title>
+    <meta name="keywords" content="iddl, hrms, afc" />
+    <meta name="description" content="human resource management system">
+    <meta name="author" content="IDDL">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>SETUP</title>
+    <link rel="shortcut icon" href="{{asset('img/logo.png')}}">
+    <!-- Font CSS (Via CDN) -->
+    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
 
-    <!-- Styles -->
-    <link href="{{asset('/css/app.css')}}" rel="stylesheet">
+    <!-- Glyphicons Pro CSS(font) -->
+    <link rel="stylesheet" type="text/css" href="{{asset('fonts/glyphicons-pro/glyphicons-pro.css')}}">
 
-    <!-- Scripts -->
-    <script>
-        window.Laravel = <?php echo json_encode([
-            'csrfToken' => csrf_token(),
-        ]); ?>
-    </script>
-</head>
-<body>
-    <div id="app">
-        <nav class="navbar navbar-default navbar-static-top">
-            <div class="container">
-                <div class="navbar-header">
+    <!-- Icomoon CSS(font) -->
+    <link rel="stylesheet" type="text/css" href="{{asset('fonts/icomoon/icomoon.css')}}">
 
-                    <!-- Collapsed Hamburger -->
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
-                        <span class="sr-only">Toggle Navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
+    <!-- Iconsweets CSS(font) -->
+    <link rel="stylesheet" type="text/css" href="{{asset('fonts/iconsweets/iconsweets.css')}}">
 
-                    <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        SETUP
-                    </a>
-                </div>
+    <!-- Octicons CSS(font) -->
+    <link rel="stylesheet" type="text/css" href="{{asset('fonts/octicons/octicons.css')}}">
 
-                <div class="collapse navbar-collapse" id="app-navbar-collapse">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="nav navbar-nav">
-                        &nbsp;
-                    </ul>
+    <!-- Stateface CSS(font) -->
+    <link rel="stylesheet" type="text/css" href="{{asset('fonts/stateface/stateface.css')}}">
 
-                    <!-- Right Side Of Navbar -->
-                    <ul class="nav navbar-nav navbar-right">
-                        <!-- Authentication Links -->
-                        @if (Auth::guard('setup')->check())
-                           <li><a href="{{ url('/config') }}">Config</a></li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user('setup')->first_name }} <span class="caret"></span>
-                                </a>
+    <!-- Font Awesome CSS(font) -->
+    <link rel="stylesheet" type="text/css" href="{{asset('fonts/font-awesome/font-awesome.min.css')}}">
 
-                                <ul class="dropdown-menu" role="menu">
-                                    <li>
-                                        <a href="{{ url('/setup/logout') }}"
-                                            onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                            Logout
-                                        </a>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="{{asset('css/hrms.css')}}">
 
-                                        <form id="logout-form" action="{{ url('/setup/logout') }}" method="POST" style="display: none;">
-                                            {{ csrf_field() }}
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                        @endif
-                    </ul>
-                </div>
+    <link rel="stylesheet" type="text/css" href="{{asset('admin-tools/admin-forms/css/admin-forms.css')}}">
+
+        @yield('style')
+    </head>
+
+<body class="blank-page">
+
+    <!-- Start: Main -->
+    <div id="main">
+
+        @include('layouts.setup_navbar')
+
+        <!-- Start: Content-Wrapper -->
+        <section id="content_wrapper">
+            <div class="container" style="margin-top: 70px;">
+                @yield('content')
             </div>
-        </nav>
-
-        @yield('content')
+        </section>
+        <!-- End: Content-Wrapper -->
     </div>
+    <!-- End: Main -->
 
-    <!-- Scripts -->
-    <script src="{{asset('/js/app.js')}}"></script>
+<!-- BEGIN: PAGE SCRIPTS -->
+<script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js"></script>
+<script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
+
+<script src="{{asset('js/utility/utility.js')}}"></script>
+<script src="{{asset('js/demo/demo.js')}}"></script>
+<script src="{{asset('js/main.js')}}"></script>
+
+<script type="text/javascript">
+    
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    jQuery(document).ready(function() {
+
+        "use strict";
+
+        // Init Theme Core
+        Core.init();
+
+        // Init Demo JS
+        Demo.init();
+
+    });
+</script>
+<!-- END: PAGE SCRIPTS -->
+
+@yield('script')
+
 </body>
+
 </html>
