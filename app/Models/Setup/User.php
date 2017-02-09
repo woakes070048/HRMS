@@ -2,6 +2,7 @@
 
 namespace App\Models\Setup;
 
+use App\Notifications\SetupResetPasswordNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -15,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-    	'first_name','last_name','email','password','mobile_number'
+    	'first_name','last_name','email','password','mobile_number','user_type', 'status'
     ];
 
 
@@ -29,6 +30,9 @@ class User extends Authenticatable
     ];
 
 
-
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new SetupResetPasswordNotification($token));
+    }
 
 }

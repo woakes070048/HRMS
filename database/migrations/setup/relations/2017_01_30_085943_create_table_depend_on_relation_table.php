@@ -56,6 +56,7 @@ class CreateTableDependOnRelationTable extends Migration
             $table->integer('package_id')->unsigned();
             $table->double('payment_amount', 9, 2);
             $table->smallInteger('payment_duration');
+            $table->tinyInteger('payment_status')->default('1')->comment="1=active,0=inactive";
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');

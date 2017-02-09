@@ -4,7 +4,7 @@
 
 
     <div id="title_section">
-        <img class="logo-img" src="{{asset('images/logo.png')}}" alt="Logo Icon">
+        <img class="logo-img" src="{{asset('img/logo.png')}}" alt="Logo Icon">
         <div class="copy">
             <h1>[ LAMBA</h1>
             <p>Welcome to LAMBA. The Human Resource Management System from IDDL.</p>
@@ -52,7 +52,7 @@
                         <i class="voyager-lock"></i> Logging in...
                     </span>
                 </button>
-                <img class="btn-loading" src="{{asset('images/logo_icon.png')}}" alt="Voyager Loader">
+                <img class="btn-loading" src="{{asset('img/logo_icon.png')}}" alt="Voyager Loader">
 
             </form>
 

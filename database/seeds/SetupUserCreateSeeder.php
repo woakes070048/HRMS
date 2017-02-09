@@ -18,7 +18,7 @@ class SetupUserCreateSeeder extends Seeder
             'first_name' => $facker->firstName,
             'last_name' => $facker->lastName,
             'email' => $facker->email,
-            'mobile_number' => $facker->phoneNumber,
+            'mobile_number' => "01783605360",
             'password' => bcrypt('123456'),
         ]);
     }

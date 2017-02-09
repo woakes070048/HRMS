@@ -16,7 +16,13 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
+<<<<<<< HEAD
+        'employee_no','designation_id','first_name','last_name', 'email', 'password','mobile_number','photo',
+||||||| merged common ancestors
         'first_name','last_name', 'email', 'password',
+=======
+        'employee_id','designation_id','first_name','last_name', 'email', 'password','mobile_number'
+>>>>>>> 3acab317d2698712ac38bb52e8b58b1d7273157f
     ];
 
     /**
@@ -27,6 +33,30 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+
+    public function getFirstNameAttribute($value){
+        return ucfirst($value);
+    }
+
+    public function getLastNameAttribute($value){
+        return ucfirst($value);
+    }
+
+
+    public function getFullNameAttribute(){
+        return ucfirst($this->first_name). ' ' .ucfirst($this->last_name);
+    }
+
+
+    public function getNickNameAttribute($value){
+        return ucfirst($value);
+    }
+
+
+    public function getUserImageAttribute(){
+
+    }
 
 
 

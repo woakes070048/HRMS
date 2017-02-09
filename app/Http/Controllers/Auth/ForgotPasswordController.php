@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use App\Services\SendsPasswordResetEmails;
 
 class ForgotPasswordController extends Controller
 {
@@ -20,6 +20,11 @@ class ForgotPasswordController extends Controller
 
     use SendsPasswordResetEmails;
 
+    // public function showLinkRequestForm(){
+
+    //     echo "testing";
+    // }
+
     /**
      * Create a new controller instance.
      *
@@ -27,6 +32,7 @@ class ForgotPasswordController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware('guest:hrms');
     }
+
 }
