@@ -90,7 +90,8 @@ trait AuthenticatesUsers
      */
     protected function credentials(Request $request)
     {
-        return $request->only($this->username(), 'password');
+        $request->offsetSet('status',1);
+        return $request->only($this->username(), 'password','status');
     }
 
     /**

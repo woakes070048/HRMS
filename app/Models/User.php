@@ -16,7 +16,13 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
+<<<<<<< HEAD
         'employee_no','designation_id','first_name','last_name', 'email', 'password','mobile_number','photo',
+||||||| merged common ancestors
+        'first_name','last_name', 'email', 'password',
+=======
+        'employee_id','designation_id','first_name','last_name', 'email', 'password','mobile_number'
+>>>>>>> 3acab317d2698712ac38bb52e8b58b1d7273157f
     ];
 
     /**
