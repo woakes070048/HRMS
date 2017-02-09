@@ -11,23 +11,35 @@
                     </div>
                     <div class="panel-body">
 
-                        <form class="form-horizontal" role="form">
+                        <form role="form">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="col-lg-3 control-label">Standard</label>
-                                        <div class="col-lg-8">
-                                            <input type="text" class="form-control input-sm" placeholder="Type Here...">
-                                        </div>
+                                        <label class="control-label">First Name</label>
+                                        <input type="text" class="form-control input-sm" placeholder="enter first name">
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="col-lg-3 control-label">Select List</label>
-                                        <div class="col-lg-8">
-                                            <input type="text" class="form-control input-sm" placeholder="Type Here...">
-                                        </div>
+                                        <label class="control-label">Last Name</label>
+                                        <input type="text" class="form-control input-sm" placeholder="enter last name">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Email Address</label>
+                                        <input type="text" class="form-control input-sm" placeholder="enter first name">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Last Name</label>
+                                        <input type="text" class="form-control input-sm" placeholder="enter last name">
                                     </div>
                                 </div>
                             </div>

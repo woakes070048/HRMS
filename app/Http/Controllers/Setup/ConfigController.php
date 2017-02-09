@@ -50,19 +50,19 @@ class ConfigController extends Controller
 	    	DB::beginTransaction();
 
             $setup_user = SetupUser::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
+                'first_name'    => $request->first_name,
+                'last_name'     => $request->last_name,
+                'email'         => $request->email,
+                'password'      => bcrypt($request->password),
                 'mobile_number' => $request->mobile_number,
             ]);
 
 	    	$config = Config::create([
-	    			'user_id' => $setup_user->id,
-	    			'company_name' => $request->company_name,
-	    			'company_address' => $request->company_address,
-	    			'database_name' => $database_name,
-                    'package_end_date' => Carbon::now()->addDays(30),
+	    			'user_id'           => $setup_user->id,
+	    			'company_name'      => $request->company_name,
+	    			'company_address'   => $request->company_address,
+	    			'database_name'     => $database_name,
+                    'package_end_date'  => Carbon::now()->addDays(30),
 	    		]);
 
 	    	UserEmails::create([
@@ -82,10 +82,13 @@ class ConfigController extends Controller
 	    	Artisan::call("migrate:hrms");
 
 	    	User::create([
-	    			'first_name' => $request->first_name,
-	    			'last_name' => $request->last_name,
-	    			'email' => $request->email,
-	    			'password' => bcrypt($request->password),
+	    			'employee_id'    => '0-00',
+	    			'designation_id' => 1,
+	    			'first_name'     => $request->first_name,
+	    			'last_name'      => $request->last_name,
+	    			'email'          => $request->email,
+	    			'password'       => bcrypt($request->password),
+	    			'mobile_number'  => $request->mobile_number,
 	    		]);
 
 	    	DB::commit();
