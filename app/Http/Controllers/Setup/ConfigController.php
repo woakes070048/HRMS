@@ -61,52 +61,24 @@ class ConfigController extends Controller
         $package_amount        = $request->package_amount;
         $package_duration      = $request->package_days;
 
-    	//try{
+    	try{
 	     	DB::beginTransaction();
 
             $setup_user = SetupUser::create([
-<<<<<<< HEAD
-                'first_name'    => $request->first_name,
-                'last_name'     => $request->last_name,
-                'email'         => $request->email,
-                'password'      => bcrypt($request->password),
-                'mobile_number' => $request->mobile_number,
-||||||| merged common ancestors
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'mobile_number' => $request->mobile_number,
-=======
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'email' => $email,
                 'password' => bcrypt($request->password),
                 'mobile_number' => $mobile_number,
                 'user_type' => 2,
->>>>>>> 3acab317d2698712ac38bb52e8b58b1d7273157f
             ]);
 
 	    	$config = Config::create([
-<<<<<<< HEAD
-	    			'user_id'           => $setup_user->id,
-	    			'company_name'      => $request->company_name,
-	    			'company_address'   => $request->company_address,
-	    			'database_name'     => $database_name,
-                    'package_end_date'  => Carbon::now()->addDays(30),
-||||||| merged common ancestors
-	    			'user_id' => $setup_user->id,
-	    			'company_name' => $request->company_name,
-	    			'company_address' => $request->company_address,
-	    			'database_name' => $database_name,
-                    'package_end_date' => Carbon::now()->addDays(30),
-=======
 	    			'user_id' => $setup_user->id,
 	    			'company_name' => $company_name,
 	    			'company_address' => $company_address,
 	    			'database_name' => $database_name,
                     'package_end_date' => Carbon::now()->addDays($package_duration),
->>>>>>> 3acab317d2698712ac38bb52e8b58b1d7273157f
 	    		]);
 
 	    	UserEmails::create([
@@ -133,44 +105,29 @@ class ConfigController extends Controller
 	    	Artisan::call("migrate:hrms");
 
 	    	User::create([
-<<<<<<< HEAD
-	    			'employee_id'    => '0-00',
-	    			'designation_id' => 1,
-	    			'first_name'     => $request->first_name,
-	    			'last_name'      => $request->last_name,
-	    			'email'          => $request->email,
-	    			'password'       => bcrypt($request->password),
-	    			'mobile_number'  => $request->mobile_number,
-||||||| merged common ancestors
-	    			'first_name' => $request->first_name,
-	    			'last_name' => $request->last_name,
-	    			'email' => $request->email,
-	    			'password' => bcrypt($request->password),
-=======
-	    			'employee_id'    => '0-00', 
+	    			'employee_no'    => '0-00',
                     'designation_id' => 1,   
                     'first_name'     => $first_name, 
                     'last_name'      => $last_name,    
                     'email'          => $email, 
                     'password'       => bcrypt($password),  
                     'mobile_number'  => $mobile_number,
->>>>>>> 3acab317d2698712ac38bb52e8b58b1d7273157f
 	    		]);
 
 	    	DB::commit();
 
 	    	$request->session()->flash('success','Application successfully setup!');
 
-	    // }catch(\Exception $e){
-	    // 	Artisan::call('db:connect');
-	    // 	DB::rollback();
+	     }catch(\Exception $e){
+	     	Artisan::call('db:connect');
+	     	DB::rollback();
 
-	    // 	Artisan::call('db:connect', ['database'=> $database_name]);
-	    // 	Artisan::call("migrate:hrms:rollback");
-	    // 	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
+	     	Artisan::call('db:connect', ['database'=> $database_name]);
+	     	Artisan::call("migrate:hrms:rollback");
+	     	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
 
-	    // 	$request->session()->flash('danger','Application setup not success!');
-	    // }
+	     	$request->session()->flash('danger','Application setup not success!');
+	     }
 
     	return back();
     }
