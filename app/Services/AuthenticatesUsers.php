@@ -37,6 +37,7 @@ trait AuthenticatesUsers
      */
     public function login(Request $request)
     {
+
         $this->validateLogin($request);
 
         if(!$this->databaseConnectByEmail($request->email)){

@@ -16,6 +16,7 @@ class CreateLanguages extends Migration
         Schema::create('languages', function (Blueprint $table) {
             $table->increments('id');
             $table->string('language_name',50);
+            $table->boolean('status')->default(1)->comment='1=active, 0=inactive';
             $table->timestamps();
         });
     }

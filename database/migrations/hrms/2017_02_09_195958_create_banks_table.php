@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDegreesTable extends Migration
+class CreateBanksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateDegreesTable extends Migration
      */
     public function up()
     {
-        Schema::create('degrees', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
+        Schema::create('banks', function (Blueprint $table) {
             $table->increments('id');
-            $table->smallInteger('education_level_id')->unsigned();
-            $table->string('degree_name');
+            $table->string('bank_code',100);
+            $table->string('bank_name',100);
             $table->boolean('status')->default(1)->comment='1=active, 0=inactive';
+            $table->timestamps();
         });
     }
 
@@ -29,6 +29,6 @@ class CreateDegreesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('degrees');
+        Schema::dropIfExists('banks');
     }
 }

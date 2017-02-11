@@ -14,12 +14,13 @@ class SetupUserCreateSeeder extends Seeder
     {
         $facker = Faker\Factory::create();
 
-        DB::table('users')->insert([
-            'first_name' => $facker->firstName,
-            'last_name' => $facker->lastName,
-            'email' => $facker->email,
+        User::create([
+            'first_name' => 'IDDL',
+            'last_name' => 'Ltd',
+            'email' => 'iddl@gmail.com',
+            'password' => bcrypt('iddl123'),
+            'user_type' => '1',
             'mobile_number' => "01783605360",
-            'password' => bcrypt('123456'),
         ]);
     }
 }

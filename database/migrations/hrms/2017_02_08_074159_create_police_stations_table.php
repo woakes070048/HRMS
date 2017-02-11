@@ -16,7 +16,7 @@ class CreatePoliceStationsTable extends Migration
         Schema::create('police_stations', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('district_id');
+            $table->integer('district_id')->unsigned();
             $table->string('police_station_name');
             $table->string('police_station_bn_name');
         });

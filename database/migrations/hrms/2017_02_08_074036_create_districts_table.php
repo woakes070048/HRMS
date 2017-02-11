@@ -16,7 +16,7 @@ class CreateDistrictsTable extends Migration
         Schema::create('districts', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->integer('division_id');
+            $table->integer('division_id')->unsigned();
             $table->string('district_name',100);
             $table->string('district_bn_name',100);
             $table->string('district_lat',100);

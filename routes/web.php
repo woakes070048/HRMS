@@ -1,4 +1,20 @@
 <?php
+// Route::get('test',function(){
+// 	$result = DB::table('packages')->get();
+// 	foreach($result as $info){
+// 		echo "['package_name'=>'".$info->package_name."',
+// 		'package_details'=>'".$info->package_details."',
+// 		'package_price'=>'".$info->package_price."',
+// 		'package_duration'=>'".$info->package_duration."',
+// 		'package_type'=>'".$info->package_type."',
+// 		'package_sister_concern_limit'=>'".$info->package_sister_concern_limit."',
+// 		'package_level_limit'=>'".$info->package_level_limit."',
+// 		'package_user_limit'=>'".$info->package_user_limit."',
+// 		'package_status'=>'".$info->package_status."',
+// 		'package_created_by'=>'".$info->package_created_by."'],
+// 		<br>";
+// 	}
+// });
 
 Route::get('testing', 'Auth\LoginController@testing');
 /***************** ...Setup Login Routes... ******************/
