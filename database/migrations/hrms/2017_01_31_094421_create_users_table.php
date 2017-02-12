@@ -14,7 +14,8 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');            
+            $table->engine = 'InnoDB';
+            $table->increments('id');
             $table->string('employee_no');            
             $table->integer('designation_id')->unsigned();   
             $table->string('first_name', 45);            
@@ -28,7 +29,7 @@ class CreateUsersTable extends Migration
             $table->string('mobile_number',16); 
             $table->string('photo',200)->nullable();  
             $table->integer('created_by')->default(0);    
-            $table->integer('updated_by')->default(0);  
+            $table->integer('updated_by')->default(0);
             $table->timestamps();
         });
     }

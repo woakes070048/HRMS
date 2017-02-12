@@ -728,6 +728,7 @@
 <!-- End: Main -->
 
 <!-- BEGIN: PAGE SCRIPTS -->
+<script src="{{asset('js/hrms.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
 

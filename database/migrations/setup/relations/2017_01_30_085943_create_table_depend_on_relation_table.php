@@ -41,6 +41,7 @@ class CreateTableDependOnRelationTable extends Migration
             $table->double('package_price',9,2);
             $table->integer('package_duration');
             $table->tinyInteger('package_type');
+            $table->tinyInteger('package_sister_concern_limit');
             $table->tinyInteger('package_level_limit');
             $table->tinyInteger('package_sister_concern_limit');
             $table->smallInteger('package_user_limit');

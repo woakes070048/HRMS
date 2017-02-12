@@ -66,8 +66,8 @@
     <!-- End: Main -->
 
 <!-- BEGIN: PAGE SCRIPTS -->
+<script src="{{asset('js/hrms.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
 
 <script src="{{asset('js/utility/utility.js')}}"></script>
