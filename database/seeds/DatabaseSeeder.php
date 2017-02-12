@@ -11,7 +11,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//         $this->call(UsersTableSeeder::class);
-         $this->call(SetupUserCreateSeeder::class);
+        // $this->call(SetupUserCreateSeeder::class);
+        
+        $this->call(HrmsEducationLevelCreateSeeder::class);
+        $this->call(HrmsDegreeCreateSeeder::class);
+        $this->call(HrmsInstituteCreateSeeder::class);
+
+        $this->call(HrmsLevelCreateSeeder::class);
+        $this->call(HrmsDepartmentCreateSeeder::class);
+        $this->call(HrmsDesignationCreateSeeder::class);
+        
+        $this->call(HrmsDivisionCreateSeeder::class);
+        $this->call(HrmsDistrictCreateSeeder::class);
+        $this->call(HrmsPoliceStationCreateSeeder::class);
     }
 }

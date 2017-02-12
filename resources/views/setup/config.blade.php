@@ -158,8 +158,6 @@
 @endsection
 
 @section('script')
-    
-    {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> --}}
 
     <script src="{{asset('admin-tools/admin-forms/js/jquery.validate.min.js')}}"></script>
     <script src="{{asset('admin-tools/admin-forms/js/jquery.steps.min.js')}}"></script>
