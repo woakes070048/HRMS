@@ -58,10 +58,17 @@ class ConfigController extends Controller
         $password              = $request->password;
         $password_confirmation = $request->password_confirmation;
         $company_address       = $request->company_address;
-        $package_amount        = $request->package_amount;
-        $package_duration      = $request->package_days;
+        // $package_amount        = $request->package_amount;
+        // $package_duration      = $request->package_duration;
 
-    	//try{
+        $package_info     = Package::find($package_id);
+        $package_amount   = $package_info->package_price;
+        $package_duration = $package_info->package_duration;
+
+        $formet = "+$package_duration month";
+        $package_end_date = date("Y-m-d", strtotime($formet));
+
+    	try{
 	     	DB::beginTransaction();
 
             $setup_user = SetupUser::create([
@@ -74,11 +81,12 @@ class ConfigController extends Controller
             ]);
 
 	    	$config = Config::create([
-	    			'user_id' => $setup_user->id,
-	    			'company_name' => $company_name,
-	    			'company_address' => $company_address,
-	    			'database_name' => $database_name,
-                    'package_end_date' => Carbon::now()->addDays($package_duration),
+	    			'user_id'          => $setup_user->id,
+	    			'company_name'     => $company_name,
+	    			'company_address'  => $company_address,
+	    			'database_name'    => $database_name,
+                    'package_end_date' => $package_end_date,
+                    'parent_id'        => 0,
 	    		]);
 
 	    	UserEmails::create([
@@ -105,7 +113,7 @@ class ConfigController extends Controller
 	    	Artisan::call("migrate:hrms");
 
 	    	User::create([
-	    			'employee_id'    => '0-00', 
+	    			'employee_no'    => '0-00', 
                     'designation_id' => 1,   
                     'first_name'     => $first_name, 
                     'last_name'      => $last_name,    
@@ -118,16 +126,16 @@ class ConfigController extends Controller
 
 	    	$request->session()->flash('success','Application successfully setup!');
 
-	    // }catch(\Exception $e){
-	    // 	Artisan::call('db:connect');
-	    // 	DB::rollback();
+	    }catch(\Exception $e){
+	    	Artisan::call('db:connect');
+	    	DB::rollback();
 
-	    // 	Artisan::call('db:connect', ['database'=> $database_name]);
-	    // 	Artisan::call("migrate:hrms:rollback");
-	    // 	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
+	    	Artisan::call('db:connect', ['database'=> $database_name]);
+	    	Artisan::call("migrate:hrms:rollback");
+	    	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
 
-	    // 	$request->session()->flash('danger','Application setup not success!');
-	    // }
+	    	$request->session()->flash('danger','Application setup not success!');
+	    }
 
     	return back();
     }
