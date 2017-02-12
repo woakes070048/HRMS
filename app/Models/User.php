@@ -15,8 +15,9 @@ class User extends Authenticatable
      *
      * @var array
      */
+    //employee_id will be employee_no
     protected $fillable = [
-        'employee_no','designation_id','first_name','last_name', 'email', 'password','mobile_number',
+        'employee_no','designation_id','first_name','last_name', 'email', 'password','mobile_number'
     ];
 
     /**
@@ -28,7 +29,6 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-
     public function getFirstNameAttribute($value){
         return ucfirst($value);
     }
@@ -37,21 +37,15 @@ class User extends Authenticatable
         return ucfirst($value);
     }
 
-
     public function getFullNameAttribute(){
         return ucfirst($this->first_name). ' ' .ucfirst($this->last_name);
     }
-
 
     public function getNickNameAttribute($value){
         return ucfirst($value);
     }
 
-
     public function getUserImageAttribute(){
 
     }
-
-
-
 }

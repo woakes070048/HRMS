@@ -2,7 +2,7 @@
 <html>
     <head>
     <meta charset="utf-8">
-    <title>HRMS</title>
+    <title>{{$title or "HRMS"}}</title>
     <meta name="keywords" content="iddl, hrms, afc" />
     <meta name="description" content="human resource management system">
     <meta name="author" content="IDDL">
@@ -37,7 +37,15 @@
 
     <link rel="stylesheet" type="text/css" href="{{asset('admin-tools/admin-forms/css/admin-forms.css')}}">
 
+    <link rel="stylesheet" type="text/css" href="{{asset('sweet_alert/sweetalert.css')}}">
+
         @yield('style')
+
+        <style type="text/css" media="screen">
+            #content_wrapper{
+                margin-left: 0px !important;
+            }
+        </style>
     </head>
 
 <body class="blank-page">
@@ -65,6 +73,7 @@
 <script src="{{asset('js/utility/utility.js')}}"></script>
 <script src="{{asset('js/demo/demo.js')}}"></script>
 <script src="{{asset('js/main.js')}}"></script>
+<script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
 
 <script type="text/javascript">
     
