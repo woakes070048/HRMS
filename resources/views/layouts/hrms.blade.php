@@ -41,7 +41,7 @@
 
 </head>
 
-<body>
+<body class="@if(isset($sidevar_hide))sb-l-m sb-l-disable-animation @endif">
 
 <!-- Start: Main -->
 <div id="main">

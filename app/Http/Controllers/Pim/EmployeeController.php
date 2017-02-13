@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Pim;
 
+use App\Models\EmployeeAddress;
 use App\Models\User;
 use App\Models\Designation;
 use App\Http\Requests\AddEmployeeRequest;
@@ -40,13 +41,16 @@ class EmployeeController extends Controller
     }
 
 
-    public function showEmployeeForm(){
-        $designations = $this->designation->get();
-        $police_stations = DB::table('police_stations')->get();
-        $districts = DB::table('districts')->get();
-        $divisions = DB::table('divisions')->get();
+    public function showEmployeeForm(Request $request){
+        $data['designations'] = $this->designation->get();
+        $data['police_stations'] = DB::table('police_stations')->get();
+        $data['districts'] = DB::table('districts')->get();
+        $data['divisions'] = DB::table('divisions')->get();
 
-        return view('pim.employee.add', compact('designations','divisions','police_stations','districts'));
+        $data['sidevar_hide'] = 1;
+        $data['tab'] = $request->tab;
+
+        return view('pim.employee.add')->with($data);
     }
 
 
@@ -65,11 +69,27 @@ class EmployeeController extends Controller
         $request->offsetSet('password', bcrypt($request->password));
         $request->offsetSet('created_by',$this->auth->id);
 
-        if($user = User::create($request->all())){
+        try{
+            DB::beginTransaction();
+
+            $user = User::create($request->all());
+
+            $request->offsetSet('user_id',$user->id);
+            EmployeeAddress::create($request->all());
+
+            DB::commit();
+
             $request->session()->flash('success','Employee Successfully Added!');
-            return redirect('/employee/add/'.$user->id.'/');
-        }else{
-            $request->session()->flash('danger','Employee Successfully Added!');
+
+            if($request->has('add_next')){
+                return redirect('/employee/add/'.base64_encode($user->id).'/personal');
+            }
+
+            return redirect('/employee/add/'.base64_encode($user->id));
+
+        }catch(\Exception $e){
+            DB::rollback();
+            $request->session()->flash('danger','Employee Not Added!');
             return redirect()->back()->withInput();
         }
     }

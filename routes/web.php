@@ -120,7 +120,7 @@ Route::group(['prefix' => '/'], function(){
 /******************** ...HRMS Employee Routes... **************/
 Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/index','EmployeeController@index');
-    Route::get('/add/{id?}','EmployeeController@showEmployeeForm');
+    Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeForm');
     Route::post('/add','EmployeeController@addEmployee');
 });
 
