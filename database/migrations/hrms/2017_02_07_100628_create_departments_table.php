@@ -17,6 +17,7 @@ class CreateDepartmentsTable extends Migration
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->string('department_name',100);
+            $table->boolean('status')->default(0);
             $table->integer('created_by')->default(0);
             $table->integer('updated_by')->default(0);
             $table->timestamps();

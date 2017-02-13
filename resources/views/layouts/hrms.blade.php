@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>HRMS</title>
+    <title>{{$title or "HRMS"}}</title>
     <meta name="keywords" content="iddl, hrms, afc" />
     <meta name="description" content="human resource management system">
     <meta name="author" content="IDDL">
@@ -634,10 +634,32 @@
                             </a>
                             <ul class="nav sub-nav">
                                 <li>
-                                    <a href="charts_highcharts.html">Levels</a>
+                                    <a href="{{url('levels/index')}}">Levels</a>
+                                    <a href="{{url('levels/add')}}">Add</a>
                                 </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="accordion-toggle" href="#">
+                                <span class="fa fa-level-up"></span> Manage Department
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="nav sub-nav">
                                 <li>
-                                    <a href="charts_d3.html">Add Level</a>
+                                    <a href="{{url('department/index')}}">Departments</a>
+                                    <a href="{{url('department/add')}}">Add</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a class="accordion-toggle" href="#">
+                                <span class="fa fa-level-up"></span> Manage Designation
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="nav sub-nav">
+                                <li>
+                                    <a href="{{url('designation/index')}}">Designations</a>
+                                    <a href="{{url('designation/add')}}">Add</a>
                                 </li>
                             </ul>
                         </li>
