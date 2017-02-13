@@ -14,7 +14,7 @@ mix.combine([
 ], 'public/css/auth.css');
 
 mix.combine([
-    'resources/assets/css/bootstrap.min.css',
+    // 'resources/assets/css/bootstrap.min.css',
     'resources/assets/css/hrms/theme.css',
 ], 'public/css/hrms.css');
 

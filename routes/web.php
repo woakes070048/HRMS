@@ -34,8 +34,8 @@ Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
 
 /*************** ...Setup Registration Routes... *****************/
 Route::group(['prefix'=>'signup','namespace'=>'Setup\Auth'], function(){
-	Route::get('/', 'RegisterController@showRegistrationForm');
-	Route::post('/', 'RegisterController@register');
+//	Route::get('/', 'RegisterController@showRegistrationForm');
+//	Route::post('/', 'RegisterController@register');
 });
 
 
@@ -120,7 +120,8 @@ Route::group(['prefix' => '/'], function(){
 /******************** ...HRMS Employee Routes... **************/
 Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/index','EmployeeController@index');
-    Route::get('/add','EmployeeController@add');
+    Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeForm');
+    Route::post('/add','EmployeeController@addEmployee');
 });
 
 /******************** ...HRMS Emp Level Routes... **************/
