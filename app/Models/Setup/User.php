@@ -35,4 +35,13 @@ class User extends Authenticatable
         $this->notify(new SetupResetPasswordNotification($token));
     }
 
+    public function getFullNameAttribute(){
+        return ucfirst($this->first_name). ' ' .ucfirst($this->last_name);
+    }
+
+    public function payments(){
+
+        return $this->hasMany('App\Setup\Payment');
+    }
+
 }

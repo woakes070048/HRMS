@@ -20,6 +20,7 @@ class CreateDesignationsTable extends Migration
             $table->integer('level_id')->unsigned();
             $table->string('designation_name',45);
             $table->text('designation_description');
+            $table->boolean('status')->default(0);
             $table->integer('created_by')->default(0);
             $table->integer('updated_by')->default(0);
             $table->timestamps();

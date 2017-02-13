@@ -15,8 +15,8 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->increments('id');            
-            $table->string('employee_no');
+            $table->increments('id');
+            $table->string('employee_no');            
             $table->integer('designation_id')->unsigned();   
             $table->string('first_name', 45);            
             $table->string('middle_name', 45)->nullable();  

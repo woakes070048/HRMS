@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>HRMS</title>
+    <title>{{$title or "HRMS"}}</title>
     <meta name="keywords" content="iddl, hrms, afc" />
     <meta name="description" content="human resource management system">
     <meta name="author" content="IDDL">
