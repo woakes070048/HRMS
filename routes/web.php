@@ -33,8 +33,8 @@ Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
 
 /*************** ...Setup Registration Routes... *****************/
 Route::group(['prefix'=>'signup','namespace'=>'Setup\Auth'], function(){
-	Route::get('/', 'RegisterController@showRegistrationForm');
-	Route::post('/', 'RegisterController@register');
+//	Route::get('/', 'RegisterController@showRegistrationForm');
+//	Route::post('/', 'RegisterController@register');
 });
 
 
@@ -70,9 +70,9 @@ Route::group(['prefix' => '/','namespace'=>'Auth'], function(){
     Route::post('logout', 'LoginController@logout');
 
     Route::get('password/reset', 'ForgotPasswordController@showLinkRequestForm');
-    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
-    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
-    Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+    Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail');
+    Route::get('password/reset/{token}', 'ResetPasswordController@showResetForm');
+    Route::post('password/reset', 'ResetPasswordController@reset');
 });
 
 
@@ -91,7 +91,8 @@ Route::group(['prefix' => '/'], function(){
 /******************** ... HRMS Employee Routes... **************/
 Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/index','EmployeeController@index');
-    Route::get('/add','EmployeeController@add');
+    Route::get('/add/{id?}','EmployeeController@showEmployeeForm');
+    Route::post('/add','EmployeeController@addEmployee');
 });
 
 
