@@ -39,6 +39,8 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
 
+    @yield('style')
+
 </head>
 
 <body class="@if(isset($sidevar_hide))sb-l-m sb-l-disable-animation @endif">
@@ -113,6 +115,12 @@
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
 <!-- PNotify -->
 <script src="{{asset('vendor/plugins/pnotify/pnotify.js')}}"></script>
+
+<script src="{{asset('vendor/plugins/datatables/media/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('vendor/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js')}}"></script>
+<script src="{{asset('vendor/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js')}}"></script>
+<script src="{{asset('vendor/plugins/datatables/media/js/dataTables.bootstrap.js')}}"></script>
+
 
 <script src="{{asset('js/utility/utility.js')}}"></script>
 <script src="{{asset('js/demo/demo.js')}}"></script>

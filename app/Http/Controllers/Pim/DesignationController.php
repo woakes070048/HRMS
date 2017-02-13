@@ -9,6 +9,7 @@ use App\Models\Level;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
+use DB;
 
 class DesignationController extends Controller
 {
@@ -43,6 +44,9 @@ class DesignationController extends Controller
 		    'level' => 'required'
 		]);
 
+        DB::beginTransaction();
+
+        try {
     	$save = new Designation;
 		$save->designation_name = $request->name;
 		$save->department_id = $request->department;
@@ -51,8 +55,15 @@ class DesignationController extends Controller
 		$save->status = $request->status;
 		$save->created_by = Auth::user()->id;
 		$save->save();
-    	
-    	$request->session()->flash('success','Designation successfully added!');
+
+    	DB::commit();    
+        $request->session()->flash('success','Designation successfully added!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            $request->session()->flash('danger','Designation not added!');
+        }
+
 
     	return redirect()->back();
     }
