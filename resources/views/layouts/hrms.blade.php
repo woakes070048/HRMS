@@ -39,6 +39,8 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
 
+    @yield('style')
+
 </head>
 
 <body class="blank-page">
@@ -754,6 +756,12 @@
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
 
+<script src="{{asset('vendor/plugins/datatables/media/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('vendor/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js')}}"></script>
+<script src="{{asset('vendor/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js')}}"></script>
+<script src="{{asset('vendor/plugins/datatables/media/js/dataTables.bootstrap.js')}}"></script>
+
+
 <script src="{{asset('js/utility/utility.js')}}"></script>
 <script src="{{asset('js/demo/demo.js')}}"></script>
 <script src="{{asset('js/main.js')}}"></script>
@@ -771,6 +779,8 @@
 
     });
 </script>
+
+@yield('script')
 <!-- END: PAGE SCRIPTS -->
 
 </body>

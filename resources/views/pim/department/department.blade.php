@@ -1,11 +1,11 @@
 @extends('layouts.hrms')
-@section('content')
 
+@section('content')
     <!-- Begin: Content -->
     <section id="content" class="animated fadeIn">
         <div class="row">
 
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <?php 
                     $msgs = ['success','danger']; 
                     foreach($msgs as $msg){ if(Session::has($msg)){?>
@@ -23,7 +23,7 @@
                     </div>
                     <div class="panel-body">
                         @if($departments->count() > 0)
-                        <table class="table table-hover">
+                        <table class="table table-hover" id="datatable">
                         <thead>
                             <tr class="success">
                                 <th>sl</th>
@@ -65,4 +65,40 @@
     </section>
     <!-- End: Content -->       
 
+@endsection
+
+@section('script')
+<script type="text/javascript">
+    
+    jQuery(document).ready(function() {
+
+    // Init DataTables
+    $('#datatable').dataTable({
+      "aoColumnDefs": [{
+        'bSortable': false,
+        'aTargets': [-1]
+      }],
+      "oLanguage": {
+        "oPaginate": {
+          "sPrevious": "",
+          "sNext": ""
+        }
+      },
+      "iDisplayLength": 25,
+      "aLengthMenu": [
+        [25, 50, -1],
+        [25, 50, "All"]
+      ],
+      "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
+      "oTableTools": {
+        "sSwfPath": "vendor/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf"
+      }
+    });
+
+    $(".pagination").addClass(" pull-right");
+
+  });
+
+
+</script>
 @endsection

@@ -7,6 +7,7 @@ use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
+use DB;
 
 class DepartmentController extends Controller
 {
@@ -37,13 +38,22 @@ class DepartmentController extends Controller
 		    'name' => 'required'
 		]);
 
+        DB::beginTransaction();
+
+        try {
 		$save = new Department;
 		$save->department_name = $request->name;
 		$save->status = $request->status;
 		$save->created_by = Auth::user()->id;
 		$save->save();
     	
-    	$request->session()->flash('success','Department successfully added!');
+    	DB::commit();    
+        $request->session()->flash('success','Department successfully added!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            $request->session()->flash('danger','Department not added!');
+        }
 
     	return redirect()->back();
     }

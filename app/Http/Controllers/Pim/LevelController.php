@@ -7,6 +7,7 @@ use App\Models\Level;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
+use DB;
 
 class LevelController extends Controller
 {
@@ -37,14 +38,25 @@ class LevelController extends Controller
 		    'name' => 'required'
 		]);
 
-		$save = new Level;
-		$save->level_name = $request->name;
-		$save->description = !empty($request->details)?$request->details:"No description...";
-		$save->status = $request->status;
-		$save->created_by = Auth::user()->id;
-		$save->save();
-    	
-    	$request->session()->flash('success','Level successfully added!');
+        DB::beginTransaction();
+
+        try {
+    		$save = new Level;
+    		$save->level_name = $request->name;
+    		$save->description = !empty($request->details)?$request->details:"No description...";
+    		$save->status = $request->status;
+    		$save->created_by = Auth::user()->id;
+    		$save->save();
+
+            DB::commit();
+            
+            $request->session()->flash('success','Level successfully added!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            $request->session()->flash('danger','Level not added!');
+        }
 
     	return redirect()->back();
     }
