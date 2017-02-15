@@ -6,20 +6,11 @@
         <div class="row">
 
             <div class="col-md-12">
-                <?php 
-                    $msgs = ['success','danger']; 
-                    foreach($msgs as $msg){ if(Session::has($msg)){?>
-                    <div class="alert alert-{{$msg}} alert-dismissible" role="alert" style="margin-top:10px">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <strong>{{ucfirst($msg)}}!</strong> {{Session::get($msg)}}
-                    </div>
-                <?php } } ?>
-
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Designations</span>
+
+                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".designationAdd" style="margin-top: 12px;">Add Designation</button>
                     </div>
                     <div class="panel-body">
                         @if($designations->count() > 0)
@@ -46,11 +37,10 @@
                                 <td>{{ $designation->designation_description }}</td>
                                 <td>{{$designation->status==1?"Active":"Inactive"}}</td>
                                 <td>
-                                    <a href="{{url("designation/edit/$designation->id")}}" title="">
-                                        <button type="button" class="btn btn-sm btn-primary">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
-                                    </a>
+                                    <button data-id="{{$designation->id}}" type="button" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".designationEdit">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+
                                     <a onclick="return confirm('Want to delete?');" href="{{url("designation/delete/$designation->id")}}" title="">
                                         <button type="button" class="btn btn-sm btn-danger">
                                             <i class="fa fa-trash-o"></i>
@@ -69,7 +59,223 @@
             </div>
         </div>
     </section>
-    <!-- End: Content -->       
+    <!-- End: Content -->    
+
+    <!-- designationAdd modal start -->
+    <div class="modal fade bs-example-modal-lg designationAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Add Designation</h4>
+              </div>
+              <div class="modal-body">
+                <form class="form-horizontal" role="form" method="POST" action="{{ url('designation/add') }}">
+
+                    {{ csrf_field() }}
+
+                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                        <label for="name" class="col-md-3 control-label">Name</label>
+
+                        <div class="col-md-9">
+                            <input id="name" type="text" class="form-control input-sm" name="name" value="{{ old('name') }}" autofocus>
+
+                            @if ($errors->has('name'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('name') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group{{ $errors->has('department') ? ' has-error' : '' }}">
+                        <label for="department" class="col-md-3 control-label">Department</label>
+
+                        <div class="col-md-9">
+                            <select id="department" name="department" class="form-control department input-sm">
+                                <option value="">Select Department</option>
+                                @foreach($departments as $department)
+                                    <option value="{{$department->id}}" @if(old('department') == $department->id){{"selected"}}@endif>{{$department->department_name}}</option>
+                                @endforeach
+                            </select>
+
+                            @if ($errors->has('department'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('department') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group{{ $errors->has('level') ? ' has-error' : '' }}">
+                        <label for="level" class="col-md-3 control-label">Level</label>
+
+                        <div class="col-md-9">
+                            <select id="level" name="level" class="form-control level input-sm">
+                                <option value="">Select Level</option>
+                                @foreach($levels as $level)
+                                    <option value="{{$level->id}}" @if(old('level') == $level->id){{"selected"}}@endif>{{$level->level_name}}</option>
+                                @endforeach
+                            </select>
+
+                            @if ($errors->has('level'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('level') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group{{ $errors->has('details') ? ' has-error' : '' }}">
+                        <label for="details" class="col-md-3 control-label">Details</label>
+
+                        <div class="col-md-9">
+                            <textarea id="details" class="form-control input-sm" name="details" autofocus>{{ old('details') }}</textarea>
+
+                            @if ($errors->has('details'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('details') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-9 col-md-offset-3">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="radio-custom radio-success mb5">
+                                        <input type="radio" id="active" name="status" checked="" value="1">
+                                        <label for="active">Active</label>
+                                    </div>    
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="radio-custom radio-danger mb5">
+                                        <input type="radio" id="inactive" name="status" value="0">
+                                        <label for="inactive">Inactive</label>
+                                    </div>    
+                                </div>
+                            </div>     
+                        </div>
+                    </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save Designation</button>
+              </div>
+
+              </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <!-- designationAdd modal end -->
+
+    <!-- designationEdit modal start -->
+    <div class="modal fade bs-example-modal-lg designationEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Edit Designation</h4>
+              </div>
+              <div class="modal-body">
+                <form class="form-horizontal" role="form" method="POST" action="{{ url('designation/edit') }} ">
+
+                    {{ csrf_field() }}
+
+                    <input type="hidden" name="id" value="" class="edit-id">
+
+                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                        <label for="name" class="col-md-3 control-label">Name</label>
+
+                        <div class="col-md-9">
+                            <input id="name" type="text" class="form-control input-sm edit-name" name="name" value="" autofocus>
+
+                            @if ($errors->has('name'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('name') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group{{ $errors->has('department') ? ' has-error' : '' }}">
+                        <label for="department" class="col-md-3 control-label">Department</label>
+
+                        <div class="col-md-9">
+                            <select id="department" name="department" class="form-control department input-sm edit-department">
+                                <option value="">Select Department</option>
+                                @foreach($departments as $department)
+                                    <option value="{{$department->id}}">{{$department->department_name}}</option>
+                                @endforeach
+                            </select>
+
+                            @if ($errors->has('department'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('department') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group{{ $errors->has('level') ? ' has-error' : '' }}">
+                        <label for="level" class="col-md-3 control-label">Level</label>
+
+                        <div class="col-md-9">
+                            <select id="level" name="level" class="form-control level input-sm edit-level">
+                                <option value="">Select Level</option>
+                                @foreach($levels as $level)
+                                    <option value="{{$level->id}}">{{$level->level_name}}</option>
+                                @endforeach
+                            </select>
+
+                            @if ($errors->has('level'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('level') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group{{ $errors->has('details') ? ' has-error' : '' }}">
+                        <label for="details" class="col-md-3 control-label">Details</label>
+
+                        <div class="col-md-9">
+                            <textarea id="details" class="form-control input-sm edit-details" name="details"></textarea>
+
+                            @if ($errors->has('details'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('details') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-9 col-md-offset-3">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="radio-custom radio-success mb5">
+                                        <input type="radio" class="edit-status" id="edit-active" name="status" value="1">
+                                        <label for="edit-active">Active</label>
+                                    </div>    
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="radio-custom radio-danger mb5">
+                                        <input type="radio" class="edit-status" id="edit-inactive" name="status" value="0">
+                                        <label for="edit-inactive">Inactive</label>
+                                    </div>    
+                                </div>
+                            </div>     
+                        </div>
+                    </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Update Designation</button>
+              </div>
+
+              </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <!-- designationEdit modal end -->   
 
 @endsection
 
@@ -104,6 +310,30 @@
     $(".pagination").addClass(" pull-right");
 
   });
+
+$('.edit-btn').click(function(event) {
+
+    var id = $(this).attr("data-id");
+
+    $.ajax({
+        url: "{{url('designation/edit')}}/"+id,
+        type: 'GET',
+    })
+    .done(function(data) {
+        
+        $('.edit-id').val(data['id']);
+        $('.edit-name').val(data['designation_name']);
+        $('.edit-department').val(data['department_id']);
+        $('.edit-level').val(data['level_id']);
+        $('.edit-details').val(data['designation_description']);
+        $(".edit-status[value=" + data['status'] + "]").prop('checked', true);
+    })
+    .fail(function() {
+        //console.log("error");
+        alert('error');
+    });
+    
+});
 
 
 </script>

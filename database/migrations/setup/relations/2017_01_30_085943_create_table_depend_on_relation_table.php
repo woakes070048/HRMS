@@ -47,6 +47,7 @@ class CreateTableDependOnRelationTable extends Migration
             $table->tinyInteger('package_status');
             $table->integer('package_created_by')->default(0);
             $table->timestamps();
+            // $table->foreign('package_created_by')->references('id')->on('users')->onDelete('restrict');
         });
 
         Schema::create('payments', function (Blueprint $table) {
@@ -54,7 +55,7 @@ class CreateTableDependOnRelationTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('config_id')->unsigned();
             $table->integer('package_id')->unsigned();
-            $table->double('payment_amount', 9, 2);
+            $table->double('payment_amount', 11, 2);
             $table->smallInteger('payment_duration');
             $table->tinyInteger('payment_status')->default('1')->comment="1=active,0=inactive";
             $table->timestamps();

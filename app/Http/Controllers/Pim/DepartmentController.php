@@ -61,9 +61,14 @@ class DepartmentController extends Controller
     public function edit($id){
 
     	$data['title'] = "Edit Employee Department-HRMS";
-    	$data['info'] = Department::find($id);
+    	$info = Department::find($id);
 
-        return view('pim.department.depAdd', $data);
+        $data['id'] = $info->id;
+        $data['department_name'] = $info->department_name;
+        $data['status'] = $info->status;
+
+        return $data;
+        //return view('pim.department.depAdd', $data);
     }
 
     public function update(Request $request){

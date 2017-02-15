@@ -58,8 +58,6 @@ class ConfigController extends Controller
         $password              = $request->password;
         $password_confirmation = $request->password_confirmation;
         $company_address       = $request->company_address;
-        // $package_amount        = $request->package_amount;
-        // $package_duration      = $request->package_duration;
 
         $package_info     = Package::find($package_id);
         $package_amount   = $package_info->package_price;

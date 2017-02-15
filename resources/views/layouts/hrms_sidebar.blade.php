@@ -14,6 +14,21 @@
                 </a>
                 <ul class="nav sub-nav">
                     <li>
+                        <a href="{{url('department/index')}}">
+                            <i class="fa fa-circle-o"></i> Manage Departments
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{url('levels/index')}}">
+                            <i class="fa fa-circle-o"></i> Manage Levels
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{url('designation/index')}}">
+                            <i class="fa fa-circle-o"></i> Manage Designation
+                        </a>
+                    </li>
+                    {{-- <li>
                         <a class="accordion-toggle" href="#">
                             <span class="fa fa-level-up"></span> Manage Level
                             <span class="caret"></span>
@@ -24,8 +39,8 @@
                                 <a href="{{url('levels/add')}}">Add</a>
                             </li>
                         </ul>
-                    </li>
-                    <li>
+                    </li> --}}
+                    {{-- <li>
                         <a class="accordion-toggle" href="#">
                             <span class="fa fa-level-up"></span> Manage Department
                             <span class="caret"></span>
@@ -36,8 +51,8 @@
                                 <a href="{{url('department/add')}}">Add</a>
                             </li>
                         </ul>
-                    </li>
-                    <li>
+                    </li> --}}
+                    {{-- <li>
                         <a class="accordion-toggle" href="#">
                             <span class="fa fa-level-up"></span> Manage Designation
                             <span class="caret"></span>
@@ -48,7 +63,7 @@
                                 <a href="{{url('designation/add')}}">Add</a>
                             </li>
                         </ul>
-                    </li>
+                    </li> --}}
                     <li>
                         <a class="accordion-toggle" href="#">
                             <span class="fa fa-users" aria-hidden="true"></span>

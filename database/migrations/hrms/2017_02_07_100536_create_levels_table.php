@@ -17,6 +17,7 @@ class CreateLevelsTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('level_name',100);
+            $table->double('level_salary_amount', 11, 2)->default(0);
             $table->boolean('status')->default(1)->comment='0=active, 1=inactive';
             $table->text('description');
             $table->integer('created_by')->default(0);

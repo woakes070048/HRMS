@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pim;
 
 use App\Models\Level;
+use App\Models\BasicSalaryInfo;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -28,12 +29,23 @@ class LevelController extends Controller
 
     	$data['title'] = "Employee Levels Add-HRMS";
     	$data['info'] = "";
+        $data['salary_info'] = BasicSalaryInfo::all();
 
         return view('pim.level.add', $data);
     }
 
     public function create(Request $request){
 
+        $percent = $request->salryInfoPercent;
+        $name = $request->salryInfoName;
+
+        $length = count($name);
+
+        for($i=0; $i<$length; $i++){
+            echo $name[$i]." ===> ".$percent[$i]."<br>";
+        }
+
+        die();
     	$this->validate($request, [
 		    'name' => 'required'
 		]);
@@ -58,7 +70,7 @@ class LevelController extends Controller
             $request->session()->flash('danger','Level not added!');
         }
 
-    	return redirect()->back();
+    	return redirect('levels/index');
     }
 
     public function edit($id){

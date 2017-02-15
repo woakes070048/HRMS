@@ -21,6 +21,8 @@ class DesignationController extends Controller
     public function index(){
 
     	$data['title'] = "Employee Designations-HRMS";
+        $data['departments'] = Department::where('status',1)->get();
+        $data['levels'] = Level::where('status',1)->get();
     	$data['designations'] = Designation::with('department','level')->get();
 
         return view('pim.designation.designation', $data);
@@ -70,12 +72,16 @@ class DesignationController extends Controller
 
     public function edit($id){
 
-    	$data['title'] = "Edit Employee Designation-HRMS";
-    	$data['departments'] = Department::where('status',1)->get();
-    	$data['levels'] = Level::where('status',1)->get();
-    	$data['info'] = Designation::find($id);
+    	$info = Designation::find($id);
+        
+        $data['id']                      = $info->id;
+        $data['designation_name']        = $info->designation_name;
+        $data['designation_description'] = $info->designation_description;
+        $data['department_id']           = $info->department_id;
+        $data['level_id']                = $info->level_id;
+        $data['status']                  = $info->status;
 
-        return view('pim.designation.degAdd', $data);
+        return $data;
     }
 
     public function update(Request $request){

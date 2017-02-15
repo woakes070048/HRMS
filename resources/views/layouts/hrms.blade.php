@@ -49,6 +49,8 @@
 
     <!-- Theme CSS -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/hrms.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('admin-tools/admin-forms/css/admin-forms.css')}}">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -138,6 +140,7 @@
 <script src="{{asset('vendor/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js')}}"></script>
 <script src="{{asset('vendor/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js')}}"></script>
 <script src="{{asset('vendor/plugins/datatables/media/js/dataTables.bootstrap.js')}}"></script>
+<script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
 
 <!-- Select2 Plugin Plugin -->
 <script src="{{asset('vendor/plugins/select2/select2.min.js')}}"></script>

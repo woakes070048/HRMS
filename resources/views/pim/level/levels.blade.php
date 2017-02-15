@@ -4,22 +4,13 @@
     <!-- Begin: Content -->
     <section id="content" class="animated fadeIn">
         <div class="row">
-
             <div class="col-md-12">
-                <?php 
-                    $msgs = ['success','danger']; 
-                    foreach($msgs as $msg){ if(Session::has($msg)){?>
-                    <div class="alert alert-{{$msg}} alert-dismissible" role="alert" style="margin-top:10px">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <strong>{{ucfirst($msg)}}!</strong> {{Session::get($msg)}}
-                    </div>
-                <?php } } ?>
-
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Levels</span>
+                        <a href="{{url('levels/add')}}">
+                            <button type="button" class="btn btn-xs btn-success pull-right" style="margin-top: 12px;">Add Level</button>
+                        </a>
                     </div>
                     <div class="panel-body">
                         @if($levels->count() > 0)

@@ -50,76 +50,6 @@
                                     </div>
                                     <div class="timeline-date">3:05am</div>
                                 </li>
-                                <li class="timeline-item">
-                                    <div class="timeline-icon bg-success">
-                                        <span class="fa fa-usd"></span>
-                                    </div>
-                                    <div class="timeline-desc">
-                                        <b>Admin</b> created invoice for:
-                                        <a href="#">Software</a>
-                                    </div>
-                                    <div class="timeline-date">4:15am</div>
-                                </li>
-                                <li class="timeline-item">
-                                    <div class="timeline-icon bg-success">
-                                        <span class="fa fa-usd"></span>
-                                    </div>
-                                    <div class="timeline-desc">
-                                        <b>Admin</b> created invoice for:
-                                        <a href="#">Apple</a>
-                                    </div>
-                                    <div class="timeline-date">7:45am</div>
-                                </li>
-                                <li class="timeline-item">
-                                    <div class="timeline-icon bg-success">
-                                        <span class="fa fa-usd"></span>
-                                    </div>
-                                    <div class="timeline-desc">
-                                        <b>Admin</b> created invoice for:
-                                        <a href="#">Software</a>
-                                    </div>
-                                    <div class="timeline-date">4:15am</div>
-                                </li>
-                                <li class="timeline-item">
-                                    <div class="timeline-icon bg-success">
-                                        <span class="fa fa-usd"></span>
-                                    </div>
-                                    <div class="timeline-desc">
-                                        <b>Admin</b> created invoice for:
-                                        <a href="#">Apple</a>
-                                    </div>
-                                    <div class="timeline-date">7:45am</div>
-                                </li>
-                                <li class="timeline-item">
-                                    <div class="timeline-icon bg-dark light">
-                                        <span class="fa fa-tags"></span>
-                                    </div>
-                                    <div class="timeline-desc">
-                                        <b>Michael</b> Added his store:
-                                        <a href="#">Ipod</a>
-                                    </div>
-                                    <div class="timeline-date">8:25am</div>
-                                </li>
-                                <li class="timeline-item">
-                                    <div class="timeline-icon bg-system">
-                                        <span class="fa fa-fire"></span>
-                                    </div>
-                                    <div class="timeline-desc">
-                                        <b>Admin</b> created invoice for:
-                                        <a href="#">Software</a>
-                                    </div>
-                                    <div class="timeline-date">4:15am</div>
-                                </li>
-                                <li class="timeline-item">
-                                    <div class="timeline-icon bg-dark light">
-                                        <span class="fa fa-tags"></span>
-                                    </div>
-                                    <div class="timeline-desc">
-                                        <b>Sara</b> Added to his store:
-                                        <a href="#">Notebook</a>
-                                    </div>
-                                    <div class="timeline-date">3:05am</div>
-                                </li>
                             </ol>
 
                         </div>
@@ -367,62 +297,7 @@
                                                 <a class="text-system" href="#"> Max </a>
                                             </div>
                                         </li>
-                                        <li class="media">
-                                            <a class="media-left" href="#"> <img src="assets/img/avatars/2.jpg" class="mw40" alt="avatar"> </a>
-                                            <div class="media-body">
-                                                <h5 class="media-heading mv5">Article
-                                                    <small> - 08/16/22</small>
-                                                </h5>
-                                                Last Updated 36 days ago by
-                                                <a class="text-system" href="#"> Max </a>
-                                            </div>
-                                        </li>
-                                        <li class="media">
-                                            <a class="media-left" href="#"> <img src="assets/img/avatars/3.jpg" class="mw40" alt="avatar"> </a>
-                                            <div class="media-body">
-                                                <h5 class="media-heading">Article
-                                                    <small class="text-muted">- 08/16/22</small>
-                                                </h5> Last Updated 36 days ago by
-                                                <a class="text-system" href="#"> Max </a>
-                                            </div>
-                                        </li>
-                                        <li class="media">
-                                            <a class="media-left" href="#"> <img src="assets/img/avatars/4.jpg" class="mw40" alt="avatar"> </a>
-                                            <div class="media-body">
-                                                <h5 class="media-heading mv5">Article
-                                                    <small class="text-muted">- 08/16/22</small>
-                                                </h5> Last Updated 36 days ago by
-                                                <a class="text-system" href="#"> Max </a>
-                                            </div>
-                                        </li>
-                                        <li class="media">
-                                            <a class="media-left" href="#"> <img src="assets/img/avatars/5.jpg" class="mw40" alt="avatar"> </a>
-                                            <div class="media-body">
-                                                <h5 class="media-heading">Article
-                                                    <small class="text-muted">- 08/16/22</small>
-                                                </h5> Last Updated 36 days ago by
-                                                <a class="text-system" href="#"> Max </a>
-                                            </div>
-                                        </li>
-                                        <li class="media">
-                                            <a class="media-left" href="#"> <img src="assets/img/avatars/2.jpg" class="mw40" alt="avatar"> </a>
-                                            <div class="media-body">
-                                                <h5 class="media-heading mv5">Article
-                                                    <small> - 08/16/22</small>
-                                                </h5>
-                                                Last Updated 36 days ago by
-                                                <a class="text-system" href="#"> Max </a>
-                                            </div>
-                                        </li>
-                                        <li class="media">
-                                            <a class="media-left" href="#"> <img src="assets/img/avatars/3.jpg" class="mw40" alt="avatar"> </a>
-                                            <div class="media-body">
-                                                <h5 class="media-heading">Article
-                                                    <small class="text-muted">- 08/16/22</small>
-                                                </h5> Last Updated 36 days ago by
-                                                <a class="text-system" href="#"> Max </a>
-                                            </div>
-                                        </li>
+                                        
                                     </ul>
                                     <table class="table table-striped hidden">
                                         <thead>
