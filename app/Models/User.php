@@ -9,7 +9,6 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -30,23 +29,34 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+
     public function getFirstNameAttribute($value){
         return ucfirst($value);
     }
+
 
     public function getLastNameAttribute($value){
         return ucfirst($value);
     }
 
+
     public function getFullNameAttribute(){
         return ucfirst($this->first_name). ' ' .ucfirst($this->last_name);
     }
+
 
     public function getNickNameAttribute($value){
         return ucfirst($value);
     }
 
-    public function getUserImageAttribute(){
 
+    public function getFullImageAttribute(){
+//        return $this->photo;
+        return \Storage::disk('public')->url($this->id.'/'.$this->photo);
+    }
+
+
+    public function designation(){
+        return $this->belongsTo('App\Models\Designation');
     }
 }

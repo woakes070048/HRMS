@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => 'local',
+    'default' => 'public',
 
     /*
     |--------------------------------------------------------------------------
@@ -45,14 +45,14 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app/hrms'),
-            'url' => env('APP_URL').'/files',
+            'root' => storage_path('app'),
         ],
 
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+//            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL').'/files',
             'visibility' => 'public',
         ],
 
