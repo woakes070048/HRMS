@@ -13,12 +13,12 @@ class CreateTableDependOnRelationTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
+            $table->integer('parent_id')->unsigned();
             $table->string('company_name',45);
             $table->text('company_address');
             $table->string('database_name',45)->unique();
             $table->date('package_end_date');
             $table->tinyInteger('config_status')->default('1')->comment="1=company active,0=company inactive";
-            $table->integer('parent_id')->unsigned();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
@@ -47,7 +47,6 @@ class CreateTableDependOnRelationTable extends Migration
             $table->tinyInteger('package_status');
             $table->integer('package_created_by')->default(0);
             $table->timestamps();
-
             // $table->foreign('package_created_by')->references('id')->on('users')->onDelete('restrict');
         });
 

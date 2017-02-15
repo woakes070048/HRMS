@@ -402,7 +402,11 @@
         </li>
         <li class="dropdown menu-merge">
             <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown">
+                @if(empty(Auth::user()->photo))
                 <img src="{{asset('img/placeholder.png')}}" alt="avatar" class="mw30 br64">
+                @else
+                <img src="{{Auth::user()->full_image}}" alt="{{Auth::user()->full_name}}" class="mw30 br64">
+                @endif
                 <span class="hidden-xs pl15"> {{Auth::user()->full_name}} </span>
                 <span class="caret caret-tp hidden-xs"></span>
             </a>
@@ -424,7 +428,7 @@
                         <span class="fa fa-gear"></span> Account Settings </a>
                 </li>
                 <li class="dropdown-footer">
-                    <a href="{{ url('/setup/logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                    <a href="{{ url('/logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                         <span class="fa fa-power-off pr5"></span> Logout
                     </a>
                     <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">

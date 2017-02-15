@@ -25,7 +25,7 @@ class CreateEmployeeDetailsTable extends Migration
             $table->string('mother_name',50);
             $table->string('personal_email',100);
             $table->string('official_email',100);
-            $table->date('birth_day');
+            $table->date('birth_date');
             $table->date('joining_date');
             $table->string('phone_number',20);
             $table->enum('gender',['male','female']);
