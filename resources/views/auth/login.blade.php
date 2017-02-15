@@ -21,7 +21,7 @@
                 {{ csrf_field() }}
 
                 <div>
-                <input type="text" class="form-control" name="email" placeholder="email address" value="">
+                <input type="text" class="form-control" name="email" placeholder="email address" value="{{old('email')}}">
                 @if ($errors->has('email'))
                     <span  class="error-login">
                         {{ $errors->first('email') }}
