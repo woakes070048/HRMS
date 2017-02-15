@@ -30,6 +30,23 @@
     <!-- Font Awesome CSS(font) -->
     <link rel="stylesheet" type="text/css" href="{{asset('fonts/font-awesome/font-awesome.min.css')}}">
 
+    <!-- Datatables CSS -->
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/datatables/media/css/dataTables.bootstrap.css')}}">
+
+    <!-- Datatables Editor Addon CSS -->
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/datatables/extensions/Editor/css/dataTables.editor.css')}}">
+
+    <!-- Datatables ColReorder Addon CSS -->
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css')}}">
+
+    <!-- Datepicker CSS -->
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/daterange/daterangepicker.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/datepicker/css/bootstrap-datetimepicker.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/colorpicker/css/bootstrap-colorpicker.min.css')}}">
+
+    <!-- Select2 Plugin CSS  -->
+    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/select2/css/core.css')}}">
+
     <!-- Theme CSS -->
     <link rel="stylesheet" type="text/css" href="{{asset('css/hrms.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
@@ -115,6 +132,7 @@
 <script src="{{asset('js/hrms.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
+
 <!-- PNotify -->
 <script src="{{asset('vendor/plugins/pnotify/pnotify.js')}}"></script>
 
@@ -123,6 +141,19 @@
 <script src="{{asset('vendor/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js')}}"></script>
 <script src="{{asset('vendor/plugins/datatables/media/js/dataTables.bootstrap.js')}}"></script>
 <script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
+
+<!-- Select2 Plugin Plugin -->
+<script src="{{asset('vendor/plugins/select2/select2.min.js')}}"></script>
+
+<!-- Time/Date Plugin Dependencies -->
+<script src="{{asset('vendor/plugins/globalize/globalize.min.js')}}"></script>
+<script src="{{asset('vendor/plugins/moment/moment.min.js')}}"></script>
+
+<!-- DateRange Plugin -->
+<!-- <script src="{{asset('vendor/plugins/daterange/daterangepicker.js')}}"></script> -->
+
+<!-- DateTime Plugin -->
+<script src="{{asset('vendor/plugins/datepicker/js/bootstrap-datetimepicker.js')}}"></script>
 
 
 <script src="{{asset('js/utility/utility.js')}}"></script>
@@ -136,6 +167,68 @@
         Core.init();
         // Init Demo JS
         Demo.init();
+
+        $('#datatable1').dataTable({
+            "paging":   true,
+            "searching": true,
+            "sDom": 't<"dt-panelfooter clearfix"ip>',
+
+        });
+
+        $('#datatable2').dataTable({
+            "sDom": 't<"dt-panelfooter clearfix"ip>',
+            "oTableTools": {
+                "sSwfPath": "vendor/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf"
+            }
+        });
+
+        $('#datatable3').dataTable({
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [-1]
+            }],
+            "oLanguage": {
+                "oPaginate": {
+                    "sPrevious": "",
+                    "sNext": ""
+                }
+            },
+            "iDisplayLength": 5,
+            "aLengthMenu": [
+                [5, 10, 25, 50, -1],
+                [5, 10, 25, 50, "All"]
+            ],
+            "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
+            "oTableTools": {
+                "sSwfPath": "vendor/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf"
+            }
+        });
+
+
+
+        // Init Select2 - Basic Single
+        $(".select2-single").select2();
+
+        // Init Select2 - Basic Multiple
+        $(".select2-multiple").select2({
+          placeholder: "Select a state",
+           allowClear: true
+        });
+
+        // Init Select2 - Contextuals (via html classes)
+        $(".select2-primary").select2(); // select2 contextual - primary
+        $(".select2-success").select2(); // select2 contextual - success
+        $(".select2-info").select2();    // select2 contextual - info
+        $(".select2-warning").select2(); // select2 contextual - warning 
+
+        // Init DateTimepicker - fields
+        $('#datetimepicker1').datetimepicker();
+        $('#datetimepicker2').datetimepicker();
+        $('#datetimepicker3').datetimepicker({
+          defaultDate: "9/4/2014",
+          inline: true,
+        });
+
 
     });
 </script>

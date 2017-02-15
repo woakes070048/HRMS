@@ -112,7 +112,7 @@ class ConfigController extends Controller
 	    	Artisan::call("db:seed");
 
 	    	User::create([
-	    			'employee_no'    => '0-00', 
+                    'employee_no'    => '0-00',
                     'designation_id' => 1,   
                     'first_name'     => $first_name, 
                     'last_name'      => $last_name,    
