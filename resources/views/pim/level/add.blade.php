@@ -60,7 +60,7 @@
                                                         {{ $sInfo->name }}
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="{{$sInfo->percent}}">  
+                                                        <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="{{$sInfo->amount}}">  
 
                                                         <input type="hidden" name="salryInfoName[]" value="{{$sInfo->name}}">      
                                                     </div>
