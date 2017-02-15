@@ -58,8 +58,6 @@ class ConfigController extends Controller
         $password              = $request->password;
         $password_confirmation = $request->password_confirmation;
         $company_address       = $request->company_address;
-        // $package_amount        = $request->package_amount;
-        // $package_duration      = $request->package_duration;
 
         $package_info     = Package::find($package_id);
         $package_amount   = $package_info->package_price;
@@ -114,7 +112,7 @@ class ConfigController extends Controller
 	    	Artisan::call("db:seed");
 
 	    	User::create([
-	    			        'employee_no'    => '0-00', 
+	    			'employee_no'    => '0-00', 
                     'designation_id' => 1,   
                     'first_name'     => $first_name, 
                     'last_name'      => $last_name,    
