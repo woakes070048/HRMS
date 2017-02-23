@@ -19,17 +19,9 @@ class DepartmentController extends Controller
     public function index(){
 
     	$data['title'] = "Employee Departments-HRMS";
-    	$data['departments'] = Department::all();
+    	$data['departments'] = Department::orderBy('id','DESC')->get();
 
-    	return view('pim.department.department', $data);
-    }
-
-    public function add(){
-
-    	$data['title'] = "Employee Department Add-HRMS";
-    	$data['info'] = "";
-
-        return view('pim.department.depAdd', $data);
+    	return view('pim.department', $data);
     }
 
     public function create(Request $request){
@@ -47,15 +39,15 @@ class DepartmentController extends Controller
 		$save->created_by = Auth::user()->id;
 		$save->save();
     	
-    	DB::commit();    
-        $request->session()->flash('success','Department successfully added!');
+    	DB::commit();
+            $data = ['title'=>'Success', 'message'=>'Department successfully added!'];
 
         } catch (\Exception $e) {
             DB::rollback();
-            $request->session()->flash('danger','Department not added!');
+            $data = ['title'=>'Error', 'message'=>'Department not added!'];
         }
 
-    	return redirect()->back();
+        return response()->json($data);
     }
 
     public function edit($id){
@@ -68,7 +60,7 @@ class DepartmentController extends Controller
         $data['status'] = $info->status;
 
         return $data;
-        //return view('pim.department.depAdd', $data);
+        //return view('pim.depAdd', $data);
     }
 
     public function update(Request $request){
@@ -77,15 +69,27 @@ class DepartmentController extends Controller
 		    'name' => 'required'
 		]);
 
-		$save = Department::find($request->id);
-		$save->department_name = $request->name;
-		$save->status = $request->status;
-		$save->updated_by = Auth::user()->id;
-		$save->save();
-    	
-    	$request->session()->flash('success','Department successfully updated!');
 
-    	return redirect('department/index');
+        DB::beginTransaction();
+
+        try {
+
+            $save = Department::find($request->id);
+            $save->department_name = $request->name;
+            $save->status = $request->status;
+            $save->updated_by = Auth::user()->id;
+            $save->save();
+
+            DB::commit();    
+            $data = ['title'=>'Success', 'message'=>'Department successfully updated!'];
+
+        } catch (\Exception $e) {
+            
+            DB::rollback();
+            $data = ['title'=>'Error', 'message'=>'Department not updated!'];
+        }
+
+        return response()->json($data);
     }
 
     public function delete(Request $request,$id){

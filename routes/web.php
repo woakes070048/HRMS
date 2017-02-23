@@ -115,13 +115,13 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::post('/add','LevelController@create');
     Route::get('/edit/{id}','LevelController@edit');
     Route::post('/edit','LevelController@update');
+    Route::post('/edit/info','LevelController@update_info');
     Route::get('/delete/{id}','LevelController@delete');
 });
 
 /******************** ...HRMS Emp Department Routes... **************/
 Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
     Route::get('/index','DepartmentController@index');
-    Route::get('/add','DepartmentController@add');
     Route::post('/add','DepartmentController@create');
     Route::get('/edit/{id}','DepartmentController@edit');
     Route::post('/edit','DepartmentController@update');
@@ -131,11 +131,21 @@ Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
 /******************** ...HRMS Emp Designations Routes... **************/
 Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
     Route::get('/index','DesignationController@index');
-    Route::get('/add','DesignationController@add');
     Route::post('/add','DesignationController@create');
     Route::get('/edit/{id}','DesignationController@edit');
     Route::post('/edit','DesignationController@update');
     Route::get('/delete/{id}','DesignationController@delete');
+});
+
+/******************** ...HRMS Emp Designations Routes... **************/
+Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
+    Route::get('/index','SalaryInfoController@index');
+    Route::get('/getAllInfo','SalaryInfoController@getAllInfo');
+    
+    Route::post('/add','SalaryInfoController@create');
+    Route::get('/edit/{id}','SalaryInfoController@edit');
+    Route::post('/edit','SalaryInfoController@update');
+    Route::get('/delete/{id}','SalaryInfoController@delete');
 });
 
 /********** ..End HRMS Routes.. *****************/

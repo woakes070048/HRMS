@@ -69,9 +69,13 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Add Designation</h4>
               </div>
-              <div class="modal-body">
-                <form class="form-horizontal" role="form" method="POST" action="{{ url('designation/add') }}">
 
+              <form class="form-horizontal designation-add" role="form">
+              <div class="modal-body">
+                    <div id="create-form-errors">
+                    
+                    </div>
+                {{-- action="{{ url('designation/add') }}" --}}
                     {{ csrf_field() }}
 
                     <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
@@ -161,7 +165,6 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary">Save Designation</button>
               </div>
-
               </form>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -177,7 +180,12 @@
                 <h4 class="modal-title">Edit Designation</h4>
               </div>
               <div class="modal-body">
-                <form class="form-horizontal" role="form" method="POST" action="{{ url('designation/edit') }} ">
+
+                <div id="edit-form-errors">
+                    
+                </div>
+
+                <form class="form-horizontal designation-edit" role="form">
 
                     {{ csrf_field() }}
 
@@ -308,6 +316,97 @@
     });
 
     $(".pagination").addClass(" pull-right");
+
+
+
+    //Create Designation --post form
+
+    $('.designation-add').submit(function(event) {
+                   
+        event.preventDefault();
+        var form = $('.designation-add');
+
+        $.ajax({
+            url: "{{url('designation/add')}}",
+            dataType:'json',
+            data: form.serialize(),
+            type: "POST", 
+
+            success: function(response)
+            {
+                swal({
+                    title: response.title,
+                    text: response.message,
+                    type: response.title == "Success"?"success":"error",
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Done",
+                    closeOnConfirm: false
+                },
+                function(){
+                    location.href=location.href;
+                });
+            },
+            error: function(data)
+            {
+                var errors = data.responseJSON;
+
+                errorsHtml = '<div class="alert alert-danger"><ul>';
+
+                $.each( errors , function( key, value ) {
+                    errorsHtml += '<li>' + value[0] + '</li>';
+                });
+                errorsHtml += '</ul></di>';
+                    
+                $( '#create-form-errors' ).html( errorsHtml );
+            }
+        });
+    });
+
+    //Create Designation --post form
+
+    $('.designation-edit').submit(function(event) {
+                   
+        event.preventDefault();
+        var form = $('.designation-edit');
+
+        $.ajax({
+            url: "{{url('designation/edit')}}",
+            dataType:'json',
+            data: form.serialize(),
+            type: "POST", 
+
+            success: function(response)
+            {
+                swal({
+                    title: response.title,
+                    text: response.message,
+                    type: response.title == "Success"?"success":"error",
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Done",
+                    closeOnConfirm: false
+                },
+                function(){
+                    location.href=location.href;
+                });
+                
+            },
+            error: function(data)
+            {
+                var errors = data.responseJSON;
+
+                errorsHtml = '<div class="alert alert-danger"><ul>';
+
+                $.each( errors , function( key, value ) {
+                    errorsHtml += '<li>' + value[0] + '</li>';
+                });
+                errorsHtml += '</ul></di>';
+                    
+                $( '#edit-form-errors' ).html( errorsHtml );
+            }
+        });
+    });
 
   });
 

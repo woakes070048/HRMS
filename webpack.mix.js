@@ -5,6 +5,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css');
 
 mix.js('resources/assets/js/hrms/hrms.js', 'public/js');
+mix.js('resources/assets/js/hrms/salaryInfo.js', 'public/js');
 
 mix.combine([
     'resources/assets/css/auth/css.css',
