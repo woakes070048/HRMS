@@ -61,8 +61,12 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Add Department</h4>
               </div>
+              <form class="form-horizontal department-create" id="department-create">
               <div class="modal-body">
-                <form class="form-horizontal" role="form" method="POST" action="{{ url('department/add') }} ">
+                <div id="create-form-errors">
+                    
+                </div>
+                {{-- action="{{ url('department/add') }} " --}}
 
                     {{ csrf_field() }}
 
@@ -119,7 +123,12 @@
                 <h4 class="modal-title">Edit Department</h4>
               </div>
               <div class="modal-body">
-                <form class="form-horizontal" role="form" method="POST" action="{{ url('department/edit') }} ">
+
+                <div id="edit-form-errors">
+                    
+                </div>
+
+                <form class="form-horizontal department-edit" role="form" method="POST" action="{{ url('department/edit') }} ">
 
                     {{ csrf_field() }}
 
@@ -202,6 +211,96 @@ jQuery(document).ready(function() {
 
     $(".pagination").addClass(" pull-right");
 
+
+    //Create Department --post form
+
+    $('#department-create').submit(function(event) {
+                   
+        event.preventDefault();
+        var form = $('#department-create');
+
+        $.ajax({
+            url: "{{url('department/add')}}",
+            dataType:'json',
+            data: form.serialize(),
+            type: "POST", 
+
+            success: function(response)
+            {
+                swal({
+                    title: response.title,
+                    text: response.message,
+                    type: response.title == "Success"?"success":"error",
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Done",
+                    closeOnConfirm: false
+                },
+                function(){
+                    location.href=location.href;
+                });
+                console.log();
+            },
+            error: function(data)
+            {
+                var errors = data.responseJSON;
+
+                errorsHtml = '<div class="alert alert-danger"><ul>';
+
+                $.each( errors , function( key, value ) {
+                    errorsHtml += '<li>' + value[0] + '</li>';
+                });
+                errorsHtml += '</ul></di>';
+                    
+                $( '#create-form-errors' ).html( errorsHtml );
+            }
+        });
+    });
+
+    //Edit Department --post form
+
+    $('.department-edit').submit(function(event) {
+                   
+        event.preventDefault();
+        var form = $('.department-edit');
+
+        $.ajax({
+            url: "{{url('department/edit')}}",
+            dataType:'json',
+            data: form.serialize(),
+            type: "POST", 
+
+            success: function(response)
+            {
+                swal({
+                    title: response.title,
+                    text: response.message,
+                    type: response.title == "Success"?"success":"error",
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Done",
+                    closeOnConfirm: false
+                },
+                function(){
+                    location.href=location.href;
+                });
+            },
+            error: function(data)
+            {
+                var errors = data.responseJSON;
+
+                errorsHtml = '<div class="alert alert-danger"><ul>';
+
+                $.each( errors , function( key, value ) {
+                    errorsHtml += '<li>' + value[0] + '</li>';
+                });
+                errorsHtml += '</ul></di>';
+                    
+                $( '#edit-form-errors' ).html( errorsHtml );
+            }
+        });
+    });
+
 });
 
 $('.edit-btn').click(function(event) {
@@ -221,12 +320,8 @@ $('.edit-btn').click(function(event) {
     .fail(function() {
         //console.log("error");
         alert('error');
-    });
-    
+    }); 
 });
-
-
-
 
 </script>
 @endsection

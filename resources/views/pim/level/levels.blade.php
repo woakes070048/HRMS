@@ -19,6 +19,8 @@
                             <tr class="success">
                                 <th>sl</th>
                                 <th>Name</th>
+                                <th>Salary</th>
+                                <th>Salary Info</th>
                                 <th>Description</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -30,6 +32,19 @@
                             <tr>
                                 <td>{{ $sl++ }}</td>
                                 <td>{{ $level->level_name }}</td>
+                                <td>{{ $level->level_salary_amount }}</td>
+                                <td>
+                                    @if($level->salaryInfo->count() > 0)
+                                        @foreach($level->salaryInfo as $info)
+                                            @if(!empty($info->basicSalaryInfo->name))
+                                                {{ $info->basicSalaryInfo->name }}
+                                                ({{$info->basicSalaryInfo->amount_status == 0?"%":"$"}})
+                                                {{ ": ".$info->amount }}
+                                                <br/>
+                                            @endif
+                                        @endforeach
+                                    @endif    
+                                </td>
                                 <td>{{ $level->description }}</td>
                                 <td>{{$level->status==1?"Active":"Inactive"}}</td>
                                 <td>
