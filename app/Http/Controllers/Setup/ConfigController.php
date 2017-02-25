@@ -66,8 +66,9 @@ class ConfigController extends Controller
         $formet = "+$package_duration month";
         $package_end_date = date("Y-m-d", strtotime($formet));
 
-    	try{
-	     	DB::beginTransaction();
+     	DB::beginTransaction();
+
+        try{
 
             $setup_user = SetupUser::create([
                 'first_name' => $first_name,
@@ -121,8 +122,6 @@ class ConfigController extends Controller
                     'mobile_number'  => $mobile_number,
 	    		]);
 
-	    	DB::commit();
-
 	    	$request->session()->flash('success','Application successfully setup!');
 
 	    }catch(\Exception $e){
@@ -135,6 +134,8 @@ class ConfigController extends Controller
 
 	    	$request->session()->flash('danger','Application setup not success!');
 	    }
+
+        DB::commit();
 
     	return back();
     }

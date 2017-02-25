@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -35,7 +37,16 @@ class User extends Authenticatable
     }
 
 
+    public function getMiddleNameAttribute($value){
+        return ucfirst($value);
+    }
+
+
     public function getLastNameAttribute($value){
+        return ucfirst($value);
+    }
+
+    public function getNickNameAttribute($value){
         return ucfirst($value);
     }
 
@@ -45,18 +56,44 @@ class User extends Authenticatable
     }
 
 
-    public function getNickNameAttribute($value){
-        return ucfirst($value);
+    public function getFullImageAttribute(){
+        return Storage::disk('public')->url($this->id.'/'.$this->photo);
     }
 
 
-    public function getFullImageAttribute(){
-//        return $this->photo;
-        return \Storage::disk('public')->url($this->id.'/'.$this->photo);
+    public function getCreatedAtAttribute($value){
+        return Carbon::parse($value)->format('d M Y');
+    }
+
+
+    public function createdBy(){
+        return $this->belongsTo('App\Models\User','created_by','id');
     }
 
 
     public function designation(){
         return $this->belongsTo('App\Models\Designation');
     }
+    
+
+    public function address(){
+        return $this->hasOne('App\Models\EmployeeAddress');
+    }
+
+
+    public function details(){
+        return $this->hasOne('App\Models\EmployeeDetail');
+    }
+
+
+    public function educations(){
+        return $this->hasMany('App\Models\EmployeeEducation');
+    }
+
+
+    public function experiences(){
+        return $this->hasMany('App\Models\EmployeeExperience');
+    }
+
+
 }
