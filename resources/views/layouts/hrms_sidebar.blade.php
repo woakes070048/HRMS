@@ -15,7 +15,7 @@
                 <ul class="nav sub-nav">
                     <li>
                         <a href="{{url('department/index')}}">
-                            <i class="fa fa-circle-o"></i> Manage Departments
+                            <i class="fa fa-circle-o"></i> Departments
                         </a>
                     </li>
                     <li>
@@ -24,8 +24,13 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{url('salaryInfo/index')}}">
+                            <i class="fa fa-circle-o"></i> Salary Info
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{url('designation/index')}}">
-                            <i class="fa fa-circle-o"></i> Manage Designation
+                            <i class="fa fa-circle-o"></i> Designation
                         </a>
                     </li>
                     {{-- <li>

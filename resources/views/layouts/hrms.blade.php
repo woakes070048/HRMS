@@ -52,11 +52,8 @@
     <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('admin-tools/admin-forms/css/admin-forms.css')}}">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="{{asset('sweet_alert/sweetalert.css')}}">
+
 
     @yield('style')
 
@@ -159,6 +156,8 @@
 <script src="{{asset('js/utility/utility.js')}}"></script>
 <script src="{{asset('js/demo/demo.js')}}"></script>
 <script src="{{asset('js/main.js')}}"></script>
+
+<script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
 
 <script type="text/javascript">
     jQuery(document).ready(function() {

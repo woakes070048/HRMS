@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(HrmsLevelCreateSeeder::class);
         $this->call(HrmsDepartmentCreateSeeder::class);
         $this->call(HrmsDesignationCreateSeeder::class);
+        $this->call(HrmsBasicSalaryInfoTableSeeder::class);
         
         $this->call(HrmsDivisionCreateSeeder::class);
         $this->call(HrmsDistrictCreateSeeder::class);

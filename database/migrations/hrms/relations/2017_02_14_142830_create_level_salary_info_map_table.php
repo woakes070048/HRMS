@@ -18,7 +18,6 @@ class CreateLevelSalaryInfoMapTable extends Migration
             $table->integer('level_id')->unsigned();
             $table->integer('basic_salary_info_id')->unsigned();
             $table->float('amount', 9, 2);
-            $table->boolean('amount_status')->default(0)->comment='0=percent, 1=amount-tk';
             $table->timestamps();
             
             $table->foreign('level_id')->references('id')->on('levels')->onDelete('restrict');
