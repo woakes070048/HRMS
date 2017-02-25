@@ -10,7 +10,7 @@
 
     <link rel="shortcut icon" href="{{asset('img/logo.png')}}">
     <!-- Font CSS (Via CDN) -->
-    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
+    <!-- <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'> -->
 
     <!-- Glyphicons Pro CSS(font) -->
     <link rel="stylesheet" type="text/css" href="{{asset('fonts/glyphicons-pro/glyphicons-pro.css')}}">
@@ -136,11 +136,11 @@
 <!-- PNotify -->
 <script src="{{asset('vendor/plugins/pnotify/pnotify.js')}}"></script>
 
+<!-- DataTable Plugin -->
 <script src="{{asset('vendor/plugins/datatables/media/js/jquery.dataTables.js')}}"></script>
 <script src="{{asset('vendor/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js')}}"></script>
 <script src="{{asset('vendor/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js')}}"></script>
 <script src="{{asset('vendor/plugins/datatables/media/js/dataTables.bootstrap.js')}}"></script>
-<script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
 
 <!-- Select2 Plugin Plugin -->
 <script src="{{asset('vendor/plugins/select2/select2.min.js')}}"></script>
@@ -169,9 +169,10 @@
         Demo.init();
 
         $('#datatable1').dataTable({
-            "paging":   true,
+            "paging":   false,
             "searching": true,
-            "sDom": 't<"dt-panelfooter clearfix"ip>',
+            "info": false,
+            "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
 
         });
 
@@ -204,8 +205,6 @@
             }
         });
 
-
-
         // Init Select2 - Basic Single
         $(".select2-single").select2();
 
@@ -215,13 +214,12 @@
            allowClear: true
         });
 
-        // Init Select2 - Contextuals (via html classes)
-        $(".select2-primary").select2(); // select2 contextual - primary
-        $(".select2-success").select2(); // select2 contextual - success
-        $(".select2-info").select2();    // select2 contextual - info
-        $(".select2-warning").select2(); // select2 contextual - warning 
-
         // Init DateTimepicker - fields
+        $('.datepicker').datetimepicker({
+            format: 'YYYY-MM-DD',
+            pickTime: false
+        });
+
         $('#datetimepicker1').datetimepicker();
         $('#datetimepicker2').datetimepicker();
         $('#datetimepicker3').datetimepicker({

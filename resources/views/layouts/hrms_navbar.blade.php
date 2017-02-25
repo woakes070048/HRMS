@@ -402,12 +402,12 @@
         </li>
         <li class="dropdown menu-merge">
             <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown">
-                @if(empty(Auth::user()->photo))
+                @if(empty($auth->photo))
                 <img src="{{asset('img/placeholder.png')}}" alt="avatar" class="mw30 br64">
                 @else
-                <img src="{{Auth::user()->full_image}}" alt="{{Auth::user()->full_name}}" class="mw30 br64">
+                <img src="{{$auth->full_image}}" alt="{{$auth->full_name}}" class="mw30 br64">
                 @endif
-                <span class="hidden-xs pl15"> {{Auth::user()->full_name}} </span>
+                <span class="hidden-xs pl15"> {{$auth->full_name}} </span>
                 <span class="caret caret-tp hidden-xs"></span>
             </a>
             <ul class="dropdown-menu list-group dropdown-persist w250" role="menu">

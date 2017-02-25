@@ -65,7 +65,7 @@ Route::group(['prefix'=>'setup/user','namespace'=>'Setup\User','middleware'=>'au
 });
 
 
-/******** ..End Setup System Route.. *********/
+/******************************* ..End Setup System Route.. **********************************/
 
 
 
@@ -73,7 +73,7 @@ Route::group(['prefix'=>'setup/user','namespace'=>'Setup\User','middleware'=>'au
 
 
 
-/******** ..Start HRMS Routes.. **************/
+/******************************* ..Start HRMS Routes.. ***************************************/
 
 
 /************ ...HRMS Login Route... ****************/
@@ -89,11 +89,6 @@ Route::group(['prefix' => '/','namespace'=>'Auth'], function(){
 });
 
 
-/***************** ...HRMS Dashboard Routes... ******************/
-Route::group(['prefix' => '/'], function(){
-    Route::get('/','DashboardController@index');
-});
-
 
 /***************** ...HRMS Dashboard Routes... ******************/
 Route::group(['prefix' => '/'], function(){
@@ -104,9 +99,15 @@ Route::group(['prefix' => '/'], function(){
 /******************** ...HRMS Employee Routes... **************/
 Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/index','EmployeeController@index');
+    Route::get('/view/{employee_no?}','EmployeeController@viewEmployeeProfile');
     Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeForm');
     Route::post('/add','EmployeeController@addEmployee');
+    Route::post('/add/{id}/personal/','EmployeeController@addPersonalInfo');
+    Route::post('/add/{id}/education/','EmployeeController@addEducation');
+    Route::post('/add/{id}/experience/','EmployeeController@addExperience');
+    Route::post('/add/designation/','EmployeeController@addDesignation');
 });
+
 
 /******************** ...HRMS Emp Level Routes... **************/
 Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
@@ -118,6 +119,7 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}','LevelController@delete');
 });
 
+
 /******************** ...HRMS Emp Department Routes... **************/
 Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
     Route::get('/index','DepartmentController@index');
@@ -128,6 +130,7 @@ Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}','DepartmentController@delete');
 });
 
+
 /******************** ...HRMS Emp Designations Routes... **************/
 Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
     Route::get('/index','DesignationController@index');
@@ -136,6 +139,22 @@ Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
     Route::get('/edit/{id}','DesignationController@edit');
     Route::post('/edit','DesignationController@update');
     Route::get('/delete/{id}','DesignationController@delete');
+});
+
+
+
+/******************** ...HRMS Common Function Routes... **************/
+Route::group(['prefix' => '/'], function(){
+    Route::get('get-departments','CommonController@getDepartments');
+    Route::get('get-levels','CommonController@getLevels');
+    Route::get('get-designations','CommonController@getDesignations');
+    Route::get('get-divisions','CommonController@getDivisions');
+    Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
+    Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');
+    Route::get('get-blood-groups','CommonController@getBloodGroups');
+    Route::get('get-education-levels','CommonController@getEducationLevels');
+    Route::get('get-institute-by-education-level/{id}','CommonController@getInstituteByEducationLevel');
+    Route::get('get-degree-by-education-level/{id}','CommonController@getDegreeByEducationLevel');
 });
 
 /********** ..End HRMS Routes.. *****************/
