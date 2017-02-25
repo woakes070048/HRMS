@@ -6,8 +6,12 @@
         <div class="col-md-12">
             <div class="panel panel-visible" id="spy3">
                 <div class="panel-heading">
-                    <div class="panel-title hidden-xs">
-                        <span class="glyphicon glyphicon-tasks"></span>Employee Information</div>
+                    <div class="panel-title">
+                        <span class="glyphicon glyphicon-tasks"></span>Employee Information
+                        <span class="pull-right">
+                          <a href="{{url('employee/add')}}" class="btn btn-sm btn-dark btn-gradient dark"><span class="glyphicons glyphicons-user_add"></span> &nbsp; Add Employee</a>
+                        </span>
+                      </div>
                 </div>
                 <div class="panel-body pn">
                     <table class="table table-striped table-hover" id="datatable1" cellspacing="0" width="100%">
@@ -20,6 +24,7 @@
                             <th>Designation</th>
                             <th>Image</th>
                             <th>Created Date</th>
+                            <th>Created By</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -32,6 +37,7 @@
                             <th>Designation</th>
                             <th>Image</th>
                             <th>Created Date</th>
+                            <th>Created By</th>
                             <th>Action</th>
                         </tr>
                         </tfoot>
@@ -51,22 +57,23 @@
                                    <img src="{{asset('img/placeholder.png')}}" alt="" width="50px">
                                    @endif
                                </td>
-                               <td>{{$user->created_at->format('d M Y')}}</td>
+                               <td>{{$user->created_at}}</td>
+                               <td>@if($user->createdBy) {{$user->createdBy->fullname}} @else Maybe system @endif</td>
                                <td>
                                    <div class="btn-group">
-                                       <button type="button" class="btn btn-sm btn-primary">
+                                       <a href="{{url('/employee/edit/'.base64_encode($user->id))}}" class="btn btn-sm btn-primary">
                                            <i class="glyphicons glyphicons-pencil"></i>
-                                       </button>
+                                       </a>
                                    </div>
                                    <div class="btn-group">
-                                       <button type="button" class="btn btn-sm btn-success">
+                                       <a href="{{url('/employee/view/'.$user->employee_no)}}" class="btn btn-sm btn-success">
                                            <i class="glyphicons glyphicons-eye_open"></i>
-                                       </button>
+                                       </a>
                                    </div>
                                    <div class="btn-group">
-                                       <button type="button" class="btn btn-sm btn-danger">
+                                       <a href="{{url('/employee/delete/'.base64_encode($user->id))}}" class="btn btn-sm btn-danger">
                                            <i class="glyphicons glyphicons-bin"></i>
-                                       </button>
+                                       </a>
                                    </div>
                                </td>
                             </tr>

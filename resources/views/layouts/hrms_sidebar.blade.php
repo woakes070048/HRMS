@@ -65,6 +65,9 @@
                         </ul>
                     </li> --}}
                     <li>
+                        <a href="{{url('employee/index')}}"><span class="fa fa-users" aria-hidden="true"></span>Manage Employee</a>
+                    </li>
+                   <!--  <li>
                         <a class="accordion-toggle" href="#">
                             <span class="fa fa-users" aria-hidden="true"></span>
                             Manage Employee
@@ -78,7 +81,7 @@
                                 <a href="{{url('employee/add')}}">Add Employee</a>
                             </li>
                         </ul>
-                    </li>
+                    </li> -->
                 </ul>
             </li>
         </ul>

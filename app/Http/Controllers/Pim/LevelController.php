@@ -15,6 +15,12 @@ class LevelController extends Controller
 	public function __construct()
     {
         $this->middleware('auth:hrms');
+
+        $this->middleware(function($request, $next){
+            $this->auth = Auth::guard('hrms')->user();
+            view()->share('auth',$this->auth);
+            return $next($request);
+        });
     }
 
     public function index(){

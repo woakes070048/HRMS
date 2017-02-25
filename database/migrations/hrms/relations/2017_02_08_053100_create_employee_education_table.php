@@ -20,10 +20,11 @@ class CreateEmployeeEducationTable extends Migration
             $table->integer('institute_id')->unsigned();
             $table->integer('degree_id')->unsigned();
             $table->boolean('foreign_degree')->default(0)->comment='0=no, 1=yes';
-            $table->date('pass_year');
-            $table->float('cgpa',3,2);
-            $table->string('division',10);
-            $table->string('certificate');
+            $table->string('pass_year',4);
+            $table->enum('result_type',['cgpa','division']);
+            $table->float('cgpa',3,2)->nullable();
+            $table->tinyInteger('division')->nullable();
+            $table->string('certificate')->nullable();
             $table->integer('created_by')->default(0);
             $table->integer('updated_by')->default(0);
             $table->timestamps();
