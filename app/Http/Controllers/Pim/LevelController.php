@@ -44,6 +44,8 @@ class LevelController extends Controller
 
         $percent = $request->salryInfoPercent;
         $name = $request->salryInfoName;
+        echo $request->name." ---- ".$request->salary_amount;
+        echo !empty($request->details)?$request->details:"No description...";
 
         $length = count($name);
 

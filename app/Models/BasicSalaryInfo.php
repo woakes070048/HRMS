@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class BasicSalaryInfo extends Model
 {
 	protected $table = 'basic_salary_info';
-    protected $fillable = ['name','percent'];
+    protected $fillable = ['name', 'amount', 'amount_status'];
 }
