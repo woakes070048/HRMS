@@ -27,10 +27,9 @@ new Vue({
         info_status: 0,
         info_amount: '',
         errorsHtml: '',
-        close_modal: 1,
     },
     mounted(){
-        showData.fetchData();  //call function from el:showData
+        showData.fetchData();
     },
     methods: {
         saveSalaryInfo: function(event){
@@ -52,6 +51,8 @@ new Vue({
                         //     force: true
                         // })  
                         showData.salaryInfo.push(response.data.data);
+                        alert('testing');
+                        $( ".modal-close-btn" ).trigger( "click" );
                     })
                     .catch(function (response) {
                          console.log(response);

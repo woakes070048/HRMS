@@ -36,9 +36,12 @@
                                 <td>
                                     @if($level->salaryInfo->count() > 0)
                                         @foreach($level->salaryInfo as $info)
-                                            {{ $info->basicSalaryInfo->name }}
-                                            ({{$info->basicSalaryInfo->amount_status == 0?"%":"$"}})
-                                            {{ ": ".$info->amount }}<br/>
+                                            @if(!empty($info->basicSalaryInfo->name))
+                                                {{ $info->basicSalaryInfo->name }}
+                                                ({{$info->basicSalaryInfo->amount_status == 0?"%":"$"}})
+                                                {{ ": ".$info->amount }}
+                                                <br/>
+                                            @endif
                                         @endforeach
                                     @endif    
                                 </td>

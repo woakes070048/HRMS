@@ -212,7 +212,6 @@ jQuery(document).ready(function() {
     $(".pagination").addClass(" pull-right");
 
 
-
     //Create Department --post form
 
     $('#department-create').submit(function(event) {
@@ -321,12 +320,8 @@ $('.edit-btn').click(function(event) {
     .fail(function() {
         //console.log("error");
         alert('error');
-    });
-    
+    }); 
 });
-
-
-
 
 </script>
 @endsection

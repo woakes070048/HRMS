@@ -6,6 +6,7 @@ use App\Models\BasicSalaryInfo;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use DB;
 
 class SalaryInfoController extends Controller
 {
@@ -24,7 +25,7 @@ class SalaryInfoController extends Controller
 
     public function getAllInfo(){
 
-    	return BasicSalaryInfo::all();
+    	return BasicSalaryInfo::orderBy('id','DESC')->get();
     }
 
     public function create(Request $request){
@@ -35,7 +36,28 @@ class SalaryInfoController extends Controller
             'info_status' => 'required'
         ]);
 
-        //return response()->json($request->info_amount);
-        return response()->json();
+        // try {
+
+        $data['data'] = BasicSalaryInfo::create([
+            'name' => $request->info_name,
+            'amount' => $request->info_amount,
+            'amount_satatus' => $request->info_status,
+        ]);
+        
+
+            // $data = ['title'=>'Success', 'message'=>'Salary info successfully added!'];
+            $data['title'] = 'Success';
+            $data['message'] = 'Salary info successfully added!';
+             return response()->json($data);
+
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     //$data = ['title'=>'Error', 'message'=>'Salary info not added!'];
+        //     $data['title'] = 'Error';
+        //     $data['message'] = 'Salary info not added!';
+        //      return response()->json($data,500);
+        // }
+
+       
     }
 }
