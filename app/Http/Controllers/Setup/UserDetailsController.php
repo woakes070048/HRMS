@@ -23,10 +23,9 @@ class UserDetailsController extends Controller
     	$data['config_info'] = Config::where('user_id',$id)->first();
 
     	$data['sister_concern'] = Config::where('parent_id',$data['config_info']->id)->get();
-    	$data['user_info'] = SetupUser::find($id);
-    	$data['payment_info'] = Payment::with('package')->get();
+    	$data['user_info']      = SetupUser::find($id);
+    	$data['payment_info']   = Payment::with('package')->where('user_id',$id)->get();
 
-        //var_dump($data['sister_concern']); die();
     	return view('setup.userDetails',$data);
     }
 

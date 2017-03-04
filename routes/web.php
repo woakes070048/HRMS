@@ -141,15 +141,24 @@ Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
 });
 
 
-/******************** ...HRMS Emp Designations Routes... **************/
+/******************** ...HRMS Emp SalaryInfo Routes... **************/
 Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
     Route::get('/index','SalaryInfoController@index');
     Route::get('/getAllInfo','SalaryInfoController@getAllInfo');
-    
     Route::post('/add','SalaryInfoController@create');
     Route::get('/edit/{id}','SalaryInfoController@edit');
     Route::post('/edit','SalaryInfoController@update');
-    Route::get('/delete/{id}','SalaryInfoController@delete');
+    Route::get('/delete/{id}/{indexId}','SalaryInfoController@delete');
+});
+
+/******************** ...HRMS Emp Units Routes... **************/
+Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
+    Route::get('/index','UnitController@index');
+    // Route::get('/getAllInfo','UnitController@getAllInfo');
+    // Route::post('/add','UnitController@create');
+    // Route::get('/edit/{id}','UnitController@edit');
+    // Route::post('/edit','UnitController@update');
+    // Route::get('/delete/{id}/{indexId}','UnitController@delete');
 });
 
 

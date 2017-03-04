@@ -12,7 +12,7 @@
             <div class="col-md-12">
                 <div class="panel">
                     <div class="panel-heading">
-                        <span class="panel-title">All Salary Info</span>
+                        <span class="panel-title">All Units</span>
                         <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".salaryInfoAdd" style="margin-top: 12px;">Add New Info</button>
                     </div>
                     <div class="panel-body">

@@ -47,137 +47,135 @@
                             {{"No level available..."}}
                         @endif
                     </div>
+                    
+                    <!-- depAdd modal start -->
+                    <div class="modal fade bs-example-modal-lg depAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <form class="form-horizontal department-create" id="department-create">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Add Department</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="create-form-errors">
+                                            
+                                        </div>
+                                        {{ csrf_field() }}
+
+                                        <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                                            <label for="name" class="col-md-3 control-label">Name</label>
+
+                                            <div class="col-md-9">
+                                                <input id="name" type="text" class="form-control input-sm" name="name" value="{{ old('name') }}" autofocus>
+
+                                                @if ($errors->has('name'))
+                                                    <span class="help-block">
+                                                        <strong>{{ $errors->first('name') }}</strong>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-9 col-md-offset-3">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="radio-custom radio-success mb5">
+                                                            <input type="radio" id="active" name="status" checked="" value="1">
+                                                            <label for="active">Active</label>
+                                                        </div>    
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="radio-custom radio-danger mb5">
+                                                            <input type="radio" id="inactive" name="status" value="0">
+                                                            <label for="inactive">Inactive</label>
+                                                        </div>    
+                                                    </div>
+                                                </div>     
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save Department</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- depAdd modal end -->
+
+                    <!-- depEdit modal start -->
+                    <div class="modal fade bs-example-modal-lg depEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Edit Department</h4>
+                              </div>
+                              <div class="modal-body">
+
+                                <div id="edit-form-errors">
+                                    
+                                </div>
+
+                                <form class="form-horizontal department-edit" role="form" method="POST" action="{{ url('department/edit') }} ">
+
+                                    {{ csrf_field() }}
+
+                                    <input type="hidden" class="edit-hdn-id" name="id" value="">
+
+                                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                                        <label for="name" class="col-md-3 control-label">Name</label>
+
+                                        <div class="col-md-9">
+                                            <input id="name" type="text" class="form-control input-sm edit-name" name="name" value="" autofocus>
+
+                                            @if ($errors->has('name'))
+                                                <span class="help-block">
+                                                    <strong>{{ $errors->first('name') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-md-9 col-md-offset-3">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="radio-custom radio-success mb5">
+                                                        <input type="radio" class="edit-status" id="edit-active" name="status" value="1">
+                                                        <label for="edit-active">Active</label>
+                                                    </div>    
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="radio-custom radio-danger mb5">
+                                                        <input type="radio" class="edit-status" id="edit-inactive" name="status" value="0">
+                                                        <label for="edit-inactive">Inactive</label>
+                                                    </div>    
+                                                </div>
+                                            </div>     
+                                        </div>
+                                    </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Update Department</button>
+                              </div>
+
+                              </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- depEdit modal end -->
+
+
                 </div>
             </div>
         </div>
     </section>
     <!-- End: Content -->    
-
-    <!-- depAdd modal start -->
-    <div class="modal fade bs-example-modal-lg depAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Add Department</h4>
-              </div>
-              <form class="form-horizontal department-create" id="department-create">
-              <div class="modal-body">
-                <div id="create-form-errors">
-                    
-                </div>
-                {{-- action="{{ url('department/add') }} " --}}
-
-                    {{ csrf_field() }}
-
-                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                        <label for="name" class="col-md-3 control-label">Name</label>
-
-                        <div class="col-md-9">
-                            <input id="name" type="text" class="form-control input-sm" name="name" value="{{ old('name') }}" autofocus>
-
-                            @if ($errors->has('name'))
-                                <span class="help-block">
-                                    <strong>{{ $errors->first('name') }}</strong>
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-md-9 col-md-offset-3">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="active" name="status" checked="" value="1">
-                                        <label for="active">Active</label>
-                                    </div>    
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-danger mb5">
-                                        <input type="radio" id="inactive" name="status" value="0">
-                                        <label for="inactive">Inactive</label>
-                                    </div>    
-                                </div>
-                            </div>     
-                        </div>
-                    </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save Department</button>
-              </div>
-
-              </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-    <!-- depAdd modal end -->
-
-    <!-- depEdit modal start -->
-    <div class="modal fade bs-example-modal-lg depEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Edit Department</h4>
-              </div>
-              <div class="modal-body">
-
-                <div id="edit-form-errors">
-                    
-                </div>
-
-                <form class="form-horizontal department-edit" role="form" method="POST" action="{{ url('department/edit') }} ">
-
-                    {{ csrf_field() }}
-
-                    <input type="hidden" class="edit-hdn-id" name="id" value="">
-
-                    <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                        <label for="name" class="col-md-3 control-label">Name</label>
-
-                        <div class="col-md-9">
-                            <input id="name" type="text" class="form-control input-sm edit-name" name="name" value="" autofocus>
-
-                            @if ($errors->has('name'))
-                                <span class="help-block">
-                                    <strong>{{ $errors->first('name') }}</strong>
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-md-9 col-md-offset-3">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" class="edit-status" id="edit-active" name="status" value="1">
-                                        <label for="edit-active">Active</label>
-                                    </div>    
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-danger mb5">
-                                        <input type="radio" class="edit-status" id="edit-inactive" name="status" value="0">
-                                        <label for="edit-inactive">Inactive</label>
-                                    </div>    
-                                </div>
-                            </div>     
-                        </div>
-                    </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Update Department</button>
-              </div>
-
-              </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-    <!-- depEdit modal end -->
-   
 
 @endsection
 

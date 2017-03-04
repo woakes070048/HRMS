@@ -56,13 +56,13 @@
                                             @foreach($salary_info as $sInfo)
                                                 <div class="col-md-4" style="margin-top: 3px;">
                                                     <div class="col-md-8">
-                                                        {{ $sInfo->name}}
+                                                        {{ $sInfo->salary_info_name}}
                                                         <span style="color:green;font-weight: bold;">
-                                                            ({{$sInfo->amount_status==0?"%":"$"}})
+                                                            ({{$sInfo->salary_info_amount_status==0?"%":"$"}})
                                                         </span>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="{{$sInfo->amount}}">
+                                                        <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="{{$sInfo->salary_info_amount}}">
                                                         <input type="hidden" name="salryInfoId[]" value="{{$sInfo->id}}">      
                                                     </div>
                                                 </div>
@@ -244,9 +244,9 @@
                                                 @foreach($info->salaryInfo as $value)
                                                 <div class="col-md-4" style="margin-top: 3px;">
                                                     <div class="col-md-8">
-                                                        {{ $value->basicSalaryInfo->name }}
+                                                        {{ $value->basicSalaryInfo->salary_info_name }}
                                                         <span style="color:green;font-weight: bold;">
-                                                            ({{$value->basicSalaryInfo->amount_status == 0?"%":"$"}})
+                                                            ({{$value->basicSalaryInfo->salary_info_amount_status == 0?"%":"$"}})
                                                         </span>
                                                     </div>
                                                     <div class="col-md-4">
@@ -345,13 +345,13 @@
                                                 @if(in_array($value->id , $info_id_diff, false))
                                                     <div class="col-md-6" style="margin-top: 3px;">
                                                         <div class="col-md-8">
-                                                            {{ $value->name }}
+                                                            {{ $value->salary_info_name }}
                                                             <span style="color:green;font-weight: bold;">
-                                                                ({{$value->amount_status == 0?"%":"$"}})
+                                                                ({{$value->salary_info_amount_status == 0?"%":"$"}})
                                                             </span>
                                                         </div>
                                                         <div class="col-md-4">
-                                                            <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="" placeholder="{{$value->amount}}">
+                                                            <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="" placeholder="{{$value->salary_info_amount}}">
                                                             <input type="hidden" name="salryInfoId[]" value="{{$value->id}}">
                                                         </div>
                                                     </div>
