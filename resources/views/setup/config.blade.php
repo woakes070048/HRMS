@@ -94,10 +94,10 @@
                                 <div class="section">
                                     <div class="section">
                                         <label for="">Package Amount(BDT)</label><br>
-                                        <input id="disable_package_amount" type="text" class="form-control" name="package_amount" value="" required="required">
+                                        <input id="disable_package_amount" type="text" class="form-control" name="package_amount" value="" disabled>
 
-                                        <label for="">Package Duration(Days)</label><br>
-                                        <input id="disable_package_days" type="text" class="form-control" name="package_days" value="" required="required">
+                                        <label for="">Package Duration(month)</label><br>
+                                        <input id="disable_package_months" type="text" class="form-control" name="package_duration" value="" required="required" disabled>
                                     </div>
                                     <div class="section">
                                         <label for="">Select Payment Type</label><br>
@@ -153,13 +153,9 @@
         </div>
     </div>
 
-
-
 @endsection
 
 @section('script')
-    
-    {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> --}}
 
     <script src="{{asset('admin-tools/admin-forms/js/jquery.validate.min.js')}}"></script>
     <script src="{{asset('admin-tools/admin-forms/js/jquery.steps.min.js')}}"></script>
@@ -202,7 +198,7 @@
             
             if(data != 'error'){
                 $('#disable_package_amount').val(data['price']);
-                $('#disable_package_days').val(data['duration']);
+                $('#disable_package_months').val(data['duration']);
             }
         });
         
@@ -249,16 +245,26 @@
       },
       onFinished: function(event, currentIndex) {
         
-        //************* Post form **************************** 
+        //************* Post form ************
             $.ajax({
                 url: '{{url("config")}}',
                 type: 'POST',
                 data: form.serialize(),
             })
             .done(function(data) {
-                //console.log("success");
-                //alert(data['first_name']);
-                alert("User Added successfully !!");
+
+                swal({
+                    title: "Success!",
+                    text: "User added successfully !",
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Done",
+                    closeOnConfirm: false
+                },
+                function(){
+                    location.href=location.href;
+                });
             })
             .fail(function(data) {
                 var errors = data.responseJSON;

@@ -34,7 +34,7 @@ class ServiceCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $type = 'Service';
+    protected $type = 'Services';
 
 
     /**
@@ -43,10 +43,10 @@ class ServiceCommand extends GeneratorCommand
      * @return void
      */
 
-    // public function __construct()
-    // {
-    //     parent::__construct();
-    // }
+//     public function __construct()
+//     {
+//         parent::__construct();
+//     }
 
     /**
      * Execute the console command.
@@ -55,9 +55,10 @@ class ServiceCommand extends GeneratorCommand
      */
     public function handle()
     {
-        $name = $this->parseName($this->getNameInput());
+//        $name = $this->parseName($this->getNameInput());
+        $name = $this->getNameInput();
 
-        $path = $this->getPath($name);
+        $path = $this->getPath($this->type.'/'.$name);
 
         if ($this->alreadyExists($this->getNameInput())) {
             $this->error($this->type.' already exists!');
@@ -95,8 +96,10 @@ class ServiceCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Services';
+        // return $rootNamespace.'/Services';
+        return $rootNamespace;
     }
+
 
     /**
      * Get the console command options.

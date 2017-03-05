@@ -16,7 +16,9 @@ class CreateDegreesTable extends Migration
         Schema::create('degrees', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
+            $table->smallInteger('education_level_id')->unsigned();
             $table->string('degree_name');
+            $table->boolean('status')->default(1)->comment='1=active, 0=inactive';
         });
     }
 

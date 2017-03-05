@@ -24,16 +24,15 @@
                 <span class="glyphicon glyphicon-home"></span> Dashboard
             </a>
         </li>
-        <li class="hidden-xs">
-            <a href="{{url('/config')}}" class="text-primary" data-toggle="tooltip" data-placement="top" title="Dashboard">
-                Config
-            </a>
-        </li>
-        {{-- <li class="hidden-xs">
-          <a class="request-fullscreen toggle-active" href="#">
-            <span class="ad ad-screen-full fs18"></span>
-          </a>
-        </li> --}}
+
+        @if(Auth::user()->user_type == 1)
+            <li class="hidden-xs">
+                <a href="{{url('/config')}}" class="text-primary" data-toggle="tooltip" data-placement="top" title="Dashboard">
+                    Config
+                </a>
+            </li>
+        @endif
+        
     </ul>
 
 

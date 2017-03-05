@@ -37,6 +37,7 @@ trait AuthenticatesUsers
      */
     public function login(Request $request)
     {
+
         $this->validateLogin($request);
 
         if(!$this->databaseConnectByEmail($request->email)){
@@ -73,7 +74,7 @@ trait AuthenticatesUsers
             ->first();
 
         if(count($user)){
-            Session(['database'=>$user->database_name]);
+            Session(['database'=>$user->database_name, 'config_id' => $user->config_id]);
             Artisan::call("db:connect", ['database'=> $user->database_name]);
 //            echo \DB::connection()->getDatabaseName();
             return true;
@@ -103,6 +104,7 @@ trait AuthenticatesUsers
      */
     protected function attemptLogin(Request $request)
     {
+        Artisan::call("db:connect", ['database' => Session('database')]);
         return $this->guard()->attempt(
             $this->credentials($request), $request->has('remember')
         );
@@ -116,8 +118,8 @@ trait AuthenticatesUsers
      */
     protected function credentials(Request $request)
     {
-        //$request->offsetSet('status',1);
-        return $request->only($this->username(), 'password');
+        $request->offsetSet('status',1);
+        return $request->only($this->username(), 'password','status');
     }
 
     /**
@@ -131,7 +133,7 @@ trait AuthenticatesUsers
         $request->session()->regenerate();
 
         $this->clearLoginAttempts($request);
-
+            
         return $this->authenticated($request, $this->guard()->user())
                 ?: redirect()->intended($this->redirectPath());
     }

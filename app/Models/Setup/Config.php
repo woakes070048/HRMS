@@ -8,7 +8,7 @@ class Config extends Model
 {
 
     protected $fillable = [
-    	'user_id','company_name','company_address','database_name','package_end_date'
+    	'user_id','company_code','company_name','company_address','database_name','package_end_date','parent_id'
     ];
     
 }
