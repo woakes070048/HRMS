@@ -14,6 +14,7 @@ class CreateTableDependOnRelationTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('parent_id')->unsigned();
+            $table->string('company_code',20);
             $table->string('company_name',45);
             $table->text('company_address');
             $table->string('database_name',45)->unique();

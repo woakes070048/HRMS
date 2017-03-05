@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeeNominee extends Migration
+class CreateEmployeeTrainingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,18 @@ class CreateEmployeeNominee extends Migration
      */
     public function up()
     {
-        Schema::create('employee_nominee', function (Blueprint $table) {
+        Schema::create('employee_trainings', function (Blueprint $table) {
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('nominee_name',20);
-            $table->string('nominee_relation',20);
-            $table->text('nominee_address');
-            $table->date('nominee_birth_date',20);
-            $table->string('nominee_distribution');
-            $table->string('nominee_rest_distribution');
-            $table->string('nominee_photo');
+            $table->string('training_code',20);
+            $table->string('training_title',200);
+            $table->date('training_from_date');
+            $table->date('training_to_date');
+            $table->date('training_passed_date');
+            $table->date('training_participation_date');
+            $table->string('training_institute',200);
+            $table->text('training_remarks');
             $table->integer('created_by')->default(0);
             $table->integer('updated_by')->default(0);
             $table->timestamps();
@@ -39,9 +40,9 @@ class CreateEmployeeNominee extends Migration
      */
     public function down()
     {
-        Schema::table('employee_nominee',function (Blueprint $table){
-            $table->dropForeign('employee_nominee_user_id_foreign');
+        Schema::table('employee_trainings',function (Blueprint $table){
+            $table->dropForeign('employee_trainings_user_id_foreign');
         });
-        Schema::dropIfExists('employee_nominee');
+        Schema::dropIfExists('employee_trainings');
     }
 }

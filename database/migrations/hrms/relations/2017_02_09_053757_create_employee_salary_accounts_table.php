@@ -18,8 +18,8 @@ class CreateEmployeeSalaryAccountsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('bank_id')->unsigned();
-            $table->string('account_no',50);
-            $table->string('account_name',100);
+            $table->string('bank_account_no',50);
+            $table->string('bank_account_name',100);
             $table->string('bank_branch_name',100);
             $table->text('bank_branch_address');
             $table->integer('created_by')->default(0);

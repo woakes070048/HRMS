@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeeReference extends Migration
+class CreateEmployeeExperiencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,17 @@ class CreateEmployeeReference extends Migration
      */
     public function up()
     {
-        Schema::create('employee_reference', function (Blueprint $table) {
+        Schema::create('employee_experiences', function (Blueprint $table) {
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('reference_name',50);
-            $table->string('reference_email',50);
-            $table->string('reference_department',50);
-            $table->string('reference_organization',100);
-            $table->string('reference_phone',20);
-            $table->text('reference_address',20);
+            $table->string('company_name',100);
+            $table->string('position_held',100);
+            $table->date('job_start_date');
+            $table->date('job_end_date');
+            $table->tinyInteger('job_duration')->comment ='in year';
+            $table->text('job_responsibility');
+            $table->text('job_location');
             $table->integer('created_by')->default(0);
             $table->integer('updated_by')->default(0);
             $table->timestamps();
@@ -38,9 +39,9 @@ class CreateEmployeeReference extends Migration
      */
     public function down()
     {
-        Schema::table('employee_reference',function (Blueprint $table){
-            $table->dropForeign('employee_reference_user_id_foreign');
+        Schema::table('employee_experiences', function(Blueprint $table){
+            $table->dropForeign('employee_experiences_user_id_foreign');
         });
-        Schema::dropIfExists('employee_reference');
+        Schema::dropIfExists('employee_experiences');
     }
 }

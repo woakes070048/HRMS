@@ -24,7 +24,7 @@ class DesignationRequest extends FormRequest
     public function rules()
     {
         return [
-            'designation_name' => 'required',
+            'designation_name' => 'required|alpha_spaces',
             'department_id' => 'required',
             'level_id' => 'required',
             'designation_description' => 'required'
