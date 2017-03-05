@@ -7,7 +7,7 @@ var employee = new Vue({
         tab: current_tab,
         user_id:user_id,
 
-        present_division_id:null,
+        present_division_id:1,
         present_district_id:null,
         permanent_division_id:null,
         permanent_district_id:null,

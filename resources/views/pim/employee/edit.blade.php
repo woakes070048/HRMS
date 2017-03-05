@@ -219,6 +219,8 @@
                                                 </span>
                                             </div>
                                         </div>
+
+                                        <div v-if="basics.address">
                                         <div class="col-md-10">
                                             <div class="admin-form">
                                                 <div class="section-divider mb40">
@@ -381,6 +383,169 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        </div>
+
+                                        <div v-else>
+                                        <div class="col-md-10">
+                                            <div class="admin-form">
+                                                <div class="section-divider mb40">
+                                                    <span class="bg-white">Present Address</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('present_division_id')?'has-error':''}}">
+                                                        <label class="control-label">Division : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <select class="form-control input-sm" name="present_division_id"
+                                                                v-model="present_division_id" >
+                                                            <option :value="''">---- Select Division ----</option>
+                                                            <option v-for="(division, index) in divisions" :value="division.id" >@{{ division.division_name }}</option>
+                                                        </select>
+                                                        @if($errors->has('present_division_id'))<span
+                                                                class="help-block">{{$errors->first('present_division_id')}}</span>@endif
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('present_district_id')?'has-error':''}}">
+                                                        <label class="control-label">District : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <select class="form-control input-sm" name="present_district_id"
+                                                                v-model="present_district_id">
+                                                            <option :value="''">---- Select District ----</option>
+                                                            <option v-for="(district, index) in districts" :value="district.id">@{{ district.district_name }}</option>
+                                                        </select>
+                                                        @if($errors->has('present_district_id'))<span
+                                                                class="help-block">{{$errors->first('present_district_id')}}</span>@endif
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('present_policestation_id')?'has-error':''}}">
+                                                        <label class="control-label">Police Station : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <select class="form-control input-sm"
+                                                                name="present_policestation_id">
+                                                            <option :value="''">---- Select Police Station ----</option>
+                                                            <option v-for="(policeStation,index) in policeStations"
+                                                                    :value="policeStation.id">@{{ policeStation.police_station_name }}</option>
+                                                        </select>
+                                                        @if($errors->has('present_policestation_id'))<span
+                                                                class="help-block">{{$errors->first('present_policestation_id')}}</span>@endif
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('present_postoffice')?'has-error':''}}">
+                                                        <label class="control-label">Post Office : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <input type="text" name="present_postoffice" 
+                                                               class="form-control input-sm"
+                                                               placeholder="Enter Post Office">
+                                                        @if($errors->has('present_postoffice'))<span
+                                                                class="help-block">{{$errors->first('present_postoffice')}}</span>@endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group {{$errors->has('present_address')?'has-error':''}}">
+                                                        <label class="control-label">Address : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <textarea name="present_address" class="form-control input-sm"
+                                                                  cols="60" rows="1"
+                                                                  placeholder="House, Road, Village."></textarea>
+                                                        @if($errors->has('present_address'))<span
+                                                                class="help-block">{{$errors->first('present_address')}}</span>@endif
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="admin-form">
+                                                <div class="section-divider mb40">
+                                                    <span class="bg-white">Permanent Address</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('permanent_division_id')?'has-error':''}}">
+                                                        <label class="control-label">Division : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <select class="form-control input-sm"
+                                                                name="permanent_division_id"
+                                                                v-model="permanent_division_id">
+                                                            <option :value="''">---- Select Division ----</option>
+                                                            <option v-for="(division, index) in divisions"
+                                                                    :value="division.id">@{{ division.division_name }}</option>
+                                                        </select>
+                                                        @if($errors->has('permanent_division_id'))<span
+                                                                class="help-block">{{$errors->first('permanent_division_id')}}</span>@endif
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('permanent_district_id')?'has-error':''}}">
+                                                        <label class="control-label">District : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <select class="form-control input-sm"
+                                                                name="permanent_district_id"
+                                                                v-model="permanent_district_id">
+                                                            <option :value="''">---- Select Employee Designation ----
+                                                            </option>
+                                                            <option v-for="(district, index) in permanentDistricts"
+                                                                    :value="district.id">@{{ district.district_name }}</option>
+                                                        </select>
+                                                        @if($errors->has('permanent_district_id'))<span
+                                                                class="help-block">{{$errors->first('permanent_district_id')}}</span>@endif
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('permanent_policestation_id')?'has-error':''}}">
+                                                        <label class="control-label">Police Station : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <select class="form-control input-sm"
+                                                                name="permanent_policestation_id">
+                                                            <option :value="''">---- Select Police Station ----</option>
+                                                            <option v-for="(policeStation,index) in permanentPoliceStations"
+                                                                    :value="policeStation.id">@{{ policeStation.police_station_name }}</option>
+                                                        </select>
+                                                        @if($errors->has('permanent_policestation_id'))<span
+                                                                class="help-block">{{$errors->first('permanent_policestation_id')}}</span>@endif
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group {{$errors->has('permanent_postoffice')?'has-error':''}}">
+                                                        <label class="control-label">Post Office : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <input type="text" name="permanent_postoffice"
+                                                               class="form-control input-sm"
+                                                               placeholder="Enter Post Office">
+                                                        @if($errors->has('permanent_postoffice'))<span
+                                                                class="help-block">{{$errors->first('permanent_postoffice')}}</span>@endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <div class="form-group {{$errors->has('permanent_address')?'has-error':''}}">
+                                                        <label class="control-label">Address : <span
+                                                                    class="text-danger">*</span></label>
+                                                        <textarea name="permanent_address" class="form-control input-sm"
+                                                                  cols="60" rows="1"
+                                                                  placeholder="House, Road, Village."></textarea>
+                                                        @if($errors->has('permanent_address'))<span
+                                                                class="help-block">{{$errors->first('permanent_address')}}</span>@endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+
 
                                     </div>
 

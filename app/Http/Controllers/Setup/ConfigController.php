@@ -66,9 +66,9 @@ class ConfigController extends Controller
         $formet = "+$package_duration month";
         $package_end_date = date("Y-m-d", strtotime($formet));
 
-     	DB::beginTransaction();
+//     	DB::beginTransaction();
 
-        try{
+//        try{
 
             $setup_user = SetupUser::create([
                 'first_name' => $first_name,
@@ -82,6 +82,7 @@ class ConfigController extends Controller
 	    	$config = Config::create([
 	    			'user_id'          => $setup_user->id,
 	    			'company_name'     => $company_name,
+                    'company_code'     => '111',
 	    			'company_address'  => $company_address,
 	    			'database_name'    => $database_name,
                     'package_end_date' => $package_end_date,
@@ -114,6 +115,7 @@ class ConfigController extends Controller
 
 	    	User::create([
                     'employee_no'    => '0-00',
+                    'employee_type_id' => 1,
                     'designation_id' => 1,   
                     'first_name'     => $first_name, 
                     'last_name'      => $last_name,    
@@ -124,18 +126,18 @@ class ConfigController extends Controller
 
 	    	$request->session()->flash('success','Application successfully setup!');
 
-	    }catch(\Exception $e){
-	    	Artisan::call('db:connect');
-	    	DB::rollback();
+//	    }catch(\Exception $e){
+//	    	Artisan::call('db:connect');
+//	    	DB::rollback();
+//
+//	    	Artisan::call('db:connect', ['database'=> $database_name]);
+//	    	Artisan::call("migrate:hrms:rollback");
+//	    	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
+//
+//	    	$request->session()->flash('danger','Application setup not success!');
+//	    }
 
-	    	Artisan::call('db:connect', ['database'=> $database_name]);
-	    	Artisan::call("migrate:hrms:rollback");
-	    	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
-
-	    	$request->session()->flash('danger','Application setup not success!');
-	    }
-
-        DB::commit();
+//        DB::commit();
 
     	return back();
     }

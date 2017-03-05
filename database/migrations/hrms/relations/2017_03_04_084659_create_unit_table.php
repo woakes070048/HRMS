@@ -9,25 +9,26 @@ class CreateUnitTable extends Migration
     
     public function up()
     {
-        Schema::table('units', function (Blueprint $table) {
+        Schema::create('units', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('unit_name',100);
             $table->integer('unit_parent_id')->unsigned();
-            $table->integer('departments_id')->unsigned();
-            $table->string('unit_details',500);
+            $table->integer('department_id')->unsigned();
+            $table->text('unit_details');
             $table->boolean('unit_status')->default(1)->comment='1=active, 0=inactive';
             $table->timestamps();
             
-            $table->foreign('departments_id')->references('id')->on('departments')->onDelete('restrict');
+            //$table->foreign('department_id')->references('id')->on('departments')->onDelete('restrict');
         });
     }
 
     
     public function down()
     {
-        Schema::table('units',function (Blueprint $table){
-            $table->dropForeign('units_departments_id_foreign');
-        });
+//        Schema::table('units',function (Blueprint $table){
+//            $table->dropForeign('units_department_id_foreign');
+//        });
         Schema::dropIfExists('units');
     }
 }
