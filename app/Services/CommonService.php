@@ -2,13 +2,29 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Designation;
-use App\Models\Department;
+use App\Models\User;
 use App\Models\Level;
+use App\Models\Bank;
+use App\Models\BasicSalaryInfo;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\EmployeeType;
+use App\Models\Division;
+use App\Models\District;
+use App\Models\PoliceStation;
+use App\Models\BloodGroup;
+use App\Models\EducationLevel;
+use App\Models\Institute;
+use App\Models\Degree;
+use App\Models\Language;
 
 trait CommonService
 {
+    
+    public function getEmployeeType(){
+        return EmployeeType::where('status',1)->get();
+    }
+
 
     public function getDepartments(){
         return Department::where('status',1)->get();
@@ -21,41 +37,68 @@ trait CommonService
 
 
 	public function getDesignations(){
-		return Designation::where('status',1)->get();
+		return Designation::with('department','level')->where('status',1)->get();
 	}
 
 
 	public function getDivisions(){
-		return DB::table('divisions')->get();
+		return Division::get();
 	}
 
 
     public function getDistrictByDivision($division_id){
-        return DB::table('districts')->where('division_id',$division_id)->get();
+        return District::where('division_id',$division_id)->get();
     }
 
 
 	public function getPolicStationByDistrict($district_id){
-		return DB::table('police_stations')->where('district_id',$district_id)->get();
+		return PoliceStation::where('district_id',$district_id)->get();
 	}
 
 
     public function getBloodGroups(){
-    	return DB::table('blood_groups')->get();
+    	return BloodGroup::get();
     }
 
 
     public function getEducationLevels(){
-    	return DB::table('education_levels')->get();
+    	return EducationLevel::get();
     }
 
 
     public function getInstituteByEducationLevel($education_level_id){
-    	return DB::table('institutes')->where('education_level_id',$education_level_id)->get();
+    	return Institute::where('education_level_id',$education_level_id)->get();
     }
 
+
     public function getDegreeByEducationLevel($education_level_id){
-        return DB::table('degrees')->where('education_level_id',$education_level_id)->get();
+        return Degree::where('education_level_id',$education_level_id)->get();
+    }
+
+
+    public function getBanks(){
+        return Bank::where('status',1)->get();
+    }
+
+
+    public function getLevelSalaryInfoByUser($user_id){
+        return User::with('designation.level.salaryInfo.basicSalaryInfo')->find($user_id);
+    }
+
+
+    public function getAllowanceNotinLevel(){
+        return BasicSalaryInfo::select('basic_salary_info.*')->leftJoin('level_salary_info_map','level_salary_info_map.basic_salary_info_id','=','basic_salary_info.id')->where('level_salary_info_map.level_id','=',null)->get();
+    }
+
+
+    public function getAllowanceByIds($ids){
+        $ids = explode(',',$ids);
+        return BasicSalaryInfo::whereIn('id',$ids)->get();
+    }
+
+
+    public function getLanguage(){
+        return Language::all();
     }
 
 

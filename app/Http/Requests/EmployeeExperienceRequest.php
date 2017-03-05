@@ -24,11 +24,11 @@ class EmployeeExperienceRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required',
+            'user_id' => 'required|numeric',
             'company_name' => 'required|alpha_spaces',
             'position_held' => 'required|alpha_spaces',
-            'job_start_date' => 'required',
-            'job_end_date' => 'required',
+            'job_start_date' => 'required|date',
+            'job_end_date' => 'required|date',
             'job_duration' => 'required',
             'job_responsibility' => 'required',
             'job_location' => 'required',

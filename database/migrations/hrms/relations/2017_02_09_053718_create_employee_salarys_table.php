@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeeTraining extends Migration
+class CreateEmployeeSalarysTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,14 @@ class CreateEmployeeTraining extends Migration
      */
     public function up()
     {
-        Schema::create('employee_training', function (Blueprint $table) {
+        Schema::create('employee_salaries', function (Blueprint $table) {
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('training_code',20);
-            $table->string('training_title',200);
-            $table->date('training_from_date');
-            $table->date('training_to_date');
-            $table->date('training_passed_date');
-            $table->date('training_participation_date');
-            $table->string('training_institute',200);
-            $table->text('training_remarks');
+            $table->integer('basic_salary_info_id')->unsigned();
+            $table->decimal('salary_amount',5,2);
+            $table->enum('salary_amount_type',['percent','fixed']);
+            $table->date('salary_effective_date');
             $table->integer('created_by')->default(0);
             $table->integer('updated_by')->default(0);
             $table->timestamps();
@@ -40,9 +36,9 @@ class CreateEmployeeTraining extends Migration
      */
     public function down()
     {
-        Schema::table('employee_training',function (Blueprint $table){
-            $table->dropForeign('employee_training_user_id_foreign');
+        Schema::table('employee_salaries',function(Blueprint $table){
+           $table->dropForeign('employee_salaries_user_id_foreign');
         });
-        Schema::dropIfExists('employee_training');
+        Schema::dropIfExists('employee_salaries');
     }
 }

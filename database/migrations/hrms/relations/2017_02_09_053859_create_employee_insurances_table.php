@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeeInsuranceTable extends Migration
+class CreateEmployeeInsurancesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateEmployeeInsuranceTable extends Migration
      */
     public function up()
     {
-        Schema::create('employee_insurance', function (Blueprint $table) {
+        Schema::create('employee_insurances', function (Blueprint $table) {
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
@@ -37,9 +37,9 @@ class CreateEmployeeInsuranceTable extends Migration
      */
     public function down()
     {
-        Schema::table('employee_insurance',function (Blueprint $table){
-            $table->dropForeign('employee_insurance_user_id_foreign');
+        Schema::table('employee_insurances',function (Blueprint $table){
+            $table->dropForeign('employee_insurances_user_id_foreign');
         });
-        Schema::dropIfExists('employee_insurance');
+        Schema::dropIfExists('employee_insurances');
     }
 }

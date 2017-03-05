@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeeExperienceTable extends Migration
+class CreateEmployeeNomineesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,17 @@ class CreateEmployeeExperienceTable extends Migration
      */
     public function up()
     {
-        Schema::create('employee_experience', function (Blueprint $table) {
+        Schema::create('employee_nominees', function (Blueprint $table) {
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('company_name',100);
-            $table->string('position_held',100);
-            $table->date('job_start_date');
-            $table->date('job_end_date');
-            $table->tinyInteger('job_duration')->comment ='in year';
-            $table->text('job_responsibility');
-            $table->text('job_location');
+            $table->string('nominee_name',20);
+            $table->string('nominee_relation',20);
+            $table->text('nominee_address')->nullable();
+            $table->date('nominee_birth_date',20)->nullable();
+            $table->string('nominee_distribution')->nullable();
+            $table->string('nominee_rest_distribution')->nullable();
+            $table->string('nominee_photo')->nullable();
             $table->integer('created_by')->default(0);
             $table->integer('updated_by')->default(0);
             $table->timestamps();
@@ -39,9 +39,9 @@ class CreateEmployeeExperienceTable extends Migration
      */
     public function down()
     {
-        Schema::table('employee_experience', function(Blueprint $table){
-            $table->dropForeign('employee_experience_user_id_foreign');
+        Schema::table('employee_nominees',function (Blueprint $table){
+            $table->dropForeign('employee_nominees_user_id_foreign');
         });
-        Schema::dropIfExists('employee_experience');
+        Schema::dropIfExists('employee_nominees');
     }
 }

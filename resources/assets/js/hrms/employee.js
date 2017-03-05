@@ -34,6 +34,9 @@ var employee = new Vue({
         showDivision:false,
         showCgpa: true,
         job_duration: null,
+
+        banks: [],
+
         submit_button:null,
 
         errors: [],

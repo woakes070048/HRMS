@@ -104,17 +104,17 @@
                 <div class="panel-heading">
                     Sister Concern(Current Package)
 
-                    <button type="button" class="btn btn-xs btn-success pull-right" style="margin-top: 12px;">
-                      @if(Auth::user()->user_type == 1)
-                        <a href="{{url('setup/admin/concern/add')}}" title="">
+                 
+                      @if(Auth::user('setup')->user_type == 1)
+                        <a class="btn btn-xs btn-success pull-right" style="margin-top: 12px;" href="{{url('setup/admin/concern/add')}}" title="">
                           <span class="glyphicon glyphicon-user mr5"></span>Add
                         </a>
                       @else
-                        <a href="{{url('setup/user/concern/add')}}" title="">
+                        <a class="btn btn-xs btn-success pull-right" style="margin-top: 12px;" href="{{url('setup/user/concern/add')}}" title="">
                           <span class="glyphicon glyphicon-user mr5"></span>Add
                         </a>
                       @endif
-                    </button>
+                  
 
 
                 </div>
