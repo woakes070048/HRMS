@@ -19,18 +19,23 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{url('levels/index')}}">
-                            <i class="fa fa-circle-o"></i> Manage Levels
+                        <a href="{{url('unit/index')}}">
+                            <i class="fa fa-circle-o"></i> Unit
                         </a>
                     </li>
                     <li>
-                        <a href="{{url('salaryInfo/index')}}">
-                            <i class="fa fa-circle-o"></i> Salary Info
+                        <a href="{{url('levels/index')}}">
+                            <i class="fa fa-circle-o"></i> Levels
                         </a>
                     </li>
                     <li>
                         <a href="{{url('designation/index')}}">
                             <i class="fa fa-circle-o"></i> Designation
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{url('salaryInfo/index')}}">
+                            <i class="fa fa-circle-o"></i> Salary Info
                         </a>
                     </li>
                     {{-- <li>

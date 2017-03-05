@@ -40,28 +40,87 @@ class SalaryInfoController extends Controller
         $this->validate($request, [
             'info_name' => 'required',
             'info_amount' => 'required',
-            'info_status' => 'required'
+            'info_status' => 'required',
+            'info_type' => 'required'
+        ]);
+
+
+        try{
+
+            $data['data'] = BasicSalaryInfo::create([
+                'salary_info_name' => $request->info_name,
+                'salary_info_amount' => $request->info_amount,
+                'salary_info_amount_status' => $request->info_status,
+                'salary_info_type' => $request->info_type,
+            ]);
+        
+            $data['title'] = 'success';
+            $data['message'] = 'salary info successfully added!';
+            return response()->json($data, 200);
+
+        }catch (\Exception $e) {
+            
+            $data['title'] = 'danger';
+            $data['message'] = 'Salary info not added!';
+            return response()->json($data, 500);
+        }
+    }
+
+    public function edit($id){
+
+        $data = BasicSalaryInfo::find($id);
+        return response()->json($data);
+    }
+
+    public function update(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required',
+            'edit_info_name' => 'required',
+            'edit_info_amount' => 'required',
+            'edit_info_status' => 'required',
+            'edit_info_type' => 'required'
         ]);
 
         try {
-
-        $data['data'] = BasicSalaryInfo::create([
-            'name' => $request->info_name,
-            'amount' => $request->info_amount,
-            'amount_satatus' => $request->info_status,
-        ]);
-    
-            $data['title'] = 'Success';
-            $data['message'] = 'Salary info successfully added!';
-             return response()->json($data);
+            $data['data'] = BasicSalaryInfo::where('id',$request->hdn_id)->update([
+                'salary_info_name' => $request->edit_info_name,
+                'salary_info_amount' => $request->edit_info_amount,
+                'salary_info_amount_status' => $request->edit_info_status,
+                'salary_info_type' => $request->edit_info_type,
+            ]);
+        
+            $data['title'] = 'success';
+            $data['message'] = 'salary info successfully updated!';
+            return response()->json($data);
 
         } catch (\Exception $e) {
-            DB::rollback();
-            $data['title'] = 'Error';
-            $data['message'] = 'Salary info not added!';
-             return response()->json($data,500);
+            
+            $data['title'] = 'danger';
+            $data['message'] = 'Salary info not updated!';
+            return response()->json($data);
+        }
+    }
+
+
+    public function delete($id, $indexId){
+        
+        $data['indexId'] = $indexId;
+
+        try{
+            $data['data'] = BasicSalaryInfo::find($id)->delete();
+        
+            $data['title'] = 'success';
+            $data['message'] = 'salary info successfully removed!';
+            return response()->json($data, 200);
+
+        }catch(\Exception $e){
+            
+            $data['title'] = 'danger';
+            $data['message'] = 'Salary info not removed!';
+            return response()->json($data, 500);
         }
 
-       
+        return response()->json($data);
     }
 }

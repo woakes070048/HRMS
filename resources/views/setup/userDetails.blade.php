@@ -3,7 +3,7 @@
 @section('style')
 <style type="text/css" media="screen">
     a{
-        color: #fff;
+      color: #fff;
     }
 
 </style>
@@ -104,9 +104,10 @@
                 <div class="panel-heading">
                     Sister Concern(Current Package)
 
-                 
-                      @if(Auth::user('setup')->user_type == 1)
-                        <a class="btn btn-xs btn-success pull-right" style="margin-top: 12px;" href="{{url('setup/admin/concern/add')}}" title="">
+                    <div type="button" class="btn btn-xs btn-success pull-right" style="margin-top: 12px;">
+                      @if(Auth::user()->user_type == 1)
+                        <a href="{{url('setup/admin/concern/add')}}" title="">
+
                           <span class="glyphicon glyphicon-user mr5"></span>Add
                         </a>
                       @else
@@ -114,9 +115,7 @@
                           <span class="glyphicon glyphicon-user mr5"></span>Add
                         </a>
                       @endif
-                  
-
-
+                    </div>
                 </div>
                 <div class="panel-body">
                     @if(count($sister_concern) > 0)
