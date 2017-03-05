@@ -100,12 +100,20 @@ Route::group(['prefix' => '/'], function(){
 Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/index','EmployeeController@index');
     Route::get('/view/{employee_no?}','EmployeeController@viewEmployeeProfile');
-    Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeForm');
+    Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeAddForm');
     Route::post('/add','EmployeeController@addEmployee');
     Route::post('/add/{id}/personal/','EmployeeController@addPersonalInfo');
     Route::post('/add/{id}/education/','EmployeeController@addEducation');
     Route::post('/add/{id}/experience/','EmployeeController@addExperience');
-    Route::post('/add/designation/','EmployeeController@addDesignation');
+    Route::post('/add/{id}/salary/','EmployeeController@addSalary');
+    Route::post('/add/{id}/nominee/','EmployeeController@addNominee');
+    Route::post('/add/{id}/training/','EmployeeController@addTraining');
+    Route::post('/add/{id}/reference/','EmployeeController@addReference');
+    Route::post('/add/{id}/children/','EmployeeController@addChildren');
+    Route::post('/add/{id}/language/','EmployeeController@addLanguage');
+
+    Route::get('/edit/{id}/{tab?}','EmployeeController@showEmployeeEditForm');
+    Route::post('/edit/{id}','EmployeeController@editEmployee');
 });
 
 
@@ -165,6 +173,7 @@ Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
 
 /******************** ...HRMS Common Function Routes... **************/
 Route::group(['prefix' => '/'], function(){
+    Route::get('get-employee-type','CommonController@getEmployeeType');
     Route::get('get-departments','CommonController@getDepartments');
     Route::get('get-levels','CommonController@getLevels');
     Route::get('get-designations','CommonController@getDesignations');
@@ -175,7 +184,16 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-education-levels','CommonController@getEducationLevels');
     Route::get('get-institute-by-education-level/{id}','CommonController@getInstituteByEducationLevel');
     Route::get('get-degree-by-education-level/{id}','CommonController@getDegreeByEducationLevel');
+    Route::get('get-banks','CommonController@getBanks');
+    Route::get('get-level-salary-info/{id}','CommonController@getLevelSalaryInfoByUser');
+    Route::get('get-allowance-by-ids/{ids}','CommonController@getAllowanceByIds');
+    Route::get('get-allowance-notin-level','CommonController@getAllowanceNotinLevel');
+    Route::get('get-language','CommonController@getLanguage');
+
+    Route::post('add-designation','CommonController@addDesignation');
+    Route::post('add-language','CommonController@addLanguage');
 
 });
+
 
 /********** ..End HRMS Routes.. *****************/

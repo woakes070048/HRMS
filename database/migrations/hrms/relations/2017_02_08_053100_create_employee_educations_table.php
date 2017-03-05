@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEmployeeEducationTable extends Migration
+class CreateEmployeeEducationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateEmployeeEducationTable extends Migration
      */
     public function up()
     {
-        Schema::create('employee_education', function (Blueprint $table) {
+        Schema::create('employee_educations', function (Blueprint $table) {
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
@@ -42,11 +42,11 @@ class CreateEmployeeEducationTable extends Migration
      */
     public function down()
     {
-        Schema::table('employee_education',function(Blueprint $table){
-           $table->dropForeign('employee_education_user_id_foreign');
-           $table->dropForeign('employee_education_institute_id_foreign');
-           $table->dropForeign('employee_education_degree_id_foreign');
+        Schema::table('employee_educations',function(Blueprint $table){
+           $table->dropForeign('employee_educations_user_id_foreign');
+           $table->dropForeign('employee_educations_institute_id_foreign');
+           $table->dropForeign('employee_educations_degree_id_foreign');
         });
-        Schema::dropIfExists('employee_education');
+        Schema::dropIfExists('employee_educations');
     }
 }
