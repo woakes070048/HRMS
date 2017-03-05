@@ -319,7 +319,7 @@ table.tc-med-2 tbody td:first-child{
                         </tfoot>
                         <tbody>
                         <?php $sl=1; ?>
-                        @forelse($user->salaries as $sinfo)
+                        @foreach($user->salaries as $sinfo)
                             <tr>
                               <td>{{$sl}}</td>
                               <td>{{$sinfo->basicSalaryInfo->name}}</td>
@@ -328,11 +328,7 @@ table.tc-med-2 tbody td:first-child{
                               <td>{{$sinfo->salary_effective_date}}</td>
                             </tr>
                             <?php $sl++; ?>
-                        @empty
-                          <tr>
-                            <td>No Data Found</td>
-                          </tr>
-                        @endforelse
+                        @endforeach
                         </tbody>
                     </table>
               </div>
