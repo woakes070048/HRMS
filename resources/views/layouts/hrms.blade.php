@@ -219,13 +219,19 @@
             pickTime: false
         });
 
+        $('.date').datetimepicker({
+            format: 'YYYY',
+            viewMode: 'years',
+            minViewMode: "years",
+            pickTime: false
+        });
+
         $('#datetimepicker1').datetimepicker();
         $('#datetimepicker2').datetimepicker();
         $('#datetimepicker3').datetimepicker({
           defaultDate: "9/4/2014",
           inline: true,
         });
-
 
     });
 </script>

@@ -1,14 +1,15 @@
 <header class="navbar navbar-fixed-top navbar-shadow">
     <div class="navbar-branding">
         <a class="navbar-brand" href="dashboard.html">
-            <b>Admin</b>Designs
+            <!-- <b>Admin</b>Designs -->
+            <b>{{strtoupper($settings->company_name)}}</b>
         </a>
         <span id="toggle_sidemenu_l" class="ad ad-lines"></span>
     </div>
 
 
     <ul class="nav navbar-nav navbar-right">
-        <li>
+       <!--  <li>
             <div class="navbar-btn btn-group">
                 <a href="#" class="topbar-menu-toggle btn btn-sm" data-toggle="button">
                     <span class="ad ad-wand"></span>
@@ -374,12 +375,11 @@
                     </div>
                 </div>
             </div>
-        </li>
-        <li class="dropdown menu-merge">
+        </li> -->
+        <!-- <li class="dropdown menu-merge">
             <div class="navbar-btn btn-group">
                 <button data-toggle="dropdown" class="btn btn-sm dropdown-toggle">
                     <span class="flag-xs flag-us"></span>
-                    <!-- <span class="caret"></span> -->
                 </button>
                 <ul class="dropdown-menu pv5 animated animated-short flipInX" role="menu">
                     <li>
@@ -396,10 +396,10 @@
                     </li>
                 </ul>
             </div>
-        </li>
-        <li class="menu-divider hidden-xs">
+        </li> -->
+<!--         <li class="menu-divider hidden-xs">
             <i class="fa fa-circle"></i>
-        </li>
+        </li> -->
         <li class="dropdown menu-merge">
             <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown">
                 @if(empty($auth->photo))
@@ -417,12 +417,12 @@
                         <span class="label label-warning">2</span>
                     </a>
                 </li>
-                <li class="list-group-item">
+                <!-- <li class="list-group-item">
                     <a href="#" class="animated animated-short fadeInUp">
                         <span class="fa fa-user"></span> Friends
                         <span class="label label-warning">6</span>
                     </a>
-                </li>
+                </li> -->
                 <li class="list-group-item">
                     <a href="#" class="animated animated-short fadeInUp">
                         <span class="fa fa-gear"></span> Account Settings </a>

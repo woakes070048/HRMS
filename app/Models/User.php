@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'employee_no','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','update_by',
+        'employee_no','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
 
     ];
 
@@ -159,6 +159,59 @@ class User extends Authenticatable
 
     public function get_profile_info($employee_no){
         return User::with('designation.department','designation.department','details.bloodGroup','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
+    }
+
+
+    public function get_user_data_by_user_tab($user_id,$tab){
+        if($tab == ''){
+            $basic = User::with('designation','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
+            return response()->json($basic);
+        }
+
+        if($tab == 'personal'){
+            $personal = User::with('details.bloodGroup')->find($user_id);
+            return response()->json($personal);
+        }
+
+        if($tab == 'experience'){
+            $experience = User::with('experiences')->find($user_id);
+            return response()->json($experience);
+        }
+
+        if($tab == 'education'){
+            $education = User::with('educations.institute.educationLevel','educations.degree')->find($user_id);
+            return response()->json($education);
+        }
+
+        if($tab == 'salary'){
+            $salaries = User::with('salaries.basicSalaryInfo','salaryAccount')->find($user_id);
+            return response()->json($salaries);
+        }
+
+        if($tab == 'nominee'){
+            $nominee =  User::with('nominees')->find($user_id);
+            return response()->json($nominee);
+        }
+
+        if($tab == 'training'){
+            $training =  User::with('trainings')->find($user_id);
+            return response()->json($training);
+        }
+
+        if($tab == 'reference'){
+            $references =  User::with('references')->find($user_id);
+            return response()->json($references);
+        }
+
+        if($tab == 'children'){
+            $childrens =  User::with('childrens')->find($user_id);
+            return response()->json($childrens);
+        }
+
+        if($tab == 'language'){
+            $languages = User::with('languages.language')->find($user_id);
+            return response()->json($languages);
+        }
     }
 
 
