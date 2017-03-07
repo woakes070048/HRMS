@@ -2,6 +2,5 @@
   "/js/app.js": "/js/app.js",
   "/css/app.css": "/css/app.css",
   "/js/hrms.js": "/js/hrms.js",
-  "/js/salaryInfo.js": "/js/salaryInfo.js",
-  "/js/employee.js": "/js/employee.js"
+  "/js/salaryInfo.js": "/js/salaryInfo.js"
 }
