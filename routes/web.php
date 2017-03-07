@@ -101,6 +101,7 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/index','EmployeeController@index');
     Route::get('/view/{employee_no?}','EmployeeController@viewEmployeeProfile');
     Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeAddForm');
+
     Route::post('/add','EmployeeController@addEmployee');
     Route::post('/add/{id}/personal/','EmployeeController@addPersonalInfo');
     Route::post('/add/{id}/education/','EmployeeController@addEducation');
@@ -114,6 +115,15 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
 
     Route::get('/edit/{id}/{tab?}','EmployeeController@showEmployeeEditForm');
     Route::post('/edit/{id}','EmployeeController@editEmployee');
+    Route::post('/edit/{id}/personal','EmployeeController@editPersonalInfo');
+
+    Route::get('/edit/tab/{data_tab}/{data_id}','EmployeeController@getDataByTabAndId');
+    Route::post('/edit/{id}/education','EmployeeController@editEducation');
+    Route::delete('/delete/{id}/education','EmployeeController@deleteEducation');
+
+    Route::post('/edit/{id}/experience','EmployeeController@editExperience');
+    Route::delete('/delete/{id}/experience','EmployeeController@deleteExperience');
+
 });
 
 

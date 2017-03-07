@@ -24,7 +24,7 @@ class EmployeeBasicInfoRequest extends FormRequest
     public function rules()
     {
 
-         if($this->segment(3)){
+        if($this->segment(3)){
              $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
              $email = 'required|email|unique:users,email,'.$this->segment(3);
              $password = 'nullable';
@@ -34,7 +34,7 @@ class EmployeeBasicInfoRequest extends FormRequest
              $email = 'required|email|unique:users';
              $password = 'required|digits_between:6,16';
              $retype_pass = 'required|same:password';
-         }
+        }
 
         return [
             'employee_no' => $employee_no,
