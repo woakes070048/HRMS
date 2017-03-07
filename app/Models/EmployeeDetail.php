@@ -10,6 +10,11 @@ class EmployeeDetail extends Model
         'father_name','mother_name','personal_email','official_email','birth_date','joining_date',
         'phone_number','gender','marital_status','religion','nationality','emergency_contact_person','emergency_contact_address','created_by','updated_by']; 
 
+
+    public static function findUser($user_id){
+         return static::where('user_id', $user_id)->first();
+    }
+
     public function getFatherNameAttribute($value){
         return ucfirst($value);
     }
@@ -20,12 +25,12 @@ class EmployeeDetail extends Model
     }
 
 
-    public function getJoiningDateAttribute($value){
+    public function getJoiningDateFormatAttribute($value){
     	return \Carbon\Carbon::parse($value)->format('d M Y');
     }
 
 
-    public function getBirthDateAttribute($value){
+    public function getBirthDateFormatAttribute($value){
     	return \Carbon\Carbon::parse($value)->format('d M Y');
     }
 

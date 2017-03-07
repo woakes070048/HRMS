@@ -37,7 +37,7 @@ trait CommonService
 
 
 	public function getDesignations(){
-		return Designation::with('department','level')->where('status',1)->get();
+		return Designation::with('department','level')->where('status',1)->orderBy('id','desc')->get();
 	}
 
 

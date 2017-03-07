@@ -29,7 +29,9 @@ class CommonController extends Controller
     public function addDesignation(DesignationRequest $request){
         try{
             $request->offsetSet('created_by', $this->auth->id);
-            $data['data'] = Designation::create($request->all());
+//            $data['data'] = Designation::create($request->all());
+            Designation::create($request->all());
+            $data['data'] = $this->getDesignations();
 
             if($request->ajax()){
                 $data['status'] = 'success';

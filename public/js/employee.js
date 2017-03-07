@@ -7,7 +7,7 @@ var employee = new Vue({
         tab: current_tab,
         user_id:user_id,
 
-        present_division_id:1,
+        present_division_id:null,
         present_district_id:null,
         permanent_division_id:null,
         permanent_district_id:null,
@@ -53,11 +53,13 @@ var employee = new Vue({
         submit_button:null,
         errors: [],
         otherAllowance:[],
+        singleData: [],
     },
 
 
     mounted(){
         this.getTabData();
+        this.datePickerYear();
 
         // $('#startDate').datepicker().on('changeDate', () => { this.startDate = $('#startDate').val() })
     },
@@ -109,9 +111,19 @@ var employee = new Vue({
         //     });
         // },
 
+        datePickerYear(){
+            // $('.date').datetimepicker({
+            //     format: 'YYYY',
+            //     viewMode: 'years',
+            //     minViewMode: "years",
+            //     pickTime: false
+            // });
+        },
+
         getTabData(){
 
             this.urlChange(this.tab);
+            this.errors = [];
 
             if(this.tab == ''){
                 this.getEmployeeType();
@@ -124,6 +136,7 @@ var employee = new Vue({
                 this.getBloodGroups();
             }
             if(this.tab == 'education'){
+                this.datePickerYear();
                 this.getEducationLevels();
                 this.getEducations();
             }
@@ -162,7 +175,7 @@ var employee = new Vue({
         getBasic(){
             axios.get('/employee/'+add_edit+'/'+id+this.tab).then(response => {
                 this.basics = response.data;
-                // console.log(this.basics);
+                console.log(this.basics);
             });
         },
 
@@ -429,12 +442,52 @@ var employee = new Vue({
             var formData = $('#'+id).serialize();
             axios.post('/add-designation',formData)
                 .then((response) => {
-                    // console.log(response);
+                    console.log(response);
                     var data = response.data;
                     this.errors = [];
-                    this.designations.push(response.data.data);
+                    // this.designations.push(response.data.data);
+                    this.designations = response.data.data;
                     jQuery(".mfp-close").trigger("click");
                     this.showMessage(data);
+                })
+                .catch(error => {
+                    console.log(error);
+                    if(error.response.status == 500 || error.response.data.status == 'danger'){
+                        var error = error.response.data;
+                       this.showMessage(error);
+                    }else if(error.response.status == 422){
+                        this.errors = error.response.data;
+                    }
+
+                });
+        },
+
+
+        addEmployeeBasicInfo(e){
+
+            var formData = new FormData(e.target);
+            formData.append(this.submit_button,this.submit_button);
+            this.submit_button = null;
+
+            if(user_id){
+                var basic_url = '/employee/'+add_edit+'/'+user_id;
+            }else{
+                var basic_url = '/employee/'+add_edit
+            }
+
+            axios.post(basic_url,formData)
+                .then((response) => {
+
+                    var data = response.data;
+                    this.user_id = data.data.id;
+                    this.errors = [];
+                    this.basics = data.data;
+                    this.showMessage(data);
+
+                    if(data.type){
+                        jQuery("#"+data.type).trigger("click");
+                        this.tab=data.type;
+                    }
                 })
                 .catch(error => {
                     console.log(error);
@@ -465,6 +518,7 @@ var employee = new Vue({
 
                     if(data.type){
                         jQuery("#"+data.type).trigger("click");
+                        this.tab = data.type;
                     }
                 })
                 .catch(error => {
@@ -526,7 +580,7 @@ var employee = new Vue({
                     var data = response.data;
                     this.errors = [];
                     jQuery(".mfp-close").trigger("click");
-                    this.experiences.push(data.data);
+                    this.experiences.experiences.push(data.data);
                     this.showMessage(data);
 
                     if(data.type){
@@ -622,7 +676,7 @@ var employee = new Vue({
                     var data = response.data;
                     this.errors = [];
                     jQuery(".mfp-close").trigger("click");
-                    this.trainings.push(data.data);
+                    this.trainings.trainings.push(data.data);
                     this.showMessage(data);
 
                     if(data.type){
@@ -656,7 +710,7 @@ var employee = new Vue({
                     var data = response.data;
                     this.errors = [];
                     jQuery(".mfp-close").trigger("click");
-                    this.references.push(data.data);
+                    this.references.references.push(data.data);
                     this.showMessage(data);
 
                     if(data.type){
@@ -690,7 +744,7 @@ var employee = new Vue({
                     var data = response.data;
                     this.errors = [];
                     jQuery(".mfp-close").trigger("click");
-                    this.childrens.push(data.data);
+                    this.childrens.childrens.push(data.data);
                     this.showMessage(data);
 
                     if(data.type){
@@ -734,6 +788,37 @@ var employee = new Vue({
                     }
 
                 });
+        },
+
+
+        deleteEmployeeData(id,tab){
+            axios.delete('/employee/delete/'+id+'/'+tab)
+                .then((response) => {
+                    var data = response.data;
+                    this.showMessage(data);
+                    this.getTabData();
+                })
+                .catch(error => {
+                    console.log(error);
+                    if(error.response.status == 500 || error.response.data.status == 'danger'){
+                        var error = error.response.data;
+                       this.showMessage(error);
+                    }else if(error.response.status == 422){
+                        this.errors = error.response.data;
+                    }
+
+                });
+        },
+
+
+        getDataByTabAndId(data_tab,data_id){
+
+            axios.get('/employee/'+add_edit+'/tab/'+data_tab+'/'+data_id).then(response => {
+                if(data_tab == 'education'){
+                    this.singleData = response.data;
+                    console.log(this.singleData);
+                }
+            });
         },
 
     },
