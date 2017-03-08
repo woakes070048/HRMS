@@ -11,6 +11,7 @@ mix.js('resources/assets/js/hrms/salaryInfo.js', 'public/js')
 	.js('resources/assets/js/hrms/unit.js', 'public/js')
     .js('resources/assets/js/hrms/employee.js', 'public/js');
 
+
 mix.combine([
     'resources/assets/css/auth/css.css',
     'resources/assets/css/auth/icons.css',
