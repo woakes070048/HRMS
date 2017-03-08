@@ -35,7 +35,6 @@ class EmployeePersonalInfoRequest extends FormRequest
         }
 
         return [
-            'user_id' => 'required|numeric',
             'father_name' => 'required|alpha_spaces',
             'mother_name' => 'required|alpha_spaces',
             'national_id' => $national_id,

@@ -103,26 +103,33 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeAddForm');
 
     Route::post('/add','EmployeeController@addEmployee');
-    Route::post('/add/{id}/personal/','EmployeeController@addPersonalInfo');
-    Route::post('/add/{id}/education/','EmployeeController@addEducation');
-    Route::post('/add/{id}/experience/','EmployeeController@addExperience');
-    Route::post('/add/{id}/salary/','EmployeeController@addSalary');
-    Route::post('/add/{id}/nominee/','EmployeeController@addNominee');
-    Route::post('/add/{id}/training/','EmployeeController@addTraining');
+    Route::post('/add/{userId}/personal/','EmployeeController@addPersonalInfo');
+    Route::post('/add/{userId}/education/','EmployeeController@addEditEducation');
+    Route::post('/add/{userId}/experience/','EmployeeController@addEditExperience');
+    Route::post('/add/{userId}/salary/','EmployeeController@addSalary');
+    Route::post('/add/{userId}/nominee/','EmployeeController@addEditNominee');
+    Route::post('/add/{userId}/training/','EmployeeController@addEditTraining');
     Route::post('/add/{id}/reference/','EmployeeController@addReference');
     Route::post('/add/{id}/children/','EmployeeController@addChildren');
     Route::post('/add/{id}/language/','EmployeeController@addLanguage');
 
     Route::get('/edit/{id}/{tab?}','EmployeeController@showEmployeeEditForm');
-    Route::post('/edit/{id}','EmployeeController@editEmployee');
-    Route::post('/edit/{id}/personal','EmployeeController@editPersonalInfo');
-
     Route::get('/edit/tab/{data_tab}/{data_id}','EmployeeController@getDataByTabAndId');
-    Route::post('/edit/{id}/education','EmployeeController@editEducation');
+
+    Route::post('/edit/{userId}','EmployeeController@editEmployee');
+    Route::post('/edit/{userId}/personal','EmployeeController@editPersonalInfo');
+
+    Route::post('/edit/{userId}/education','EmployeeController@addEditEducation');
     Route::delete('/delete/{id}/education','EmployeeController@deleteEducation');
 
-    Route::post('/edit/{id}/experience','EmployeeController@editExperience');
+    Route::post('/edit/{userId}/experience','EmployeeController@addEditExperience');
     Route::delete('/delete/{id}/experience','EmployeeController@deleteExperience');
+
+    Route::post('/edit/{userId}/salary','EmployeeController@editSalary');
+
+    Route::post('/edit/{userId}/nominee/','EmployeeController@addEditNominee');
+
+    Route::post('/edit/{userId}/training/','EmployeeController@addEditTraining');
 
 });
 
@@ -172,11 +179,19 @@ Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
 /******************** ...HRMS Emp Units Routes... **************/
 Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
     Route::get('/index','UnitController@index');
-    // Route::get('/getAllInfo','UnitController@getAllInfo');
-    // Route::post('/add','UnitController@create');
-    // Route::get('/edit/{id}','UnitController@edit');
-    // Route::post('/edit','UnitController@update');
-    // Route::get('/delete/{id}/{indexId}','UnitController@delete');
+    Route::get('/getUnits','UnitController@getUnits');
+    Route::post('/add','UnitController@create');
+    Route::post('/edit','UnitController@update');
+    Route::get('/delete/{id}/{indexId}','UnitController@delete');
+});
+
+/******************** ...HRMS Emp Settings Routes... **************/
+Route::group(['prefix' => 'settings', 'namespace' => 'Pim'],function (){
+    Route::get('/index','SettingsController@index');
+    Route::get('/getSettings','SettingsController@getSettings');
+    Route::post('/add','SettingsController@create');
+    Route::post('/edit','SettingsController@update');
+    // Route::get('/delete/{id}/{indexId}','SettingsController@delete');
 });
 
 
@@ -186,6 +201,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-employee-type','CommonController@getEmployeeType');
     Route::get('get-departments','CommonController@getDepartments');
     Route::get('get-levels','CommonController@getLevels');
+    Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');

@@ -620,7 +620,7 @@
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
                                             <button type="submit" :disabled="basics != ''"
-                                                    name="save_next" value="save_next"
+                                                    name="save_next" value="save_next" v-on:click="submit_button = 'save_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Create &
                                                 Next
@@ -630,7 +630,7 @@
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
                                             <button type="submit" :disabled="basics != ''"
-                                                    name="add_employee" value="add_employee"
+                                                    name="add_employee" value="add_employee" v-on:click="submit_button = 'add_employee'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Create
                                                 Employee
@@ -758,7 +758,7 @@
                                             <div class="form-group">
                                                 <label class="control-label">Blood Group :</label>
                                                 <input type="text"
-                                                       :value="personals.details.blood_group.blood_name"
+                                                       :value="(personals.details.blood_group)?personals.details.blood_group.blood_name:''"
                                                        class="form-control input-sm"
                                                        disabled="disabled">
                                             </div>
@@ -1223,7 +1223,7 @@
                                             <div class="form-group" :class="{'has-error': errors.pass_year}">
                                                 <label class="control-label">Pass Year : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="pass_year" class="date form-control input-sm"
+                                                <input type="text" name="pass_year" class="date form-control input-sm" v-on:click="datePickerYear"
                                                        readonly="">
                                                 <span v-if="errors.pass_year" class="text-danger">@{{ errors.pass_year[0]}}</span>
                                             </div>
@@ -1436,7 +1436,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_start_date}">
                                                 <label class="control-label">Job Start Date : <span class="text-danger">*</span></label>
-                                                <input type="text" id="job_start_date" name="job_start_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" id="job_start_date" name="job_start_date" class="datepicker form-control input-sm" v-on:click="datePicker" readonly="readonly">
                                                 <span v-if="errors.job_start_date" class="text-danger">@{{ errors.job_start_date[0]}}</span>
                                             </div>
                                         </div>
@@ -1444,7 +1444,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_end_date}">
                                                 <label class="control-label">Job End Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="job_end_date" id="job_end_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="job_end_date" id="job_end_date" class="datepicker form-control input-sm" v-on:click="datePicker" readonly="readonly">
                                                 <span v-if="errors.job_end_date" class="text-danger">@{{ errors.job_end_date[0]}}</span>
                                             </div>
                                         </div>
@@ -1623,7 +1623,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group" :class="{'has-error': errors.bank_id}">
                                         <label class="control-label">Bank Name : </label>
                                         <select class="form-control input-sm" name="bank_id" :disabled="salaries.salary_account">
@@ -1635,7 +1635,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group" :class="{'has-error': errors.bank_account_no}">
                                         <label class="control-label">Account No : </label>
                                         <input type="text" name="bank_account_no" class="form-control input-sm" :disabled="salaries.salary_account">
@@ -1651,10 +1651,17 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
                                         <label class="control-label">Bank Branch : </label>
                                         <input type="text" name="bank_branch_name" class="form-control input-sm" :disabled="salaries.salary_account">
+                                        <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
+                                        <label class="control-label">Bank Branch Address: </label>
+                                        <textarea type="text" name="bank_branch_address" class="form-control input-sm" :disabled="salaries.salary_account"></textarea>
                                         <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
                                     </div>
                                 </div>
@@ -2551,19 +2558,7 @@
         var base_url = "{{url('/')}}";
         var add_edit = "add";
         var current_tab = "{{($tab)?$tab:''}}";
-        var id = "{{(isset($id))?base64_encode($id).'/':''}}";
         var user_id = "{{(isset($id))?$id:''}}";
-
-        jQuery(document).ready(function () {
-
-            $('.date').datetimepicker({
-                format: 'YYYY',
-                viewMode: 'years',
-                minViewMode: "years",
-                pickTime: false
-            });
-
-        });
 
         // Modal Start
         function modal_open(id, form_id) {

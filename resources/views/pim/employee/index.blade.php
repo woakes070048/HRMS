@@ -67,7 +67,7 @@
                                <td>@if($user->createdBy) {{$user->createdBy->fullname}} @else Maybe system @endif</td>
                                <td>
                                    <div class="btn-group">
-                                       <a href="{{url('/employee/edit/'.base64_encode($user->id))}}" class="btn btn-sm btn-primary">
+                                       <a href="{{url('/employee/edit/'.$user->id)}}" class="btn btn-sm btn-primary">
                                            <i class="glyphicons glyphicons-pencil"></i>
                                        </a>
                                    </div>
@@ -77,7 +77,7 @@
                                        </a>
                                    </div>
                                    <div class="btn-group">
-                                       <a href="{{url('/employee/delete/'.base64_encode($user->id))}}" class="btn btn-sm btn-danger">
+                                       <a href="{{url('/employee/delete/'.$user->id)}}" class="btn btn-sm btn-danger">
                                            <i class="glyphicons glyphicons-bin"></i>
                                        </a>
                                    </div>

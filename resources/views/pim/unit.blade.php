@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<div id="salaryInfoDiv">
+<div id="unitDiv">
     <!-- Begin: Content -->
     <section id="content" class="animated fadeIn">
         <div class="row">
@@ -13,7 +13,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Units</span>
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".salaryInfoAdd" style="margin-top: 12px;">Add New Info</button>
+                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".unitAdd" style="margin-top: 12px;">Add New Unit</button>
                     </div>
                     <div class="panel-body">
                         <div id="showData">
@@ -21,29 +21,30 @@
                                 <thead>
                                     <tr class="success">
                                         <th>sl</th>
-                                        <th>Name</th>
-                                        <th>Amount</th>
-                                        <th>Type</th>
+                                        <th>Unit Name</th>
+                                        <th>Parent Name</th>
+                                        <th>Department</th>
+                                        <th>Details</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                        $sl = 1;
-                                    ?>
-                                    <tr v-for="(info,index) in salaryInfo">
+                                    <tr v-for="(info,index) in units">
                                         <td >@{{ index+1 }}</td>
-                                        <td>@{{ info.salary_info_name }}</td>
+                                        <td>@{{ info.unit_name }}</td>
                                         <td>
-                                            @{{ info.salary_info_amount }}
-                                            @{{ info.salary_info_amount_status==1?" (BDT)":" (%)" }}
+                                            <span v-if="info.parent">@{{ info.parent.unit_name }}</span>
+                                            <span v-else>...</span>
                                         </td>
-                                        <td> @{{ info.salary_info_type }} </td>
+                                        <td>@{{ info.department.department_name }}</td>
+                                        <td>@{{ info.unit_details }}</td>
+                                        <td>@{{ info.unit_status==1?"Active":"Inactive" }}</td>
                                         <td>
-                                            <button type="button" @click="editSalaryInfo(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".salaryInfoEdit">
+                                            <button type="button" @click="editUnit(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".unitEdit">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button type="button" @click="deleteSalaryInfo(info.id, index)" class="btn btn-sm btn-danger">
+                                            <button type="button" @click="deleteUnit(info.id, index)" class="btn btn-sm btn-danger">
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
                                         </td>
@@ -58,16 +59,16 @@
     </section>
     <!-- End: Content -->   
 
-    <!-- salaryInfoAdd modal start -->
-    <div class="modal fade bs-example-modal-lg salaryInfoAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalSalaryInfoAdd">
+    <!-- unitAdd modal start -->
+    <div class="modal fade bs-example-modal-lg unitAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalUnitAdd">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Add Salary Info</h4>
+                <h4 class="modal-title">Add New Unit</h4>
               </div>
-              <form class="form-horizontal department-create" id="department-create">
-              <div class="modal-body">
+              <form class="form-horizontal" @submit.prevent="saveUnit('addUnitFormData')" id="addUnitFormData">
+                <div class="modal-body">
 
                     <div id="create-form-errors">
                     </div>
@@ -75,162 +76,197 @@
                     {{ csrf_field() }}
 
                     <div class="form-group">
-                        <label for="name" class="col-md-3 control-label">Name</label>
+                        <label for="name" class="col-md-3 control-label">Unit Name</label>
                         <div class="col-md-9">
-                            <input name="info_name" class="form-control input-sm" v-model="info_name" v-validate:info_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('info_name') }" type="text" data-vv-as="name" placeholder="Salary info name">
-                            <div v-show="errors.has('info_name')" class="help text-danger">
-                                <i v-show="errors.has('info_name')" class="fa fa-warning"></i> 
-                                @{{ errors.first('info_name') }}
+                            <input name="unit_name" class="form-control input-sm" v-model="unit_name" v-validate:unit_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_name') }" data-vv-as="unit name" type="text" placeholder="Unit name">
+                            <div v-show="errors.has('unit_name')" class="help text-danger">
+                                <i v-show="errors.has('unit_name')" class="fa fa-warning"></i> 
+                                @{{ errors.first('unit_name') }}
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">Amount</label>
+                        <label for="unit_department_id" class="col-md-3 control-label">Department Name</label>
                         <div class="col-md-9">
-                            <input name="info_amount" type="number" step="0.01" class="form-control input-sm" v-model="info_amount" v-validate:info_amount.initial="'required'" :class="{'input': true, 'is-danger': errors.has('info_amount') }" type="text" data-vv-as="amount" placeholder="00.00">
-                            <div v-show="errors.has('info_amount')" class="help text-danger">
-                                <i v-show="errors.has('info_amount')" class="fa fa-warning"></i> 
-                                @{{ errors.first('info_amount') }}
+                            <select class="form-control input-sm" name="unit_department_id" v-model="unit_department_id" v-validate:unit_department_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_department_id') }" data-vv-as="unit department">
+                                <option value="">Select Department</option>
+                                <option v-for="department in departments" v-bind:value="department.id"> 
+                                    @{{ department.department_name }} 
+                                </option>
+                            </select>
+                            <div v-show="errors.has('unit_department_id')" class="help text-danger">
+                                <i v-show="errors.has('unit_department_id')" class="fa fa-warning"></i> 
+                                @{{ errors.first('unit_department_id') }}
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">Status</label>
+                        <label for="amount" class="col-md-3 control-label">
+                        </label>
                         <div class="col-md-9">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="inactive" v-model="info_status" value="0">
-                                        <label for="inactive">Percent</label>
-                                    </div>    
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="active" v-model="info_status" value="1">
-                                        <label for="active">Amount(BDT)</label>
-                                    </div>    
-                                </div>
-                            </div>     
+                            <div class="checkbox-custom mb5">
+                                <input type="checkbox" @click="chk_parent==1?chk_parent=0:chk_parent=1" id="checkboxDefault3" name="chk_parent" value="1">
+                                <label for="checkboxDefault3"> If this unit have parent</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" v-show="chk_parent == 1">
+                        <label for="amount" class="col-md-3 control-label">Parent Name</label>
+                        <div class="col-md-9">
+                            <select class="form-control input-sm" name="unit_parent_id" v-model="unit_parent_id" v-validate:unit_parent_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_parent_id') }" data-vv-as="unit parent">
+                                <option value="">Select Unit's Parent</option>
+                                <option v-for="unit in activeUnits" v-bind:value="unit.id"> @{{unit.unit_name}} </option>
+                            </select>
+                            <div v-show="errors.has('unit_parent_id')" class="help text-danger">
+                                <i v-show="errors.has('unit_parent_id')" class="fa fa-warning"></i> 
+                                @{{ errors.first('unit_parent_id') }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">Type</label>
+                        <label for="unit_details" class="col-md-3 control-label">Unit Details</label>
+                        <div class="col-md-9">
+                            <textarea name="unit_details" class="form-control input-sm" v-model="unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount" class="col-md-3 control-label"></label>
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="inactive_allowance" v-model="info_type" value="Allowance">
-                                        <label for="inactive_allowance">Allowance</label>
+                                        <input type="radio" name="unit_status" id="active" v-model="unit_status" value="1">
+                                        <label for="active">Active</label>
                                     </div>    
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="active_allowance" v-model="info_type" value="Deduct">
-                                        <label for="active_allowance">Deduct</label>
+                                    <div class="radio-custom radio-danger mb5">
+                                        <input type="radio" name="unit_status" id="inactive" v-model="unit_status" value="0">
+                                        <label for="inactive">Inactive</label>
                                     </div>    
                                 </div>
                             </div>     
                         </div>
                     </div>
-              </div>
+                </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" @click.prevent="saveSalaryInfo">Save Salary Info</button>
+                <button type="submit" class="btn btn-primary">Save Unit</button>
               </div>
 
               </form>
             </div>
         </div>
     </div>
-    <!-- salaryInfoAdd modal end --> 
+    <!-- unitAdd modal end --> 
 
     <!-- salary Info Edit modal start -->
-    <div class="modal fade bs-example-modal-lg salaryInfoEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalSalaryInfoEdit">
+    <div class="modal fade bs-example-modal-lg unitEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalUnitEdit">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Edit Salary Info</h4>
+                <h4 class="modal-title">Edit Unit</h4>
               </div>
-              <form class="form-horizontal department-create" id="department-create" @submit.prevent="updateSalaryInfo">
-              <div class="modal-body">
+              <form class="form-horizontal department-create" @submit.prevent="updateUnit('updateUnitFormData')" id="updateUnitFormData">
+                
+                <div class="modal-body">
 
                     <div id="edit-form-errors">
                     </div>
 
                     {{ csrf_field() }}
 
-                    <input type="hidden" data-vv-as="id" v-model="hdn_id">
+                    <input type="hidden" name="hdn_id" data-vv-as="id" v-model="hdn_id">
 
                     <div class="form-group">
-                        <label for="name" class="col-md-3 control-label">Name</label>
+                        <label for="edit_unit_name" class="col-md-3 control-label">Unit Name</label>
                         <div class="col-md-9">
-                            <input name="edit_info_name" class="form-control input-sm" v-model="edit_info_name" v-validate:edit_info_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_info_name') }" type="text" data-vv-as="name" placeholder="Salary info name">
-                            <div v-show="errors.has('edit_info_name')" class="help text-danger">
-                                <i v-show="errors.has('edit_info_name')" class="fa fa-warning"></i> 
-                                @{{ errors.first('edit_info_name') }}
+                            <input name="edit_unit_name" class="form-control input-sm" v-model="edit_unit_name" v-validate:edit_unit_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_unit_name') }" data-vv-as="unit name" type="text" placeholder="Unit name">
+                            <div v-show="errors.has('edit_unit_name')" class="help text-danger">
+                                <i v-show="errors.has('edit_unit_name')" class="fa fa-warning"></i> 
+                                @{{ errors.first('edit_unit_name') }}
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">Amount</label>
+                        <label for="edit_unit_department_id" class="col-md-3 control-label">Department Name</label>
                         <div class="col-md-9">
-                            <input name="edit_info_amount" type="number" step="0.01" class="form-control input-sm" v-model="edit_info_amount" v-validate:edit_info_amount.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_info_amount') }" type="text" data-vv-as="amount" placeholder="00.00">
-                            <div v-show="errors.has('edit_info_amount')" class="help text-danger">
-                                <i v-show="errors.has('edit_info_amount')" class="fa fa-warning"></i> 
-                                @{{ errors.first('edit_info_amount') }}
+                            <select class="form-control input-sm" name="edit_unit_department_id" v-model="edit_unit_department_id" v-validate:edit_unit_department_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_unit_department_id') }" data-vv-as="unit department">
+                                <option value="">Select Department</option>
+                                <option v-for="department in departments" v-bind:value="department.id"> 
+                                    @{{ department.department_name }} 
+                                </option>
+                            </select>
+                            <div v-show="errors.has('edit_unit_department_id')" class="help text-danger">
+                                <i v-show="errors.has('edit_unit_department_id')" class="fa fa-warning"></i> 
+                                @{{ errors.first('edit_unit_department_id') }}
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">Status</label>
+                        <label for="amount" class="col-md-3 control-label">
+                        </label>
                         <div class="col-md-9">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="edit_inactive" v-model="edit_info_status" value="0">
-                                        <label for="edit_inactive">Percent</label>
-                                    </div>    
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="edit_active" v-model="edit_info_status" value="1">
-                                        <label for="edit_active">Amount(BDT)</label>
-                                    </div>    
-                                </div>
-                            </div>     
+                            <div class="checkbox-custom mb5">
+                                <input type="checkbox" @click="chk_parent==1?chk_parent=0:chk_parent=1" id="checkboxDefault3" :checked="0" name="chk_parent" v-model="chk_parent" value="1">
+                                <label for="checkboxDefault3"> If this unit have parent</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" v-show="chk_parent == 1">
+                        <label for="edit_unit_parent_id" class="col-md-3 control-label">Parent Name</label>
+                        <div class="col-md-9">
+                            <select class="form-control input-sm" name="edit_unit_parent_id" v-model="edit_unit_parent_id" v-validate:edit_unit_parent_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_unit_parent_id') }" data-vv-as="unit parent">
+                                <option value="">Select Unit's Parent</option>
+                                <option v-for="unit in activeUnits" v-bind:value="unit.id"> @{{unit.unit_name}} </option>
+                            </select>
+                            <div v-show="errors.has('edit_unit_parent_id')" class="help text-danger">
+                                <i v-show="errors.has('edit_unit_parent_id')" class="fa fa-warning"></i> 
+                                @{{ errors.first('edit_unit_parent_id') }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">Type</label>
+                        <label for="edit_unit_details" class="col-md-3 control-label">Unit Details</label>
+                        <div class="col-md-9">
+                            <textarea name="edit_unit_details" class="form-control input-sm" v-model="edit_unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount" class="col-md-3 control-label"></label>
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="edit_inactive_allowance" v-model="edit_info_type" value="Allowance">
-                                        <label for="edit_inactive_allowance">Allowance</label>
+                                        <input type="radio" name="edit_unit_status" id="edit_active" v-model="edit_unit_status" value="1">
+                                        <label for="edit_active">Active</label>
                                     </div>    
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="edit_active_allowance" v-model="edit_info_type" value="Deduct">
-                                        <label for="edit_active_allowance">Deduct</label>
+                                    <div class="radio-custom radio-danger mb5">
+                                        <input type="radio" name="edit_unit_status" id="edit_inactive" v-model="edit_unit_status" value="0">
+                                        <label for="edit_inactive">Inactive</label>
                                     </div>    
                                 </div>
                             </div>     
                         </div>
                     </div>
-              </div>
+                </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default modal-close-btn" id="modal-edit-close-btn" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default modal-edit-close-btn" id="modal-edit-close-btn" data-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary">
-                    Update Salary Info
+                    Update Unit
                 </button>
               </div>
 
@@ -244,6 +280,6 @@
 
 @section('script')
 
-<script src="{{asset('js/salaryInfo.js')}}"></script>
+<script src="{{asset('js/unit.js')}}"></script>
 
 @endsection
