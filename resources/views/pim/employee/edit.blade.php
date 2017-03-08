@@ -64,7 +64,6 @@
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form method="post" v-on:submit.prevent="addEmployeeBasicInfo" enctype="multipart/form-data">
-                                <input type="hidden" name="user_id" v-model="user_id" class="form-control input-sm">
 
                                 <div v-for="(basic,index) in basics" v-if="index =='id'">
 
@@ -877,7 +876,11 @@
                                             <div class="col-md-3" v-if="education.result_type=='division'">
                                                 <div class="form-group">
                                                     <label class="control-label">Division :</label>
-                                                    <input type="text" :value="education.division" disabled="disabled" class="form-control input-sm">
+                                                    <select name="division" class="form-control input-sm" disabled="disabled">
+                                                        <option value="1" :selected="education.division ==1">First Division</option>
+                                                        <option value="2" :selected="education.division ==2">Second Division</option>
+                                                        <option value="3" :selected="education.division ==3">Third Division</option>
+                                                    </select>
                                                 </div>
                                             </div>
 
@@ -906,8 +909,8 @@
                                             </div>
                                             <div class="col-md-1 pull-right">
                                                 <div class="form-group mt5">
-                                                    <button id="add_education" v-on:click="getDataByTabAndId('education',education.id)"
-                                                            onclick="modal_open('#add_education','#add_new_education_modal')"
+                                                    <button id="add_education" v-on:click.prevent="getDataByTabAndId('education',education.id),errors=[]"
+                                                    onclick="modal_open('#add_education','#add_new_education_modal')" 
                                                             class="btn btn-sm btn-success btn-gradient dark btn-block"
                                                             data-effect="mfp-with-fade"><span
                                                             class="glyphicons glyphicons-edit"></span> &nbsp; Edit
@@ -1005,13 +1008,10 @@
                                                 <div class="radio-custom mb5">
                                                     <input id="result_type_cgpa" name="result_type" type="radio"
                                                            value="cgpa"
-                                                           @if(old('result_type') == 'cgpa') checked="checked" @endif
                                                            v-on:click="showCgpa=true,showDivision=false">
                                                     <label for="result_type_cgpa">CGPA</label>
 
                                                     <input id="result_type_division" name="result_type" type="radio"
-                                                           @if(old('result_type') == 'division') checked="checked"
-                                                           @endif
                                                            value="division"
                                                            v-on:click="showCgpa=false,showDivision=true">
                                                     <label for="result_type_division">Division</label>
@@ -1036,13 +1036,13 @@
                                                             class="text-danger">*</span></label>
                                                 <select name="division" class="form-control input-sm">
                                                     <option value="">--- Select Division ---</option>
-                                                    <option value="1" @if(old('division') == 1) {{"selected"}} @endif>
+                                                    <option value="1">
                                                         First Division
                                                     </option>
-                                                    <option value="2" @if(old('division') == 2) {{"selected"}} @endif>
+                                                    <option value="2" >
                                                         Second Division
                                                     </option>
-                                                    <option value="3" @if(old('division') == 3) {{"selected"}} @endif>
+                                                    <option value="3">
                                                         Third Division
                                                     </option>
                                                 </select>
@@ -1056,7 +1056,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_education" :disabled="educations.educations ==''"
+                                            <button id="add_education" :disabled="educations.educations ==''" v-on:click="singleEducation=[],showCgpa=true,showDivision=false,errors=[]"
                                                     onclick="modal_open('#add_education','#add_new_education_modal')"
                                                     class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span
@@ -1105,9 +1105,9 @@
                             <form id="add_experience_form" v-on:submit.prevent="addNewExperience" method="post">
 
                                 <!-- start v-if -->
-                                <div v-if="experiences.length>0">
+                                <div v-if="experiences.experiences !=''">
                                     <!-- start v-for in experiences   -->
-                                    <div v-for="(experience, index) in experiences">
+                                    <div v-for="(experience, index) in experiences.experiences">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -1172,7 +1172,7 @@
                                             <div class="col-md-1 pull-right">
                                                 <div class="form-group mt5">
                                                     <button id="add_education"
-                                                            onclick="modal_open('#add_education','#add_new_education_modal')"
+                                                            v-on:click.prevent="deleteEmployeeData(experience.id,'experience')"
                                                             class="btn btn-sm btn-danger btn-gradient dark btn-block"
                                                             data-effect="mfp-with-fade"><span
                                                             class="glyphicons glyphicons-bin"></span> &nbsp; Delete
@@ -1181,8 +1181,8 @@
                                             </div>
                                             <div class="col-md-1 pull-right">
                                                 <div class="form-group mt5">
-                                                    <button id="add_education"
-                                                            onclick="modal_open('#add_education','#add_new_education_modal')"
+                                                    <button id="add_new_experience_button" v-on:click.prevent="getDataByTabAndId('experience',experience.id),errors=[]"
+                                                    onclick="setTimeout(modal_open('#add_new_experience_button','#add_new_experience_modal'),5)" 
                                                             class="btn btn-sm btn-success btn-gradient dark btn-block"
                                                             data-effect="mfp-with-fade"><span
                                                             class="glyphicons glyphicons-edit"></span> &nbsp; Edit
@@ -1219,7 +1219,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_start_date}">
                                                 <label class="control-label">Job Start Date : <span class="text-danger">*</span></label>
-                                                <input type="text" id="job_start_date" name="job_start_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" id="job_start_date" v-on:click="datePicker" name="job_start_date" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.job_start_date" class="text-danger">@{{ errors.job_start_date[0]}}</span>
                                             </div>
                                         </div>
@@ -1227,7 +1227,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_end_date}">
                                                 <label class="control-label">Job End Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="job_end_date" id="job_end_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="job_end_date" v-on:click="datePicker" id="job_end_date" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.job_end_date" class="text-danger">@{{ errors.job_end_date[0]}}</span>
                                             </div>
                                         </div>
@@ -1264,7 +1264,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_new_experience_button" :disabled="experiences.length<=0"
+                                            <button id="add_new_experience_button" :disabled="experiences.experiences ==''" v-on:click="singleExperience=[],errors=[]"
                                                     onclick="modal_open('#add_new_experience_button','#add_new_experience_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
                                                 Experience
@@ -1275,10 +1275,10 @@
 
                                 <hr class="short alt">
 
-                                <div class="section row mbn">
+                                <div class="section row mbn" v-if="experiences.experiences ==''">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" v-if="experiences.length<=0"
+                                            <button type="submit"
                                                     name="save_experience_and_next" v-on:click="submit_button='save_experience_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
@@ -1289,7 +1289,7 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" v-if="experiences.length<=0"
+                                            <button type="submit"
                                                     name="save_experience" v-on:click="submit_button='save_experience'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Experience
@@ -1314,7 +1314,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.basic_salary}">
                                             <label class="control-label">Basic Salary Amount: <span class="text-danger">*</span></label>
-                                            <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount" :readonly="salaries.basic_salary">
+                                            <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount">
                                             <span v-if="errors.basic_salary" class="help-block">@{{errors.basic_salary[0]}}</span>
                                         </div>
                                     </div>
@@ -1322,7 +1322,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.effective_date}">
                                             <label class="control-label">Salary Effective Date: <span class="text-danger">*</span></label>
-                                            <input type="text" name="effective_date" :value="(salaries.effective_date)?salaries.effective_date:''" :readonly="salaries.effective_date" class="datepicker form-control input-sm">
+                                            <input type="text" name="effective_date" :value="(salaries.effective_date)?salaries.effective_date:''" class="datepicker form-control input-sm">
                                             <span v-if="errors.effective_date" class="help-block">@{{errors.effective_date[0]}}</span>
                                         </div>
                                     </div>
@@ -1337,43 +1337,90 @@
                                 <div class="row" v-if="salaries.salaries ==''">
                                     <div class="col-md-3 " v-for="levelSalaryInfo in levelSalaryInfos.salary_info">
                                         <div class="checkbox-custom mb5 pull-left">
-                                            <input :id="levelSalaryInfo.basic_salary_info.id" type="checkbox" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][id]'" :value="levelSalaryInfo.basic_salary_info.id" checked="checked">
+                                            <input :id="levelSalaryInfo.basic_salary_info.id" type="checkbox" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][id]'" :value="levelSalaryInfo.basic_salary_info.id">
 
-                                            <label :for="levelSalaryInfo.basic_salary_info.id" v-text="(levelSalaryInfo.basic_salary_info.amount_status==0)?levelSalaryInfo.basic_salary_info.name+' (%) ':levelSalaryInfo.basic_salary_info.name+' ($) '"></label>
+                                            <label :for="levelSalaryInfo.basic_salary_info.id" v-text="(levelSalaryInfo.basic_salary_info.salary_info_amount_status==0)?levelSalaryInfo.basic_salary_info.salary_info_name+' (%) ':levelSalaryInfo.basic_salary_info.salary_info_name+' ($) '"></label>
 
                                         </div>
 
                                         <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][type]'">
-                                            <option value="percent" :selected="levelSalaryInfo.basic_salary_info.amount_status ==0">Percent</option>
-                                            <option value="fixed" :selected="levelSalaryInfo.basic_salary_info.amount_status ==1">Fixed</option>
+                                            <option value="percent" :selected="levelSalaryInfo.basic_salary_info.salary_info_amount_status ==0">Percent</option>
+                                            <option value="fixed" :selected="levelSalaryInfo.basic_salary_info.salary_info_amount_status ==1">Fixed</option>
                                         </select>
 
                                         <input type="number" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][amount]'" :value="levelSalaryInfo.amount" class="col-md-2 form-control input-sm mb5">
 
                                         <input type="text" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][effective_date]'" class="datepicker form-control input-sm">
                                     </div>
+
+                                        <!-- add other allowance -->
+                                    <div class="col-md-3 mb15" v-for="allowance in otherAllowance">
+                                        <div class="checkbox-custom mb5 pull-left">
+
+                                            <input :id="allowance.id" type="checkbox" :name="'salary_info['+allowance.id+'][id]'" :value="allowance.id" checked="checked">
+
+                                            <label :for="allowance.id" v-text="(allowance.salary_info_amount_status==0)?allowance.salary_info_name+' (%) ':allowance.salary_info_name+' ($) '"></label>
+                                        </div>
+
+                                        <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+allowance.id+'][type]'">
+                                            <option value="percent" :selected="allowance.salary_info_amount_status ==0">Percent</option>
+                                            <option value="fixed" :selected="allowance.salary_info_amount_status ==1">Fixed</option>
+                                        </select>
+
+                                        <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
+
+                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="datepicker2 form-control input-sm">
+                                    </div>
+
                                 </div>
 
                                 <div class="row" v-else>
                                     <div class="col-md-3 " v-for="salary in salaries.salaries">
                                         <div class="checkbox-custom mb5 pull-left">
-                                            <input type="checkbox" checked="checked">
-                                            <label v-text="salary.basic_salary_info.name+' ( '+salary.salary_amount_type+' ) '"></label>
+                                            <input :id="salary.basic_salary_info_id" type="checkbox" :name="'salary_info['+salary.basic_salary_info_id+'][id]'" :value="salary.basic_salary_info_id" :checked="salary.basic_salary_info_id">
+
+                                            <label :for="salary.basic_salary_info_id" v-text="(salary.salary_amount_type=='percent')?salary.basic_salary_info.salary_info_name+' (%) ':salary.basic_salary_info.salary_info_name+' ($) '"></label>
                                         </div>
 
-                                        <input type="text" :value="salary.salary_amount_type" class="col-md-2 form-control input-sm mb5" disabled="disabled">
+                                        <input type="hidden" :name="'salary_info['+salary.basic_salary_info_id+'][salary_id]'" :value="salary.id">
 
-                                        <input type="number" :value="salary.salary_amount" class="col-md-2 form-control input-sm mb5" disabled="disabled">
+                                        <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+salary.basic_salary_info_id+'][type]'">
+                                            <option value="percent" :selected="salary.salary_amount_type =='percent'">Percent</option>
+                                            <option value="fixed" :selected="salary.salary_amount_type =='fixed'">Fixed</option>
+                                        </select>
 
-                                        <input type="text" :value="salary.salary_effective_date" class="datepicker form-control input-sm" disabled="disabled">
+                                        <input type="number" :name="'salary_info['+salary.basic_salary_info_id+'][amount]'" :value="salary.salary_amount" class="col-md-2 form-control input-sm mb5">
+
+                                        <input type="text" :value="salary.salary_effective_date" :name="'salary_info['+salary.basic_salary_info_id+'][effective_date]'" class="datepicker form-control input-sm">
+                                    </div>
+
+                                     <!-- add other allowance -->
+                                    <div class="col-md-3 mb15" v-for="allowance in otherAllowance">
+                                        <div class="checkbox-custom mb5 pull-left">
+
+                                            <input :id="allowance.id" type="checkbox" :name="'salary_info['+allowance.id+'][id]'" :value="allowance.id" checked="checked">
+
+                                            <label :for="allowance.id" v-text="(allowance.salary_info_amount_status==0)?allowance.salary_info_name+' (%) ':allowance.salary_info_name+' ($) '"></label>
+                                        </div>
+
+                                        <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+allowance.id+'][type]'">
+                                            <option value="percent" :selected="allowance.salary_info_amount_status ==0">Percent</option>
+                                            <option value="fixed" :selected="allowance.salary_info_amount_status ==1">Fixed</option>
+                                        </select>
+
+                                        <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
+
+                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="datepicker2 form-control input-sm">
                                     </div>
                                 </div>
+
+
 
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_more_allownce_button" :disabled="salaries.salaries !=''"
-                                                    onclick="modal_open('#add_more_allownce_button','#add_more_allownce_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block" v-on:click="getAllowanceNotinLevel"
+                                            <button id="add_more_allownce_button"
+                                                    onclick="setTimeout(modal_open('#add_more_allownce_button','#add_more_allownce_modal'),5)" class="btn btn-sm btn-dark btn-gradient dark btn-block" v-on:click="getAllowanceNotinLevel"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add More Allowance
                                             </button>
                                         </div>
@@ -1387,11 +1434,13 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <input type="hidden" name="salary_account_id" :value="(salaries.salary_account)?salaries.salary_account.id:''">
+
+                                    <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.bank_id}">
                                             <label class="control-label">Bank Name : </label>
                                             <select class="form-control input-sm" name="bank_id" :disabled="salaries.salary_account">
-                                                <option :value="''">---- Select Bank Name ----</option>
+                                                <option value="">---- Select Bank Name ----</option>
                                                 <option v-for="(bank,index) in banks"
                                                         :value="bank.id">@{{ bank.bank_name }}</option>
                                             </select>
@@ -1399,10 +1448,10 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.bank_account_no}">
                                             <label class="control-label">Account No : </label>
-                                            <input type="text" name="bank_account_no" class="form-control input-sm" :disabled="salaries.salary_account">
+                                            <input type="text" name="bank_account_no" class="form-control input-sm">
                                             <span v-if="errors.bank_account_no" class="help-block">@{{errors.bank_account_no[0]}}</span>
                                         </div>
                                     </div>
@@ -1410,16 +1459,24 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.bank_account_name}">
                                             <label class="control-label">Account Name : </label>
-                                            <input type="text" name="bank_account_name" class="form-control input-sm" :disabled="salaries.salary_account">
+                                            <input type="text" name="bank_account_name" class="form-control input-sm">
                                             <span v-if="errors.bank_account_name" class="help-block">@{{errors.bank_account_name[0]}}</span>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
                                             <label class="control-label">Bank Branch : </label>
-                                            <input type="text" name="bank_branch_name" class="form-control input-sm" :disabled="salaries.salary_account">
+                                            <input type="text" name="bank_branch_name" class="form-control input-sm">
                                             <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.bank_branch_address}">
+                                            <label class="control-label">Bank Branch Address: </label>
+                                            <textarea type="text" name="bank_branch_address" class="form-control input-sm"></textarea>
+                                            <span v-if="errors.bank_branch_address" class="help-block">@{{errors.bank_branch_address[0]}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1429,10 +1486,10 @@
                                 <div class="section row mbn">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="salaries.salaries !=''"
+                                            <button type="submit"
                                                     name="save_salary_and_next" v-on:click="submit_button='save_salary_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -1440,10 +1497,10 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="salaries.salaries !=''"
+                                            <button type="submit"
                                                     name="save_salary" v-on:click="submit_button='save_salary'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Salary
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Salary
                                             </button>
                                         </p>
                                     </div>
@@ -1462,59 +1519,73 @@
                                 <input type="hidden" name="user_id" :value="user_id">
 
                                 <div v-if="nominee.user_id">
-                                    <div class="col-md-2">
+                                    <input type="hidden" name="id" :value="nominee.id">
+                                    <div class="col-md-2" :class="{'has-error': errors.image}">
                                         <label class="control-label">Nominee Photo :</label>
+
                                         <div class="fileupload-new admin-form" data-provides="fileupload">
                                             <div class="fileupload-preview thumbnail mb5">
-                                                <img v-if="nominee.nominee_photo" :src="'/files/'+nominee.user_id+'/'+nominee.nominee_photo" alt="holder">
+                                                 <img v-if="nominee.nominee_photo" :src="'/files/'+nominee.user_id+'/'+nominee.nominee_photo" alt="holder">
                                                 <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
                                             </div>
+                                            <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
+                                                <span class="fileupload-exists"><span class="fa fa-user"></span> &nbsp; <strong>Change Photo</strong></span>
+                                                <span class="fileupload-new"><span class="fa fa-user"></span> &nbsp; <strong>Select Photo</strong></span>
+                                                <input type="file" name="image">
+                                            </span>
                                         </div>
+                                        <span v-if="errors.image" class="help-block">@{{errors.image[0]}}</span>
                                     </div>
 
                                     <div class="col-md-10 mt40">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div class="form-group">
+                                                <div class="form-group" :class="{'has-error': errors.nominee_name}">
                                                     <label class="control-label">Nominee Name : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_name" :value="nominee.nominee_name" class="form-control input-sm" disabled="disabled">
+                                                    <input type="text" name="nominee_name" :value="nominee.nominee_name" class="form-control input-sm">
+                                                    <span v-if="errors.nominee_name" class="help-block">@{{errors.nominee_name[0]}}</span>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group">
+                                                <div class="form-group" :class="{'has-error': errors.nominee_relation}">
                                                     <label class="control-label">Nominee Relation : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_relation" class="form-control input-sm" :value="nominee.nominee_relation" disabled="disabled">
+                                                    <input type="text" name="nominee_relation" class="form-control input-sm" :value="nominee.nominee_relation">
+                                                     <span v-if="errors.nominee_relation" class="help-block">@{{errors.nominee_relation[0]}}</span>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group">
+                                                <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
                                                     <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
                                                     <input type="text" name="nominee_birth_date" class="form-control input-sm" readonly="readonly" :value="nominee.nominee_birth_date">
+                                                    <span v-if="errors.nominee_birth_date" class="help-block">@{{errors.nominee_birth_date[0]}}</span>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div class="form-group">
+                                                <div class="form-group" :class="{'has-error': errors.nominee_distribution}">
                                                     <label class="control-label">Nominee Distribution : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_distribution" class="form-control input-sm" :value="nominee.nominee_distribution" disabled="disabled">
+                                                    <input type="text" name="nominee_distribution" class="form-control input-sm" :value="nominee.nominee_distribution">
+                                                    <span v-if="errors.nominee_distribution" class="help-block">@{{errors.nominee_distribution[0]}}</span>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group">
+                                                <div class="form-group" :class="{'has-error': errors.nominee_rest_distribution}">
                                                     <label class="control-label">Nominee Rest Distribution : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="nominee.nominee_rest_distribution" disabled="disabled">
+                                                    <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="nominee.nominee_rest_distribution">
+                                                    <span v-if="errors.nominee_rest_distribution" class="help-block">@{{errors.nominee_rest_distribution[0]}}</span>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group">
+                                                <div class="form-group" :class="{'has-error': errors.nominee_address}">
                                                     <label class="control-label">Nominee Address : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_address" class="form-control input-sm" :value="nominee.nominee_address" disabled="disabled">
+                                                    <input type="text" name="nominee_address" class="form-control input-sm" :value="nominee.nominee_address">
+                                                    <span v-if="errors.nominee_address" class="help-block">@{{errors.nominee_address[0]}}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1560,7 +1631,7 @@
                                                 <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
                                                     <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
                                                     <input type="text" name="nominee_birth_date" class="datepicker form-control input-sm" readonly="readonly">
-                                                    <span v-if="errors.nominee_birth_date" class="help-block">@{{errors.   nominee_birth_date[0]}}</span>
+                                                    <span v-if="errors.nominee_birth_date" class="help-block">@{{errors.nominee_birth_date[0]}}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1597,10 +1668,10 @@
                                 <div class="section row mbn">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="nominee.user_id"
+                                            <button type="submit"
                                                     name="save_nominee_and_next" v-on:click="submit_button='save_nominee_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -1608,10 +1679,10 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="nominee.user_id"
+                                            <button type="submit"
                                                     name="save_nominee" v-on:click="submit_button='save_nominee'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Nominee
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Nominee
                                             </button>
                                         </p>
                                     </div>
@@ -1769,10 +1840,10 @@
                                 <div class="section row mbn">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="trainings.length>0" :disabled="trainings.user_id"
+                                            <button type="submit"
                                                     name="save_training_and_next" v-on:click="submit_button='save_training_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -1780,10 +1851,10 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="trainings.length>0"
+                                            <button type="submit"
                                                     name="save_training" v-on:click="submit_button='save_training'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Training
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Training
                                             </button>
                                         </p>
                                     </div>
@@ -2251,7 +2322,7 @@
     @include('pim.employee.modals.children')
 
     <!-- Add Language Form Popup -->
-        @include('pim.employee.modals.language')
+    @include('pim.employee.modals.language')
 
         <div id="add_new_language_button_modal" style="max-width:400px" class="popup-basic mfp-with-anim mfp-hide">
             <div class="panel">
