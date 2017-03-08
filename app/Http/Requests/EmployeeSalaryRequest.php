@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DesignationRequest extends FormRequest
+class EmployeeSalaryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,20 +24,19 @@ class DesignationRequest extends FormRequest
     public function rules()
     {
         return [
-            'designation_name' => 'required|alpha_spaces',
-            'department_id' => 'required',
-            'level_id' => 'required',
-            'designation_description' => 'required'
+            'basic_salary' => 'required|numeric',
+            'effective_date' => 'required|date',
+            'bank_id' => 'nullable|required',
+            'bank_account_no' => 'nullable|required|digits_between:13,26',
+            'bank_account_name' => 'nullable|required|alpha_spaces',
+            'bank_branch_name' => 'nullable|required|alpha_spaces',
         ];
     }
 
 
     public function attributes(){
         return [
-            'designation_name' => 'Designation Name',
-            'department_id' => 'Department',
-            'level_id' => 'Level',
-            'designation_description' => 'Designation Description'
+            'bank_id' => 'bank name',
         ];
     }
 }

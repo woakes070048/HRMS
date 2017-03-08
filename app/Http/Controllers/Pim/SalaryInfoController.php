@@ -44,6 +44,7 @@ class SalaryInfoController extends Controller
             'info_type' => 'required'
         ]);
 
+
         try{
 
             $data['data'] = BasicSalaryInfo::create([
@@ -100,6 +101,7 @@ class SalaryInfoController extends Controller
             return response()->json($data);
         }
     }
+
 
     public function delete($id, $indexId){
         

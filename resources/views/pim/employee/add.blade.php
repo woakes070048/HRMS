@@ -41,6 +41,9 @@
                 <li class="@if(isset($id) && $tab == 'children') active @endif">
                     <a id="children" @if(isset($id)) href="#tab1_9" v-on:click="tab = 'children'" data-toggle="tab" @endif aria-expanded="true">Children</a>
                 </li>
+                <li class="@if(isset($id) && $tab == 'language') active @endif">
+                    <a id="language" @if(isset($id)) href="#tab1_10" v-on:click="tab = 'language'" data-toggle="tab" @endif aria-expanded="true">Language</a>
+                </li>
             </ul>
         </div>
 
@@ -49,7 +52,7 @@
 
                 <!--- Basic Info -->
                 <div id="tab1_1" class="tab-pane @if($tab == '') active @endif">
-                    <div class="row">
+                    <div class="row mt20">
                         <div class="col-md-12">
                             <form action="{{url('employee/add')}}" method="post" enctype="multipart/form-data">
                                 {{csrf_field()}}
@@ -58,12 +61,21 @@
                                     <div v-for="(basic,index) in basics" v-if="index =='id'">
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="control-label">Employee No : <span
                                                                 class="text-danger">*</span></label>
                                                     <input type="text" :value="basics.employee_no"
                                                            class="form-control input-sm" disabled="disabled">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="control-label">Employee Type : <span class="text-danger">*</span></label>
+                                                    <select class="form-control input-sm" disabled="disabled">
+                                                        <option v-for="(employeeType,index) in employeeTypes" :selected="employeeType.id == basics.employee_type_id">@{{employeeType.type_name}}</option>
+                                                    </select>
                                                 </div>
                                             </div>
 
@@ -327,15 +339,26 @@
                                     </div>
                                 @else
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group {{$errors->has('employee_no')?'has-error':''}}">
                                                 <label class="control-label">Employee No : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="employee_no"
-                                                       value="{{old('employee_no')}}"
+                                                <input type="text" name="employee_no" value="{{(old('employee_no'))?old('employee_no'):$next_employee_id}}" 
                                                        class="form-control input-sm" placeholder="Enter Employee No">
                                                 @if($errors->has('employee_no'))<span
                                                         class="help-block">{{$errors->first('employee_no')}}</span>@endif
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-group {{$errors->has('employee_type_id')?'has-error':''}}">
+                                                <label class="control-label">Employee Type : <span
+                                                            class="text-danger">*</span></label>
+                                                <select class="form-control input-sm" id="employee_type_id" name="employee_type_id">
+                                                    <option value="">...Select Employee Type...</option>
+                                                    <option v-for="(employeeType,index) in employeeTypes" v-bind:value="employeeType.id">@{{employeeType.type_name}}</option>
+                                                </select>
+                                                @if($errors->has('employee_type_id'))<span class="help-block">{{$errors->first('employee_type_id')}}</span>@endif
                                             </div>
                                         </div>
 
@@ -343,13 +366,11 @@
                                             <div class="form-group {{$errors->has('designation_id')?'has-error':''}}">
                                                 <label class="control-label">Employee Designation : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="form-control input-sm" id="designation_id"
+                                                <select class="select2-single form-control input-sm" id="designation_id"
                                                         name="designation_id">
-                                                    <option v-bind:value="0">---- Select Employee Designation ----
-                                                    </option>
+                                                        <option>...Select Employee Designation...</option>
                                                     <option v-for="(designation,index) in designations"
-                                                            v-bind:value="designation.id"
-                                                            :selected="designation.id == {{json_encode(old('designation_id'))?true:false}}">@{{designation.designation_name}}</option>
+                                                            v-bind:value="designation.id">@{{designation.designation_name}} - ( @{{designation.level.level_name}} ) - (@{{designation.department.department_name}})</option>
                                                 </select>
                                                 @if($errors->has('designation_id'))<span
                                                         class="help-block">{{$errors->first('designation_id')}}</span>@endif
@@ -475,7 +496,7 @@
                                                     <span class="fileupload-exists"><span class="fa fa-user"></span> &nbsp; <strong>Change Photo</strong></span>
                                                     <span class="fileupload-new"><span class="fa fa-user"></span> &nbsp; <strong>Select Photo</strong></span>
                                                 <input type="file" name="image">
-                                            </span>
+                                                </span>
                                             </div>
                                         </div>
                                         <div class="col-md-10">
@@ -675,12 +696,9 @@
 
                 <!--- Personal Info -->
                 <div id="tab1_2" class="tab-pane @if(isset($id) && $tab == 'personal') active @endif">
-                    <div class="row">
+                    <div class="row mt20">
                         <div class="col-md-12">
-                            <form action="@if(isset($id) && isset($tab)){{url('employee/add/'.$id.'/personal')}}@endif"
-                                  method="post">
-                                {{csrf_field()}}
-
+                            <form id="add_personal_info_form" v-on:submit.prevent="addPersonalInfo" method="post">
                                 <div v-if="personals.details">
                                     <div class="row">
                                         <div class="col-md-3">
@@ -866,151 +884,137 @@
 
                                 <div v-else>
                                     <div class="row">
-                                        @if(isset($user))
-                                            <div class="col-md-3">
-                                                <div class="form-group {{$errors->has('user_id')?'has-error':''}}">
-                                                    <label class="control-label">Employee Full Name:</label>
-                                                    <input type="text" value="{{$user->fullname}}"
-                                                           class="form-control input-sm" disabled>
-                                                    <input type="hidden" name="user_id" value="{{$user->id}}"
-                                                           class="form-control input-sm">
-                                                    @if($errors->has('user_id'))<span
-                                                            class="help-block">{{$errors->first('user_id')}}</span>@endif
-                                                </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.user_id}">
+                                                <label class="control-label">Employee Full Name:</label>
+                                                <input type="text" :value="personals.first_name+' '+personals.last_name"
+                                                       class="form-control input-sm" disabled>
+                                                <input type="hidden" name="user_id" :value="user_id"
+                                                       class="form-control input-sm">
+                                                <span v-if="errors.user_id" class="text-danger">@{{ errors.user_id[0]}}</span>
                                             </div>
-                                        @endif
+                                        </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('father_name')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.father_name}">
                                                 <label class="control-label">Father Name : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="father_name"
                                                        value="{{old('father_name')}}"
                                                        class="form-control input-sm" placeholder="Enter Father Name">
-                                                @if($errors->has('father_name'))<span
-                                                        class="help-block">{{$errors->first('father_name')}}</span>@endif
+                                                <span v-if="errors.father_name" class="text-danger">@{{ errors.father_name[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('mother_name')?'has-error':''}}">
-                                                <label class="control-label">Father Name : <span
+                                            <div class="form-group" :class="{'has-error': errors.mother_name}">
+                                                <label class="control-label">Mother Name : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="mother_name" value="{{old('mother_name')}}"
                                                        class="form-control input-sm" placeholder="Enter Mother Name">
-                                                @if($errors->has('mother_name'))<span
-                                                        class="help-block">{{$errors->first('mother_name')}}</span>@endif
+                                                <span v-if="errors.mother_name" class="text-danger">@{{ errors.mother_name[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('national_id')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.national_id}">
                                                 <label class="control-label">National Id : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="national_id" value="{{old('national_id')}}"
                                                        class="form-control input-sm" placeholder="Enter National Id">
-                                                @if($errors->has('national_id'))<span
-                                                        class="help-block">{{$errors->first('national_id')}}</span>@endif
+                                                <span v-if="errors.national_id" class="text-danger">@{{ errors.national_id[0]}}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('passport_no')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.passport_no}">
                                                 <label class="control-label">Passport No :</label>
                                                 <input type="text" name="passport_no" value="{{old('passport_no')}}"
                                                        class="form-control input-sm" placeholder="Enter Passport No">
-                                                @if($errors->has('passport_no'))<span
-                                                        class="help-block">{{$errors->first('passport_no')}}</span>@endif
+                                                <span v-if="errors.passport_no" class="text-danger">@{{ errors.passport_no[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('tin_no')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.tin_no}">
                                                 <label class="control-label">Tin No :</label>
                                                 <input type="text" name="tin_no" value="{{old('tin_no')}}"
                                                        class="form-control input-sm" placeholder="Enter Tin No">
-                                                @if($errors->has('tin_no'))<span
-                                                        class="help-block">{{$errors->first('tin_no')}}</span>@endif
+                                                <span v-if="errors.tin_no" class="text-danger">@{{ errors.tin_no[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('personal_email')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.personal_email}">
                                                 <label class="control-label">Personal Email : <span class="text-danger">*</span></label>
                                                 <input type="text" name="personal_email"
                                                        value="{{old('personal_email')}}" class="form-control input-sm"
                                                        placeholder="Enter Personal Email">
-                                                @if($errors->has('personal_email'))<span
-                                                        class="help-block">{{$errors->first('personal_email')}}</span>@endif
+                                                <span v-if="errors.personal_email" class="text-danger">@{{ errors.personal_email[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('official_email')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.official_email}">
                                                 <label class="control-label">Official Email : <span class="text-danger">*</span></label>
                                                 <input type="text" name="official_email"
                                                        value="{{old('official_email')}}" class="form-control input-sm"
                                                        placeholder="Enter Official Email">
-                                                @if($errors->has('official_email'))<span
-                                                        class="help-block">{{$errors->first('official_email')}}</span>@endif
+                                                <span v-if="errors.official_email" class="text-danger">@{{ errors.official_email[0]}}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('phone_number')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.phone_number}">
                                                 <label class="control-label">Phone Number : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="phone_number" value="{{old('phone_number')}}"
                                                        class="form-control input-sm" placeholder="Enter Phone Number">
-                                                @if($errors->has('phone_number'))<span
-                                                        class="help-block">{{$errors->first('phone_number')}}</span>@endif
+                                                <span v-if="errors.phone_number" class="text-danger">@{{ errors.phone_number[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('birth_date')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.birth_date}">
                                                 <label class="control-label">Birth Date :</label>
                                                 <input type="text" name="birth_date" value="{{old('birth_date')}}"
                                                        class="datepicker form-control input-sm"
                                                        placeholder="Enter Birth Date" readonly="readonly">
-                                                @if($errors->has('birth_date'))<span
-                                                        class="help-block">{{$errors->first('birth_date')}}</span>@endif
+                                                <span v-if="errors.birth_date" class="text-danger">@{{ errors.birth_date[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('joining_date')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.joining_date}">
                                                 <label class="control-label">Joining Date : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="joining_date" value="{{old('joining_date')}}"
                                                        class="datepicker form-control input-sm"
                                                        placeholder="Enter Joining Date" readonly="readonly">
-                                                @if($errors->has('joining_date'))<span
-                                                        class="help-block">{{$errors->first('joining_date')}}</span>@endif
+                                                <span v-if="errors.joining_date" class="text-danger">@{{ errors.joining_date[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('blood_group_id')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.blood_group_id}">
                                                 <label class="control-label">Blood Group :</label>
                                                 <select class="form-control input-sm" name="blood_group_id">
                                                     <option value="0">---- Select Blood Group ----</option>
                                                     <option v-bind:value="blood_group.id"
                                                             v-for="(blood_group, index) in blood_group">@{{ blood_group.blood_name}}</option>
                                                 </select>
-                                                @if($errors->has('blood_group_id'))<span
-                                                        class="help-block">{{$errors->first('blood_group_id')}}</span>@endif
+                                                <span v-if="errors.blood_group_id" class="text-danger">@{{ errors.blood_group_id[0]}}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('gender')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.gender}">
                                                 <label class="control-label">Gender : <span class="text-danger">*</span></label>
                                                 <div class="radio-custom mb5">
                                                     <input id="male" name="gender" type="radio" value="male"
@@ -1021,13 +1025,12 @@
                                                            @if(old('gender') == 'female') checked="checked" @endif>
                                                     <label for="female">Female</label>
                                                 </div>
-                                                @if($errors->has('gender'))<span
-                                                        class="help-block">{{$errors->first('gender')}}</span>@endif
+                                                <span v-if="errors.gender" class="text-danger">@{{ errors.gender[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('marital_status')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.marital_status}">
                                                 <label class="control-label">Marital Status : <span class="text-danger">*</span></label>
                                                 <div class="radio-custom mb5">
                                                     <input id="married" name="marital_status" type="radio"
@@ -1040,52 +1043,47 @@
                                                            @if(old('marital_status') == 'unmarried') checked="checked" @endif>
                                                     <label for="unmarried">Unmarried</label>
                                                 </div>
-                                                @if($errors->has('marital_status'))<span
-                                                        class="help-block">{{$errors->first('marital_status')}}</span>@endif
+                                                <span v-if="errors.marital_status" class="text-danger">@{{ errors.marital_status[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('religion')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.religion}">
                                                 <label class="control-label">Religion :</label>
                                                 <input type="text" name="religion" value="{{old('religion')}}"
                                                        class="form-control input-sm" placeholder="Enter Religion">
-                                                @if($errors->has('religion'))<span
-                                                        class="help-block">{{$errors->first('religion')}}</span>@endif
+                                                <span v-if="errors.religion" class="text-danger">@{{ errors.religion[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('nationality')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.nationality}">
                                                 <label class="control-label">Nationality :</label>
                                                 <input type="text" name="nationality" value="{{old('nationality')}}"
                                                        class="form-control input-sm" placeholder="Enter Nationality">
-                                                @if($errors->has('nationality'))<span
-                                                        class="help-block">{{$errors->first('nationality')}}</span>@endif
+                                                <span v-if="errors.nationality" class="text-danger">@{{ errors.nationality[0]}}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <div class="form-group {{$errors->has('emergency_contact_person')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.emergency_contact_person}">
                                                 <label class="control-label">Emergency Contact Person :</label>
                                                 <input type="text" name="emergency_contact_person"
                                                        value="{{old('emergency_contact_person')}}"
                                                        class="form-control input-sm"
                                                        placeholder="Emergency Contact Person">
-                                                @if($errors->has('emergency_contact_person'))<span
-                                                        class="help-block">{{$errors->first('emergency_contact_person')}}</span>@endif
+                                                <span v-if="errors.emergency_contact_person" class="text-danger">@{{ errors.emergency_contact_person[0]}}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-8">
-                                            <div class="form-group {{$errors->has('emergency_contact_address')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.emergency_contact_address}">
                                                 <label class="control-label">Emergency Contact Address :</label>
                                                 <textarea name="emergency_contact_address" class="form-control input-sm"
                                                           cols="60" rows="1"
                                                           placeholder="Emergency Contact Address">{{old('emergency_contact_address')}}</textarea>
-                                                @if($errors->has('emergency_contact_address'))<span
-                                                        class="help-block">{{$errors->first('emergency_contact_address')}}</span>@endif
+                                                <span v-if="errors.emergency_contact_address" class="text-danger">@{{ errors.emergency_contact_address[0]}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1098,6 +1096,7 @@
                                         <p class="text-left">
                                             <button :disabled="personals.details" type="submit"
                                                     name="save_personal_and_next" value="save_personal_and_next"
+                                                    v-on:click="submit_button='save_personal_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block">
                                                 <span class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
@@ -1109,8 +1108,9 @@
                                         <p class="text-left">
                                             <button :disabled="personals.details" type="submit" name="save_personal"
                                                     value="save_personal"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Personal
+                                                    v-on:click="submit_button='save_personal'"
+                                                    class="btn btn-dark btn-gradient dark btn-block">
+                                                <span class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Personal
                                                 Info
                                             </button>
                                         </p>
@@ -1122,13 +1122,11 @@
                     </div>
                 </div>
 
-                <!--- Education Info ---->
+                <!--- Education Info -->
                 <div id="tab1_3" class="tab-pane @if(isset($id) && $tab == 'education') active @endif">
-                    <div class="row">
+                    <div class="row mt20">
                         <div class="col-md-12">
-                            <form action="@if(isset($id) && isset($tab)){{url('employee/add/'.$id.'/'.$tab)}}@endif"
-                                  method="post" enctype="multipart/form-data">
-                            {{csrf_field()}}
+                            <form id="add_education_from" v-on:submit.prevent="addNewEducation" method="post" enctype="multipart/form-data">
 
                             <!-- start v-if -->
                                 <div v-if="educations.educations !=''">
@@ -1223,23 +1221,20 @@
                                 <!-- start v-else -->
                                 <div v-else>
                                     <div class="row">
-                                        @if(isset($user))
-                                            <div class="col-md-3">
-                                                <div class="form-group {{$errors->has('user_id')?'has-error':''}}">
-                                                    <label class="control-label">Employee Full Name:</label>
-                                                    <input type="text" value="{{($user->fullname)?$user->fullname:''}}"
-                                                           class="form-control input-sm" disabled>
-                                                    <input type="hidden" name="user_id"
-                                                           value="{{($user->id)?$user->id:''}}"
-                                                           class="form-control input-sm">
-                                                    @if($errors->has('user_id'))<span
-                                                            class="help-block">{{$errors->first('user_id')}}</span>@endif
-                                                </div>
+                                        <div class="col-md-3" v-if="educations !=''">
+                                            <div class="form-group" :class="{'has-error': errors.user_id}">
+                                                <label class="control-label">Employee Full Name:</label>
+                                                <input type="text" :value="educations.first_name+' '+educations.last_name"
+                                                       class="form-control input-sm" disabled>
+                                                <input type="hidden" name="user_id"
+                                                       :value="user_id"
+                                                       class="form-control input-sm">
+                                                <span v-if="errors.user_id" class="text-danger">@{{ errors.user_id[0]}}</span>
                                             </div>
-                                        @endif
+                                        </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('education_level_id')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.education_level_id}">
                                                 <label class="control-label">Education Level : <span
                                                             class="text-danger">*</span></label>
                                                 <select class="form-control input-sm" name="education_level_id"
@@ -1249,64 +1244,59 @@
                                                     <option v-bind:value="education_level.id"
                                                             v-for="(education_level, index) in education_levels">@{{ education_level.education_level_name }}</option>
                                                 </select>
-                                                @if($errors->has('education_level_id'))<span
-                                                        class="help-block">{{$errors->first('education_level_id')}}</span>@endif
+                                                <span v-if="errors.education_level_id" class="text-danger">@{{ errors.education_level_id[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('institute_id')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.institute_id}">
                                                 <label class="control-label">Institute : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="form-control input-sm" name="institute_id">
+                                                <select class="select2-single form-control input-sm" name="institute_id">
                                                     <option v-bind:value="''">---- Select Institute ----</option>
                                                     <option v-bind:value="institute.id"
                                                             v-for="(institute, index) in institutes">@{{ institute.institute_name }}</option>
                                                 </select>
-                                                @if($errors->has('institute_id'))<span
-                                                        class="help-block">{{$errors->first('institute_id')}}</span>@endif
+                                                <span v-if="errors.institute_id" class="text-danger">@{{ errors.institute_id[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('degree_id')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.degree_id}">
                                                 <label class="control-label">Degree : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="form-control input-sm" name="degree_id">
+                                                <select class="select2-single form-control input-sm" name="degree_id">
                                                     <option v-bind:value="''">---- Select Degree ----</option>
                                                     <option v-bind:value="degree.id"
                                                             v-for="(degree, index) in degrees">@{{ degree.degree_name }}</option>
                                                 </select>
-                                                @if($errors->has('degree_id'))<span
-                                                        class="help-block">{{$errors->first('degree_id')}}</span>@endif
+                                                <span v-if="errors.degree_id" class="text-danger">@{{ errors.degree_id[0]}}</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('pass_year')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.pass_year}">
                                                 <label class="control-label">Pass Year : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="pass_year" class="date form-control input-sm"
                                                        readonly="">
-                                                @if($errors->has('pass_year'))<span
-                                                        class="help-block">{{$errors->first('pass_year')}}</span>@endif
+                                                <span v-if="errors.pass_year" class="text-danger">@{{ errors.pass_year[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('certificate')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.certificate_file}">
                                                 <label class="control-label">Certificate:</label>
-                                                <input type="file" name="certificate"
+                                                <input type="file" name="certificate_file"
                                                        class="form-control btn-primary input-sm">
-                                                @if($errors->has('certificate'))<span
-                                                        class="help-block">{{$errors->first('certificate')}}</span>@endif
+                                                <span v-if="errors.certificate_file" class="text-danger">@{{ errors.certificate_file[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group {{$errors->has('result_type')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.result_type}">
                                                 <label class="control-label">Result Type : <span
                                                             class="text-danger">*</span></label>
                                                 <div class="radio-custom mb5">
@@ -1323,24 +1313,22 @@
                                                            v-on:click="showCgpa=false,showDivision=true">
                                                     <label for="result_type_division">Division</label>
                                                 </div>
-                                                @if($errors->has('result_type'))<span
-                                                        class="help-block">{{$errors->first('result_type')}}</span>@endif
+                                                <span v-if="errors.result_type" class="text-danger">@{{ errors.result_type[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3" v-if="showCgpa">
-                                            <div class="form-group {{$errors->has('cgpa')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.cgpa}">
                                                 <label class="control-label">CGPA : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="cgpa" value="{{old('cgpa')}}"
                                                        class="form-control input-sm" placeholder="Enter CGPA">
-                                                @if($errors->has('cgpa'))<span
-                                                        class="help-block">{{$errors->first('cgpa')}}</span>@endif
+                                                <span v-if="errors.cgpa" class="text-danger">@{{ errors.cgpa[0]}}</span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3" v-if="showDivision">
-                                            <div class="form-group {{$errors->has('division')?'has-error':''}}">
+                                            <div class="form-group" :class="{'has-error': errors.division}">
                                                 <label class="control-label">Division : <span
                                                             class="text-danger">*</span></label>
                                                 <select name="division" class="form-control input-sm">
@@ -1355,8 +1343,7 @@
                                                         Third Division
                                                     </option>
                                                 </select>
-                                                @if($errors->has('division'))<span
-                                                        class="help-block">{{$errors->first('division')}}</span>@endif
+                                                <span v-if="errors.division" class="text-danger">@{{ errors.division[0]}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1367,7 +1354,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
                                             <button id="add_education" :disabled="educations.educations ==''"
-                                                    onclick="modal_open('#add_education','#add_education_form')"
+                                                    onclick="modal_open('#add_education','#add_new_education_modal')"
                                                     class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span
                                                         class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
@@ -1384,9 +1371,9 @@
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
                                             <button type="submit" :disabled="educations.educations !=''"
-                                                    name="save_education_and_next" value="save_education_and_next"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                    name="save_education_and_next" value="save_education_and_next" v-on:click="submit_button='save_education_and_next'"
+                                                    class="btn btn-dark btn-gradient dark btn-block">
+                                                <span class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -1395,7 +1382,7 @@
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
                                             <button type="submit" :disabled="educations.educations !=''"
-                                                    name="save_education" value="save_education"
+                                                    name="save_education" value="save_education" v-on:click="submit_button='save_education'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Education
                                             </button>
@@ -1408,9 +1395,9 @@
                     </div>
                 </div>
 
-                <!---  Experience Info ---->
+                <!---  Experience Info -->
                 <div id="tab1_4" class="tab-pane @if(isset($id) && $tab == 'experience') active @endif">
-                    <div class="row">
+                    <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_experience_form" v-on:submit.prevent="addNewExperience" method="post">
 
@@ -1590,382 +1577,1014 @@
                     </div>
                 </div>
 
-                <!---  Salary Info ---->
+                <!---  Salary Info -->
                 <div id="tab1_5" class="tab-pane @if(isset($id) && $tab == 'salary') active @endif">
-                    <div class="row">
+                    <div class="row mt20">
                         <div class="col-md-12">
-                            <form id="add_experience_form" v-on:submit.prevent="addNewExperience" method="post">
+                            <form id="add_salary_form" v-on:submit.prevent="addSalary" method="post">
+                            <input type="hidden" name="user_id" :value="user_id" class="form-control input-sm">
 
-                          
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group mt25">
-                                            <button id="add_new_experience_button" :disabled="experiences.length<=0"
-                                                onclick="modal_open('#add_new_experience_button','#add_new_experience_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                    data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
-                                                Experience
-                                            </button>
-                                        </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group" :class="{'has-error': errors.basic_salary}">
+                                        <label class="control-label">Basic Salary Amount: <span class="text-danger">*</span></label>
+                                        <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount" :readonly="salaries.basic_salary">
+                                        <span v-if="errors.basic_salary" class="help-block">@{{errors.basic_salary[0]}}</span>
                                     </div>
                                 </div>
 
-                                <hr class="short alt">
-
-                                <div class="section row mbn">
-                                    <div class="col-sm-2 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" :disabled="experiences.length>0"
-                                                    name="save_experience_and_next" v-on:click="submit_button='save_experience_and_next'"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
-                                                <span class="glyphicons glyphicons-right_arrow"></span>
-                                            </button>
-                                        </p>
-                                    </div>
-
-                                    <div class="col-sm-2 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" :disabled="experiences.length>0"
-                                                    name="save_experience" v-on:click="submit_button='save_experience'"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Experience
-                                            </button>
-                                        </p>
+                                <div class="col-md-3">
+                                    <div class="form-group" :class="{'has-error': errors.effective_date}">
+                                        <label class="control-label">Salary Effective Date: <span class="text-danger">*</span></label>
+                                        <input type="text" name="effective_date" :value="(salaries.effective_date)?salaries.effective_date:''" :readonly="salaries.effective_date" class="datepicker form-control input-sm">
+                                        <span v-if="errors.effective_date" class="help-block">@{{errors.effective_date[0]}}</span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="admin-form">
+                                <div class="section-divider mb40">
+                                    <span class="bg-white">Salary Allowance Information</span>
+                                </div>
+                            </div>
+
+                            <div class="row" v-if="salaries.salaries ==''">    
+                                <div class="col-md-3 mb15" v-for="(levelSalaryInfo,index) in levelSalaryInfos.salary_info">
+                                    <div class="checkbox-custom mb5 pull-left">
+                                        
+                                        <input :id="levelSalaryInfo.basic_salary_info.id" type="checkbox" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][id]'" :value="levelSalaryInfo.basic_salary_info.id" checked="checked">
+
+                                        <label :for="levelSalaryInfo.basic_salary_info.id" v-text="(levelSalaryInfo.basic_salary_info.salary_info_amount_status==0)?levelSalaryInfo.basic_salary_info.salary_info_name+' (%) ':levelSalaryInfo.basic_salary_info.salary_info_name+' ($) '"></label>
+                                    </div>
+                                        
+                                    <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][type]'">
+                                        <option value="percent" :selected="levelSalaryInfo.basic_salary_info.salary_info_amount_status ==0">Percent</option>
+                                        <option value="fixed" :selected="levelSalaryInfo.basic_salary_info.salary_info_amount_status ==1">Fixed</option>
+                                    </select>
+
+                                    <input type="number" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][amount]'" :value="levelSalaryInfo.basic_salary_info.salary_info_amount" class="col-md-2 form-control input-sm mb5">
+
+                                    <input type="text" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][effective_date]'" class="datepicker form-control input-sm">
+                                </div>
+
+                                <!-- add other allowance -->
+                                <div class="col-md-3 mb15" v-for="allowance in otherAllowance">
+                                    <div class="checkbox-custom mb5 pull-left">
+                                        
+                                        <input :id="allowance.id" type="checkbox" :name="'salary_info['+allowance.id+'][id]'" :value="allowance.id" checked="checked">
+
+                                        <label :for="allowance.id" v-text="(allowance.salary_info_amount_status==0)?allowance.salary_info_name+' (%) ':allowance.salary_info_name+' ($) '"></label>
+                                    </div>
+                                        
+                                    <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+allowance.id+'][type]'">
+                                        <option value="percent" :selected="allowance.salary_info_amount_status ==0">Percent</option>
+                                        <option value="fixed" :selected="allowance.salary_info_amount_status ==1">Fixed</option>
+                                    </select>
+
+                                    <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
+
+                                    <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="datepicker2 form-control input-sm">
+                                </div>
+                            </div>
+
+                            <div class="row" v-else>    
+                                <div class="col-md-3 " v-for="salary in salaries.salaries">
+                                    <div class="checkbox-custom mb5 pull-left">
+                                        <input type="checkbox" checked="checked">
+                                        <label v-text="salary.basic_salary_info.salary_info_name+' ( '+salary.salary_amount_type+' ) '"></label>
+                                    </div>
+
+                                    <input type="text" :value="salary.salary_amount_type" class="col-md-2 form-control input-sm mb5" disabled="disabled">
+
+                                    <input type="number" :value="salary.salary_amount" class="col-md-2 form-control input-sm mb5" disabled="disabled">
+
+                                    <input type="text" :value="salary.salary_effective_date" class="datepicker form-control input-sm" disabled="disabled">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group mt25">
+                                        <button id="add_more_allownce_button" :disabled="salaries.salaries !=''"
+                                            onclick="modal_open('#add_more_allownce_button','#add_more_allownce_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block" v-on:click="getAllowanceNotinLevel"
+                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add More Allowance
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="admin-form">
+                                    <div class="section-divider mb40">
+                                        <span class="bg-white">Salary Account Information</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group" :class="{'has-error': errors.bank_id}">
+                                        <label class="control-label">Bank Name : </label>
+                                        <select class="form-control input-sm" name="bank_id" :disabled="salaries.salary_account">
+                                            <option :value="''">---- Select Bank Name ----</option>
+                                            <option v-for="(bank,index) in banks"
+                                                    :value="bank.id">@{{ bank.bank_name }}</option>
+                                        </select>
+                                        <span v-if="errors.bank_id" class="help-block">@{{errors.bank_id[0]}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group" :class="{'has-error': errors.bank_account_no}">
+                                        <label class="control-label">Account No : </label>
+                                        <input type="text" name="bank_account_no" class="form-control input-sm" :disabled="salaries.salary_account">
+                                        <span v-if="errors.bank_account_no" class="help-block">@{{errors.bank_account_no[0]}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group" :class="{'has-error': errors.bank_account_name}">
+                                        <label class="control-label">Account Name : </label>
+                                        <input type="text" name="bank_account_name" class="form-control input-sm" :disabled="salaries.salary_account">
+                                        <span v-if="errors.bank_account_name" class="help-block">@{{errors.bank_account_name[0]}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
+                                        <label class="control-label">Bank Branch : </label>
+                                        <input type="text" name="bank_branch_name" class="form-control input-sm" :disabled="salaries.salary_account">
+                                        <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="short alt">
+
+                            <div class="section row mbn">
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="salaries.salaries !=''"
+                                                name="save_salary_and_next" v-on:click="submit_button='save_salary_and_next'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                    class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                            <span class="glyphicons glyphicons-right_arrow"></span>
+                                        </button>
+                                    </p>
+                                </div>
+
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="salaries.salaries !=''"
+                                                name="save_salary" v-on:click="submit_button='save_salary'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                    class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Salary
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
 
                             </form>
                         </div>
                     </div>
                 </div>
+
+                <!---  Nominee Info -->
+                <div id="tab1_6" class="tab-pane @if(isset($id) && $tab == 'nominee') active @endif">
+                    <div class="row mt20">
+                        <div class="col-md-12">
+                        <form id="add_nominee_form" v-on:submit.prevent="addNomineeInfo" method="post">
+                            <input type="hidden" name="user_id" :value="user_id">
+
+                            <div v-if="nominee.user_id">
+                                <div class="col-md-2">
+                                    <label class="control-label">Nominee Photo :</label>
+                                    <div class="fileupload-new admin-form" data-provides="fileupload">
+                                        <div class="fileupload-preview thumbnail mb5">
+                                            <img v-if="nominee.nominee_photo" :src="'/files/'+nominee.user_id+'/'+nominee.nominee_photo" alt="holder">
+                                            <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-10 mt40">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Nominee Name : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_name" :value="nominee.nominee_name" class="form-control input-sm" disabled="disabled">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Nominee Relation : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_relation" class="form-control input-sm" :value="nominee.nominee_relation" disabled="disabled">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_birth_date" class="form-control input-sm" readonly="readonly" :value="nominee.nominee_birth_date">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Nominee Distribution : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_distribution" class="form-control input-sm" :value="nominee.nominee_distribution" disabled="disabled">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Nominee Rest Distribution : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="nominee.nominee_rest_distribution" disabled="disabled">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Nominee Address : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_address" class="form-control input-sm" :value="nominee.nominee_address" disabled="disabled">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="short alt">
+                                </div>
+                            </div>
+
+                            <div v-else>
+                                <div class="col-md-2" :class="{'has-error': errors.image}">
+                                    <label class="control-label">Nominee Photo :</label>
+                                    <div class="fileupload-new admin-form" data-provides="fileupload">
+                                        <div class="fileupload-preview thumbnail mb5">
+                                            <img src="{{asset('img/placeholder.png')}}" alt="holder">
+                                        </div>
+                                       <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
+                                            <span class="fileupload-exists"><span class="fa fa-user"></span> &nbsp; <strong>Change Photo</strong></span>
+                                            <span class="fileupload-new"><span class="fa fa-user"></span> &nbsp; <strong>Select Photo</strong></span>
+                                            <input type="file" name="image">
+                                        </span>
+                                    </div>
+                                    <span v-if="errors.image" class="help-block">@{{errors.image[0]}}</span>
+                                </div>
+
+                                <div class="col-md-10 mt40">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group" :class="{'has-error': errors.nominee_name}">
+                                                <label class="control-label">Nominee Name : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_name" class="form-control input-sm">
+                                                <span v-if="errors.nominee_name" class="help-block">@{{errors.nominee_name[0]}}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group" :class="{'has-error': errors.nominee_relation}">
+                                                <label class="control-label">Nominee Relation : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_relation" class="form-control input-sm">
+                                                <span v-if="errors.nominee_relation" class="help-block">@{{errors.nominee_relation[0]}}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
+                                                <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_birth_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <span v-if="errors.nominee_birth_date" class="help-block">@{{errors.   nominee_birth_date[0]}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group" :class="{'has-error': errors.nominee_distribution}">
+                                                <label class="control-label">Nominee Distribution : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_distribution" class="form-control input-sm">
+                                                <span v-if="errors.nominee_distribution" class="help-block">@{{errors.nominee_distribution[0]}}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group" :class="{'has-error': errors.nominee_rest_distribution}">
+                                                <label class="control-label">Nominee Rest Distribution : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_rest_distribution" class="form-control input-sm">
+                                                <span v-if="errors.nominee_rest_distribution" class="help-block">@{{errors.nominee_rest_distribution[0]}}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group" :class="{'has-error': errors.nominee_address}">
+                                                <label class="control-label">Nominee Address : <span class="text-danger">*</span></label>
+                                                <input type="text" name="nominee_address" class="form-control input-sm">
+                                                <span v-if="errors.nominee_address" class="help-block">@{{errors.nominee_address[0]}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="short alt">
+                                </div>
+                            </div>
+
+                            <div class="section row mbn">
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="nominee.user_id"
+                                                name="save_nominee_and_next" v-on:click="submit_button='save_nominee_and_next'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                            <span class="glyphicons glyphicons-right_arrow"></span>
+                                        </button>
+                                    </p>
+                                </div>
+
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="nominee.user_id"
+                                                name="save_nominee" v-on:click="submit_button='save_nominee'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Nominee
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!---  Training Info -->
+                <div id="tab1_7" class="tab-pane @if(isset($id) && $tab == 'training') active @endif">
+                    <div class="row mt20">
+                        <div class="col-md-12">
+                        <form id="add_training_form" v-on:submit.prevent="addNewTraining" method="post">
+                            <input type="hidden" name="user_id" :value="user_id">
+
+                            <div v-if="trainings.length>0">
+                                <div v-for="training in trainings">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Training Code : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="training.training_code" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label class="control-label">Training Title  : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="training.training_title" readonly="readonly" class="form-control input-sm">
+                                        </div>
+                                    </div>
+                                     <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Training Institute : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="training.training_institute" readonly="readonly" class="form-control input-sm">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="training.training_from_date" class="datepicker form-control input-sm" disabled="disabled">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="training.training_to_date" class="datepicker form-control input-sm" disabled="disabled">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label class="control-label">Training Passed Date : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="training.training_passed_date" class="datepicker form-control input-sm" disabled="disabled">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="training.training_participation_date" class="datepicker form-control input-sm" disabled="disabled">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Training remarks : <span class="text-danger">*</span></label>
+                                            <textarea type="text" :value="training.training_remarks" readonly="readonly" class="form-control input-sm"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="short alt">
+                                </div>
+                            </div>
+
+                            <div v-else>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.training_code}">
+                                            <label class="control-label">Training Code : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_code" class="form-control input-sm">
+                                            <span v-if="errors.training_code" class="text-danger">@{{ errors.training_code[0]}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <div class="form-group" :class="{'has-error': errors.training_title}">
+                                            <label class="control-label">Training Title  : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_title" class="form-control input-sm">
+                                            <span v-if="errors.training_title" class="text-danger">@{{ errors.training_title[0]}}</span>
+                                        </div>
+                                    </div>
+                                     <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.training_institute}">
+                                            <label class="control-label">Training Institute : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_institute" class="form-control input-sm">
+                                            <span v-if="errors.training_institute" class="text-danger">@{{ errors.training_institute[0]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group" :class="{'has-error': errors.training_from_date}">
+                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_from_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <span v-if="errors.training_from_date" class="text-danger">@{{ errors.training_from_date[0]}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group" :class="{'has-error': errors.training_to_date}">
+                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_to_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <span v-if="errors.training_to_date" class="text-danger">@{{ errors.training_to_date[0]}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group" :class="{'has-error': errors.training_passed_date}">
+                                            <label class="control-label">Training Passed Date : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_passed_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <span v-if="errors.training_passed_date" class="text-danger">@{{ errors.training_passed_date[0]}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group" :class="{'has-error': errors.training_participation_date}">
+                                            <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_participation_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <span v-if="errors.training_participation_date" class="text-danger">@{{ errors.training_participation_date[0]}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.training_remarks}">
+                                            <label class="control-label">Training remarks : <span class="text-danger">*</span></label>
+                                            <textarea type="text" name="training_remarks" class="form-control input-sm"></textarea>
+                                            <span v-if="errors.training_remarks" class="text-danger">@{{ errors.training_remarks[0]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group mt25">
+                                        <button id="add_new_training_button" :disabled="trainings.length<=0"
+                                            onclick="modal_open('#add_new_training_button','#add_new_training_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Training
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="short alt">
+
+                            <div class="section row mbn">
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="trainings.length>0" :disabled="trainings.user_id"
+                                                name="save_training_and_next" v-on:click="submit_button='save_training_and_next'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                            <span class="glyphicons glyphicons-right_arrow"></span>
+                                        </button>
+                                    </p>
+                                </div>
+
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="trainings.length>0"
+                                                name="save_training" v-on:click="submit_button='save_training'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Training
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!---  Reference Info -->
+                <div id="tab1_8" class="tab-pane @if(isset($id) && $tab == 'reference') active @endif">
+                    <div class="row mt20">
+                        <div class="col-md-12">
+                        <form id="add_reference_form" v-on:submit.prevent="addNewReference" method="post">
+                            <input type="hidden" name="user_id" :value="user_id">
+
+                            <div v-if="references.length>0">
+                                <div v-for="reference in references">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Reference Name : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="reference.reference_name" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Reference Email  : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="reference.reference_email" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+                                     <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Reference Department : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="reference.reference_department" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Reference Organization : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="reference.reference_organization" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Reference Phone : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="reference.reference_phone" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Reference Address : <span class="text-danger">*</span></label>
+                                            <textarea type="text" :value="reference.reference_address" class="form-control input-sm" readonly="readonly"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="short alt">
+                                </div>
+                            </div>
+
+                            <div v-else>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.reference_name}">
+                                            <label class="control-label">Reference Name : <span class="text-danger">*</span></label>
+                                            <input type="text" name="reference_name" class="form-control input-sm">
+                                            <span v-if="errors.reference_name" class="text-danger">@{{ errors.reference_name[0]}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.reference_email}">
+                                            <label class="control-label">Reference Email  : <span class="text-danger">*</span></label>
+                                            <input type="text" name="reference_email" class="form-control input-sm">
+                                            <span v-if="errors.reference_email" class="text-danger">@{{ errors.reference_email[0]}}</span>
+                                        </div>
+                                    </div>
+                                     <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.reference_department}">
+                                            <label class="control-label">Reference Department : <span class="text-danger">*</span></label>
+                                            <input type="text" name="reference_department" class="form-control input-sm">
+                                            <span v-if="errors.reference_department" class="text-danger">@{{ errors.reference_department[0]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.reference_organization}">
+                                            <label class="control-label">Reference Organization : <span class="text-danger">*</span></label>
+                                            <input type="text" name="reference_organization" class="form-control input-sm">
+                                            <span v-if="errors.reference_organization" class="text-danger">@{{ errors.reference_organization[0]}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.reference_phone}">
+                                            <label class="control-label">Reference Phone : <span class="text-danger">*</span></label>
+                                            <input type="text" name="reference_phone" class="form-control input-sm">
+                                            <span v-if="errors.reference_phone" class="text-danger">@{{ errors.reference_phone[0]}}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.reference_address}">
+                                            <label class="control-label">Reference Address : <span class="text-danger">*</span></label>
+                                            <textarea type="text" name="reference_address" class="form-control input-sm"></textarea>
+                                            <span v-if="errors.reference_address" class="text-danger">@{{ errors.reference_address[0]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group mt25">
+                                        <button id="add_new_reference_button" :disabled="references.length<=0"
+                                            onclick="modal_open('#add_new_reference_button','#add_new_reference_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Reference
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="short alt">
+
+                            <div class="section row mbn">
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="references.user_id"
+                                                name="save_reference_and_next" v-on:click="submit_button='save_reference_and_next'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                            <span class="glyphicons glyphicons-right_arrow"></span>
+                                        </button>
+                                    </p>
+                                </div>
+
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="references.user_id"
+                                                name="save_reference" v-on:click="submit_button='save_reference'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Reference
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+
+                 <!---  Children Info -->
+                <div id="tab1_9" class="tab-pane @if(isset($id) && $tab == 'children') active @endif">
+                    <div class="row mt20">
+                        <div class="col-md-12">
+                        <form id="add_children_form" v-on:submit.prevent="addNewChildren" method="post">
+                            <input type="hidden" name="user_id" :value="user_id">
+
+                            <div v-if="childrens.length>0">
+                                <div v-for="children in childrens">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Children Name : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="children.children_name" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <label class="control-label">Children Education Level : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="children.children_education_level" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Children Birth Date  : <span class="text-danger">*</span></label>
+                                            <input type="text" :value="children.children_birth_date" class="datepicker form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Children Gender : <span class="text-danger">*</span></label>
+                                            <div class="radio-custom mb5">
+                                                <input :checked="children.children_gender=='male'" type="radio" readonly="readonly">
+                                                <label for="children_male">Male</label>
+
+                                                <input :checked="children.children_gender=='female'" type="radio" readonly="readonly">
+                                                <label for="children_female">Female</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <div class="form-group" :class="{'has-error': errors.children_remarks}">
+                                            <label class="control-label">Children Remarks : <span class="text-danger">*</span></label>
+                                            <textarea name="children_remarks" class="form-control input-sm" readonly="readonly">@{{children.children_remarks}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="short alt">
+                                </div>
+                            </div>
+
+                            <div v-else>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.children_name}">
+                                            <label class="control-label">Children Name : <span class="text-danger">*</span></label>
+                                            <input type="text" name="children_name" class="form-control input-sm">
+                                            <span v-if="errors.children_name" class="text-danger">@{{ errors.children_name[0]}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <div class="form-group" :class="{'has-error': errors.children_education_level}">
+                                            <label class="control-label">Children Education Level : <span class="text-danger">*</span></label>
+                                            <input type="text" name="children_education_level" class="form-control input-sm">
+                                            <span v-if="errors.children_education_level" class="text-danger">@{{ errors.children_education_level[0]}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.children_birth_date}">
+                                            <label class="control-label">Children Birth Date  : <span class="text-danger">*</span></label>
+                                            <input type="text" name="children_birth_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <span v-if="errors.children_birth_date" class="text-danger">@{{ errors.children_birth_date[0]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group" :class="{'has-error': errors.children_gender}">
+                                            <label class="control-label">Children Gender : <span class="text-danger">*</span></label>
+                                            <div class="radio-custom mb5">
+                                                <input id="children_male" name="children_gender" type="radio" value="male">
+                                                <label for="children_male">Male</label>
+                                                <input id="children_female" name="children_gender" type="radio" value="female">
+                                                <label for="children_female">Female</label>
+                                            </div>
+                                            <span v-if="errors.children_gender" class="text-danger">@{{ errors.children_gender[0]}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <div class="form-group" :class="{'has-error': errors.children_remarks}">
+                                            <label class="control-label">Children Remarks : <span class="text-danger">*</span></label>
+                                            <textarea name="children_remarks" class="form-control input-sm"></textarea>
+                                            <span v-if="errors.children_remarks" class="text-danger">@{{ errors.children_remarks[0]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group mt25">
+                                        <button id="add_new_children_button" :disabled="childrens.length<=0"
+                                            onclick="modal_open('#add_new_children_button','#add_new_children_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Children
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="short alt">
+
+                            <div class="section row mbn">
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="childrens.length>0"
+                                                name="save_children_and_next" v-on:click="submit_button='save_children_and_next'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                            <span class="glyphicons glyphicons-right_arrow"></span>
+                                        </button>
+                                    </p>
+                                </div>
+
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="childrens.length>0"
+                                                name="save_children" v-on:click="submit_button='save_children'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Children
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+
+                 <!---  Language Info -->
+                <div id="tab1_10" class="tab-pane @if(isset($id) && $tab == 'language') active @endif">
+                    <div class="row">
+                        <div class="col-md-12">
+                        <form id="add_language_form" v-on:submit.prevent="addNewLanguage" method="post">
+                            <input type="hidden" name="user_id" :value="user_id">
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group mt20 mb25">
+                                        <button type="button" id="add_new_language_modal_button" onclick="modal_open('#add_new_language_modal_button','#add_new_language_button_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block" data-effect="mfp-newspaper"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add Language
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-if="languages.languages !=''">
+                                <div v-for="language in languages.languages">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Language Name :</label>
+                                            <input :value="language.language.language_name" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Speaking Skill :</label>
+                                            <input :value="language.speaking" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Reading Skill :</label>
+                                            <input :value="language.reading" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">Writing Skill :</label>
+                                            <input :value="language.writing" class="form-control input-sm" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="short alt">
+                                </div>
+                            </div>
+
+                            <div v-else>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.language_id}">
+                                            <label class="control-label">Language Name : <span class="text-danger">*</span></label>
+                                            <select name="language_id" class="form-control input-sm">
+                                                <option value="">...Select Language Name...</option>
+                                                <option v-for="lan in language" :value="lan.id" v-text="lan.language_name"></option>
+                                            </select>
+                                            <span v-if="errors.language_id" class="text-danger">@{{ errors.language_id[0]}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.speaking}">
+                                            <label class="control-label">Speaking Skill : <span class="text-danger">*</span></label>
+                                            <select name="speaking" class="form-control input-sm">
+                                                <option value="">...Select Speaking Skill...</option>
+                                                <option>Bad</option>
+                                                <option>Medium</option>
+                                                <option>Good</option>
+                                                <option>excelent</option>
+                                            </select>
+                                            <span v-if="errors.speaking" class="text-danger">@{{ errors.speaking[0]}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.reading}">
+                                            <label class="control-label">Reading Skill : <span class="text-danger">*</span></label>
+                                            <select name="reading" class="form-control input-sm">
+                                                <option value="">...Select Reading Skill...</option>
+                                                <option>Bad</option>
+                                                <option>Medium</option>
+                                                <option>Good</option>
+                                                <option>excelent</option>
+                                            </select>
+                                            <span v-if="errors.reading" class="text-danger">@{{ errors.reading[0]}}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.writing}">
+                                            <label class="control-label">Writing Skill : <span class="text-danger">*</span></label>
+                                            <select name="writing" class="form-control input-sm">
+                                                <option value="">...Select Writing Skill...</option>
+                                                <option>Bad</option>
+                                                <option>Medium</option>
+                                                <option>Good</option>
+                                                <option>excelent</option>
+                                            </select>
+                                            <span v-if="errors.writing" class="text-danger">@{{ errors.writing[0]}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group mt25">
+                                        <button id="add_new_language_button" :disabled="languages.languages ==''"
+                                            onclick="modal_open('#add_new_language_button','#add_new_language_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Language
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="short alt">
+
+                            <div class="section row mbn">
+                                <div class="col-sm-2 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" :disabled="languages.languages !=''"
+                                                name="save_language" v-on:click="submit_button='save_language'"
+                                                class="btn btn-dark btn-gradient dark btn-block"><span
+                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Language
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
 
         <!-- Add Designation Form Popup -->
-        <div id="add_new_designation_modal" style="max-width:700px" class="popup-basic mfp-with-anim mfp-hide">
-            <div class="panel">
-                <div class="panel-heading">
-                    <span class="panel-title">
-                        <i class="fa fa-rocket"></i>Add New Designation
-                    </span>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <form method="post" v-on:submit.prevent="addNewDesignation('add_new_designation_form')"
-                                  id="add_new_designation_form">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.designation_name}">
-                                            <label class="control-label">Designation Name : <span
-                                                        class="text-danger">*</span></label>
-                                            <input type="text" name="designation_name" class="form-control input-sm">
-                                            <span v-if="errors.designation_name"
-                                                  class="text-danger">@{{ errors.designation_name[0]}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.department_id}">
-                                            <label class="control-label">Department : <span class="text-danger">*</span></label>
-                                            <select class="form-control input-sm" name="department_id">
-                                                <option v-bind:value="''">---- Select Department ----</option>
-                                                <option v-bind:value="department.id"
-                                                        v-for="(department, index) in departments">@{{ department.department_name }}</option>
-                                            </select>
-                                            <span v-if="errors.department_id"
-                                                  class="text-danger">@{{ errors.department_id[0]}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.level_id}">
-                                            <label class="control-label">Level : <span
-                                                        class="text-danger">*</span></label>
-                                            <select class="form-control input-sm" name="level_id">
-                                                <option v-bind:value="''">---- Select Level ----</option>
-                                                <option v-bind:value="level.id"
-                                                        v-for="(level, index) in levels">@{{ level.level_name }}</option>
-                                            </select>
-                                            <span v-if="errors.level_id"
-                                                  class="text-danger">@{{ errors.level_id[0]}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group" :class="{'has-error': errors.designation_description}">
-                                            <label class="control-label">Description : <span
-                                                        class="text-danger">*</span></label>
-                                            <textarea class="form-control input-sm"
-                                                      name="designation_description"></textarea>
-                                            <span v-if="errors.designation_description"
-                                                  class="text-danger">@{{ errors.designation_description[0]}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr class="short alt">
-
-                                <div class="section row mbn">
-                                    <div class="col-sm-4 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" name="save_designation"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Add New
-                                            </button>
-                                        </p>
-                                    </div>
-                                </div>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @include('pim.employee.modals.designation')
 
         <!-- Add Education Form Popup -->
-        <div id="add_new_education_modal" style="max-width:700px" class="popup-basic mfp-with-anim mfp-hide">
-            <div class="panel">
-                <div class="panel-heading">
-                    <span class="panel-title">
-                        <i class="fa fa-rocket"></i>Add New Education
-                    </span>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <form method="post" enctype="multipart/form-data" v-on:submit.prevent="addNewEducation">
-                                <div class="row">
-                                    <input type="hidden" name="user_id" v-model="user_id">
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.education_level_id}">
-                                            <label class="control-label">Education Level : <span
-                                                        class="text-danger">*</span></label>
-                                            <select class="form-control input-sm" name="education_level_id"
-                                                    v-on:change="getInstituteAndDegreeByEducationLevelId()"
-                                                    v-model="education_level_id">
-                                                <option v-bind:value="''">---- Select Education Level ----</option>
-                                                <option v-bind:value="education_level.id"
-                                                        v-for="(education_level, index) in education_levels">@{{ education_level.education_level_name }}</option>
-                                            </select>
-                                            <span v-if="errors.education_level_id"
-                                                  class="text-danger">@{{ errors.education_level_id[0]}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.institute_id}">
-                                            <label class="control-label">Institute : <span class="text-danger">*</span></label>
-                                            <select class="form-control input-sm" name="institute_id">
-                                                <option v-bind:value="''">---- Select Institute ----</option>
-                                                <option v-bind:value="institute.id"
-                                                        v-for="(institute, index) in institutes">@{{ institute.institute_name }}</option>
-                                            </select>
-                                            <span v-if="errors.institute_id"
-                                                  class="text-danger">@{{ errors.institute_id[0]}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.degree_id}">
-                                            <label class="control-label">Degree : <span
-                                                        class="text-danger">*</span></label>
-                                            <select class="form-control input-sm" name="degree_id">
-                                                <option v-bind:value="''">---- Select Degree ----</option>
-                                                <option v-bind:value="degree.id"
-                                                        v-for="(degree, index) in degrees">@{{ degree.degree_name }}</option>
-                                            </select>
-                                            <span v-if="errors.degree_id"
-                                                  class="text-danger">@{{ errors.degree_id[0]}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.pass_year}">
-                                            <label class="control-label">Pass Year : <span class="text-danger">*</span></label>
-                                            <input type="text" name="pass_year" class="date form-control input-sm"
-                                                   readonly="">
-                                            <span v-if="errors.pass_year"
-                                                  class="text-danger">@{{ errors.pass_year[0]}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.result_type}">
-                                            <label class="control-label">Result Type :</label>
-                                            <div class="radio-custom mb5">
-                                                <input id="result_type_cgpa" name="result_type" type="radio"
-                                                       value="cgpa" checked="checked"
-                                                       v-on:click="showCgpa=true,showDivision=false">
-                                                <label for="result_type_cgpa">CGPA</label>
-
-                                                <input id="result_type_division" name="result_type" type="radio"
-                                                       value="division" v-on:click="showCgpa=false,showDivision=true">
-                                                <label for="result_type_division">Division</label>
-                                                <span v-if="errors.result_type"
-                                                      class="text-danger">@{{ errors.result_type[0]}}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4" v-if="showCgpa">
-                                        <div class="form-group" :class="{'has-error' : errors.cgpa}">
-                                            <label class="control-label">CGPA : <span
-                                                        class="text-danger">*</span></label>
-                                            <input type="number" name="cgpa" class="form-control input-sm"
-                                                   placeholder="Enter CGPA">
-                                            <span v-if="errors.cgpa" class="text-danger">@{{ errors.cgpa[0]}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4" v-if="showDivision">
-                                        <div class="form-group" :class="{'has-error': errors.division}">
-                                            <label class="control-label">Division : <span
-                                                        class="text-danger">*</span></label>
-                                            <select name="division" class="form-control input-sm">
-                                                <option value="">--- Select Division ---</option>
-                                                <option value="1">First Division</option>
-                                                <option value="2">Second Division</option>
-                                                <option value="3">Third Division</option>
-                                            </select>
-                                            <span v-if="errors.division"
-                                                  class="text-danger">@{{ errors.division[0] }}</span>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6" :class="{'has-error': errors.certificate_file}">
-                                        <div class="form-group">
-                                            <label class="control-label">Certificate:</label>
-                                            <input type="file" name="certificate_file" class="form-control btn-primary input-sm">
-                                            <span v-if="errors.certificate_file" class="text-danger">@{{ errors.certificate_file[0]}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr class="short alt">
-
-                                <div class="section row mbn">
-                                    <div class="col-sm-4 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" name="save_education"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Add New
-                                            </button>
-                                        </p>
-                                    </div>
-                                </div>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        @include('pim.employee.modals.education')
 
         <!-- Add Experience Form Popup -->
-        <div id="add_new_experience_modal" style="max-width:700px" class="popup-basic mfp-with-anim mfp-hide">
-            <div class="panel">
-                <div class="panel-heading">
-                    <span class="panel-title">
-                        <i class="fa fa-rocket"></i>Add New Experience
-                    </span>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <form id="add_new_experience_form" method="post" v-on:submit.prevent="addNewExperience">
-                                <input type="hidden" name="user_id" v-model="user_id">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group" :class="{'has-error': errors.company_name}">
-                                            <label class="control-label">Company Name : <span class="text-danger">*</span></label>
-                                            <input type="text" name="company_name" class="form-control input-sm">
-                                            <span v-if="errors.company_name" class="text-danger">@{{ errors.company_name[0]}}</span>
-                                        </div>
-                                    </div>
+        @include('pim.employee.modals.experience')
 
-                                    <div class="col-md-6">
-                                        <div class="form-group" :class="{'has-error': errors.position_held}">
-                                            <label class="control-label">Position Held : <span class="text-danger">*</span></label>
-                                            <input type="text" name="position_held" class="form-control input-sm">
-                                            <span v-if="errors.position_held" class="text-danger">@{{ errors.position_held[0]}}</span>
-                                        </div>
-                                    </div>
-                                </div>
+        <!-- Add Allowance Form Popup -->
+        @include('pim.employee.modals.allowance')
 
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.job_start_date}">
-                                            <label class="control-label">Job Start Date : <span class="text-danger">*</span></label>
-                                            <input type="text" id="job_start_date" name="job_start_date" class="datepicker form-control input-sm" readonly="readonly">
-                                            <span v-if="errors.job_start_date" class="text-danger">@{{ errors.job_start_date[0]}}</span>
-                                        </div>
-                                    </div>
+        <!-- Add Training Form Popup -->
+        @include('pim.employee.modals.training')
 
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.job_end_date}">
-                                            <label class="control-label">Job End Date : <span class="text-danger">*</span></label>
-                                            <input type="text" id="job_end_date" name="job_end_date" class="datepicker form-control input-sm" readonly="readonly">
-                                            <span v-if="errors.job_end_date" class="text-danger">@{{ errors.job_end_date[0]}}</span>
-                                        </div>
-                                    </div>
+        <!-- Add Reference Form Popup -->
+        @include('pim.employee.modals.reference')
 
-                                    <div class="col-md-4">
-                                        <div class="form-group" :class="{'has-error': errors.job_duration}">
-                                            <label class="control-label">Job Duration : <span class="text-danger">*</span></label>
-                                            <input type="text" name="job_duration" v-on:click="theDuration" :value="job_duration" class="form-control input-sm" readonly="readonly">
-                                            <span v-if="errors.job_duration" class="text-danger">@{{ errors.job_duration[0]}}</span>
-                                        </div>
+        <!-- Add Children Form Popup -->
+        @include('pim.employee.modals.children')
+
+        <!-- Add Language Form Popup -->
+        @include('pim.employee.modals.language')
+
+    <div id="add_new_language_button_modal" style="max-width:400px" class="popup-basic mfp-with-anim mfp-hide">
+        <div class="panel">
+            <div class="panel-heading">
+                <span class="panel-title">
+                    <i class="fa fa-rocket"></i>Add New Language
+                </span>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="add_language" method="post" v-on:submit.prevent="addLanguage('add_language')">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" :class="{'has-error': errors.language_name}">
+                                        <label class="control-label">Language Name : <span class="text-danger">*</span></label>
+                                        <input type="text" name="language_name" class="form-control input-sm">
+                                        <span v-if="errors.language_name" class="text-danger">@{{ errors.language_name[0]}}</span>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group" :class="{'has-error': errors.job_responsibility}">
-                                            <label class="control-label">Job Responsibility : <span class="text-danger">*</span></label>
-                                            <textarea type="text" name="job_responsibility" class="form-control input-sm"></textarea>
-                                            <span v-if="errors.job_responsibility" class="text-danger">@{{ errors.job_responsibility[0]}}</span>
-                                        </div>
-                                    </div>
+                            <hr class="short alt">
 
-                                    <div class="col-md-6">
-                                        <div class="form-group" :class="{'has-error': errors.job_location}">
-                                            <label class="control-label">Job Location : <span class="text-danger">*</span></label>
-                                            <textarea type="text" name="job_location" class="form-control input-sm"></textarea>
-                                            <span v-if="errors.job_location" class="text-danger">@{{ errors.job_location[0]}}</span>
-                                        </div>
-                                    </div>
+                            <div class="section row mbn">
+                                <div class="col-sm-6 pull-right">
+                                    <p class="text-left">
+                                        <button type="submit" name="add_language" class="btn btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-ok_2"></span> &nbsp; Add Language
+                                        </button>
+                                    </p>
                                 </div>
+                            </div>
 
-                                <hr class="short alt">
-
-                                <div class="section row mbn">
-                                    <div class="col-sm-4 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" name="save_experience" class="btn btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-ok_2"></span> &nbsp; Add New
-                                            </button>
-                                        </p>
-                                    </div>
-                                </div>
-
-                            </form>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- <add-education :education_levels="education_levels" :user_id="user_id"></add-education> -->
     </div>
 </section>
 
@@ -1987,6 +2606,7 @@
         // alert(years.toFixed(1));
 
         var base_url = "{{url('/')}}";
+        var add_edit = "add";
         var current_tab = "{{($tab)?$tab:''}}";
         var id = "{{(isset($id))?base64_encode($id).'/':''}}";
         var user_id = "{{(isset($id))?$id:''}}";
@@ -1999,6 +2619,7 @@
                 minViewMode: "years",
                 pickTime: false
             });
+
         });
 
         // Modal Start

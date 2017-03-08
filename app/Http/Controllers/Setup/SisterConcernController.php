@@ -45,8 +45,8 @@ class SisterConcernController extends Controller
         $password_confirmation = $request->password_confirmation;
         $company_address       = $request->company_address;
 
-    	// try{
-	    //  	DB::beginTransaction();
+    	try{
+	     	DB::beginTransaction();
 
 	    	$config = Config::create([
 	    			'user_id'          => session('user_id'),
@@ -83,20 +83,20 @@ class SisterConcernController extends Controller
                     'mobile_number'  => $mobile_number,
 	    		]);
 
-	    	//DB::commit();
+	    	DB::commit();
 
 	    	$request->session()->flash('success','Application successfully setup!');
 
-	    // }catch(\Exception $e){
-	    // 	Artisan::call('db:connect');
-	    // 	DB::rollback();
+	    }catch(\Exception $e){
+	    	Artisan::call('db:connect');
+	    	DB::rollback();
 
-	    // 	Artisan::call('db:connect', ['database'=> $database_name]);
-	    // 	Artisan::call("migrate:hrms:rollback");
-	    // 	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
+	    	Artisan::call('db:connect', ['database'=> $database_name]);
+	    	Artisan::call("migrate:hrms:rollback");
+	    	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
 
-	    // 	$request->session()->flash('danger','Application setup not success!');
-	    // }
+	    	$request->session()->flash('danger','Application setup not success!');
+	    }
 
     	return back();
     }
