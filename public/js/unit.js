@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 43);
+/******/ 	return __webpack_require__(__webpack_require__.s = 44);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -13565,7 +13565,7 @@ return index;
 
 /***/ }),
 
-/***/ 35:
+/***/ 36:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13580,45 +13580,58 @@ return index;
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vee_validate___default.a);
 
 new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
-    el: "#salaryInfoDiv",
+    el: "#unitDiv",
     data: {
         message: 'Hello Vue!',
-        salaryInfo: [],
-        info_name: '',
-        info_status: 0,
-        info_amount: '',
-        info_type: 'Allowance',
-        errorsHtml: '',
+        unit_name: '',
+        unit_parent_id: '',
+        unit_department_id: '',
+        unit_status: 1,
+        unit_details: '',
         hdn_id: '',
-        edit_info_name: null,
-        edit_info_status: 0,
-        edit_info_amount: '',
-        edit_info_type: '',
-        edit_errorsHtml: '',
-        salaryInfoIndex: '',
-        testVal: []
+        edit_unit_name: '',
+        edit_unit_parent_id: '',
+        edit_unit_department_id: '',
+        edit_unit_status: 1,
+        edit_unit_details: '',
+        departments: [],
+        units: [],
+        activeUnits: [],
+        chk_parent: 0,
+        unitIndex: null
     },
     mounted: function mounted() {
         var _this = this;
 
-        axios.get('/salaryInfo/getAllInfo').then(function (response) {
-            return _this.salaryInfo = response.data;
+        this.getAllUnit(); //call method
+        axios.get('/get-departments').then(function (response) {
+            return _this.departments = response.data;
+        });
+        axios.get('/get-units').then(function (response) {
+            return _this.activeUnits = response.data;
         });
     },
 
     methods: {
-        saveSalaryInfo: function saveSalaryInfo(event) {
+        getAllUnit: function getAllUnit() {
             var _this2 = this;
 
-            axios.post('/salaryInfo/add', {
-                info_name: this.info_name,
-                info_status: this.info_status,
-                info_amount: this.info_amount,
-                info_type: this.info_type
-            }).then(function (response) {
+            axios.get('/unit/getUnits').then(function (response) {
+                return _this2.units = response.data;
+            });
+        },
+        saveUnit: function saveUnit(formId) {
+            var _this3 = this;
 
-                _this2.salaryInfo.push(response.data.data);
+            var formData = $('#' + formId).serialize();
+
+            axios.post('/unit/add', formData).then(function (response) {
+
+                // axios.get('/unit/getUnits').then(response => this.units = response.data);
+                _this3.getAllUnit(); //call method
+                $('#create-form-errors').html('');
                 document.getElementById("modal-close-btn").click();
+                // console.log(response.data);
 
                 new PNotify({
                     title: response.data.title + ' Message',
@@ -13630,6 +13643,7 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                     delay: 1500
                 });
             }).catch(function (error) {
+                //console.log("Errorrr: "+error);
                 if (error.response.status != 200) {
                     //error 422
 
@@ -13644,40 +13658,29 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 }
             });
         },
-        editSalaryInfo: function editSalaryInfo(id, index) {
-            var _this3 = this;
+        editUnit: function editUnit(id, index) {
 
-            this.salaryInfoIndex = index;
-
-            axios.get("/salaryInfo/edit/" + id, {}).then(function (response) {
-
-                _this3.hdn_id = response.data.id;
-                _this3.edit_info_name = response.data.salary_info_name;
-                _this3.edit_info_amount = response.data.salary_info_amount;
-                _this3.edit_info_status = response.data.salary_info_amount_status;
-                _this3.edit_info_type = response.data.salary_info_type;
-            }).catch(function (error) {
-                swal('Error:', 'Edit function not working', 'error');
-                document.getElementById("modal-edit-close-btn").click();
-            });
+            this.unitIndex = index;
+            this.hdn_id = id;
+            this.edit_unit_name = this.units[index].unit_name;
+            this.edit_unit_parent_id = this.units[index].unit_parent_id;
+            this.edit_unit_department_id = this.units[index].unit_departments_id;
+            this.edit_unit_status = this.units[index].unit_status;
+            this.edit_unit_details = this.units[index].unit_details;
+            this.chk_parent = this.units[index].unit_parent_id > 0 ? 1 : 0;
         },
-        updateSalaryInfo: function updateSalaryInfo() {
+        updateUnit: function updateUnit(updateFormId) {
             var _this4 = this;
 
-            axios.post('/salaryInfo/edit', {
-                hdn_id: this.hdn_id,
-                edit_info_name: this.edit_info_name,
-                edit_info_status: this.edit_info_status,
-                edit_info_amount: this.edit_info_amount,
-                edit_info_type: this.edit_info_type
-            }).then(function (response) {
+            var formData = $('#' + updateFormId).serialize();
 
+            axios.post('/unit/edit', formData).then(function (response) {
+
+                $('#edit-form-errors').html('');
                 document.getElementById("modal-edit-close-btn").click();
 
-                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_name = _this4.edit_info_name;
-                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_amount = _this4.edit_info_amount;
-                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_amount_status = _this4.edit_info_status;
-                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_type = _this4.edit_info_type;
+                // axios.get('/unit/getUnits').then(response => this.units = response.data);
+                _this4.getAllUnit(); //call method
 
                 new PNotify({
                     title: response.data.title + ' Message',
@@ -13699,9 +13702,9 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 $('#edit-form-errors').html(errorsHtml);
             });
         },
-        deleteSalaryInfo: function deleteSalaryInfo(id, index) {
+        deleteUnit: function deleteUnit(id, index) {
 
-            var delSalaryInfo = this.salaryInfo;
+            var delUnits = this.units;
 
             swal({
                 title: "Are you sure?",
@@ -13714,23 +13717,24 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
             }, function () {
 
                 swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                axios.get("/unit/delete/" + id + "/" + index, {}).then(function (response) {
 
-                axios.get("/salaryInfo/delete/" + id + "/" + index, {}).then(function (response) {
+                    //console.log("--response--"+response);
+                    //console.log(delUnits+"---fff--"+response.data.indexId);
 
-                    new PNotify({
-                        title: response.data.title + ' Message',
-                        text: response.data.message,
-                        shadow: true,
-                        addclass: 'stack_top_right',
-                        type: response.data.title,
-                        width: '290px',
-                        delay: 1500
-                    });
+                    // new PNotify({
+                    //     title: response.data.title+' Message',
+                    //     text: response.data.message,
+                    //     shadow: true,
+                    //     addclass: 'stack_top_right',
+                    //     type: response.data.title,
+                    //     width: '290px',
+                    //     delay: 1500
+                    // });
 
-                    //console.log("--ok--"+response);
-                    delSalaryInfo.splice(response.data.indexId, 1);
+                    delUnits.splice(response.data.indexId, 1);
                 }).catch(function (error) {
-                    //console.log("--error--"+error);
+
                     swal('Error:', 'Delete function not working', 'error');
                 });
             });
@@ -13741,10 +13745,10 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
 
 /***/ }),
 
-/***/ 43:
+/***/ 44:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(35);
+module.exports = __webpack_require__(36);
 
 
 /***/ }),

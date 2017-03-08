@@ -154,11 +154,11 @@ Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
 /******************** ...HRMS Emp Units Routes... **************/
 Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
     Route::get('/index','UnitController@index');
-    // Route::get('/getAllInfo','UnitController@getAllInfo');
-    // Route::post('/add','UnitController@create');
+    Route::get('/getUnits','UnitController@getUnits');
+    Route::post('/add','UnitController@create');
     // Route::get('/edit/{id}','UnitController@edit');
-    // Route::post('/edit','UnitController@update');
-    // Route::get('/delete/{id}/{indexId}','UnitController@delete');
+    Route::post('/edit','UnitController@update');
+    Route::get('/delete/{id}/{indexId}','UnitController@delete');
 });
 
 
@@ -167,6 +167,7 @@ Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
 Route::group(['prefix' => '/'], function(){
     Route::get('get-departments','CommonController@getDepartments');
     Route::get('get-levels','CommonController@getLevels');
+    Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Designation;
 use App\Models\Department;
 use App\Models\Level;
+use App\Models\Units;
 
 trait CommonService
 {
@@ -56,6 +57,10 @@ trait CommonService
 
     public function getDegreeByEducationLevel($education_level_id){
         return DB::table('degrees')->where('education_level_id',$education_level_id)->get();
+    }
+
+    public function getUnits(){
+        return Units::where('unit_status',1)->get();
     }
 
 

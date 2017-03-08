@@ -122,13 +122,13 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="inactive_allowance" v-model="info_type" value="Allowance">
+                                        <input type="radio" id="inactive_allowance" v-model="info_type" value="allowance">
                                         <label for="inactive_allowance">Allowance</label>
                                     </div>    
                                 </div>
                                 <div class="col-md-4">
                                     <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="active_allowance" v-model="info_type" value="Deduct">
+                                        <input type="radio" id="active_allowance" v-model="info_type" value="deduction">
                                         <label for="active_allowance">Deduct</label>
                                     </div>    
                                 </div>
@@ -213,13 +213,13 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="edit_inactive_allowance" v-model="edit_info_type" value="Allowance">
+                                        <input type="radio" id="edit_inactive_allowance" v-model="edit_info_type" value="allowance">
                                         <label for="edit_inactive_allowance">Allowance</label>
                                     </div>    
                                 </div>
                                 <div class="col-md-4">
                                     <div class="radio-custom radio-success mb5">
-                                        <input type="radio" id="edit_active_allowance" v-model="edit_info_type" value="Deduct">
+                                        <input type="radio" id="edit_active_allowance" v-model="edit_info_type" value="deduction">
                                         <label for="edit_active_allowance">Deduct</label>
                                     </div>    
                                 </div>

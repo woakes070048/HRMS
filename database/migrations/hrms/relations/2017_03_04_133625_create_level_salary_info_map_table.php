@@ -24,7 +24,6 @@ class CreateLevelSalaryInfoMapTable extends Migration
             $table->foreign('basic_salary_info_id')->references('id')->on('basic_salary_info')->onDelete('restrict');
         });
     }
-
     /**
      * Reverse the migrations.
      *
