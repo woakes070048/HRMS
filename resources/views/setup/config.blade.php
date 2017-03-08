@@ -50,6 +50,10 @@
                                 </div>
 
                                 <div class="section">
+                                    <input id="company_code" type="text" class="form-control" name="company_code" value="{{ old('company_code') }}" placeholder="Company Code">
+                                </div>
+
+                                <div class="section">
                                     <select id="package_name" name="package_name" class="form-control package_name" required="required">
                                         <option value="">Select Package</option>
                                         @foreach($packages as $package)
