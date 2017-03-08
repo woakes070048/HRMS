@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEducationLevelTable extends Migration
+class CreateSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateEducationLevelTable extends Migration
      */
     public function up()
     {
-        Schema::create('education_levels', function (Blueprint $table) {
-            $table->smallIncrements('id');
-            $table->string('education_level_name');
-            $table->boolean('status')->default(1)->comment='1=active, 0=inactive';
+        Schema::create('settings', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('field_name',45)->unique();
+            $table->string('field_value',255);
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateEducationLevelTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('education_levels');
+        Schema::dropIfExists('settings');
     }
 }
