@@ -112,13 +112,13 @@ class SalaryInfoController extends Controller
         
             $data['title'] = 'success';
             $data['message'] = 'salary info successfully removed!';
-            return response()->json($data, 200);
+            //return response()->json($data, 200);
 
         }catch(\Exception $e){
             
             $data['title'] = 'danger';
             $data['message'] = 'Salary info not removed!';
-            return response()->json($data, 500);
+            //return response()->json($data, 500);
         }
 
         return response()->json($data);

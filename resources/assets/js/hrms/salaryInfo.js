@@ -35,12 +35,9 @@ new Vue({
                 info_type: this.info_type,
             })
             .then((response) => { 
-                
-                console.log("Successss: "+response);
 
                 this.salaryInfo.push(response.data.data);
                 document.getElementById("modal-close-btn").click();
-                console.log(response.data);
 
                 new PNotify({
                     title: response.data.title+' Message',
@@ -53,7 +50,6 @@ new Vue({
                 });
             })
             .catch((error) => {
-                console.log("Errorrr: "+error);
                 if(error.response.status != 200){ //error 422
                 
                     var errors = error.response.data;
@@ -159,11 +155,11 @@ new Vue({
                         delay: 1500
                     });
                     
-                    console.log("--ok--"+response);
+                    //console.log("--ok--"+response);
                     delSalaryInfo.splice(response.data.indexId, 1);
                 })
                 .catch(function (error) {
-                    console.log("--error--"+error);
+                    //console.log("--error--"+error);
                     swal('Error:','Delete function not working','error');
                 });
             });

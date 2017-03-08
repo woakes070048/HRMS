@@ -24,7 +24,7 @@ class ConfigRequest extends FormRequest
     public function rules()
     {
         return [
-            'company_name' => 'required|alpha_spaces|min:5|max:25|unique:configs',
+            'company_name' => 'required|min:5|max:25|unique:configs',
             'package_name' => 'required',
             'first_name' => 'required|alpha|alpha_dash',
             'last_name' => 'required|alpha|alpha_dash',

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Level;
+use App\Models\Units;
 use App\Models\Bank;
 use App\Models\BasicSalaryInfo;
 use App\Models\Department;
@@ -17,6 +18,7 @@ use App\Models\EducationLevel;
 use App\Models\Institute;
 use App\Models\Degree;
 use App\Models\Language;
+
 
 trait CommonService
 {
@@ -99,6 +101,10 @@ trait CommonService
 
     public function getLanguage(){
         return Language::all();
+    }
+
+    public function getUnits(){
+        return Units::where('unit_status',1)->get();
     }
 
 
