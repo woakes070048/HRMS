@@ -66,9 +66,9 @@ class ConfigController extends Controller
         $formet = "+$package_duration month";
         $package_end_date = date("Y-m-d", strtotime($formet));
 
-//     	DB::beginTransaction();
+     	DB::beginTransaction();
 
-//        try{
+        try{
 
             $setup_user = SetupUser::create([
                 'first_name' => $first_name,
@@ -114,7 +114,7 @@ class ConfigController extends Controller
 	    	Artisan::call("db:seed");
 
 	    	User::create([
-                    'employee_no'    => '0-00',
+                    'employee_no'    => $config->company_code.'-0000',
                     'employee_type_id' => 1,
                     'designation_id' => 1,   
                     'first_name'     => $first_name, 
@@ -126,18 +126,18 @@ class ConfigController extends Controller
 
 	    	$request->session()->flash('success','Application successfully setup!');
 
-//	    }catch(\Exception $e){
-//	    	Artisan::call('db:connect');
-//	    	DB::rollback();
-//
-//	    	Artisan::call('db:connect', ['database'=> $database_name]);
-//	    	Artisan::call("migrate:hrms:rollback");
-//	    	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
-//
-//	    	$request->session()->flash('danger','Application setup not success!');
-//	    }
+	    }catch(\Exception $e){
+	    	Artisan::call('db:connect');
+	    	DB::rollback();
 
-//        DB::commit();
+	    	Artisan::call('db:connect', ['database'=> $database_name]);
+	    	Artisan::call("migrate:hrms:rollback");
+	    	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
+
+	    	$request->session()->flash('danger','Application setup not success!');
+	    }
+
+        DB::commit();
 
     	return back();
     }

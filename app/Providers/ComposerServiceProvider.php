@@ -24,6 +24,13 @@ class ComposerServiceProvider extends ServiceProvider
         //         $view->with('auth', Auth()->guard('setup')->user());
         //     }
         // });
+
+        View()->composer('layouts.hrms_navbar',function($view){
+            \Artisan::call("db:connect");
+            $config = \DB::table('configs')->where('id',Session('config_id'))->first();
+            $view->with('settings',$config);
+        });
+
     }
 
     /**

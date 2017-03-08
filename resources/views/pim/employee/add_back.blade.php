@@ -18,40 +18,31 @@
                     <a id="" href="#tab1_1" v-on:click="tab = ''" data-toggle="tab" aria-expanded="true">Basic</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'personal') active @endif">
-                    <a v-if="user_id" id="personal" href="#tab1_2" v-on:click="tab = 'personal'" data-toggle="tab" aria-expanded="true">Personal</a>
-                    <a v-else id="personal" aria-expanded="true">Personal</a>
+                    <a id="personal" @if(isset($id)) href="#tab1_2" v-on:click="tab = 'personal'" data-toggle="tab" @endif aria-expanded="true">Personal</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'education') active @endif">
-                    <a v-if="user_id" id="education" href="#tab1_3" v-on:click="tab = 'education'" data-toggle="tab"  aria-expanded="true">Education</a>
-                    <a v-else id="education" aria-expanded="true">Education</a>
+                    <a id="education" @if(isset($id)) href="#tab1_3" v-on:click="tab = 'education'" data-toggle="tab" @endif aria-expanded="true">Education</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'experience') active @endif">
-                    <a v-if="user_id" id="experience" href="#tab1_4" v-on:click="tab = 'experience'" data-toggle="tab" aria-expanded="true">Experience</a>
-                    <a v-else id="experience"  aria-expanded="true">Experience</a>
+                    <a id="experience" @if(isset($id)) href="#tab1_4" v-on:click="tab = 'experience'" data-toggle="tab" @endif aria-expanded="true">Experience</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'salary') active @endif">
-                    <a v-if="user_id" id="salary" href="#tab1_5" v-on:click="tab = 'salary'" data-toggle="tab" aria-expanded="true">Salary</a>
-                    <a v-else id="salary" aria-expanded="true">Salary</a>
+                    <a id="salary" @if(isset($id)) href="#tab1_5" v-on:click="tab = 'salary'" data-toggle="tab" @endif aria-expanded="true">Salary</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'nominee') active @endif">
-                    <a v-if="user_id" id="nominee" href="#tab1_6" v-on:click="tab = 'nominee'" data-toggle="tab" aria-expanded="true">Nominee</a>
-                    <a v-else id="nominee" aria-expanded="true">Nominee</a>
+                    <a id="nominee" @if(isset($id)) href="#tab1_6" v-on:click="tab = 'nominee'" data-toggle="tab" @endif aria-expanded="true">Nominee</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'training') active @endif">
-                    <a v-if="user_id" id="training" href="#tab1_7" v-on:click="tab = 'training'" data-toggle="tab" aria-expanded="true">Training</a>
-                    <a v-else id="training" aria-expanded="true">Training</a>
+                    <a id="training" @if(isset($id)) href="#tab1_7" v-on:click="tab = 'training'" data-toggle="tab" @endif aria-expanded="true">Training</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'reference') active @endif">
-                    <a v-if="user_id" id="reference" href="#tab1_8" v-on:click="tab = 'reference'" data-toggle="tab" aria-expanded="true">Reference</a>
-                    <a v-else id="reference" aria-expanded="true">Reference</a>
+                    <a id="reference" @if(isset($id)) href="#tab1_8" v-on:click="tab = 'reference'" data-toggle="tab" @endif aria-expanded="true">Reference</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'children') active @endif">
-                    <a v-if="user_id" id="children" href="#tab1_9" v-on:click="tab = 'children'" data-toggle="tab" aria-expanded="true">Children</a>
-                    <a v-else id="children" aria-expanded="true">Children</a>
+                    <a id="children" @if(isset($id)) href="#tab1_9" v-on:click="tab = 'children'" data-toggle="tab" @endif aria-expanded="true">Children</a>
                 </li>
                 <li class="@if(isset($id) && $tab == 'language') active @endif">
-                    <a v-if="user_id" id="language" href="#tab1_10" v-on:click="tab = 'language'" data-toggle="tab" aria-expanded="true">Language</a>
-                    <a v-else id="language" aria-expanded="true">Language</a>
+                    <a id="language" @if(isset($id)) href="#tab1_10" v-on:click="tab = 'language'" data-toggle="tab" @endif aria-expanded="true">Language</a>
                 </li>
             </ul>
         </div>
@@ -63,9 +54,10 @@
                 <div id="tab1_1" class="tab-pane @if($tab == '') active @endif">
                     <div class="row mt20">
                         <div class="col-md-12">
-                            <form method="post" v-on:submit.prevent="addEmployeeBasicInfo" enctype="multipart/form-data">
+                            <form action="{{url('employee/add')}}" method="post" enctype="multipart/form-data">
+                                {{csrf_field()}}
+                                @if(isset($user))
 
-                                <div v-if="basics !=''">    
                                     <div v-for="(basic,index) in basics" v-if="index =='id'">
 
                                         <div class="row">
@@ -187,7 +179,7 @@
                                         <div class="row">
                                             <div class="col-md-2 pt50" v-if="basics.address">
                                                 <label class="control-label">Employee Photo :</label>
-                                                <div class="fileupload admin-form" :class="(basics.photo)?'fileupload-exists':'fileupload-new'" data-provides="fileupload">
+                                                <div class="@if($user->photo) fileupload-exists @else fileupload-new @endif admin-form" data-provides="fileupload">
                                                     <div class="fileupload-preview thumbnail mb15">
                                                        
                                                     <img v-if="basics.photo" :src="'/files/'+basics.id+'/'+basics.photo" alt="holder">
@@ -319,40 +311,69 @@
                                             </div>
 
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div v-else>    
+                                        <hr class="short alt">
+
+                                        <div class="section row mbn">
+                                            <div class="col-sm-2 pull-right">
+                                                <p class="text-left">
+                                                    <button disabled="disabled" type="submit"
+                                                            name="save_next" value="save_next"
+                                                            class="btn btn-dark btn-gradient dark btn-block"><span
+                                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Create
+                                                        & Next
+                                                        <span class="glyphicons glyphicons-right_arrow"></span></button>
+                                                </p>
+                                            </div>
+                                            <div class="col-sm-2 pull-right">
+                                                <p class="text-left">
+                                                    <button disabled="disabled" type="submit"
+                                                            name="add_employee"
+                                                            class="btn btn-dark btn-gradient dark btn-block"><span
+                                                                class="glyphicons glyphicons-ok_2"></span> &nbsp; Create
+                                                        Employee
+                                                    </button>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.employee_no}">
-                                                <label class="control-label">Employee No : <span class="text-danger">*</span></label>
-                                                <input type="text" name="employee_no" class="form-control input-sm" placeholder="Enter Employee No" value="{{$next_employee_id or ''}}">
-                                                <span v-if="errors.employee_no" class="help-block" v-text="errors.employee_no[0]"></span>
+                                            <div class="form-group {{$errors->has('employee_no')?'has-error':''}}">
+                                                <label class="control-label">Employee No : <span
+                                                            class="text-danger">*</span></label>
+                                                <input type="text" name="employee_no" value="{{(old('employee_no'))?old('employee_no'):$next_employee_id}}" 
+                                                       class="form-control input-sm" placeholder="Enter Employee No">
+                                                @if($errors->has('employee_no'))<span
+                                                        class="help-block">{{$errors->first('employee_no')}}</span>@endif
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.employee_type_id}">
-                                                <label class="control-label">Employee Type : <span class="text-danger">*</span></label>
+                                            <div class="form-group {{$errors->has('employee_type_id')?'has-error':''}}">
+                                                <label class="control-label">Employee Type : <span
+                                                            class="text-danger">*</span></label>
                                                 <select class="form-control input-sm" id="employee_type_id" name="employee_type_id">
                                                     <option value="">...Select Employee Type...</option>
-                                                    <option v-for="(employeeType,index) in employeeTypes" :value="employeeType.id" v-text="employeeType.type_name"></option>
+                                                    <option v-for="(employeeType,index) in employeeTypes" v-bind:value="employeeType.id">@{{employeeType.type_name}}</option>
                                                 </select>
-                                                <span v-if="errors.employee_type_id" class="help-block" v-text="errors.employee_type_id[0]"></span>
+                                                @if($errors->has('employee_type_id'))<span class="help-block">{{$errors->first('employee_type_id')}}</span>@endif
                                             </div>
                                         </div>
 
                                         <div class="col-md-4">
-                                            <div class="form-group" :class="{'has-error': errors.designation_id}">
+                                            <div class="form-group {{$errors->has('designation_id')?'has-error':''}}">
                                                 <label class="control-label">Employee Designation : <span
                                                             class="text-danger">*</span></label>
                                                 <select class="select2-single form-control input-sm" id="designation_id"
                                                         name="designation_id">
-                                                    <option value="">...Select Employee Designation...</option>
-                                                    <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'"></option>
+                                                        <option>...Select Employee Designation...</option>
+                                                    <option v-for="(designation,index) in designations"
+                                                            v-bind:value="designation.id">@{{designation.designation_name}} - ( @{{designation.level.level_name}} ) - (@{{designation.department.department_name}})</option>
                                                 </select>
-                                                <span v-if="errors.designation_id" class="help-block" v-text="errors.designation_id[0]"></span>
+                                                @if($errors->has('designation_id'))<span
+                                                        class="help-block">{{$errors->first('designation_id')}}</span>@endif
                                             </div>
                                         </div>
 
@@ -372,12 +393,14 @@
 
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.first_name}">
+                                            <div class="form-group {{$errors->has('first_name')?'has-error':''}}">
                                                 <label class="control-label">First Name : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="first_name"
+                                                       value="{{old('first_name')}}"
                                                        class="form-control input-sm" placeholder="Enter First Name">
-                                                <span v-if="errors.first_name" class="help-block" v-text="errors.first_name[0]"></span>
+                                                @if($errors->has('first_name'))<span
+                                                        class="help-block">{{$errors->first('first_name')}}</span>@endif
                                             </div>
                                         </div>
 
@@ -385,17 +408,20 @@
                                             <div class="form-group">
                                                 <label class="control-label">Middle Name : </label>
                                                 <input type="text" name="middle_name"
+                                                       value="{{old('middle_name')}}"
                                                        class="form-control input-sm" placeholder="Enter Middle Name">
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.last_name}">
+                                            <div class="form-group {{$errors->has('last_name')?'has-error':''}}">
                                                 <label class="control-label">Last Name : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="last_name"
+                                                       value="{{old('last_name')}}"
                                                        class="form-control input-sm" placeholder="Enter Last Name">
-                                                <span v-if="errors.last_name" class="help-block" v-text="errors.last_name[0]"></span>
+                                                @if($errors->has('last_name'))<span
+                                                        class="help-block">{{$errors->first('last_name')}}</span>@endif
                                             </div>
                                         </div>
 
@@ -403,6 +429,7 @@
                                             <div class="form-group">
                                                 <label class="control-label">Nick Name</label>
                                                 <input type="text" name="nick_name"
+                                                       value="{{old('nick_name')}}"
                                                        class="form-control input-sm" placeholder="Enter Nick Name">
                                             </div>
                                         </div>
@@ -410,43 +437,49 @@
 
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.email}">
+                                            <div class="form-group {{$errors->has('email')?'has-error':''}}">
                                                 <label class="control-label">Email Address : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="email" name="email"
+                                                       value="{{old('email')}}"
                                                        class="form-control input-sm" placeholder="Enter Email Address">
-                                                <span v-if="errors.email" class="help-block" v-text="errors.email[0]"></span>
+                                                @if($errors->has('email'))<span
+                                                        class="help-block">{{$errors->first('email')}}</span>@endif
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.mobile_number}">
+                                            <div class="form-group {{$errors->has('mobile_number')?'has-error':''}}">
                                                 <label class="control-label">Mobile Number : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="number" name="mobile_number"
+                                                       value="{{old('mobile_number')}}"
                                                        class="form-control input-sm" placeholder="Enter Mobile Number">
-                                                <span v-if="errors.mobile_number" class="help-block" v-text="errors.mobile_number[0]"></span>
+                                                @if($errors->has('mobile_number'))<span
+                                                        class="help-block">{{$errors->first('mobile_number')}}</span>@endif
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.password}">
+                                            <div class="form-group {{$errors->has('password')?'has-error':''}}">
                                                 <label class="control-label">Password : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="password" name="password"
+                                                <input type="password" name="password" value="{{old('password')}}"
                                                        class="form-control input-sm" placeholder="Enter Password">
-                                                <span v-if="errors.password" class="help-block" v-text="errors.password[0]"></span>
+                                                @if($errors->has('password'))<span
+                                                        class="help-block">{{$errors->first('password')}}</span>@endif
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.retype_password}">
+                                            <div class="form-group {{$errors->has('retype_password')?'has-error':''}}">
                                                 <label class="control-label">Retype Password : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="password" name="retype_password"
                                                        class="form-control input-sm"
                                                        placeholder="Enter Retype Password">
-                                                <span v-if="errors.retype_password" class="help-block" v-text="errors.retype_password[0]"></span>
+                                                @if($errors->has('retype_password'))<span
+                                                        class="help-block">{{$errors->first('retype_password')}}</span>@endif
                                             </div>
                                         </div>
                                     </div>
@@ -454,19 +487,18 @@
                                     <div class="row">
                                         <div class="col-md-2 pt50">
                                             <label class="control-label">Employee Photo :</label>
-                                            <div class="fileupload-new fileupload admin-form" data-provides="fileupload">
+                                            <div class="fileupload fileupload-new admin-form"
+                                                 data-provides="fileupload">
                                                 <div class="fileupload-preview thumbnail mb15">
                                                     <img src="{{asset('img/placeholder.png')}}" alt="holder">
                                                 </div>
                                                 <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
                                                     <span class="fileupload-exists"><span class="fa fa-user"></span> &nbsp; <strong>Change Photo</strong></span>
                                                     <span class="fileupload-new"><span class="fa fa-user"></span> &nbsp; <strong>Select Photo</strong></span>
-                                                    <input type="file" name="image">
+                                                <input type="file" name="image">
                                                 </span>
                                             </div>
                                         </div>
-
-
                                         <div class="col-md-10">
                                             <div class="admin-form">
                                                 <div class="section-divider mb40">
@@ -476,63 +508,73 @@
 
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.present_division_id}">
+                                                    <div class="form-group {{$errors->has('present_division_id')?'has-error':''}}">
                                                         <label class="control-label">Division : <span
                                                                     class="text-danger">*</span></label>
-                                                        <select v-model="present_division_id" class="form-control input-sm" name="present_division_id" >
+                                                        <select class="form-control input-sm" name="present_division_id"
+                                                                v-model="present_division_id">
                                                             <option :value="''">---- Select Division ----</option>
-                                                            <option v-for="(division, index) in divisions" :value="division.id" v-text="division.division_name"></option>
+                                                            <option v-for="(division, index) in divisions"
+                                                                    :value="division.id">@{{ division.division_name }}</option>
                                                         </select>
-                                                         <span v-if="errors.present_division_id" class="help-block" v-text="errors.present_division_id[0]"></span>
+                                                        @if($errors->has('present_division_id'))<span
+                                                                class="help-block">{{$errors->first('present_division_id')}}</span>@endif
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.present_district_id}">
+                                                    <div class="form-group {{$errors->has('present_district_id')?'has-error':''}}">
                                                         <label class="control-label">District : <span
                                                                     class="text-danger">*</span></label>
-                                                        <select v-model="present_district_id" class="form-control input-sm" name="present_district_id" >
+                                                        <select class="form-control input-sm" name="present_district_id"
+                                                                v-model="present_district_id">
                                                             <option :value="''">---- Select District ----</option>
-                                                            <option v-for="(district, index) in districts" :value="district.id" v-text="district.district_name"></option>
+                                                            <option v-for="(district, index) in districts"
+                                                                    :value="district.id">@{{ district.district_name }}</option>
                                                         </select>
-                                                        <span v-if="errors.present_district_id" class="help-block" v-text="errors.present_district_id[0]"></span>
+                                                        @if($errors->has('present_district_id'))<span
+                                                                class="help-block">{{$errors->first('present_district_id')}}</span>@endif
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.present_policestation_id}">
+                                                    <div class="form-group {{$errors->has('present_policestation_id')?'has-error':''}}">
                                                         <label class="control-label">Police Station : <span
                                                                     class="text-danger">*</span></label>
                                                         <select class="form-control input-sm"
                                                                 name="present_policestation_id">
                                                             <option :value="''">---- Select Police Station ----</option>
                                                             <option v-for="(policeStation,index) in policeStations"
-                                                                    :value="policeStation.id" v-text="policeStation.police_station_name"></option>
+                                                                    :value="policeStation.id">@{{ policeStation.police_station_name }}</option>
                                                         </select>
-                                                        <span v-if="errors.present_policestation_id" class="help-block" v-text="errors.present_policestation_id[0]"></span>
+                                                        @if($errors->has('present_policestation_id'))<span
+                                                                class="help-block">{{$errors->first('present_policestation_id')}}</span>@endif
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.present_postoffice}">
+                                                    <div class="form-group {{$errors->has('present_postoffice')?'has-error':''}}">
                                                         <label class="control-label">Post Office : <span
                                                                     class="text-danger">*</span></label>
-                                                        <input type="text" name="present_postoffice" 
+                                                        <input type="text" name="present_postoffice"
+                                                               value="{{old('present_postoffice')}}"
                                                                class="form-control input-sm"
                                                                placeholder="Enter Post Office">
-                                                        <span v-if="errors.present_postoffice" class="help-block" v-text="errors.present_postoffice[0]"></span>
+                                                        @if($errors->has('present_postoffice'))<span
+                                                                class="help-block">{{$errors->first('present_postoffice')}}</span>@endif
                                                     </div>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="form-group" :class="{'has-error': errors.present_address}">
+                                                    <div class="form-group {{$errors->has('present_address')?'has-error':''}}">
                                                         <label class="control-label">Address : <span
                                                                     class="text-danger">*</span></label>
                                                         <textarea name="present_address" class="form-control input-sm"
                                                                   cols="60" rows="1"
-                                                                  placeholder="House, Road, Village."></textarea>
-                                                        <span v-if="errors.present_address" class="help-block" v-text="errors.present_address[0]"></span>
+                                                                  placeholder="House, Road, Village.">{{old('present_address')}}</textarea>
+                                                        @if($errors->has('present_address'))<span
+                                                                class="help-block">{{$errors->first('present_address')}}</span>@endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -545,99 +587,108 @@
 
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.permanent_division_id}">
+                                                    <div class="form-group {{$errors->has('permanent_division_id')?'has-error':''}}">
                                                         <label class="control-label">Division : <span
                                                                     class="text-danger">*</span></label>
-                                                        <select v-model="permanent_division_id" class="form-control input-sm"
-                                                                name="permanent_division_id" >
+                                                        <select class="form-control input-sm"
+                                                                name="permanent_division_id"
+                                                                v-model="permanent_division_id">
                                                             <option :value="''">---- Select Division ----</option>
                                                             <option v-for="(division, index) in divisions"
-                                                                    :value="division.id" v-text="division.division_name"></option>
+                                                                    :value="division.id">@{{ division.division_name }}</option>
                                                         </select>
-                                                        <span v-if="errors.permanent_division_id" class="help-block" v-text="errors.permanent_division_id[0]"></span>
+                                                        @if($errors->has('permanent_division_id'))<span
+                                                                class="help-block">{{$errors->first('permanent_division_id')}}</span>@endif
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.permanent_district_id}">
+                                                    <div class="form-group {{$errors->has('permanent_district_id')?'has-error':''}}">
                                                         <label class="control-label">District : <span
                                                                     class="text-danger">*</span></label>
-                                                        <select v-model="permanent_district_id" class="form-control input-sm"
-                                                                name="permanent_district_id" >
+                                                        <select class="form-control input-sm"
+                                                                name="permanent_district_id"
+                                                                v-model="permanent_district_id">
                                                             <option :value="''">---- Select Employee Designation ----
                                                             </option>
                                                             <option v-for="(district, index) in permanentDistricts"
-                                                                    :value="district.id" v-text="district.district_name"></option>
+                                                                    :value="district.id">@{{ district.district_name }}</option>
                                                         </select>
-                                                        <span v-if="errors.permanent_district_id" class="help-block" v-text="errors.permanent_district_id[0]"></span>
+                                                        @if($errors->has('permanent_district_id'))<span
+                                                                class="help-block">{{$errors->first('permanent_district_id')}}</span>@endif
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.permanent_policestation_id}">
+                                                    <div class="form-group {{$errors->has('permanent_policestation_id')?'has-error':''}}">
                                                         <label class="control-label">Police Station : <span
                                                                     class="text-danger">*</span></label>
                                                         <select class="form-control input-sm"
                                                                 name="permanent_policestation_id">
                                                             <option :value="''">---- Select Police Station ----</option>
                                                             <option v-for="(policeStation,index) in permanentPoliceStations"
-                                                                    :value="policeStation.id" v-text="policeStation.police_station_name"></option>
+                                                                    :value="policeStation.id">@{{ policeStation.police_station_name }}</option>
                                                         </select>
-                                                        <span v-if="errors.permanent_policestation_id" class="help-block" v-text="errors.permanent_policestation_id[0]"></span>
+                                                        @if($errors->has('permanent_policestation_id'))<span
+                                                                class="help-block">{{$errors->first('permanent_policestation_id')}}</span>@endif
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <div class="form-group" :class="{'has-error': errors.permanent_postoffice}">
+                                                    <div class="form-group {{$errors->has('permanent_postoffice')?'has-error':''}}">
                                                         <label class="control-label">Post Office : <span
                                                                     class="text-danger">*</span></label>
                                                         <input type="text" name="permanent_postoffice"
+                                                               value="{{old('permanent_postoffice')}}"
                                                                class="form-control input-sm"
                                                                placeholder="Enter Post Office">
-                                                        <span v-if="errors.permanent_postoffice" class="help-block" v-text="errors.permanent_postoffice[0]"></span>
+                                                        @if($errors->has('permanent_postoffice'))<span
+                                                                class="help-block">{{$errors->first('permanent_postoffice')}}</span>@endif
                                                     </div>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="form-group" :class="{'has-error': errors.permanent_address}">
+                                                    <div class="form-group {{$errors->has('permanent_address')?'has-error':''}}">
                                                         <label class="control-label">Address : <span
                                                                     class="text-danger">*</span></label>
                                                         <textarea name="permanent_address" class="form-control input-sm"
                                                                   cols="60" rows="1"
-                                                                  placeholder="House, Road, Village."></textarea>
-                                                       <span v-if="errors.permanent_address" class="help-block" v-text="errors.permanent_address[0]"></span>
+                                                                  placeholder="House, Road, Village.">{{old('permanent_address')}}</textarea>
+                                                        @if($errors->has('permanent_address'))<span
+                                                                class="help-block">{{$errors->first('permanent_address')}}</span>@endif
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>  
 
-                                <hr class="short alt">
+                                    </div>
 
-                                <div class="section row mbn">
-                                    <div class="col-sm-2 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" :disabled="basics != ''"
-                                                    name="save_next" value="save_next" v-on:click="submit_button = 'save_next'"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Create &
-                                                Next
-                                                <span class="glyphicons glyphicons-right_arrow"></span></button>
-                                        </p>
+                                    <hr class="short alt">
+
+                                    <div class="section row mbn">
+                                        <div class="col-sm-2 pull-right">
+                                            <p class="text-left">
+                                                <button type="submit"
+                                                        name="save_next" value="save_next"
+                                                        class="btn btn-dark btn-gradient dark btn-block"><span
+                                                            class="glyphicons glyphicons-ok_2"></span> &nbsp; Create &
+                                                    Next
+                                                    <span class="glyphicons glyphicons-right_arrow"></span></button>
+                                            </p>
+                                        </div>
+                                        <div class="col-sm-2 pull-right">
+                                            <p class="text-left">
+                                                <button type="submit"
+                                                        name="add_employee" value="add_employee"
+                                                        class="btn btn-dark btn-gradient dark btn-block"><span
+                                                            class="glyphicons glyphicons-ok_2"></span> &nbsp; Create
+                                                    Employee
+                                                </button>
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-2 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" :disabled="basics != ''"
-                                                    name="add_employee" value="add_employee" v-on:click="submit_button = 'add_employee'"
-                                                    class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Create
-                                                Employee
-                                            </button>
-                                        </p>
-                                    </div>
-                                </div>
+                                @endif
                             </form>
                         </div>
                     </div>
@@ -758,7 +809,7 @@
                                             <div class="form-group">
                                                 <label class="control-label">Blood Group :</label>
                                                 <input type="text"
-                                                       :value="(personals.details.blood_group)?personals.details.blood_group.blood_name:''"
+                                                       :value="personals.details.blood_group.blood_name"
                                                        class="form-control input-sm"
                                                        disabled="disabled">
                                             </div>
@@ -849,6 +900,7 @@
                                                 <label class="control-label">Father Name : <span
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="father_name"
+                                                       value="{{old('father_name')}}"
                                                        class="form-control input-sm" placeholder="Enter Father Name">
                                                 <span v-if="errors.father_name" class="text-danger">@{{ errors.father_name[0]}}</span>
                                             </div>
@@ -858,7 +910,7 @@
                                             <div class="form-group" :class="{'has-error': errors.mother_name}">
                                                 <label class="control-label">Mother Name : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="mother_name"
+                                                <input type="text" name="mother_name" value="{{old('mother_name')}}"
                                                        class="form-control input-sm" placeholder="Enter Mother Name">
                                                 <span v-if="errors.mother_name" class="text-danger">@{{ errors.mother_name[0]}}</span>
                                             </div>
@@ -868,7 +920,7 @@
                                             <div class="form-group" :class="{'has-error': errors.national_id}">
                                                 <label class="control-label">National Id : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="national_id"
+                                                <input type="text" name="national_id" value="{{old('national_id')}}"
                                                        class="form-control input-sm" placeholder="Enter National Id">
                                                 <span v-if="errors.national_id" class="text-danger">@{{ errors.national_id[0]}}</span>
                                             </div>
@@ -879,7 +931,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.passport_no}">
                                                 <label class="control-label">Passport No :</label>
-                                                <input type="text" name="passport_no" 
+                                                <input type="text" name="passport_no" value="{{old('passport_no')}}"
                                                        class="form-control input-sm" placeholder="Enter Passport No">
                                                 <span v-if="errors.passport_no" class="text-danger">@{{ errors.passport_no[0]}}</span>
                                             </div>
@@ -888,7 +940,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.tin_no}">
                                                 <label class="control-label">Tin No :</label>
-                                                <input type="text" name="tin_no"
+                                                <input type="text" name="tin_no" value="{{old('tin_no')}}"
                                                        class="form-control input-sm" placeholder="Enter Tin No">
                                                 <span v-if="errors.tin_no" class="text-danger">@{{ errors.tin_no[0]}}</span>
                                             </div>
@@ -898,7 +950,7 @@
                                             <div class="form-group" :class="{'has-error': errors.personal_email}">
                                                 <label class="control-label">Personal Email : <span class="text-danger">*</span></label>
                                                 <input type="text" name="personal_email"
-                                                       class="form-control input-sm"
+                                                       value="{{old('personal_email')}}" class="form-control input-sm"
                                                        placeholder="Enter Personal Email">
                                                 <span v-if="errors.personal_email" class="text-danger">@{{ errors.personal_email[0]}}</span>
                                             </div>
@@ -908,7 +960,7 @@
                                             <div class="form-group" :class="{'has-error': errors.official_email}">
                                                 <label class="control-label">Official Email : <span class="text-danger">*</span></label>
                                                 <input type="text" name="official_email"
-                                                       class="form-control input-sm"
+                                                       value="{{old('official_email')}}" class="form-control input-sm"
                                                        placeholder="Enter Official Email">
                                                 <span v-if="errors.official_email" class="text-danger">@{{ errors.official_email[0]}}</span>
                                             </div>
@@ -920,7 +972,7 @@
                                             <div class="form-group" :class="{'has-error': errors.phone_number}">
                                                 <label class="control-label">Phone Number : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="phone_number"
+                                                <input type="text" name="phone_number" value="{{old('phone_number')}}"
                                                        class="form-control input-sm" placeholder="Enter Phone Number">
                                                 <span v-if="errors.phone_number" class="text-danger">@{{ errors.phone_number[0]}}</span>
                                             </div>
@@ -929,7 +981,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.birth_date}">
                                                 <label class="control-label">Birth Date :</label>
-                                                <input type="text" name="birth_date"
+                                                <input type="text" name="birth_date" value="{{old('birth_date')}}"
                                                        class="datepicker form-control input-sm"
                                                        placeholder="Enter Birth Date" readonly="readonly">
                                                 <span v-if="errors.birth_date" class="text-danger">@{{ errors.birth_date[0]}}</span>
@@ -940,7 +992,7 @@
                                             <div class="form-group" :class="{'has-error': errors.joining_date}">
                                                 <label class="control-label">Joining Date : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="joining_date"
+                                                <input type="text" name="joining_date" value="{{old('joining_date')}}"
                                                        class="datepicker form-control input-sm"
                                                        placeholder="Enter Joining Date" readonly="readonly">
                                                 <span v-if="errors.joining_date" class="text-danger">@{{ errors.joining_date[0]}}</span>
@@ -965,10 +1017,12 @@
                                             <div class="form-group" :class="{'has-error': errors.gender}">
                                                 <label class="control-label">Gender : <span class="text-danger">*</span></label>
                                                 <div class="radio-custom mb5">
-                                                    <input id="male" name="gender" type="radio" value="male">
+                                                    <input id="male" name="gender" type="radio" value="male"
+                                                           @if(old('gender') == 'male') checked="checked" @endif>
                                                     <label for="male">Male</label>
 
-                                                    <input id="female" name="gender" type="radio" value="female">
+                                                    <input id="female" name="gender" type="radio" value="female"
+                                                           @if(old('gender') == 'female') checked="checked" @endif>
                                                     <label for="female">Female</label>
                                                 </div>
                                                 <span v-if="errors.gender" class="text-danger">@{{ errors.gender[0]}}</span>
@@ -980,11 +1034,13 @@
                                                 <label class="control-label">Marital Status : <span class="text-danger">*</span></label>
                                                 <div class="radio-custom mb5">
                                                     <input id="married" name="marital_status" type="radio"
-                                                           value="married">
+                                                           value="married"
+                                                           @if(old('marital_status') == 'married') checked="checked" @endif>
                                                     <label for="married">Married</label>
 
                                                     <input id="unmarried" name="marital_status" type="radio"
-                                                           value="unmarried">
+                                                           value="unmarried"
+                                                           @if(old('marital_status') == 'unmarried') checked="checked" @endif>
                                                     <label for="unmarried">Unmarried</label>
                                                 </div>
                                                 <span v-if="errors.marital_status" class="text-danger">@{{ errors.marital_status[0]}}</span>
@@ -994,7 +1050,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.religion}">
                                                 <label class="control-label">Religion :</label>
-                                                <input type="text" name="religion" 
+                                                <input type="text" name="religion" value="{{old('religion')}}"
                                                        class="form-control input-sm" placeholder="Enter Religion">
                                                 <span v-if="errors.religion" class="text-danger">@{{ errors.religion[0]}}</span>
                                             </div>
@@ -1003,7 +1059,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.nationality}">
                                                 <label class="control-label">Nationality :</label>
-                                                <input type="text" name="nationality"
+                                                <input type="text" name="nationality" value="{{old('nationality')}}"
                                                        class="form-control input-sm" placeholder="Enter Nationality">
                                                 <span v-if="errors.nationality" class="text-danger">@{{ errors.nationality[0]}}</span>
                                             </div>
@@ -1015,6 +1071,7 @@
                                             <div class="form-group" :class="{'has-error': errors.emergency_contact_person}">
                                                 <label class="control-label">Emergency Contact Person :</label>
                                                 <input type="text" name="emergency_contact_person"
+                                                       value="{{old('emergency_contact_person')}}"
                                                        class="form-control input-sm"
                                                        placeholder="Emergency Contact Person">
                                                 <span v-if="errors.emergency_contact_person" class="text-danger">@{{ errors.emergency_contact_person[0]}}</span>
@@ -1025,7 +1082,7 @@
                                                 <label class="control-label">Emergency Contact Address :</label>
                                                 <textarea name="emergency_contact_address" class="form-control input-sm"
                                                           cols="60" rows="1"
-                                                          placeholder="Emergency Contact Address"></textarea>
+                                                          placeholder="Emergency Contact Address">{{old('emergency_contact_address')}}</textarea>
                                                 <span v-if="errors.emergency_contact_address" class="text-danger">@{{ errors.emergency_contact_address[0]}}</span>
                                             </div>
                                         </div>
@@ -1223,7 +1280,7 @@
                                             <div class="form-group" :class="{'has-error': errors.pass_year}">
                                                 <label class="control-label">Pass Year : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="pass_year" class="date form-control input-sm" v-on:click="datePickerYear"
+                                                <input type="text" name="pass_year" class="date form-control input-sm"
                                                        readonly="">
                                                 <span v-if="errors.pass_year" class="text-danger">@{{ errors.pass_year[0]}}</span>
                                             </div>
@@ -1276,13 +1333,13 @@
                                                             class="text-danger">*</span></label>
                                                 <select name="division" class="form-control input-sm">
                                                     <option value="">--- Select Division ---</option>
-                                                    <option value="1">
+                                                    <option value="1" @if(old('division') == 1) {{"selected"}} @endif>
                                                         First Division
                                                     </option>
-                                                    <option value="2">
+                                                    <option value="2" @if(old('division') == 2) {{"selected"}} @endif>
                                                         Second Division
                                                     </option>
-                                                    <option value="3">
+                                                    <option value="3" @if(old('division') == 3) {{"selected"}} @endif>
                                                         Third Division
                                                     </option>
                                                 </select>
@@ -1345,9 +1402,9 @@
                             <form id="add_experience_form" v-on:submit.prevent="addNewExperience" method="post">
 
                             <!-- start v-if -->
-                                <div v-if="experiences.experiences !=''">
+                                <div v-if="experiences.length>0">
                                     <!-- start v-for in experiences   -->
-                                    <div v-for="(experience, index) in experiences.experiences">
+                                    <div v-for="(experience, index) in experiences">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -1436,7 +1493,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_start_date}">
                                                 <label class="control-label">Job Start Date : <span class="text-danger">*</span></label>
-                                                <input type="text" id="job_start_date" name="job_start_date" class="datepicker form-control input-sm" v-on:click="datePicker" readonly="readonly">
+                                                <input type="text" id="job_start_date" name="job_start_date" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.job_start_date" class="text-danger">@{{ errors.job_start_date[0]}}</span>
                                             </div>
                                         </div>
@@ -1444,7 +1501,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_end_date}">
                                                 <label class="control-label">Job End Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="job_end_date" id="job_end_date" class="datepicker form-control input-sm" v-on:click="datePicker" readonly="readonly">
+                                                <input type="text" name="job_end_date" id="job_end_date" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.job_end_date" class="text-danger">@{{ errors.job_end_date[0]}}</span>
                                             </div>
                                         </div>
@@ -1481,7 +1538,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_new_experience_button" :disabled="experiences.experiences ==''"
+                                            <button id="add_new_experience_button" :disabled="experiences.length<=0"
                                                 onclick="modal_open('#add_new_experience_button','#add_new_experience_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
                                                 Experience
@@ -1495,7 +1552,7 @@
                                 <div class="section row mbn">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="experiences.experiences !=''"
+                                            <button type="submit" :disabled="experiences.length>0"
                                                     name="save_experience_and_next" v-on:click="submit_button='save_experience_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
@@ -1506,7 +1563,7 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="experiences.experiences !=''"
+                                            <button type="submit" :disabled="experiences.length>0"
                                                     name="save_experience" v-on:click="submit_button='save_experience'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Experience
@@ -1623,7 +1680,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.bank_id}">
                                         <label class="control-label">Bank Name : </label>
                                         <select class="form-control input-sm" name="bank_id" :disabled="salaries.salary_account">
@@ -1635,7 +1692,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.bank_account_no}">
                                         <label class="control-label">Account No : </label>
                                         <input type="text" name="bank_account_no" class="form-control input-sm" :disabled="salaries.salary_account">
@@ -1651,17 +1708,10 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
                                         <label class="control-label">Bank Branch : </label>
                                         <input type="text" name="bank_branch_name" class="form-control input-sm" :disabled="salaries.salary_account">
-                                        <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
-                                        <label class="control-label">Bank Branch Address: </label>
-                                        <textarea type="text" name="bank_branch_address" class="form-control input-sm" :disabled="salaries.salary_account"></textarea>
                                         <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
                                     </div>
                                 </div>
@@ -1871,8 +1921,8 @@
                         <form id="add_training_form" v-on:submit.prevent="addNewTraining" method="post">
                             <input type="hidden" name="user_id" :value="user_id">
 
-                            <div v-if="trainings.trainings !=''">
-                                <div v-for="training in trainings.trainings">
+                            <div v-if="trainings.length>0">
+                                <div v-for="training in trainings">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -1999,7 +2049,7 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_training_button" :disabled="trainings.trainings ==''"
+                                        <button id="add_new_training_button" :disabled="trainings.length<=0"
                                             onclick="modal_open('#add_new_training_button','#add_new_training_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                 data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Training
                                         </button>
@@ -2012,7 +2062,7 @@
                             <div class="section row mbn">
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="trainings.trainings !=''"
+                                        <button type="submit" :disabled="trainings.length>0" :disabled="trainings.user_id"
                                                 name="save_training_and_next" v-on:click="submit_button='save_training_and_next'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
@@ -2023,7 +2073,7 @@
 
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="trainings.trainings !=''"
+                                        <button type="submit" :disabled="trainings.length>0"
                                                 name="save_training" v-on:click="submit_button='save_training'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Training
@@ -2043,8 +2093,8 @@
                         <form id="add_reference_form" v-on:submit.prevent="addNewReference" method="post">
                             <input type="hidden" name="user_id" :value="user_id">
 
-                            <div v-if="references.references !=''">
-                                <div v-for="reference in references.references">
+                            <div v-if="references.length>0">
+                                <div v-for="reference in references">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -2147,7 +2197,7 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_reference_button" :disabled="references.references ==''"
+                                        <button id="add_new_reference_button" :disabled="references.length<=0"
                                             onclick="modal_open('#add_new_reference_button','#add_new_reference_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                 data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Reference
                                         </button>
@@ -2160,7 +2210,7 @@
                             <div class="section row mbn">
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="references.references !=''"
+                                        <button type="submit" :disabled="references.user_id"
                                                 name="save_reference_and_next" v-on:click="submit_button='save_reference_and_next'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
@@ -2171,7 +2221,7 @@
 
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="references.references !=''"
+                                        <button type="submit" :disabled="references.user_id"
                                                 name="save_reference" v-on:click="submit_button='save_reference'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Reference
@@ -2191,8 +2241,8 @@
                         <form id="add_children_form" v-on:submit.prevent="addNewChildren" method="post">
                             <input type="hidden" name="user_id" :value="user_id">
 
-                            <div v-if="childrens.childrens !=''">
-                                <div v-for="children in childrens.childrens">
+                            <div v-if="childrens.length>0">
+                                <div v-for="children in childrens">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -2295,7 +2345,7 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_children_button" :disabled="childrens.childrens ==''"
+                                        <button id="add_new_children_button" :disabled="childrens.length<=0"
                                             onclick="modal_open('#add_new_children_button','#add_new_children_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                 data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Children
                                         </button>
@@ -2308,7 +2358,7 @@
                             <div class="section row mbn">
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="childrens.childrens !=''"
+                                        <button type="submit" :disabled="childrens.length>0"
                                                 name="save_children_and_next" v-on:click="submit_button='save_children_and_next'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
@@ -2319,7 +2369,7 @@
 
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="childrens.childrens !=''"
+                                        <button type="submit" :disabled="childrens.length>0"
                                                 name="save_children" v-on:click="submit_button='save_children'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Children
@@ -2558,7 +2608,19 @@
         var base_url = "{{url('/')}}";
         var add_edit = "add";
         var current_tab = "{{($tab)?$tab:''}}";
+        var id = "{{(isset($id))?base64_encode($id).'/':''}}";
         var user_id = "{{(isset($id))?$id:''}}";
+
+        jQuery(document).ready(function () {
+
+            $('.date').datetimepicker({
+                format: 'YYYY',
+                viewMode: 'years',
+                minViewMode: "years",
+                pickTime: false
+            });
+
+        });
 
         // Modal Start
         function modal_open(id, form_id) {

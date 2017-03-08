@@ -21,7 +21,7 @@ class CreateEmployeeExperiencesTable extends Migration
             $table->string('position_held',100);
             $table->date('job_start_date');
             $table->date('job_end_date');
-            $table->tinyInteger('job_duration')->comment ='in year';
+            $table->decimal('job_duration',3,2)->comment ='in year';
             $table->text('job_responsibility');
             $table->text('job_location');
             $table->integer('created_by')->default(0);

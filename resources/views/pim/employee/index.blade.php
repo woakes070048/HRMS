@@ -17,10 +17,12 @@
                     <table class="table table-striped table-hover" id="datatable1" cellspacing="0" width="100%">
                         <thead>
                         <tr class="bg-dark">
-                            <th>SL No:</th>
+                            <th>SL:</th>
                             <th>Employee No</th>
                             <th>Employee Name</th>
                             <th>Email Address</th>
+                            <th>Level</th>
+                            <th>Department</th>
                             <th>Designation</th>
                             <th>Image</th>
                             <th>Created Date</th>
@@ -30,10 +32,12 @@
                         </thead>
                         <tfoot>
                         <tr class="bg-dark">
-                            <th>SL No:</th>
+                            <th>SL:</th>
                             <th>Employee No</th>
                             <th>Employee Name</th>
                             <th>Email Address</th>
+                            <th>Level</th>
+                            <th>Department</th>
                             <th>Designation</th>
                             <th>Image</th>
                             <th>Created Date</th>
@@ -49,6 +53,8 @@
                                <td>{{$user->employee_no}}</td>
                                <td>{{$user->fullname}}</td>
                                <td>{{$user->email}}</td>
+                               <td>{{$user->designation->level->level_name}}</td>
+                               <td>{{$user->designation->department->department_name}}</td>
                                <td>{{$user->designation->designation_name}}</td>
                                <td>
                                   @if($user->photo)
@@ -61,7 +67,7 @@
                                <td>@if($user->createdBy) {{$user->createdBy->fullname}} @else Maybe system @endif</td>
                                <td>
                                    <div class="btn-group">
-                                       <a href="{{url('/employee/edit/'.base64_encode($user->id))}}" class="btn btn-sm btn-primary">
+                                       <a href="{{url('/employee/edit/'.$user->id)}}" class="btn btn-sm btn-primary">
                                            <i class="glyphicons glyphicons-pencil"></i>
                                        </a>
                                    </div>
@@ -71,7 +77,7 @@
                                        </a>
                                    </div>
                                    <div class="btn-group">
-                                       <a href="{{url('/employee/delete/'.base64_encode($user->id))}}" class="btn btn-sm btn-danger">
+                                       <a href="{{url('/employee/delete/'.$user->id)}}" class="btn btn-sm btn-danger">
                                            <i class="glyphicons glyphicons-bin"></i>
                                        </a>
                                    </div>

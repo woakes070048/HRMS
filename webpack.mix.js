@@ -6,7 +6,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
 
 
 mix.js('resources/assets/js/hrms/salaryInfo.js', 'public/js')
-    // .js('resources/assets/js/hrms/employee.js', 'public/js')
+    .js('resources/assets/js/hrms/employee.js', 'public/js')
 	.js('resources/assets/js/hrms/hrms.js', 'public/js');
 
 
