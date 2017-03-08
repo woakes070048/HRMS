@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Setup;
 
 // model class
 use App\Models\User;
+use App\Models\Setting;
 use App\Models\Setup\UserEmails;
 use App\Models\Setup\Config;
 use App\Models\Setup\Package;
@@ -50,6 +51,7 @@ class ConfigController extends Controller
     	$database_name = $this->makeDatabaseName($request->company_name);
 
         $company_name          = $request->company_name;
+        $company_code          = $request->company_code;
         $package_id            = $request->package_name;
         $first_name            = $request->first_name;
         $last_name             = $request->last_name;
@@ -66,9 +68,9 @@ class ConfigController extends Controller
         $formet = "+$package_duration month";
         $package_end_date = date("Y-m-d", strtotime($formet));
 
-     	// DB::beginTransaction();
+     	DB::beginTransaction();
 
-      //   try{
+        // try{
 
             $setup_user = SetupUser::create([
                 'first_name' => $first_name,
@@ -81,7 +83,8 @@ class ConfigController extends Controller
 
 	    	$config = Config::create([
 	    			'user_id'          => $setup_user->id,
-	    			'company_name'     => $company_name,
+                    'company_name'     => $company_name,
+	    			'company_code'     => $company_code,
 	    			'company_address'  => $company_address,
 	    			'database_name'    => $database_name,
                     'package_end_date' => $package_end_date,
@@ -113,14 +116,25 @@ class ConfigController extends Controller
 	    	Artisan::call("db:seed");
 
 	    	User::create([
-                    'employee_no'    => '0-00',
-                    'designation_id' => 1,   
-                    'first_name'     => $first_name, 
-                    'last_name'      => $last_name,    
-                    'email'          => $email, 
-                    'password'       => bcrypt($password),  
-                    'mobile_number'  => $mobile_number,
+                    'employee_no'       => '0-00',
+                    'employee_type_id'  => 1,
+                    'designation_id'    => 1,   
+                    'first_name'        => $first_name, 
+                    'last_name'         => $last_name,    
+                    'email'             => $email, 
+                    'password'          => bcrypt($password),  
+                    'mobile_number'     => $mobile_number,
 	    		]);
+
+            Setting::create([
+                    'field_name' => "company_name",
+                    'field_value' => $company_name,
+                ]);
+
+            Setting::create([
+                    'field_name' => "company_code",
+                    'field_value' => $company_code,
+                ]);
 
 	    	$request->session()->flash('success','Application successfully setup!');
 
@@ -135,7 +149,7 @@ class ConfigController extends Controller
 	    // 	$request->session()->flash('danger','Application setup not success!');
 	    // }
 
-     //    DB::commit();
+        DB::commit();
 
     	return back();
     }

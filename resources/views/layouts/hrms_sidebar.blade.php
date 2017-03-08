@@ -14,6 +14,12 @@
                 </a>
                 <ul class="nav sub-nav">
                     <li>
+                        <a href="{{url('settings/index')}}">
+                            <i class="fa fa-circle-o"></i> 
+                            Settings
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{url('department/index')}}">
                             <i class="fa fa-circle-o"></i> Departments
                         </a>

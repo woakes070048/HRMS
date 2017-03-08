@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Level;
-<<<<<<< HEAD
 use App\Models\Units;
-=======
 use App\Models\Bank;
 use App\Models\BasicSalaryInfo;
 use App\Models\Department;
@@ -20,7 +18,7 @@ use App\Models\EducationLevel;
 use App\Models\Institute;
 use App\Models\Degree;
 use App\Models\Language;
->>>>>>> d9b4edfc01e57d591747a3e976d4d14be7a1e888
+
 
 trait CommonService
 {

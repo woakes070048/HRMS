@@ -6,15 +6,10 @@ mix.js('resources/assets/js/app.js', 'public/js')
 
 
 mix.js('resources/assets/js/hrms/salaryInfo.js', 'public/js')
-<<<<<<< HEAD
-	.js('resources/assets/js/hrms/hrms.js', 'public/js')
+    .js('resources/assets/js/hrms/hrms.js', 'public/js')
+	.js('resources/assets/js/hrms/settings.js', 'public/js')
 	.js('resources/assets/js/hrms/unit.js', 'public/js')
     .js('resources/assets/js/hrms/employee.js', 'public/js');
-=======
-    // .js('resources/assets/js/hrms/employee.js', 'public/js')
-	.js('resources/assets/js/hrms/hrms.js', 'public/js');
->>>>>>> d9b4edfc01e57d591747a3e976d4d14be7a1e888
-
 
 mix.combine([
     'resources/assets/css/auth/css.css',

@@ -164,9 +164,17 @@ Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
     Route::get('/index','UnitController@index');
     Route::get('/getUnits','UnitController@getUnits');
     Route::post('/add','UnitController@create');
-    // Route::get('/edit/{id}','UnitController@edit');
     Route::post('/edit','UnitController@update');
     Route::get('/delete/{id}/{indexId}','UnitController@delete');
+});
+
+/******************** ...HRMS Emp Settings Routes... **************/
+Route::group(['prefix' => 'settings', 'namespace' => 'Pim'],function (){
+    Route::get('/index','SettingsController@index');
+    Route::get('/getSettings','SettingsController@getSettings');
+    Route::post('/add','SettingsController@create');
+    Route::post('/edit','SettingsController@update');
+    // Route::get('/delete/{id}/{indexId}','SettingsController@delete');
 });
 
 
