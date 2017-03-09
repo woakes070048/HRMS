@@ -1076,7 +1076,7 @@
                                             <button type="submit" v-if="educations.educations ==''"
                                                     name="save_education_and_next" value="save_education_and_next" v-on:click="submit_button='save_education_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block">
-                                                <span class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                <span class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -1087,7 +1087,7 @@
                                             <button type="submit" v-if="educations.educations ==''"
                                                     name="save_education" value="save_education" v-on:click="submit_button='save_education'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Education
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Education
                                             </button>
                                         </p>
                                     </div>
@@ -1171,8 +1171,7 @@
                                         <div class="row">
                                             <div class="col-md-1 pull-right">
                                                 <div class="form-group mt5">
-                                                    <button id="add_education"
-                                                            v-on:click.prevent="deleteEmployeeData(experience.id,'experience')"
+                                                    <button v-on:click.prevent="deleteEmployeeData(experience.id,'experience')"
                                                             class="btn btn-sm btn-danger btn-gradient dark btn-block"
                                                             data-effect="mfp-with-fade"><span
                                                             class="glyphicons glyphicons-bin"></span> &nbsp; Delete
@@ -1281,7 +1280,7 @@
                                             <button type="submit"
                                                     name="save_experience_and_next" v-on:click="submit_button='save_experience_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -1292,7 +1291,7 @@
                                             <button type="submit"
                                                     name="save_experience" v-on:click="submit_button='save_experience'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Experience
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Experience
                                             </button>
                                         </p>
                                     </div>
@@ -1518,7 +1517,7 @@
                             <form id="add_nominee_form" v-on:submit.prevent="addNomineeInfo" method="post">
                                 <input type="hidden" name="user_id" :value="user_id">
 
-                                <div v-if="nominee.user_id">
+                                <div v-if="nominee">
                                     <input type="hidden" name="id" :value="nominee.id">
                                     <div class="col-md-2" :class="{'has-error': errors.image}">
                                         <label class="control-label">Nominee Photo :</label>
@@ -1699,8 +1698,8 @@
                             <form id="add_training_form" v-on:submit.prevent="addNewTraining" method="post">
                                 <input type="hidden" name="user_id" :value="user_id">
 
-                                <div v-if="trainings.length>0">
-                                    <div v-for="training in trainings">
+                                <div v-if="trainings.trainings !=''">
+                                    <div v-for="training in trainings.trainings">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -1755,6 +1754,29 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button v-on:click.prevent="deleteEmployeeData(training.id,'training')"
+                                                            class="btn btn-sm btn-danger btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-bin"></span> &nbsp; Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button id="add_new_training_button" v-on:click.prevent="getDataByTabAndId('training',training.id),errors=[]"
+                                                    onclick="setTimeout(modal_open('#add_new_training_button','#add_new_training_modal'),5)" 
+                                                            class="btn btn-sm btn-success btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-edit"></span> &nbsp; Edit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <hr class="short alt">
                                     </div>
                                 </div>
@@ -1789,28 +1811,28 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.training_from_date}">
                                                 <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_from_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_from_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_from_date" class="text-danger">@{{ errors.training_from_date[0]}}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.training_to_date}">
                                                 <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_to_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_to_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_to_date" class="text-danger">@{{ errors.training_to_date[0]}}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.training_passed_date}">
                                                 <label class="control-label">Training Passed Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_passed_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_passed_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_passed_date" class="text-danger">@{{ errors.training_passed_date[0]}}</span>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.training_participation_date}">
                                                 <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_participation_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_participation_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_participation_date" class="text-danger">@{{ errors.training_participation_date[0]}}</span>
                                             </div>
                                         </div>
@@ -1827,7 +1849,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_new_training_button" :disabled="trainings.length<=0"
+                                            <button id="add_new_training_button" :disabled="trainings.trainings ==''" v-on:click="singleTraining=[],errors=[]"
                                                     onclick="modal_open('#add_new_training_button','#add_new_training_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Training
                                             </button>
@@ -1840,7 +1862,7 @@
                                 <div class="section row mbn">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit"
+                                            <button type="submit" :disabled="trainings.trainings !=''"
                                                     name="save_training_and_next" v-on:click="submit_button='save_training_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
@@ -1851,7 +1873,7 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit"
+                                            <button type="submit" :disabled="trainings.trainings !=''"
                                                     name="save_training" v-on:click="submit_button='save_training'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
                                                         class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Training
@@ -1871,8 +1893,8 @@
                             <form id="add_reference_form" v-on:submit.prevent="addNewReference" method="post">
                                 <input type="hidden" name="user_id" :value="user_id">
 
-                                <div v-if="references.length>0">
-                                    <div v-for="reference in references">
+                                <div v-if="references.references !=''">
+                                    <div v-for="reference in references.references">
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -1916,7 +1938,31 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <hr class="short alt">
+
+                                        <div class="row">
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button v-on:click.prevent="deleteEmployeeData(reference.id,'reference')"
+                                                            class="btn btn-sm btn-danger btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-bin"></span> &nbsp; Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button id="add_new_reference_button" v-on:click.prevent="getDataByTabAndId('reference',reference.id),errors=[]"
+                                                    onclick="setTimeout(modal_open('#add_new_reference_button','#add_new_reference_modal'),5)" 
+                                                            class="btn btn-sm btn-success btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-edit"></span> &nbsp; Edit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -1975,7 +2021,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_new_reference_button" :disabled="references.length<=0"
+                                            <button id="add_new_reference_button" :disabled="references.references ==''" v-on:click="singleReference=[],errors=[]"
                                                     onclick="modal_open('#add_new_reference_button','#add_new_reference_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Reference
                                             </button>
@@ -1988,10 +2034,10 @@
                                 <div class="section row mbn">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="references.user_id"
+                                            <button type="submit" :disabled="references.references !=''"
                                                     name="save_reference_and_next" v-on:click="submit_button='save_reference_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -1999,10 +2045,10 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="references.user_id"
+                                            <button type="submit" :disabled="references.references!=''"
                                                     name="save_reference" v-on:click="submit_button='save_reference'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Reference
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Reference
                                             </button>
                                         </p>
                                     </div>
@@ -2019,8 +2065,8 @@
                             <form id="add_children_form" v-on:submit.prevent="addNewChildren" method="post">
                                 <input type="hidden" name="user_id" :value="user_id">
 
-                                <div v-if="childrens.length>0">
-                                    <div v-for="children in childrens">
+                                <div v-if="childrens.childrens !=''">
+                                    <div v-for="children in childrens.childrens">
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -2065,6 +2111,29 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button v-on:click.prevent="deleteEmployeeData(children.id,'children')"
+                                                            class="btn btn-sm btn-danger btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-bin"></span> &nbsp; Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button id="add_new_children_button" v-on:click.prevent="getDataByTabAndId('children',children.id),errors=[]"
+                                                    onclick="setTimeout(modal_open('#add_new_children_button','#add_new_children_modal'),5)" 
+                                                            class="btn btn-sm btn-success btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-edit"></span> &nbsp; Edit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <hr class="short alt">
                                     </div>
                                 </div>
@@ -2090,7 +2159,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.children_birth_date}">
                                                 <label class="control-label">Children Birth Date  : <span class="text-danger">*</span></label>
-                                                <input type="text" name="children_birth_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="children_birth_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.children_birth_date" class="text-danger">@{{ errors.children_birth_date[0]}}</span>
                                             </div>
                                         </div>
@@ -2123,7 +2192,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_new_children_button" :disabled="childrens.length<=0"
+                                            <button id="add_new_children_button" :disabled="childrens.childrens ==''" v-on:click="singleChildren=[],errors=[]"
                                                     onclick="modal_open('#add_new_children_button','#add_new_children_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Children
                                             </button>
@@ -2136,10 +2205,10 @@
                                 <div class="section row mbn">
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="childrens.length>0"
+                                            <button type="submit" :disabled="childrens.childrens !=''"
                                                     name="save_children_and_next" v-on:click="submit_button='save_children_and_next'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update & Next
                                                 <span class="glyphicons glyphicons-right_arrow"></span>
                                             </button>
                                         </p>
@@ -2147,10 +2216,10 @@
 
                                     <div class="col-sm-2 pull-right">
                                         <p class="text-left">
-                                            <button type="submit" :disabled="childrens.length>0"
+                                            <button type="submit" :disabled="childrens.childrens !=''"
                                                     name="save_children" v-on:click="submit_button='save_children'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Children
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Children
                                             </button>
                                         </p>
                                     </div>
@@ -2207,6 +2276,29 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button v-on:click.prevent="deleteEmployeeData(language.id,'language')"
+                                                            class="btn btn-sm btn-danger btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-bin"></span> &nbsp; Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 pull-right">
+                                                <div class="form-group mt5">
+                                                    <button id="add_new_language_button" v-on:click.prevent="getDataByTabAndId('language',language.id),errors=[]"
+                                                    onclick="setTimeout(modal_open('#add_new_language_button','#add_new_language_modal'),5)" 
+                                                            class="btn btn-sm btn-success btn-gradient dark btn-block"
+                                                            data-effect="mfp-with-fade"><span
+                                                            class="glyphicons glyphicons-edit"></span> &nbsp; Edit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <hr class="short alt">
                                     </div>
                                 </div>
@@ -2270,7 +2362,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_new_language_button" :disabled="languages.languages ==''"
+                                            <button id="add_new_language_button" :disabled="languages.languages ==''" v-on:click="singleLanguage=[],errors=[]"
                                                     onclick="modal_open('#add_new_language_button','#add_new_language_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Language
                                             </button>
@@ -2286,7 +2378,7 @@
                                             <button type="submit" :disabled="languages.languages !=''"
                                                     name="save_language" v-on:click="submit_button='save_language'"
                                                     class="btn btn-dark btn-gradient dark btn-block"><span
-                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Language
+                                                        class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Language
                                             </button>
                                         </p>
                                     </div>
@@ -2300,7 +2392,7 @@
         </div>
 
 
-        <!-- Add Designation Form Popup -->
+    <!-- Add Designation Form Popup -->
     @include('pim.employee.modals.designation')
 
     <!-- Add Education Form Popup -->
@@ -2324,44 +2416,8 @@
     <!-- Add Language Form Popup -->
     @include('pim.employee.modals.language')
 
-        <div id="add_new_language_button_modal" style="max-width:400px" class="popup-basic mfp-with-anim mfp-hide">
-            <div class="panel">
-                <div class="panel-heading">
-                <span class="panel-title">
-                    <i class="fa fa-rocket"></i>Add New Language
-                </span>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <form id="add_language" method="post" v-on:submit.prevent="addLanguage('add_language')">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group" :class="{'has-error': errors.language_name}">
-                                            <label class="control-label">Language Name : <span class="text-danger">*</span></label>
-                                            <input type="text" name="language_name" class="form-control input-sm">
-                                            <span v-if="errors.language_name" class="text-danger">@{{ errors.language_name[0]}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr class="short alt">
-
-                                <div class="section row mbn">
-                                    <div class="col-sm-6 pull-right">
-                                        <p class="text-left">
-                                            <button type="submit" name="add_language" class="btn btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-ok_2"></span> &nbsp; Add Language
-                                            </button>
-                                        </p>
-                                    </div>
-                                </div>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- New Language Form Popup -->
+    @include('pim.employee.modals.new_language')    
 
     </div>
 </section>

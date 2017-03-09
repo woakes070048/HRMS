@@ -1,5 +1,5 @@
-import Other_Allowance from "./../components/employee/other_allowance.vue";
-Vue.component('other-allowance', Other_Allowance);
+// import Other_Allowance from "./../components/employee/other_allowance.vue";
+// Vue.component('other-allowance', Other_Allowance);
 
 
 var employee = new Vue({
@@ -58,6 +58,10 @@ var employee = new Vue({
         otherAllowance:[],
         singleEducation: [],
         singleExperience: [],
+        singleTraining: [],
+        singleReference: [],
+        singleChildren: [],
+        singleLanguage: [],
     },
 
 
@@ -241,9 +245,9 @@ var employee = new Vue({
         getNominee(){
             var url = this.makeUrl();
             axios.get(url).then(response => {
-                console.log(response.data);
-                this.nominee = response.data.nominees;
-            });
+            this.nominee = response.data.nominees;
+                console.log(this.nominee);
+        });
         },
 
 
@@ -385,24 +389,24 @@ var employee = new Vue({
         getBanks(){
             axios.get('/get-banks').then(response => {
                 this.banks = response.data;
-                console.log(this.banks);
-            });
+            console.log(this.banks);
+        });
         },
 
 
         getLevelSalaryInfo(){
             axios.get('/get-level-salary-info/'+this.user_id).then(response => {
                 this.levelSalaryInfos = response.data.designation.level;
-                console.log(this.levelSalaryInfos);
-            });
+            console.log(this.levelSalaryInfos);
+        });
         },
 
 
         getAllowanceNotinLevel(){
             axios.get('/get-allowance-notin-level').then(response => {
                 this.levelSalaryNotinLevels = response.data;
-                console.log(response.data);
-            });
+            console.log(response.data);
+        });
         },
 
 
@@ -654,28 +658,28 @@ var employee = new Vue({
                 .then((response) => {
                 // console.log(response);
                 var data = response.data;
+            this.errors = [];
+            this.salaries = data.data;
+            this.otherAllowance = [];
+            this.showMessage(data);
+
+            if(data.type){
+                // this.urlChange(data.type);
+                // jQuery("#"+data.type).trigger("click");
+                setTimeout(function(){document.getElementById(data.type).click();},5);
+            }
+
+        })
+        .catch(error => {
                 this.errors = [];
-                this.salaries = data.data;
-                this.otherAllowance = [];
-                this.showMessage(data);
+            if(error.response.status == 500 || error.response.data.status == 'danger'){
+                var error = error.response.data;
+                this.showMessage(error);
+            }else if(error.response.status == 422){
+                this.errors = error.response.data;
+            }
 
-                if(data.type){
-                    // this.urlChange(data.type);
-                    // jQuery("#"+data.type).trigger("click");
-                    setTimeout(function(){document.getElementById(data.type).click();},5);
-                }
-
-            })
-            .catch(error => {
-                    this.errors = [];
-                if(error.response.status == 500 || error.response.data.status == 'danger'){
-                    var error = error.response.data;
-                    this.showMessage(error);
-                }else if(error.response.status == 422){
-                    this.errors = error.response.data;
-                }
-
-            });
+        });
         },
 
 
@@ -690,7 +694,8 @@ var employee = new Vue({
                 .then((response) => {
                 var data = response.data;
             this.errors = [];
-            this.nominee = data.data;
+            this.nominee = data.data.nominees;
+            console.log(this.nominee);
 
             this.showMessage(data);
             if(data.type){
@@ -725,7 +730,7 @@ var employee = new Vue({
                 var data = response.data;
             this.errors = [];
             jQuery(".mfp-close").trigger("click");
-            this.trainings.trainings.push(data.data);
+            this.trainings = data.data;
             this.showMessage(data);
 
             if(data.type){
@@ -762,7 +767,7 @@ var employee = new Vue({
                 var data = response.data;
             this.errors = [];
             jQuery(".mfp-close").trigger("click");
-            this.references.references.push(data.data);
+            this.references = data.data;
             this.showMessage(data);
 
             if(data.type){
@@ -799,7 +804,7 @@ var employee = new Vue({
                 var data = response.data;
             this.errors = [];
             jQuery(".mfp-close").trigger("click");
-            this.childrens.childrens.push(data.data);
+            this.childrens = data.data;
             this.showMessage(data);
 
             if(data.type){
@@ -855,30 +860,41 @@ var employee = new Vue({
                 var data = response.data;
             this.showMessage(data);
             this.getTabData();
-        })
-        .catch(error => {
-                console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+            })
+            .catch(error => {
+                    console.log(error);
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         getDataByTabAndId(data_tab,data_id){
             axios.get('/employee/'+add_edit+'/tab/'+data_tab+'/'+data_id).then(response => {
                 if(data_tab == 'education'){
-                this.singleEducation = response.data;
-            }
-            if(data_tab == 'experience'){
-                this.singleExperience = response.data;
-                console.log(this.singleExperience);
-            }
-        });
+                    this.singleEducation = response.data;
+                }
+                if(data_tab == 'experience'){
+                    this.singleExperience = response.data;
+                }
+                if(data_tab == 'training'){
+                    this.singleTraining = response.data;
+                }
+                if(data_tab == 'reference'){
+                    this.singleReference = response.data;
+                }
+                if(data_tab == 'children'){
+                    this.singleChildren = response.data;
+                }
+                if(data_tab == 'language'){
+                    this.singleLanguage = response.data;
+                }
+            });
         },
 
     },

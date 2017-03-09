@@ -305,11 +305,7 @@ class EmployeeController extends Controller
             }
 
             $request->session()->flash('success',$message);
-
-            if($request->has('save_education_and_next')){
-                return redirect('/employee/add/'.$request->userId.'/experience');
-            }
-            return redirect('/employee/add/'.$request->userId.'/education');
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -319,42 +315,12 @@ class EmployeeController extends Controller
                 $data['code'] = 500;
                 $data['type'] = null;
                 $data['title'] = 'Error!';
-                $data['message'] = $message;
+                $data['message'] = 'Education Successfully Saved.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger',$message);
+            $request->session()->flash('danger','Education Successfully Saved.');
             return redirect()->back()->withInput();
-        }
-    }
-
-
-    /**
-     * @Delete Delete Education
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function deleteEducation(Request $request){
-        if($request->ajax()){
-            try{
-                EmployeeEducation::where('id',$request->id)->delete();
-
-                $data['status'] = 'success';
-                $data['statusType'] = 'OK';
-                $data['code'] = 200;
-                $data['title'] = 'Success!';
-                $data['message'] = 'Education Successfully Deleted.';
-                return response()->json($data,200);
-
-            }catch(\Exception $e){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
-                $data['message'] = 'Employee Education Not Deleted.';
-                return response()->json($data,500);
-            }
         }
     }
 
@@ -390,11 +356,7 @@ class EmployeeController extends Controller
             }
 
             $request->session()->flash('success',$message);
-
-            if($request->has('save_experience_and_next')){
-                return redirect('/employee/add/'.$request->userId.'/salary');
-            }
-            return redirect('/employee/add/'.$request->userId.'/experience');
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -404,42 +366,12 @@ class EmployeeController extends Controller
                 $data['code'] = 500;
                 $data['type'] = null;
                 $data['title'] = 'Error!';
-                $data['message'] = $message;
+                $data['message'] = 'Experience Not Saved.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger',$message);
+            $request->session()->flash('danger','Experience Not Saved.');
             return redirect()->back()->withInput();
-        }
-    }
-
-
-    /**
-     * @Delete Delete Education
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function deleteExperience(Request $request){
-        if($request->ajax()){
-            try{
-                EmployeeExperience::where('id',$request->id)->delete();
-
-                $data['status'] = 'success';
-                $data['statusType'] = 'OK';
-                $data['code'] = 200;
-                $data['title'] = 'Success!';
-                $data['message'] = 'Experience Successfully Deleted.';
-                return response()->json($data,200);
-
-            }catch(\Exception $e){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
-                $data['message'] = 'Experience Not Deleted.';
-                return response()->json($data,500);
-            }
         }
     }
 
@@ -542,7 +474,7 @@ class EmployeeController extends Controller
              if($request->id) {
                  $message = 'Nominee Successfully Update.';
                  $request->offsetSet('updated_by', $this->auth->id);
-                 if(!$data['data'] = EmployeeNominee::find($request->id)->update($request->all())){
+                 if(!EmployeeNominee::find($request->id)->update($request->all())){
                      if(isset($image)) {
                          File::delete('files/'.$request->userId.'/'.$image);
                      }
@@ -550,7 +482,7 @@ class EmployeeController extends Controller
              }else{
                  $message = 'Nominee Successfully Saved.';
                  $request->offsetSet('created_by', $this->auth->id);
-                 if(!$data['data'] = EmployeeNominee::create($request->all())){
+                 if(!EmployeeNominee::create($request->all())){
                      if(isset($image)) {
                          File::delete('files/'.$request->userId.'/'.$image);
                      }
@@ -558,6 +490,8 @@ class EmployeeController extends Controller
              }
 
             if($request->ajax()){
+                $nominee = $this->user->get_user_data_by_user_tab($request->userId,'nominee');
+                $data['data'] = $nominee->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
@@ -576,12 +510,12 @@ class EmployeeController extends Controller
                  $data['statusType'] = 'NotOk';
                  $data['code'] = 500;
                  $data['title'] = 'Error!';
-                 $data['message'] = $message;
+                 $data['message'] = 'Nominee Not Saved.';
                  $data['data'] = '';
                  return response()->json($data,500);
              }
 
-             $request->session()->flash('danger',$message);
+             $request->session()->flash('danger','Nominee Not Saved.');
              return redirect()->back()->withInput();
          }
     }
@@ -607,10 +541,114 @@ class EmployeeController extends Controller
             }
 
             if($request->ajax()){
+                $training = $this->user->get_user_data_by_user_tab($request->userId,'training');
+                $data['data'] = $training->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = ($request->has('save_training_and_next'))?'reference':null;
+                $data['title'] = 'Success!';
+                $data['message'] = $message;
+                return response()->json($data,200);
+            }
+
+            $request->session()->flash('success',$message);
+            return redirect()->back();
+
+        }catch(\Exception $e){
+            if($request->ajax()){
+                $data['status'] = 'danger';
+                $data['statusType'] = 'NotOk';
+                $data['code'] = 500;
+                $data['type'] = null;
+                $data['title'] = 'Error!';
+                $data['message'] = 'Training Not Saved.';
+                return response()->json($data,500);
+            }
+
+            $request->session()->flash('danger','Training Not Saved.');
+            return redirect()->back()->withInput();
+        }
+    }
+
+
+    /**
+     * @post Add Employee Reference
+     * @param EmployeeReferenceRequest $request
+     * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function addEditReference(EmployeeReferenceRequest $request){
+        try{
+
+            $message = '';
+            if($request->id) {
+                $message = 'Reference Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeReference::find($request->id)->update($request->all());
+            }else{
+                $message = 'Reference Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeReference::create($request->all());
+            }
+
+            if($request->ajax()){
+                $reference = $this->user->get_user_data_by_user_tab($request->userId,'reference');
+                $data['data'] = $reference->original;
+                $data['status'] = 'success';
+                $data['statusType'] = 'OK';
+                $data['code'] = 200;
+                $data['type'] = ($request->has('save_reference_and_next'))?'children':null;
+                $data['title'] = 'Success!';
+                $data['message'] = 'Reference Successfully Saved.';
+                return response()->json($data,200);
+            }
+
+            $request->session()->flash('success',$message);
+            return redirect()->back();
+
+        }catch(\Exception $e){
+
+            if($request->ajax()){
+                $data['status'] = 'danger';
+                $data['statusType'] = 'NotOk';
+                $data['code'] = 500;
+                $data['type'] = null;
+                $data['title'] = 'Error!';
+                $data['message'] = 'Reference Not Saved.';
+                return response()->json($data,500);
+            }
+
+            $request->session()->flash('danger','Reference Not Saved.');
+            return redirect()->back()->withInput();
+        }
+    }
+
+
+    /**
+     * @post Add Employee Children
+     * @param EmployeeChildrenRequest $request
+     * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function addEditChildren(EmployeeChildrenRequest $request){
+        try{
+            $message = '';
+            if($request->id) {
+                $message = 'Children Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeChildren::find($request->id)->update($request->all());
+            }else{
+                $message = 'Children Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeChildren::create($request->all());
+            }
+
+            if($request->ajax()){
+                $children = $this->user->get_user_data_by_user_tab($request->userId,'children');
+                $data['data'] = $children->original;
+                $data['status'] = 'success';
+                $data['statusType'] = 'OK';
+                $data['code'] = 200;
+                $data['type'] = ($request->has('save_children_and_next'))?'language':null;
                 $data['title'] = 'Success!';
                 $data['message'] = $message;
                 return response()->json($data,200);
@@ -627,102 +665,11 @@ class EmployeeController extends Controller
                 $data['code'] = 500;
                 $data['type'] = null;
                 $data['title'] = 'Error!';
-                $data['message'] = $message;
-                return response()->json($data,500);
-            }
-
-            $request->session()->flash('danger',$message);
-            return redirect()->back()->withInput();
-        }
-    }
-
-
-
-    /**
-     * @post Add Employee Reference
-     * @param EmployeeReferenceRequest $request
-     * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function addReference(EmployeeReferenceRequest $request){
-        try{
-            $request->offsetSet('created_by', $this->auth->id);
-            $data['data'] = EmployeeReference::create($request->all());
-
-            if($request->ajax()){
-                $data['status'] = 'success';
-                $data['statusType'] = 'OK';
-                $data['code'] = 200;
-                $data['type'] = ($request->has('save_reference_and_next'))?'children':null;
-                $data['title'] = 'Success!';
-                $data['message'] = 'Reference Successfully Saved.';
-                return response()->json($data,200);
-            }
-
-            $request->session()->flash('success','Reference Successfully Saved.');
-
-            if($request->has('save_reference_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/children');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/reference');
-
-        }catch(\Exception $e){
-
-            if($request->ajax()){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
-                $data['message'] = 'Reference Not Saved.';
-                return response()->json($data,500);
-            }
-
-            $request->session()->flash('danger','Experience Not Saved.');
-            return redirect()->back()->withInput();
-        }
-    }
-
-
-    /**
-     * @post Add Employee Children
-     * @param EmployeeChildrenRequest $request
-     * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function addChildren(EmployeeChildrenRequest $request){
-        try{
-            $request->offsetSet('created_by', $this->auth->id);
-            $data['data'] = EmployeeChildren::create($request->all());
-
-            if($request->ajax()){
-                $data['status'] = 'success';
-                $data['statusType'] = 'OK';
-                $data['code'] = 200;
-                $data['type'] = ($request->has('save_children_and_next'))?'language':null;
-                $data['title'] = 'Success!';
-                $data['message'] = 'Children Successfully Saved.';
-                return response()->json($data,200);
-            }
-
-            $request->session()->flash('success','Children Successfully Saved.');
-
-            if($request->has('save_children_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/language');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/children');
-
-        }catch(\Exception $e){
-
-            if($request->ajax()){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
                 $data['message'] = 'Children Not Saved.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Experience Not Saved.');
+            $request->session()->flash('danger','Children Not Saved.');
             return redirect()->back()->withInput();
         }
     }
@@ -733,26 +680,34 @@ class EmployeeController extends Controller
      * @param EmployeeLanguageRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function addLanguage(EmployeeLanguageRequest $request){
+    public function addEditLanguage(EmployeeLanguageRequest $request){
         try{
-            $request->offsetSet('created_by', $this->auth->id);
 
-            if(EmployeeLanguage::create($request->all())){
-                $data['data'] = User::with('languages.language')->find($request->id);
+            $message = '';
+            if($request->id) {
+                $message = 'Language Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeLanguage::find($request->id)->update($request->all());
+            }else{
+                $message = 'Language Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeLanguage::create($request->all());
             }
 
             if($request->ajax()){
+                $language = $this->user->get_user_data_by_user_tab($request->userId,'language');
+                $data['data'] = $language->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Language Successfully Saved.';
+                $data['message'] = $message;
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Language Successfully Saved.');
-            return redirect('/employee/add/'.base64_encode($request->id).'/language');
+            $request->session()->flash('success',$message);
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -803,6 +758,19 @@ class EmployeeController extends Controller
         if($request->data_tab == 'experience'){
             $data = EmployeeExperience::find($request->data_id);
         }
+        if($request->data_tab == 'training'){
+            $data = EmployeeTraining::find($request->data_id);
+        }
+        if($request->data_tab == 'reference'){
+            $data = EmployeeReference::find($request->data_id);
+        }
+        if($request->data_tab == 'children'){
+            $data = EmployeeChildren::find($request->data_id);
+        }
+        if($request->data_tab == 'language'){
+            $data = EmployeeLanguage::find($request->data_id);
+        }
+
 
         return response()->json($data);
     }
@@ -1035,6 +1003,53 @@ class EmployeeController extends Controller
 
             $request->session()->flash('danger','Salary Not Update.');
             return redirect()->back()->withInput();
+        }
+    }
+
+
+    /**
+     * @Delete Employee Data
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteEmployeeData(Request $request){
+        if($request->ajax()){
+            try{
+                if($request->segment(4) == 'education'){
+                    EmployeeEducation::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'experience'){
+                    EmployeeExperience::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'training'){
+                    EmployeeTraining::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'reference'){
+                    EmployeeReference::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'children'){
+                    EmployeeChildren::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'language'){
+                    EmployeeLanguage::where('id',$request->id)->delete();
+                }
+
+                $data['status'] = 'success';
+                $data['statusType'] = 'OK';
+                $data['code'] = 200;
+                $data['title'] = 'Success!';
+                $data['message'] = ucfirst($request->segment(4)).' Successfully Deleted.';
+                return response()->json($data,200);
+
+            }catch(\Exception $e){
+                $data['status'] = 'danger';
+                $data['statusType'] = 'NotOk';
+                $data['code'] = 500;
+                $data['type'] = null;
+                $data['title'] = 'Error!';
+                $data['message'] = ucfirst($request->segment(4)).' Not Deleted.';
+                return response()->json($data,500);
+            }
         }
     }
 
