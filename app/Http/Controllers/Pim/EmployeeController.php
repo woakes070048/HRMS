@@ -783,8 +783,8 @@ class EmployeeController extends Controller
      * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function editEmployee(EmployeeBasicInfoRequest $request){
-
-        try{
+        dd($request->all());
+        // try{
             Artisan::call('db:connect');
 
             UserEmails::where('email',$request->email)->where('config_id',Session('config_id'))->update([
@@ -839,20 +839,20 @@ class EmployeeController extends Controller
 
             return redirect('/employee/edit/'.$request->userId);
 
-        }catch(\Exception $e){
-            DB::rollback();
-            if($request->ajax()){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
-                $data['message'] = 'Employee Not Update!';
-                return response()->json($data,500);
-            }
-            $request->session()->flash('danger','Employee Not Update!');
-            return redirect()->back()->withInput();
-        }
+        // }catch(\Exception $e){
+        //     DB::rollback();
+        //     if($request->ajax()){
+        //         $data['status'] = 'danger';
+        //         $data['statusType'] = 'NotOk';
+        //         $data['code'] = 500;
+        //         $data['type'] = null;
+        //         $data['title'] = 'Error!';
+        //         $data['message'] = 'Employee Not Update!';
+        //         return response()->json($data,500);
+        //     }
+        //     $request->session()->flash('danger','Employee Not Update!');
+        //     return redirect()->back()->withInput();
+        // }
     }
 
 

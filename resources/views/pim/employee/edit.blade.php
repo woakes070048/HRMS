@@ -64,7 +64,8 @@
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form method="post" v-on:submit.prevent="addEmployeeBasicInfo" enctype="multipart/form-data">
-
+                                <input type="hidden" name="user_id" v-model="user_id" class="form-control input-sm">
+                                
                                 <div v-for="(basic,index) in basics" v-if="index =='id'">
 
                                     <div class="row">
