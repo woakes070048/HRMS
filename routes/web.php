@@ -100,36 +100,47 @@ Route::group(['prefix' => '/'], function(){
 Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/index','EmployeeController@index');
     Route::get('/view/{employee_no?}','EmployeeController@viewEmployeeProfile');
-    Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeAddForm');
 
-    Route::post('/add','EmployeeController@addEmployee');
-    Route::post('/add/{userId}/personal/','EmployeeController@addPersonalInfo');
-    Route::post('/add/{userId}/education/','EmployeeController@addEditEducation');
-    Route::post('/add/{userId}/experience/','EmployeeController@addEditExperience');
-    Route::post('/add/{userId}/salary/','EmployeeController@addSalary');
-    Route::post('/add/{userId}/nominee/','EmployeeController@addEditNominee');
-    Route::post('/add/{userId}/training/','EmployeeController@addEditTraining');
-    Route::post('/add/{id}/reference/','EmployeeController@addReference');
-    Route::post('/add/{id}/children/','EmployeeController@addChildren');
-    Route::post('/add/{id}/language/','EmployeeController@addLanguage');
+    Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeAddForm');
 
     Route::get('/edit/{id}/{tab?}','EmployeeController@showEmployeeEditForm');
     Route::get('/edit/tab/{data_tab}/{data_id}','EmployeeController@getDataByTabAndId');
 
+    Route::post('/add','EmployeeController@addEmployee');
     Route::post('/edit/{userId}','EmployeeController@editEmployee');
+
+    Route::post('/add/{userId}/personal/','EmployeeController@addPersonalInfo');
     Route::post('/edit/{userId}/personal','EmployeeController@editPersonalInfo');
 
+    Route::post('/add/{userId}/education/','EmployeeController@addEditEducation');
     Route::post('/edit/{userId}/education','EmployeeController@addEditEducation');
-    Route::delete('/delete/{id}/education','EmployeeController@deleteEducation');
+    Route::delete('/delete/{id}/education','EmployeeController@deleteEmployeeData');
 
+    Route::post('/add/{userId}/experience/','EmployeeController@addEditExperience');
     Route::post('/edit/{userId}/experience','EmployeeController@addEditExperience');
-    Route::delete('/delete/{id}/experience','EmployeeController@deleteExperience');
+    Route::delete('/delete/{id}/experience','EmployeeController@deleteEmployeeData');
 
+    Route::post('/add/{userId}/salary/','EmployeeController@addSalary');
     Route::post('/edit/{userId}/salary','EmployeeController@editSalary');
 
+    Route::post('/add/{userId}/nominee/','EmployeeController@addEditNominee');
     Route::post('/edit/{userId}/nominee/','EmployeeController@addEditNominee');
 
+    Route::post('/add/{userId}/training/','EmployeeController@addEditTraining');
     Route::post('/edit/{userId}/training/','EmployeeController@addEditTraining');
+    Route::delete('/delete/{id}/training','EmployeeController@deleteEmployeeData');
+
+    Route::post('/add/{userId}/reference/','EmployeeController@addEditReference');
+    Route::post('/edit/{userId}/reference/','EmployeeController@addEditReference');
+    Route::delete('/delete/{id}/reference/','EmployeeController@deleteEmployeeData');
+
+    Route::post('/add/{userId}/children/','EmployeeController@addEditChildren');
+    Route::post('/edit/{userId}/children/','EmployeeController@addEditChildren');
+    Route::delete('/delete/{id}/children/','EmployeeController@deleteEmployeeData');
+
+    Route::post('/add/{userId}/language/','EmployeeController@addEditLanguage');
+    Route::post('/edit/{userId}/language/','EmployeeController@addEditLanguage');
+    Route::post('/delete/{id}/language/','EmployeeController@deleteEmployeeData');
 
 });
 

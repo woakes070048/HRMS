@@ -14,90 +14,57 @@
                 </a>
                 <ul class="nav sub-nav">
                     <li>
-                        <a href="{{url('settings/index')}}">
-                            <i class="fa fa-circle-o"></i> 
-                            Settings
+                        <a href="{{url('department/index')}}">
+                            <span class="fa fa-level-up"></span> Departments
                         </a>
                     </li>
                     <li>
-                        <a href="{{url('department/index')}}">
-                            <i class="fa fa-circle-o"></i> Departments
+                        <a href="{{url('unit/index')}}">
+                            <span class="fa fa-level-up"></span> Unit
                         </a>
                     </li>
-                    <!-- <li>
-                        <a href="{{url('unit/index')}}">
-                            <i class="fa fa-circle-o"></i> Unit
-                        </a>
-                    </li> -->
                     <li>
                         <a href="{{url('levels/index')}}">
-                            <i class="fa fa-circle-o"></i> Levels
+                            <span class="fa fa-level-up"></span> Levels
                         </a>
                     </li>
                     <li>
                         <a href="{{url('designation/index')}}">
-                            <i class="fa fa-circle-o"></i> Designation
+                            <span class="fa fa-level-up"></span> Designation
                         </a>
                     </li>
-                    <li>
-                        <a href="{{url('salaryInfo/index')}}">
-                            <i class="fa fa-circle-o"></i> Salary Info
-                        </a>
-                    </li>
-                    {{-- <li>
-                        <a class="accordion-toggle" href="#">
-                            <span class="fa fa-level-up"></span> Manage Level
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="nav sub-nav">
-                            <li>
-                                <a href="{{url('levels/index')}}">Levels</a>
-                                <a href="{{url('levels/add')}}">Add</a>
-                            </li>
-                        </ul>
-                    </li> --}}
-                    {{-- <li>
-                        <a class="accordion-toggle" href="#">
-                            <span class="fa fa-level-up"></span> Manage Department
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="nav sub-nav">
-                            <li>
-                                <a href="{{url('department/index')}}">Departments</a>
-                                <a href="{{url('department/add')}}">Add</a>
-                            </li>
-                        </ul>
-                    </li> --}}
-                    {{-- <li>
-                        <a class="accordion-toggle" href="#">
-                            <span class="fa fa-level-up"></span> Manage Designation
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="nav sub-nav">
-                            <li>
-                                <a href="{{url('designation/index')}}">Designations</a>
-                                <a href="{{url('designation/add')}}">Add</a>
-                            </li>
-                        </ul>
-                    </li> --}}
                     <li>
                         <a href="{{url('employee/index')}}"><span class="fa fa-users" aria-hidden="true"></span>Manage Employee</a>
                     </li>
-                   <!--  <li>
-                        <a class="accordion-toggle" href="#">
-                            <span class="fa fa-users" aria-hidden="true"></span>
-                            Manage Employee
-                            <span class="caret"></span>
+                </ul>
+            </li>
+            <li>
+                <a class="accordion-toggle" href="#">
+                    <span class="fa fa-money" aria-hidden="true"></span>
+                    <span class="sidebar-title">PayRoll Management</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li>
+                        <a href="{{url('salaryInfo/index')}}">
+                            <span class="glyphicon glyphicon-usd"></span> Salary Info
                         </a>
-                        <ul class="nav sub-nav">
-                            <li>
-                                <a href="{{url('employee/index')}}">Employees</a>
-                            </li>
-                            <li>
-                                <a href="{{url('employee/add')}}">Add Employee</a>
-                            </li>
-                        </ul>
-                    </li> -->
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="accordion-toggle" href="#">
+                    <span class="glyphicons glyphicons-adjust_alt" aria-hidden="true"></span>
+                    <span class="sidebar-title">Application Settings</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li>
+                        <a href="{{url('settings/index')}}">
+                            <span class="glyphicons glyphicons-settings"></span> 
+                            Basic Settings
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul>
