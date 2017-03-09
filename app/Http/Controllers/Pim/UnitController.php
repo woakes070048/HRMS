@@ -54,7 +54,7 @@ class UnitController extends Controller
             $unit_parent_id = 0;
         }
 
-        try{
+        //try{
 
             $data['data'] = Units::create([
                 'unit_name' => $request->unit_name,
@@ -67,11 +67,11 @@ class UnitController extends Controller
             $data['title'] = 'success';
             $data['message'] = 'unit successfully added!';
 
-        }catch (\Exception $e) {
+        //}catch (\Exception $e) {
             
-            $data['title'] = 'danger';
-            $data['message'] = 'unit not added!';
-        }
+           // $data['title'] = 'danger';
+            //$data['message'] = 'unit not added!';
+        //}
 
         return response()->json($data);
     }
