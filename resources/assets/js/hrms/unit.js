@@ -25,6 +25,7 @@ new Vue({
         unitIndex: null,
     },
     mounted(){
+        //alert('tesss');
     	this.getAllUnit();  //call method
     	axios.get('/get-departments').then(response => this.departments = response.data);
     	axios.get('/get-units').then(response => this.activeUnits = response.data);

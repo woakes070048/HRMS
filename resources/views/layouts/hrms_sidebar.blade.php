@@ -24,11 +24,11 @@
                             <i class="fa fa-circle-o"></i> Departments
                         </a>
                     </li>
-                    <!-- <li>
+                    <li>
                         <a href="{{url('unit/index')}}">
                             <i class="fa fa-circle-o"></i> Unit
                         </a>
-                    </li> -->
+                    </li>
                     <li>
                         <a href="{{url('levels/index')}}">
                             <i class="fa fa-circle-o"></i> Levels

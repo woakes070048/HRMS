@@ -13587,7 +13587,8 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
         allValues: [],
         edit_field_name: '',
         edit_field_value: '',
-        indexValue: null
+        indexValue: null,
+        hdn_id: ''
     },
     mounted: function mounted() {
         var _this = this;

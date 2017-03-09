@@ -13603,6 +13603,7 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
     mounted: function mounted() {
         var _this = this;
 
+        //alert('tesss');
         this.getAllUnit(); //call method
         axios.get('/get-departments').then(function (response) {
             return _this.departments = response.data;
