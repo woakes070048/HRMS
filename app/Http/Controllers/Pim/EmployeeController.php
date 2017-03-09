@@ -810,7 +810,8 @@ class EmployeeController extends Controller
             $user = User::find($request->userId);
             $user->update($request->all());
 
-            EmployeeAddress::findUser($request->userId)->update($request->all());
+            $address = EmployeeAddress::findUser($request->userId);
+            $address->update($request->all());
 
             DB::commit();
 
