@@ -205,6 +205,15 @@ Route::group(['prefix' => 'settings', 'namespace' => 'Pim'],function (){
     // Route::get('/delete/{id}/{indexId}','SettingsController@delete');
 });
 
+/******************** ...HRMS Emp Units Routes... **************/
+Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
+    Route::get('/index','BranchController@index');
+    Route::get('/getBranch','BranchController@getBranch');
+    Route::post('/add','BranchController@create');
+    // Route::post('/edit','BranchController@update');
+    // Route::get('/delete/{id}/{indexId}','BranchController@delete');
+});
+
 
 
 /******************** ...HRMS Common Function Routes... **************/
