@@ -783,7 +783,7 @@ class EmployeeController extends Controller
      * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function editEmployee(EmployeeBasicInfoRequest $request){
- 
+
         try{
             Artisan::call('db:connect');
 
