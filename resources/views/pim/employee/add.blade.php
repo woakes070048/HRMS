@@ -654,7 +654,7 @@
                                             <div class="form-group">
                                                 <label class="control-label">Employee Full Name:</label>
                                                 <input type="text"
-                                                       value="@if(isset($user->fullname)){{$user->fullname}}@endif"
+                                                       :value="personals.first_name+' '+personals.middle_name+' '+personals.last_name"
                                                        class="form-control input-sm" disabled="disabled">
                                             </div>
                                         </div>
@@ -836,7 +836,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.user_id}">
                                                 <label class="control-label">Employee Full Name:</label>
-                                                <input type="text" :value="personals.first_name+' '+personals.last_name"
+                                                <input type="text" :value="personals.first_name+' '+personals.middle_name+' '+personals.last_name"
                                                        class="form-control input-sm" disabled>
                                                 <input type="hidden" name="user_id" :value="user_id"
                                                        class="form-control input-sm">
@@ -1167,7 +1167,7 @@
                                         <div class="col-md-3" v-if="educations !=''">
                                             <div class="form-group" :class="{'has-error': errors.user_id}">
                                                 <label class="control-label">Employee Full Name:</label>
-                                                <input type="text" :value="educations.first_name+' '+educations.last_name"
+                                                <input type="text" :value="educations.first_name+' '+educations.middle_name+' '+educations.last_name"
                                                        class="form-control input-sm" disabled>
                                                 <input type="hidden" name="user_id"
                                                        :value="user_id"
@@ -1704,7 +1704,7 @@
                         <form id="add_nominee_form" v-on:submit.prevent="addNomineeInfo" method="post">
                             <input type="hidden" name="user_id" :value="user_id">
 
-                            <div v-if="nominee.user_id">
+                            <div v-if="nominee">
                                 <div class="col-md-2">
                                     <label class="control-label">Nominee Photo :</label>
                                     <div class="fileupload-new admin-form" data-provides="fileupload">
@@ -1840,7 +1840,7 @@
                             <div class="section row mbn">
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="nominee.user_id"
+                                        <button type="submit" :disabled="nominee"
                                                 name="save_nominee_and_next" v-on:click="submit_button='save_nominee_and_next'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
@@ -1851,7 +1851,7 @@
 
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="nominee.user_id"
+                                        <button type="submit" :disabled="nominee"
                                                 name="save_nominee" v-on:click="submit_button='save_nominee'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Nominee
@@ -1961,28 +1961,28 @@
                                     <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.training_from_date}">
                                             <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="training_from_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <input type="text" name="training_from_date" class="datepicker form-control input-sm" readonly="readonly" v-on:click="datePicker">
                                             <span v-if="errors.training_from_date" class="text-danger">@{{ errors.training_from_date[0]}}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.training_to_date}">
                                             <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="training_to_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <input type="text" name="training_to_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                             <span v-if="errors.training_to_date" class="text-danger">@{{ errors.training_to_date[0]}}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.training_passed_date}">
                                             <label class="control-label">Training Passed Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="training_passed_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <input type="text" name="training_passed_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                             <span v-if="errors.training_passed_date" class="text-danger">@{{ errors.training_passed_date[0]}}</span>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.training_participation_date}">
                                             <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="training_participation_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <input type="text" name="training_participation_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                             <span v-if="errors.training_participation_date" class="text-danger">@{{ errors.training_participation_date[0]}}</span>
                                         </div>
                                     </div>
@@ -2262,7 +2262,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.children_birth_date}">
                                             <label class="control-label">Children Birth Date  : <span class="text-danger">*</span></label>
-                                            <input type="text" name="children_birth_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <input type="text" name="children_birth_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
                                             <span v-if="errors.children_birth_date" class="text-danger">@{{ errors.children_birth_date[0]}}</span>
                                         </div>
                                     </div>
@@ -2496,44 +2496,8 @@
         <!-- Add Language Form Popup -->
         @include('pim.employee.modals.language')
 
-    <div id="add_new_language_button_modal" style="max-width:400px" class="popup-basic mfp-with-anim mfp-hide">
-        <div class="panel">
-            <div class="panel-heading">
-                <span class="panel-title">
-                    <i class="fa fa-rocket"></i>Add New Language
-                </span>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <form id="add_language" method="post" v-on:submit.prevent="addLanguage('add_language')">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group" :class="{'has-error': errors.language_name}">
-                                        <label class="control-label">Language Name : <span class="text-danger">*</span></label>
-                                        <input type="text" name="language_name" class="form-control input-sm">
-                                        <span v-if="errors.language_name" class="text-danger">@{{ errors.language_name[0]}}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="short alt">
-
-                            <div class="section row mbn">
-                                <div class="col-sm-6 pull-right">
-                                    <p class="text-left">
-                                        <button type="submit" name="add_language" class="btn btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-ok_2"></span> &nbsp; Add Language
-                                        </button>
-                                    </p>
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- New Language Form Popup -->
+        @include('pim.employee.modals.new_language')
 
     </div>
 </section>
