@@ -811,7 +811,11 @@ class EmployeeController extends Controller
             $user->update($request->all());
 
             $address = EmployeeAddress::findUser($request->userId);
-            $address->update($request->all());
+            if($address){
+                $address->update($request->all());
+            }else{
+               EmployeeAddress::create($request->all());
+            }
 
             DB::commit();
 
