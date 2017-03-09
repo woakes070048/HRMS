@@ -34,8 +34,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{url('employee/index')}}"><span class="fa fa-users" aria-hidden="true"></span>Manage Employee</a>
+                        <a href="{{url('branch/index')}}">
+                            <span class="fa fa-level-up"></span> Branch
+                        </a>
                     </li>
+                    <li>
+                        <a href="{{url('employee/index')}}"><span class="fa fa-users" aria-hidden="true"></span> Manage Employee</a>
+                    </li>
+                    
                 </ul>
             </li>
             <li>
