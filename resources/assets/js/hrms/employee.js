@@ -16,7 +16,10 @@ var employee = new Vue({
         permanent_district_id:null,
 
         employeeTypes:[],
+        branchs:[],
         designations: [],
+        units: [],
+        allUnits:[],
 
         divisions: [],
         districts: [],
@@ -64,9 +67,9 @@ var employee = new Vue({
         singleLanguage: [],
     },
 
-
     mounted(){
         this.getTabData();
+        // $('#select').select2();
         // $('#startDate').datepicker().on('changeDate', () => { this.startDate = $('#startDate').val() })
     },
 
@@ -143,10 +146,11 @@ var employee = new Vue({
             this.errors = [];
 
             if(this.tab == ''){
-                this.getEmployeeType();
-                this.getDesignations();
-                this.getDivisions();
-                this.getBasic();
+                // this.getEmployeeType();
+                // this.getDesignations();
+                // this.getDivisions();
+                // this.getAllUnit();
+                // this.getBasic();
             }
             if(this.tab == 'personal'){
                 this.getPersonals();
@@ -316,7 +320,25 @@ var employee = new Vue({
 
 
         getDesignations(){
-            axios.get('/get-designations').then(response => this.designations = response.data);
+            axios.get('/get-designations').then(response => {
+                this.designations = response.data;
+                console.log(this.designations);
+            });
+        },
+
+        getAllUnit(){
+             axios.get('/get-units').then(response => {
+                this.allUnits = response.data;
+                console.log(this.allUnits);
+            });
+        },
+
+        getUnitByDesignationId(e){
+            var id = e.target.value;
+             axios.get('/get-unit-by-designation-id/'+id).then(response => {
+                this.units = response.data;
+                console.log(this.units);
+            });
         },
 
 

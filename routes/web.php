@@ -214,6 +214,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-levels','CommonController@getLevels');
     Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
+    Route::get('get-unit-by-designation-id/{id}','CommonController@getUnitByDesignationId');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
     Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');

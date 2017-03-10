@@ -38,6 +38,8 @@ class EmployeeBasicInfoRequest extends FormRequest
 
         return [
             'employee_no' => $employee_no,
+            'branch_id' => 'required|numeric',
+            'unit_id' => 'required|numeric',
             'designation_id' => 'required|numeric',
             'employee_type_id' => 'required|numeric',
             'first_name' => 'required|alpha_spaces',

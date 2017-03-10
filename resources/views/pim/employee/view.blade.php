@@ -150,7 +150,7 @@ table.tc-med-2 tbody td:first-child{
               </tr>
                <tr>
                 <td class="text-left">Blood Group :</td>
-                <td class="text-right">{{$user->details->bloodGroup->blood_name}}</td>
+                <td class="text-right">{{$user->details->bloodGroup->blood_namea or ''}}</td>
               </tr>
               <tr>
                 <td class="text-left">Gender :</td>

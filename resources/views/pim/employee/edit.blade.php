@@ -69,7 +69,7 @@
                                 <div v-for="(basic,index) in basics" v-if="index =='id'">
 
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.employee_no}">
                                                 <label class="control-label">Employee No : <span class="text-danger">*</span></label>
                                                 <input type="text" name="employee_no" v-model="basics.employee_no" class="form-control input-sm" placeholder="Enter Employee No">
@@ -77,7 +77,18 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
+                                            <div class="form-group" :class="{'has-error': errors.branch_id}">
+                                                <label class="control-label">Branch : <span class="text-danger">*</span></label>
+                                               <select class="form-control input-sm" id="branch_id" name="branch_id">
+                                                    <option value="">...Select Branch...</option>
+                                                    <option v-for="(branch,index) in branchs" :value="employeeType.id" v-text="branch.branch_id"></option>
+                                                </select>
+                                                <span v-if="errors.branch_id" class="help-block" v-text="errors.branch_id[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.employee_type_id}">
                                                 <label class="control-label">Employee Type : <span class="text-danger">*</span></label>
                                                 <select class="form-control input-sm" id="employee_type_id" name="employee_type_id" v-model="basics.employee_type_id">

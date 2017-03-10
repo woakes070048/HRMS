@@ -19,10 +19,21 @@ use App\Models\Institute;
 use App\Models\Degree;
 use App\Models\Language;
 
+use App\Models\Setting;
+
 
 trait CommonService
 {
     
+    public function settings(){
+        $settings = Setting::all();
+        foreach ($settings as $setting) {
+            // $settingData[$setting->field_name] = $setting->field_value;
+            // \Config::set('hrms.'.$setting->field_name,$setting->field_value);
+            Session([$setting->field_name => $setting->field_value]);
+        }
+    }
+
     public function getEmployeeType(){
         return EmployeeType::where('status',1)->get();
     }
@@ -41,6 +52,12 @@ trait CommonService
 	public function getDesignations(){
 		return Designation::with('department','level')->where('status',1)->orderBy('id','desc')->get();
 	}
+
+
+    public function getUnitByDesignationId($id){
+        $units =  Designation::with('department.units')->orderBy('id','desc')->find($id);
+        return $units->department->units;
+    }
 
 
 	public function getDivisions(){
