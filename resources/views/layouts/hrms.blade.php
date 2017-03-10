@@ -159,6 +159,8 @@
 
 <script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
 
+@yield('script')
+
 <script type="text/javascript">
     jQuery(document).ready(function() {
         "use strict";
@@ -253,7 +255,7 @@
 @endif
 <?php }?>
 
-@yield('script')
+
 <!-- END: PAGE SCRIPTS -->
 
 </body>

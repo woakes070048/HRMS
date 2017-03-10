@@ -13,7 +13,6 @@ class Designation extends Model
     	return $this->hasOne('App\Models\Department', 'id', 'department_id');
     }
 
-
     public function level(){
     	return $this->hasOne('App\Models\Level', 'id', 'level_id');
     }

@@ -69,7 +69,7 @@
                                     <div v-for="(basic,index) in basics" v-if="index =='id'">
 
                                         <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label class="control-label">Employee No : <span
                                                                 class="text-danger">*</span></label>
@@ -78,7 +78,16 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label class="control-label">Branch : <span
+                                                                class="text-danger">*</span></label>
+                                            <!--         <input type="text" :value="basics.branch.branch_name"
+                                                           class="form-control input-sm" disabled="disabled"> -->
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label class="control-label">Employee Type : <span class="text-danger">*</span></label>
                                                     <select class="form-control input-sm" disabled="disabled">
@@ -87,7 +96,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="control-label">Employee Designation : <span
                                                                 class="text-danger">*</span></label>
@@ -96,13 +105,15 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-2">
-                                                <div class="form-group mt25">
-                                                    <button type="button" disabled="disabled"
-                                                            class="btn btn-sm btn-dark btn-gradient dark btn-block">
-                                                        <span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add
-                                                        Designation
-                                                    </button>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="control-label">Employee Unit : <span
+                                                                class="text-danger">*</span></label>
+                                                    <select class="form-control input-sm" id="unit_id"
+                                                        name="unit_id" v-model="basics.unit_id" disabled="disabled">
+                                                    <option value="">...Select Unit...</option>
+                                                    <option v-for="(unit,index) in allUnits" :value="unit.id" v-text="unit.unit_name"></option>
+                                                </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -324,7 +335,7 @@
 
                                 <div v-else>    
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.employee_no}">
                                                 <label class="control-label">Employee No : <span class="text-danger">*</span></label>
                                                 <input type="text" name="employee_no" class="form-control input-sm" placeholder="Enter Employee No" value="{{$next_employee_id or ''}}">
@@ -332,42 +343,64 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
+                                            <div class="form-group" :class="{'has-error': errors.branch_id}">
+                                                <label class="control-label">Branch : <span class="text-danger">*</span></label>
+                                               <select class="form-control input-sm" id="branch_id" name="branch_id">
+                                                    <option value="">...Select Branch...</option>
+                                                    <option v-for="(branch,index) in branchs" :value="employeeType.id" v-text="branch.branch_id"></option>
+                                                </select>
+                                                <span v-if="errors.branch_id" class="help-block" v-text="errors.branch_id[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.employee_type_id}">
                                                 <label class="control-label">Employee Type : <span class="text-danger">*</span></label>
                                                 <select class="form-control input-sm" id="employee_type_id" name="employee_type_id">
-                                                    <option value="">...Select Employee Type...</option>
+                                                    <option value="">...Select Type...</option>
                                                     <option v-for="(employeeType,index) in employeeTypes" :value="employeeType.id" v-text="employeeType.type_name"></option>
                                                 </select>
                                                 <span v-if="errors.employee_type_id" class="help-block" v-text="errors.employee_type_id[0]"></span>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.designation_id}">
                                                 <label class="control-label">Employee Designation : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="select2-single form-control input-sm" id="designation_id"
-                                                        name="designation_id">
+                                                <select2 class="form-control input-sm" id="designation_id"
+                                                        name="designation_id" v-model="designation_id">
                                                     <option value="">...Select Employee Designation...</option>
                                                     <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'"></option>
-                                                </select>
+                                                </select2>
                                                 <span v-if="errors.designation_id" class="help-block" v-text="errors.designation_id[0]"></span>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.unit_id}">
+                                                <label class="control-label">Employee Unit : <span
+                                                            class="text-danger">*</span></label>
+                                                <select class="form-control input-sm" id="unit_id"
+                                                        name="unit_id">
+                                                    <option value="">...Select Unit...</option>
+                                                    <option v-for="(unit,index) in units" :value="unit.id" v-text="unit.unit_name"></option>
+                                                </select>
+                                                <span v-if="errors.unit_id" class="help-block" v-text="errors.unit_id[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="col-md-1">
                                             <div class="form-group mt25">
                                                 <button type="button" id="add_new_designation_button"
                                                         onclick="modal_open('#add_new_designation_button','#add_new_designation_modal')"
                                                         v-on:click="getDepartmentsAndLevels()"
                                                         class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                        data-effect="mfp-newspaper"><span
-                                                            class="glyphicons glyphicons-briefcase"></span> &nbsp; Add
-                                                    Designation
+                                                        data-effect="mfp-newspaper">Add
                                                 </button>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                     <div class="row">

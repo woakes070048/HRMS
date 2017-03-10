@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'employee_no','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
+        'employee_no','branch_id','unit_id','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
 
     ];
 
@@ -82,19 +82,20 @@ class User extends Authenticatable
             $employee_no = explode('-', $this->employee_no);
             $next_id_without_zero_prefix = end($employee_no) + 1;
             $zero_perfix_count = strlen(end($employee_no)) - strlen($next_id_without_zero_prefix);
-            $next_employee_no = $employee_no[0] . '-' . str_repeat('0', $zero_perfix_count) . $next_id_without_zero_prefix;
+            $next_employee_no = Session('company_code') . '-' . str_repeat('0', $zero_perfix_count) . $next_id_without_zero_prefix;
             return $next_employee_no;
         }else{
-            Artisan::call('db:connect');
-            $config = Setup\Config::where('id',Session('config_id'))->first();
-            Artisan::call("db:connect", ['database' => Session('database')]);
-            return $config->company_code.'-0000';
+            return Session('company_code').'-0000';
         }
     }
 
     public function employeeType(){
         return $this->belongsTo('App\Models\EmployeeType');
     }
+
+    // public function branch(){
+    //     return $this->belongsTo('App\Models\Branch');
+    // }
 
 
     public function designation(){
