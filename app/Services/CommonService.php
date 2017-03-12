@@ -18,6 +18,7 @@ use App\Models\EducationLevel;
 use App\Models\Institute;
 use App\Models\Degree;
 use App\Models\Language;
+use App\Models\Religion;
 
 
 trait CommonService
@@ -105,6 +106,10 @@ trait CommonService
 
     public function getUnits(){
         return Units::where('unit_status',1)->get();
+    }
+
+    public function getReligions(){
+        return Religion::all();
     }
 
 

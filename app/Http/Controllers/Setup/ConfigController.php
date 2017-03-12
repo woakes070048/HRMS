@@ -133,7 +133,7 @@ class ConfigController extends Controller
 
             Setting::create([
                     'field_name' => "company_code",
-                    'field_value' => $company_code,
+                    'field_value' => empty($company_code)?"00":$company_code,
                 ]);
 
 	    	$request->session()->flash('success','Application successfully setup!');
