@@ -18,6 +18,11 @@ class AppServiceProvider extends ServiceProvider
         {
             return preg_match('/^[\pL\s]+$/u', $value);
         });
+
+        Validator::extend('alpha_spaces_dot', function($attribute, $value)
+        {
+            return preg_match('/^[\pL\s\.]+$/u', $value);
+        });
     }
 
     /**

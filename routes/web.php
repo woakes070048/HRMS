@@ -102,12 +102,13 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/view/{employee_no?}','EmployeeController@viewEmployeeProfile');
 
     Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeAddForm');
+    Route::post('/add','EmployeeController@addEmployee');
 
     Route::get('/edit/{id}/{tab?}','EmployeeController@showEmployeeEditForm');
     Route::get('/edit/tab/{data_tab}/{data_id}','EmployeeController@getDataByTabAndId');
-
-    Route::post('/add','EmployeeController@addEmployee');
     Route::post('/edit/{userId}','EmployeeController@editEmployee');
+
+    Route::get('/delete/{id}','EmployeeController@deleteEmployee');
 
     Route::post('/add/{userId}/personal/','EmployeeController@addPersonalInfo');
     Route::post('/edit/{userId}/personal','EmployeeController@editPersonalInfo');
@@ -125,6 +126,7 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
 
     Route::post('/add/{userId}/nominee/','EmployeeController@addEditNominee');
     Route::post('/edit/{userId}/nominee/','EmployeeController@addEditNominee');
+    Route::delete('/delete/{id}/nominee/','EmployeeController@deleteEmployeeData');
 
     Route::post('/add/{userId}/training/','EmployeeController@addEditTraining');
     Route::post('/edit/{userId}/training/','EmployeeController@addEditTraining');
@@ -202,7 +204,15 @@ Route::group(['prefix' => 'settings', 'namespace' => 'Pim'],function (){
     Route::get('/getSettings','SettingsController@getSettings');
     Route::post('/add','SettingsController@create');
     Route::post('/edit','SettingsController@update');
-    // Route::get('/delete/{id}/{indexId}','SettingsController@delete');
+});
+
+/******************** ...HRMS Emp Units Routes... **************/
+Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
+    Route::get('/index','BranchController@index');
+    Route::get('/getBranch','BranchController@getBranch');
+    Route::post('/add','BranchController@create');
+    Route::post('/edit','BranchController@update');
+    Route::get('/delete/{id}/{indexId}','BranchController@delete');
 });
 
 
@@ -212,8 +222,10 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-employee-type','CommonController@getEmployeeType');
     Route::get('get-departments','CommonController@getDepartments');
     Route::get('get-levels','CommonController@getLevels');
+    Route::get('get-branches','CommonController@getBranches');
     Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
+    Route::get('get-unit-by-designation-id/{id}','CommonController@getUnitByDesignationId');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
     Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');
@@ -224,8 +236,9 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-banks','CommonController@getBanks');
     Route::get('get-level-salary-info/{id}','CommonController@getLevelSalaryInfoByUser');
     Route::get('get-allowance-by-ids/{ids}','CommonController@getAllowanceByIds');
-    Route::get('get-allowance-notin-level','CommonController@getAllowanceNotinLevel');
+    Route::get('get-allowance-notin-level/{ids?}','CommonController@getAllowanceNotinLevel');
     Route::get('get-language','CommonController@getLanguage');
+    Route::get('get-religions','CommonController@getReligions');
 
     Route::post('add-designation','CommonController@addDesignation');
     Route::post('add-language','CommonController@addLanguage');

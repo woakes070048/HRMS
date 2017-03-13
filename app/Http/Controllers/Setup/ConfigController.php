@@ -58,7 +58,6 @@ class ConfigController extends Controller
         $email                 = $request->email;
         $mobile_number         = $request->mobile_number;
         $password              = $request->password;
-        $password_confirmation = $request->password_confirmation;
         $company_address       = $request->company_address;
 
         $package_info     = Package::find($package_id);
@@ -118,8 +117,10 @@ class ConfigController extends Controller
 	    	User::create([
                     'employee_no'    => $config->company_code.'-0000',
                     'employee_type_id' => 1,
-                    'designation_id' => 1,   
-                    'first_name'     => $first_name, 
+                    'branch_id' => 1,
+                    'designation_id' => 1,
+                    'unit_id' => 1,
+                    'first_name'     => $first_name,
                     'last_name'      => $last_name,    
                     'email'          => $email, 
                     'password'       => bcrypt($password),  
@@ -133,7 +134,7 @@ class ConfigController extends Controller
 
             Setting::create([
                     'field_name' => "company_code",
-                    'field_value' => $company_code,
+                    'field_value' => empty($company_code)?"00":$company_code,
                 ]);
 
 	    	$request->session()->flash('success','Application successfully setup!');
@@ -160,13 +161,25 @@ class ConfigController extends Controller
      * @return mixed
      */
     private function makeDatabaseName($database){
-    	if(stristr($database,' ')){
-    		$database = str_replace(' ', '_', $database);
-    		if(stristr($database,'-')){
-    			$database = str_replace(' ', '_', $database);
-    		}
-    	}
-    	return $database;
+
+        $database = time().'_'.$database;
+
+        if(stristr($database,' ')){
+            $database = str_replace(' ', '_', $database);
+        }
+
+        if(stristr($database,'-')){
+            $database = str_replace('-', '_', $database);
+        }
+
+        $database1 =  preg_replace('/[^A-Za-z0-9\_]/', '', $database);
+
+        if(strlen($database1) > 64){
+            $database1 = substr($database1,0,60);
+        }
+
+        return $database1;
+
     }
 
     public function get_package_info(Request $request){

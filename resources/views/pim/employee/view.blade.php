@@ -150,7 +150,7 @@ table.tc-med-2 tbody td:first-child{
               </tr>
                <tr>
                 <td class="text-left">Blood Group :</td>
-                <td class="text-right">{{$user->details->bloodGroup->blood_name}}</td>
+                <td class="text-right">{{$user->details->bloodGroup->blood_namea or ''}}</td>
               </tr>
               <tr>
                 <td class="text-left">Gender :</td>
@@ -341,18 +341,18 @@ table.tc-med-2 tbody td:first-child{
             <div class="panel">
               <div class="panel-body pb5">
 
-              @if($user->nominees)
+              @forelse($user->nominees as $nominees)
               <div class="col-md-10">
-                <h4>Nominee Name : {{$user->nominees->nominee_name}}</h4>
-                <h5>Relation : {{$user->nominees->nominee_relation}}</h5>
-                <h6>Birth Date : {{$user->nominees->nominee_birth_date}}</h6>
-                <p class="text-muted">Nominee Distribution : {{$user->nominees->nominee_distribution}}</p>
-                <p class="text-muted">Nominee Rest Distribution : {{$user->nominees->nominee_rest_distribution}}</p>
+                <h4>Nominee Name : {{$nominees->nominee_name}}</h4>
+                <h5>Relation : {{$nominees->nominee_relation}}</h5>
+                <h6>Birth Date : {{$nominees->nominee_birth_date}}</h6>
+                <p class="text-muted">Nominee Distribution : {{$nominees->nominee_distribution}}</p>
+                <p class="text-muted">Nominee Rest Distribution : {{$nominees->nominee_rest_distribution}}</p>
               </div>
               <div class="col-md-2">
-                <img src="@if($user->nominees->nominee_photo){{url('files/'.$user->id.'/'.$user->nominees->nominee_photo)}}@else{{url('img/placeholder.png')}}@endif" class="img-responsive">
+                <img src="@if($nominees->nominee_photo){{url('files/'.$user->id.'/'.$nominees->nominee_photo)}}@else{{url('img/placeholder.png')}}@endif" class="img-responsive">
               </div>
-              @else
+              @empty
                 <h5>No Data Available</h5>  
               @endforelse
 

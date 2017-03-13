@@ -19,7 +19,7 @@
                             <div class="col-md-4">
                                 <div class="form-group" :class="{'has-error': errors.reference_name}">
                                     <label class="control-label">Reference Name : <span class="text-danger">*</span></label>
-                                    <input type="text" name="reference_name" class="form-control input-sm" :value="(singleReference.reference_name)?singleReference.reference_name:''">
+                                    <input type="text" name="reference_name" class="form-control input-sm" v-model="singleReference.reference_name">
                                     <span v-if="errors.reference_name" class="text-danger">@{{ errors.reference_name[0]}}</span>
                                 </div>
                             </div>
@@ -27,14 +27,14 @@
                             <div class="col-md-4">
                                 <div class="form-group" :class="{'has-error': errors.reference_email}">
                                     <label class="control-label">Reference Email  : <span class="text-danger">*</span></label>
-                                    <input type="text" name="reference_email" class="form-control input-sm" :value="(singleReference.reference_email)?singleReference.reference_email:''">
+                                    <input type="text" name="reference_email" class="form-control input-sm" v-model="singleReference.reference_email">
                                     <span v-if="errors.reference_email" class="text-danger">@{{ errors.reference_email[0]}}</span>
                                 </div>
                             </div>
                              <div class="col-md-4">
                                 <div class="form-group" :class="{'has-error': errors.reference_department}">
                                     <label class="control-label">Reference Department : <span class="text-danger">*</span></label>
-                                    <input type="text" name="reference_department" class="form-control input-sm" :value="(singleReference.reference_department)?singleReference.reference_department:''">
+                                    <input type="text" name="reference_department" class="form-control input-sm" v-model="singleReference.reference_department">
                                     <span v-if="errors.reference_department" class="text-danger">@{{ errors.reference_department[0]}}</span>
                                 </div>
                             </div>
@@ -44,14 +44,14 @@
                             <div class="col-md-4">
                                 <div class="form-group" :class="{'has-error': errors.reference_organization}">
                                     <label class="control-label">Reference Organization : <span class="text-danger">*</span></label>
-                                    <input type="text" name="reference_organization" class="form-control input-sm" :value="(singleReference.reference_organization)?singleReference.reference_organization:''">
+                                    <input type="text" name="reference_organization" class="form-control input-sm" v-model="singleReference.reference_organization">
                                     <span v-if="errors.reference_organization" class="text-danger">@{{ errors.reference_organization[0]}}</span>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group" :class="{'has-error': errors.reference_phone}">
                                     <label class="control-label">Reference Phone : <span class="text-danger">*</span></label>
-                                    <input type="text" name="reference_phone" class="form-control input-sm" :value="(singleReference.reference_phone)?singleReference.reference_phone:''">
+                                    <input type="text" name="reference_phone" class="form-control input-sm" v-model="singleReference.reference_phone">
                                     <span v-if="errors.reference_phone" class="text-danger">@{{ errors.reference_phone[0]}}</span>
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
                             <div class="col-md-4">
                                 <div class="form-group" :class="{'has-error': errors.reference_address}">
                                     <label class="control-label">Reference Address : <span class="text-danger">*</span></label>
-                                    <textarea type="text" name="reference_address" class="form-control input-sm" :value="(singleReference.reference_address)?singleReference.reference_address:''"></textarea>
+                                    <textarea type="text" name="reference_address" class="form-control input-sm" v-model="singleReference.reference_address"></textarea>
                                     <span v-if="errors.reference_address" class="text-danger">@{{ errors.reference_address[0]}}</span>
                                 </div>
                             </div>

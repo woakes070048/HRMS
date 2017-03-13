@@ -31,7 +31,7 @@ class EmployeeEducationRequest extends FormRequest
             'pass_year' => 'required',
             'certificate_file' => 'nullable|mimes:jpeg,jpg,png,pdf|max:4000',
             'result_type' => 'required',
-            'cgpa' => 'required_if:result_type,cgpa|numeric',
+            'cgpa' => 'required_if:result_type,cgpa|numeric|max:5',
             'division' => 'required_if:result_type,division',
         ];
     }

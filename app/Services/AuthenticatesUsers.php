@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Setup\UserEmails;
+use App\Services\CommonService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Artisan;
 trait AuthenticatesUsers
 {
 	
-	use RedirectsUsers, ThrottlesLogins;
+	use RedirectsUsers, ThrottlesLogins, CommonService;
 
     /**
      * Show the application's login form.
@@ -150,6 +151,7 @@ trait AuthenticatesUsers
         if(Session('database')){
             Artisan::call("db:connect", ['database'=> Session('database')]);
         }
+        $this->settings();
     }
 
     /**

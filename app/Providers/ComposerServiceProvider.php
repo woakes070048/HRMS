@@ -5,6 +5,8 @@ namespace App\Providers;
 use Auth;
 use Illuminate\Support\ServiceProvider;
 
+// use App\Models\Setting;
+
 class ComposerServiceProvider extends ServiceProvider
 {
     /**
@@ -23,13 +25,16 @@ class ComposerServiceProvider extends ServiceProvider
         //     if(Auth::guard('setup')->check()){
         //         $view->with('auth', Auth()->guard('setup')->user());
         //     }
-        // });
+        // 
 
-        View()->composer('layouts.hrms_navbar',function($view){
-            \Artisan::call("db:connect");
-            $config = \DB::table('configs')->where('id',Session('config_id'))->first();
-            $view->with('settings',$config);
-        });
+        // View()->composer('layouts.hrms_navbar',function($view){
+        //     $settings = Setting::all();
+        //     foreach ($settings as $setting) {
+        //         $settingData[$setting->field_name] = $setting->field_value;
+        //         \Config::set('hrms.'.$setting->field_name,$setting->field_value);
+        //     }
+        //     $view->with('settings',$settingData);
+        // });
 
     }
 

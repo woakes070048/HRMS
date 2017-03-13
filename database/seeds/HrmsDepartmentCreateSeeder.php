@@ -13,7 +13,7 @@ class HrmsDepartmentCreateSeeder extends Seeder
     public function run()
     {
     	Department::create([
-    		'department_name' => 'Admin',
+    		'department_name' => 'HR',
     		'created_by' => 1,
     		'updated_by' => 1
 		]);

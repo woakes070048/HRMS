@@ -24,13 +24,13 @@ class EmployeeTrainingRequest extends FormRequest
     public function rules()
     {
         return [
-            'training_code' => 'required|numeric|digits_between:5,20',
+            // 'training_code' => 'required|numeric|digits_between:5,20',
             'training_title' => 'required|alpha_spaces',
+            'training_institute' => 'required|alpha_spaces',
             'training_from_date' => 'required|date',
             'training_to_date' => 'required|date',
             'training_passed_date' => 'required|date',
             'training_participation_date' => 'required|date',
-            'training_institute' => 'required|alpha_spaces',
             'training_remarks' => 'required',
         ];
     }

@@ -4,47 +4,37 @@ import VeeValidate from 'vee-validate';
 Vue.use(VeeValidate);
 
 new Vue({
-	el: "#unitDiv",
-    data: {
-        message: 'Hello Vue!',
-        unit_name: '',
-        unit_parent_id: '',
-        unit_department_id: '',
-        unit_status: 1,
-        unit_details: '',
-        hdn_id: '',
-        edit_unit_name: '',
-        edit_unit_parent_id: '',
-        edit_unit_department_id: '',
-        edit_unit_status: 1,
-        edit_unit_details: '',
-        departments: [],
-        units: [],
-        activeUnits: [],
-        chk_parent: 0,
-        unitIndex: null,
-    },
-    mounted(){
-    	this.getAllUnit();  //call method
-    	axios.get('/get-departments').then(response => this.departments = response.data);
-    	axios.get('/get-units').then(response => this.activeUnits = response.data);
+	el: "#mainDiv",
+	data:{
+		branches: [],
+		branch_name: '',
+		branch_email: '',
+		branch_mobile: '',
+		branch_phone: '',
+		branch_location: '',
+		branch_status: '1',
+        edit_branch_name: '',
+        edit_branch_email: '',
+        edit_branch_mobile: '',
+        edit_branch_phone: '',
+        edit_branch_location: '',
+        edit_branch_status: '',
+        indexId: '',
+        hdn_id: null,
+	},
+	mounted(){
+    	
+    	axios.get('/branch/getBranch').then(response => this.branches = response.data);
     },
     methods:{
-    	getAllUnit: function(){
-
-    		axios.get('/unit/getUnits').then(response => this.units = response.data);
-    	},
-    	saveUnit: function(formId){
-
+    	saveBranch(formId){
     		var formData = $('#'+formId).serialize();
 
-            axios.post('/unit/add', formData)
+            axios.post('/branch/add', formData)
             .then((response) => { 
 
-                this.getAllUnit();  //call method
-                axios.get('/get-units').then(response => this.activeUnits = response.data);
-
                 $('#create-form-errors').html('');
+                this.branches.push(response.data.data);
                 document.getElementById("modal-close-btn").click();
 
                 new PNotify({
@@ -58,7 +48,7 @@ new Vue({
                 });
             })
             .catch((error) => {
-            
+                
                 if(error.response.status != 200){ //error 422
                 
                     var errors = error.response.data;
@@ -71,29 +61,34 @@ new Vue({
                     $( '#create-form-errors' ).html( errorsHtml );
                 }
             });
-        },
-        editUnit: function(id, index){
+    	},
+        editData(id, index){
 
-        	this.unitIndex = index;
+            this.indexId = index;
             this.hdn_id = id;
-            this.edit_unit_name = this.units[index].unit_name;
-	        this.edit_unit_parent_id = this.units[index].unit_parent_id;
-	        this.edit_unit_department_id = this.units[index].unit_departments_id;
-	        this.edit_unit_status= this.units[index].unit_status;
-	        this.edit_unit_details = this.units[index].unit_details;
-	        this.chk_parent = this.units[index].unit_parent_id > 0 ? 1 : 0;
+            this.edit_branch_name = this.branches[index].branch_name;
+            this.edit_branch_email = this.branches[index].branch_email;
+            this.edit_branch_mobile = this.branches[index].branch_mobile;
+            this.edit_branch_phone = this.branches[index].branch_phone;
+            this.edit_branch_location = this.branches[index].branch_location;
+            this.edit_branch_status = this.branches[index].branch_status;
         },
-        updateUnit: function(updateFormId){
+        updateData: function(updateFormId){
             
-        	var formData = $('#'+updateFormId).serialize();
+            var formData = $('#'+updateFormId).serialize();
 
-            axios.post('/unit/edit', formData)
+            axios.post('/branch/edit', formData)
             .then(response => { 
                
-               	$('#edit-form-errors').html('');
+                $('#edit-form-errors').html('');
                 document.getElementById("modal-edit-close-btn").click();
                 
-                this.getAllUnit();  //call method
+                this.branches[this.indexId].branch_name = this.edit_branch_name;
+                this.branches[this.indexId].branch_email = this.edit_branch_email;
+                this.branches[this.indexId].branch_mobile = this.edit_branch_mobile;
+                this.branches[this.indexId].branch_phone = this.edit_branch_phone;
+                this.branches[this.indexId].branch_location = this.edit_branch_location;
+                this.branches[this.indexId].branch_status = this.edit_branch_status;
 
                 new PNotify({
                     title: response.data.title+' Message',
@@ -116,9 +111,9 @@ new Vue({
                 $( '#edit-form-errors' ).html( errorsHtml );
             });
         },
-        deleteUnit: function(id, index){
+        deleteData: function(id, index){
 
-            var delUnits = this.units;
+            var delBranch = this.branches;
 
             swal({
                 title: "Are you sure?",
@@ -132,20 +127,29 @@ new Vue({
             function(){
                 
                 swal("Deleted!", "Your imaginary file has been deleted.", "success");
-                axios.get("/unit/delete/"+id+"/"+index,{
+
+                axios.get("/branch/delete/"+id+"/"+index,{
             
                 })
                 .then((response) => {
+
+                    new PNotify({
+                        title: response.data.title+' Message',
+                        text: response.data.message,
+                        shadow: true,
+                        addclass: 'stack_top_right',
+                        type: response.data.title,
+                        width: '290px',
+                        delay: 1500
+                    });
                     
-                    delUnits.splice(response.data.indexId, 1);
+                    delBranch.splice(response.data.indexId, 1);
                 })
                 .catch(function (error) {
-                   
+                    
                     swal('Error:','Delete function not working','error');
                 });
             });
-
-
         }
     }
 });

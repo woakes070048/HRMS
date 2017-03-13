@@ -1,12 +1,10 @@
 <header class="navbar navbar-fixed-top navbar-shadow">
     <div class="navbar-branding">
         <a class="navbar-brand" href="dashboard.html">
-            <!-- <b>Admin</b>Designs -->
-            <b>{{strtoupper($settings->company_name)}}</b>
+            <b>{{strtoupper(Session('company_name'))}}</b>
         </a>
         <span id="toggle_sidemenu_l" class="ad ad-lines"></span>
     </div>
-
 
     <ul class="nav navbar-nav navbar-right">
        <!--  <li>

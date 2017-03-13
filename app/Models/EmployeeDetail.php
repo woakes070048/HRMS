@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class EmployeeDetail extends Model
 {
     protected $fillable = ['user_id','blood_group_id','national_id','passport_no','tin_no',
-        'father_name','mother_name','personal_email','official_email','birth_date','joining_date',
-        'phone_number','gender','marital_status','religion','nationality','emergency_contact_person','emergency_contact_address','created_by','updated_by']; 
+        'father_name','mother_name','spouse_name','personal_email','official_email','birth_date','joining_date',
+        'phone_number','gender','marital_status','religion','nationality',
+        'emergency_contact_person','emergency_contact_number','emergency_contact_address','created_by','updated_by'];
 
 
     public static function findUser($user_id){

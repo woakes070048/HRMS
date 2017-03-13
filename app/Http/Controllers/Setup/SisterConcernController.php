@@ -37,6 +37,7 @@ class SisterConcernController extends Controller
 	    $database_name = $this->makeDatabaseName($request->company_name);
 
         $company_name          = $request->company_name;
+        $company_code          = $request->company_code;
         $first_name            = $request->first_name;
         $last_name             = $request->last_name;
         $email                 = $request->email;
@@ -50,7 +51,8 @@ class SisterConcernController extends Controller
 
 	    	$config = Config::create([
 	    			'user_id'          => session('user_id'),
-	    			'company_name'     => $company_name,
+                    'company_name'     => $company_name,
+	    			'company_code'     => $company_code,
 	    			'company_address'  => $company_address,
 	    			'database_name'    => $database_name,
                     'package_end_date' => session('end_date'),

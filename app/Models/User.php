@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'employee_no','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
+        'employee_no','branch_id','unit_id','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
 
     ];
 
@@ -82,19 +82,20 @@ class User extends Authenticatable
             $employee_no = explode('-', $this->employee_no);
             $next_id_without_zero_prefix = end($employee_no) + 1;
             $zero_perfix_count = strlen(end($employee_no)) - strlen($next_id_without_zero_prefix);
-            $next_employee_no = $employee_no[0] . '-' . str_repeat('0', $zero_perfix_count) . $next_id_without_zero_prefix;
+            $next_employee_no = Session('company_code') . '-' . str_repeat('0', $zero_perfix_count) . $next_id_without_zero_prefix;
             return $next_employee_no;
         }else{
-            Artisan::call('db:connect');
-            $config = Setup\Config::where('id',Session('config_id'))->first();
-            Artisan::call("db:connect", ['database' => Session('database')]);
-            return $config->company_code.'-0000';
+            return Session('company_code').'-0000';
         }
     }
 
     public function employeeType(){
         return $this->belongsTo('App\Models\EmployeeType');
     }
+
+     public function branch(){
+         return $this->belongsTo('App\Models\Branch');
+     }
 
 
     public function designation(){
@@ -104,6 +105,10 @@ class User extends Authenticatable
 
     public function address(){
         return $this->hasOne('App\Models\EmployeeAddress');
+    }
+
+    public function unit(){
+        return $this->belongsTo('App\Models\Units');
     }
 
 
@@ -133,7 +138,7 @@ class User extends Authenticatable
 
 
     public function nominees(){
-        return $this->hasOne('App\Models\EmployeeNominee');
+        return $this->hasMany('App\Models\EmployeeNominee');
     }
 
 
@@ -158,13 +163,13 @@ class User extends Authenticatable
 
 
     public function get_profile_info($employee_no){
-        return User::with('designation.department','designation.department','details.bloodGroup','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
+        return User::with('designation.department','designation.level','branch','unit','details.bloodGroup','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
     }
 
 
     public function get_user_data_by_user_tab($user_id,$tab){
         if($tab == ''){
-            $basic = User::with('designation','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
+            $basic = User::with('designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
             return response()->json($basic);
         }
 
