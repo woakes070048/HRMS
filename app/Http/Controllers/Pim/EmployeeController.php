@@ -761,6 +761,9 @@ class EmployeeController extends Controller
         if($request->data_tab == 'experience'){
             $data = EmployeeExperience::find($request->data_id);
         }
+        if($request->data_tab == 'nominee'){
+            $data = EmployeeNominee::find($request->data_id);
+        }
         if($request->data_tab == 'training'){
             $data = EmployeeTraining::find($request->data_id);
         }
@@ -1030,6 +1033,9 @@ class EmployeeController extends Controller
                 if($request->segment(4) == 'experience'){
                     EmployeeExperience::where('id',$request->id)->delete();
                 }
+                if($request->segment(4) == 'nominee'){
+                    EmployeeNominee::where('id',$request->id)->delete();
+                }
                 if($request->segment(4) == 'training'){
                     EmployeeTraining::where('id',$request->id)->delete();
                 }
@@ -1060,6 +1066,11 @@ class EmployeeController extends Controller
                 return response()->json($data,500);
             }
         }
+    }
+
+
+    public function deleteEmployee($employee_id){
+        return redirect()->back();
     }
 
 

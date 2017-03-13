@@ -138,7 +138,7 @@ class User extends Authenticatable
 
 
     public function nominees(){
-        return $this->hasOne('App\Models\EmployeeNominee');
+        return $this->hasMany('App\Models\EmployeeNominee');
     }
 
 
