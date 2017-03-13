@@ -1657,7 +1657,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.effective_date}">
                                         <label class="control-label">Salary Effective Date: <span class="text-danger">*</span></label>
-                                        <input type="text" name="effective_date" :value="(salaries.effective_date)?salaries.effective_date:''" :readonly="salaries.effective_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm">
+                                        <input type="text" name="effective_date" v-model="salaries.effective_date" :readonly="salaries.effective_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                         <span v-if="errors.effective_date" class="help-block" v-text="errors.effective_date[0]"></span>
                                     </div>
                                 </div>
@@ -1817,18 +1817,20 @@
 
                 <!---  Nominee Info -->
                 <div id="tab1_6" class="tab-pane @if(isset($id) && $tab == 'nominee') active @endif">
-                    <div v-if="nominee">
+                    <div v-if="nominees">
                         <span class="text-info">Employee No : </span>
-                        <span v-text="nominee.employee_no+', '"></span>
+                        <span v-text="nominees.employee_no+', '"></span>
                         <span class="text-info">Employee Full Name : </span>
-                        <span v-text="nominee.first_name+' '+nominee.middle_name+' '+nominee.last_name"></span>
+                        <span v-text="nominees.first_name+' '+nominees.middle_name+' '+nominees.last_name"></span>
                     </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                         <form id="add_nominee_form" v-on:submit.prevent="addNomineeInfo" method="post">
                             <input type="hidden" name="user_id" :value="user_id">
 
-                            <div v-if="nominee">
+                            <div v-if="nominees.nominees !=''">
+                                <div v-for="(nominee,index) in nominees.nominees" :class="index%2==0?'even':'odd'">
+                                <div class="row">
                                 <div class="col-md-2">
                                     <label class="control-label">Nominee Photo :</label>
                                     <div class="fileupload-new admin-form" data-provides="fileupload">
@@ -1887,9 +1889,12 @@
                                     </div>
                                     <hr class="short alt">
                                 </div>
+                                </div>
+                                </div>
                             </div>
 
                             <div v-else>
+                                <div class="row">
                                 <div class="col-md-2" :class="{'has-error': errors.image}">
                                     <label class="control-label">Nominee Photo :</label>
                                     <div class="fileupload-new admin-form" data-provides="fileupload">
@@ -1902,7 +1907,7 @@
                                             <input type="file" name="image">
                                         </span>
                                     </div>
-                                    <span v-if="errors.image" class="help-block">@{{errors.image[0]}}</span>
+                                    <span v-if="errors.image" class="help-block" v-text="errors.image[0]"></span>
                                 </div>
 
                                 <div class="col-md-10 mt40">
@@ -1911,7 +1916,7 @@
                                             <div class="form-group" :class="{'has-error': errors.nominee_name}">
                                                 <label class="control-label">Nominee Name : <span class="text-danger">*</span></label>
                                                 <input type="text" name="nominee_name" class="form-control input-sm">
-                                                <span v-if="errors.nominee_name" class="help-block">@{{errors.nominee_name[0]}}</span>
+                                                <span v-if="errors.nominee_name" class="help-block" v-text="errors.nominee_name[0]"></span>
                                             </div>
                                         </div>
 
@@ -1919,7 +1924,7 @@
                                             <div class="form-group" :class="{'has-error': errors.nominee_relation}">
                                                 <label class="control-label">Nominee Relation : <span class="text-danger">*</span></label>
                                                 <input type="text" name="nominee_relation" class="form-control input-sm">
-                                                <span v-if="errors.nominee_relation" class="help-block">@{{errors.nominee_relation[0]}}</span>
+                                                <span v-if="errors.nominee_relation" class="help-block" v-text="errors.nominee_relation[0]"></span>
                                             </div>
                                         </div>
 
@@ -1927,7 +1932,7 @@
                                             <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
                                                 <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
                                                 <input type="text" name="nominee_birth_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
-                                                <span v-if="errors.nominee_birth_date" class="help-block">@{{errors.   nominee_birth_date[0]}}</span>
+                                                <span v-if="errors.nominee_birth_date" class="help-block" v-text="errors.nominee_birth_date[0]"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -1936,16 +1941,16 @@
                                         <div class="col-md-4">
                                             <div class="form-group" :class="{'has-error': errors.nominee_distribution}">
                                                 <label class="control-label">Nominee Distribution : <span class="text-danger">*</span></label>
-                                                <input type="text" name="nominee_distribution" class="form-control input-sm">
-                                                <span v-if="errors.nominee_distribution" class="help-block">@{{errors.nominee_distribution[0]}}</span>
+                                                <input type="text" name="nominee_distribution" v-on:keyup="nomineeDistribution" v-model="nominee_distribution" class="form-control input-sm">
+                                                <span v-if="errors.nominee_distribution" class="help-block" v-text="errors.nominee_distribution[0]"></span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-4">
                                             <div class="form-group" :class="{'has-error': errors.nominee_rest_distribution}">
                                                 <label class="control-label">Nominee Rest Distribution : <span class="text-danger">*</span></label>
-                                                <input type="text" name="nominee_rest_distribution" class="form-control input-sm">
-                                                <span v-if="errors.nominee_rest_distribution" class="help-block">@{{errors.nominee_rest_distribution[0]}}</span>
+                                                <input type="text" name="nominee_rest_distribution" :value="nominee_rest_distribution" class="form-control input-sm" readonly="readonly">
+                                                <span v-if="errors.nominee_rest_distribution" class="help-block" v-text="errors.nominee_rest_distribution[0]"></span>
                                             </div>
                                         </div>
 
@@ -1953,18 +1958,31 @@
                                             <div class="form-group" :class="{'has-error': errors.nominee_address}">
                                                 <label class="control-label">Nominee Address : <span class="text-danger">*</span></label>
                                                 <input type="text" name="nominee_address" class="form-control input-sm">
-                                                <span v-if="errors.nominee_address" class="help-block">@{{errors.nominee_address[0]}}</span>
+                                                <span v-if="errors.nominee_address" class="help-block" v-text="errors.nominee_address[0]"></span>
                                             </div>
                                         </div>
                                     </div>
                                     <hr class="short alt">
+                                </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group mt25">
+                                        <button id="add_new_nominee_button" :disabled="nominees.nominees ==''" v-on:click="singleNominee=[],errors=[]"
+                                                onclick="modal_open('#add_new_nominee_button','#add_new_nominee_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
+                                            Nominee
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="section row mbn">
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="nominee"
+                                        <button type="submit" :disabled="nominees.nominees !=''"
                                                 name="save_nominee_and_next" v-on:click="submit_button='save_nominee_and_next'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save & Next
@@ -1975,7 +1993,7 @@
 
                                 <div class="col-sm-2 pull-right">
                                     <p class="text-left">
-                                        <button type="submit" :disabled="nominee"
+                                        <button type="submit" :disabled="nominees.nominees !=''"
                                                 name="save_nominee" v-on:click="submit_button='save_nominee'"
                                                 class="btn btn-dark btn-gradient dark btn-block"><span
                                                 class="glyphicons glyphicons-ok_2"></span> &nbsp; Save Nominee
@@ -2002,16 +2020,16 @@
                             <input type="hidden" name="user_id" :value="user_id">
 
                             <div v-if="trainings.trainings !=''">
-                                <div v-for="training in trainings.trainings">
+                                <div v-for="(training,index) in trainings.trainings" :class="index%2==0?'even':'odd'">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <!-- <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">Training Code : <span class="text-danger">*</span></label>
                                             <input type="text" :value="training.training_code" class="form-control input-sm" readonly="readonly">
                                         </div>
-                                    </div>
+                                    </div> -->
 
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">Training Title  : <span class="text-danger">*</span></label>
                                             <input type="text" :value="training.training_title" readonly="readonly" class="form-control input-sm">
@@ -2023,9 +2041,6 @@
                                             <input type="text" :value="training.training_institute" readonly="readonly" class="form-control input-sm">
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
@@ -2034,23 +2049,26 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
+                                            <label class="control-label">Training To Date : <span class="text-danger">*</span></label>
                                             <input type="text" :value="training.training_to_date" class="form-control input-sm" disabled="disabled">
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">Training Passed Date : <span class="text-danger">*</span></label>
                                             <input type="text" :value="training.training_passed_date" class="form-control input-sm" disabled="disabled">
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
                                             <input type="text" :value="training.training_participation_date" class="form-control input-sm" disabled="disabled">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Training remarks : <span class="text-danger">*</span></label>
                                             <textarea type="text" :value="training.training_remarks" readonly="readonly" class="form-control input-sm"></textarea>
@@ -2063,64 +2081,64 @@
 
                             <div v-else>
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <!-- <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.training_code}">
                                             <label class="control-label">Training Code : <span class="text-danger">*</span></label>
                                             <input type="text" name="training_code" class="form-control input-sm">
                                             <span v-if="errors.training_code" class="text-danger">@{{ errors.training_code[0]}}</span>
                                         </div>
-                                    </div>
+                                    </div> -->
 
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <div class="form-group" :class="{'has-error': errors.training_title}">
                                             <label class="control-label">Training Title  : <span class="text-danger">*</span></label>
                                             <input type="text" name="training_title" class="form-control input-sm">
-                                            <span v-if="errors.training_title" class="text-danger">@{{ errors.training_title[0]}}</span>
+                                            <span v-if="errors.training_title" class="text-danger" v-text="errors.training_title[0]"></span>
                                         </div>
                                     </div>
                                      <div class="col-md-4">
                                         <div class="form-group" :class="{'has-error': errors.training_institute}">
                                             <label class="control-label">Training Institute : <span class="text-danger">*</span></label>
                                             <input type="text" name="training_institute" class="form-control input-sm">
-                                            <span v-if="errors.training_institute" class="text-danger">@{{ errors.training_institute[0]}}</span>
+                                            <span v-if="errors.training_institute" class="text-danger" v-text="errors.training_institute[0]"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group" :class="{'has-error': errors.training_from_date}">
+                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_from_date" class="mydatepicker form-control input-sm" readonly="readonly" v-on:mouseover="myDatePicker">
+                                            <span v-if="errors.training_from_date" class="text-danger" v-text="errors.training_from_date[0]"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group" :class="{'has-error': errors.training_to_date}">
+                                            <label class="control-label">Training To Date : <span class="text-danger">*</span></label>
+                                            <input type="text" name="training_to_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
+                                            <span v-if="errors.training_to_date" class="text-danger" v-text="errors.training_to_date[0]"></span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group" :class="{'has-error': errors.training_from_date}">
-                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="training_from_date" class="mydatepicker form-control input-sm" readonly="readonly" v-on:mouseover="myDatePicker">
-                                            <span v-if="errors.training_from_date" class="text-danger">@{{ errors.training_from_date[0]}}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group" :class="{'has-error': errors.training_to_date}">
-                                            <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="training_to_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
-                                            <span v-if="errors.training_to_date" class="text-danger">@{{ errors.training_to_date[0]}}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.training_passed_date}">
                                             <label class="control-label">Training Passed Date : <span class="text-danger">*</span></label>
                                             <input type="text" name="training_passed_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
-                                            <span v-if="errors.training_passed_date" class="text-danger">@{{ errors.training_passed_date[0]}}</span>
+                                            <span v-if="errors.training_passed_date" class="text-danger" v-text="errors.training_passed_date[0]"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.training_participation_date}">
-                                            <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
+                                            <label class="control-label">Training Participation Date : <span class="text-danger">*</span></label>
                                             <input type="text" name="training_participation_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
-                                            <span v-if="errors.training_participation_date" class="text-danger">@{{ errors.training_participation_date[0]}}</span>
+                                            <span v-if="errors.training_participation_date" class="text-danger" v-text="errors.training_participation_date[0]"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group" :class="{'has-error': errors.training_remarks}">
                                             <label class="control-label">Training remarks : <span class="text-danger">*</span></label>
                                             <textarea type="text" name="training_remarks" class="form-control input-sm"></textarea>
-                                            <span v-if="errors.training_remarks" class="text-danger">@{{ errors.training_remarks[0]}}</span>
+                                            <span v-if="errors.training_remarks" class="text-danger" v-text="errors.training_remarks[0]"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -2631,6 +2649,9 @@
 
         <!-- Add Allowance Form Popup -->
         @include('pim.employee.modals.allowance')
+
+        <!-- Add Nominee Form Popup -->
+        @include('pim.employee.modals.nominee')
 
         <!-- Add Training Form Popup -->
         @include('pim.employee.modals.training')

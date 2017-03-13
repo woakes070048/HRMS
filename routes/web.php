@@ -102,12 +102,13 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::get('/view/{employee_no?}','EmployeeController@viewEmployeeProfile');
 
     Route::get('/add/{id?}/{tab?}','EmployeeController@showEmployeeAddForm');
+    Route::post('/add','EmployeeController@addEmployee');
 
     Route::get('/edit/{id}/{tab?}','EmployeeController@showEmployeeEditForm');
     Route::get('/edit/tab/{data_tab}/{data_id}','EmployeeController@getDataByTabAndId');
-
-    Route::post('/add','EmployeeController@addEmployee');
     Route::post('/edit/{userId}','EmployeeController@editEmployee');
+
+    Route::get('/delete/{id}','EmployeeController@deleteEmployee');
 
     Route::post('/add/{userId}/personal/','EmployeeController@addPersonalInfo');
     Route::post('/edit/{userId}/personal','EmployeeController@editPersonalInfo');
@@ -125,6 +126,7 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
 
     Route::post('/add/{userId}/nominee/','EmployeeController@addEditNominee');
     Route::post('/edit/{userId}/nominee/','EmployeeController@addEditNominee');
+    Route::delete('/delete/{id}/nominee/','EmployeeController@deleteEmployeeData');
 
     Route::post('/add/{userId}/training/','EmployeeController@addEditTraining');
     Route::post('/edit/{userId}/training/','EmployeeController@addEditTraining');
