@@ -82,6 +82,7 @@ class EmployeeController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function viewEmployeeProfile($employee_no=null){
+
         $sidevar_hide = 1;
         if(!empty($employee_no)){
             $user = $this->user->get_profile_info($employee_no);
@@ -331,6 +332,7 @@ class EmployeeController extends Controller
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function addEditExperience(EmployeeExperienceRequest $request){
+        // dd($request->all());
         try{
             $message = '';
             if($request->id) {
@@ -389,6 +391,7 @@ class EmployeeController extends Controller
 
             User::where('id',$request->userId)->update([
                 'basic_salary' => $request->basic_salary,
+                'salary_in_cache' => $request->salary_in_cache,
                 'effective_date' => $request->effective_date,
             ]);
 
@@ -921,6 +924,7 @@ class EmployeeController extends Controller
 
             User::where('id',$request->userId)->update([
                 'basic_salary' => $request->basic_salary,
+                'salary_in_cache' => $request->salary_in_cache,
                 'effective_date' => $request->effective_date,
             ]);
 

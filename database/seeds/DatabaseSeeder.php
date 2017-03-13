@@ -29,6 +29,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call(HrmsEmployeeTypeCreateSeeder::class);
 
+        $this->call(HrmsBranchCreateSeeder::class);
+        $this->call(HrmsUnitCreateSeeder::class);
+
         // $this->call(HrmsUserCreateSeeder::class);
     }
 }

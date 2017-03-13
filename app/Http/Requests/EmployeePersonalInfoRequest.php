@@ -35,8 +35,9 @@ class EmployeePersonalInfoRequest extends FormRequest
         }
 
         return [
-            'father_name' => 'required|alpha_spaces',
-            'mother_name' => 'required|alpha_spaces',
+            'father_name' => 'required|alpha_spaces_dot',
+            'mother_name' => 'required|alpha_spaces_dot',
+            'spouse_name' => 'required|alpha_spaces_dot',
             'national_id' => $national_id,
             'passport_no' => $passport_no,
             'tin_no' => $tin_no,
@@ -47,8 +48,10 @@ class EmployeePersonalInfoRequest extends FormRequest
             'joining_date' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
-            'religion' => 'nullable|alpha',
-            'nationality' => 'nullable|alpha',
+            'religion' => 'nullable|alpha_spaces',
+            'nationality' => 'nullable|alpha_spaces',
         ];
     }
+
+
 }

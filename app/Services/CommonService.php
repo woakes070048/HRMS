@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Branch;
 use App\Models\User;
 use App\Models\Level;
 use App\Models\Units;
@@ -34,8 +35,14 @@ trait CommonService
         }
     }
 
+
     public function getEmployeeType(){
         return EmployeeType::where('status',1)->get();
+    }
+
+
+    public function getBranches(){
+        return Branch::where('branch_status',1)->get();
     }
 
 
@@ -52,6 +59,11 @@ trait CommonService
 	public function getDesignations(){
 		return Designation::with('department','level')->where('status',1)->orderBy('id','desc')->get();
 	}
+
+
+    public function getUnits(){
+        return Units::where('unit_status',1)->get();
+    }
 
 
     public function getUnitByDesignationId($id){
@@ -105,8 +117,17 @@ trait CommonService
     }
 
 
-    public function getAllowanceNotinLevel(){
-        return BasicSalaryInfo::select('basic_salary_info.*')->leftJoin('level_salary_info_map','level_salary_info_map.basic_salary_info_id','=','basic_salary_info.id')->where('level_salary_info_map.level_id','=',null)->get();
+    public function getAllowanceNotinLevel($ids=null){
+        $basicSalaryInfo =  BasicSalaryInfo::select('basic_salary_info.*')
+            ->leftJoin('level_salary_info_map','level_salary_info_map.basic_salary_info_id','=','basic_salary_info.id')
+            ->leftJoin('employee_salaries','employee_salaries.basic_salary_info_id','=','basic_salary_info.id')
+            ->where('employee_salaries.basic_salary_info_id','=',null)
+            ->where('level_salary_info_map.level_id','=',null);
+            if($ids !=null){
+                $ids = explode(',',$ids);
+                $basicSalaryInfo->whereNotIn('basic_salary_info.id',$ids);
+            }
+        return $basicSalaryInfo->get();
     }
 
 
@@ -117,11 +138,7 @@ trait CommonService
 
 
     public function getLanguage(){
-        return Language::all();
-    }
-
-    public function getUnits(){
-        return Units::where('unit_status',1)->get();
+        return Language::where('status',1)->get();
     }
 
 

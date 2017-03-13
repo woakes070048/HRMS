@@ -7,6 +7,19 @@
 
     <!-- Vendor CSS -->
     <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
+
+    <style type="text/css">
+        .odd{
+            background: #f5f5f5;
+            padding: 20px 15px 0px;
+            margin: -20px -15px -0px;
+        }
+        .even{
+            padding: 10px 15px 0px;
+            margin: 0px -15px;
+        }
+    </style>
+
 @endsection
 
 <section class="animated fadeIn p10" id="employee">
@@ -80,9 +93,9 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.branch_id}">
                                                 <label class="control-label">Branch : <span class="text-danger">*</span></label>
-                                               <select class="form-control input-sm" id="branch_id" name="branch_id">
+                                               <select class="form-control input-sm" id="branch_id" name="branch_id" v-model="basics.branch_id">
                                                     <option value="">...Select Branch...</option>
-                                                    <option v-for="(branch,index) in branchs" :value="employeeType.id" v-text="branch.branch_id"></option>
+                                                    <option v-for="(branch,index) in branches" :value="branch.id" v-text="branch.branch_name"></option>
                                                 </select>
                                                 <span v-if="errors.branch_id" class="help-block" v-text="errors.branch_id[0]"></span>
                                             </div>
@@ -99,20 +112,32 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.designation_id}">
                                                 <label class="control-label">Employee Designation : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="select2-single form-control input-sm" id="designation_id"
-                                                        name="designation_id" v-model="basics.designation.id">
+                                                <select2 class="form-control input-sm" id="designation_id"
+                                                        name="designation_id" v-model="designation_id = basics.designation_id">
                                                     <option>...Select Employee Designation...</option>
-                                                    <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'"></option>
-                                                </select>
+                                                    <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'" :selected="basics.designation_id == designation.id"></option>
+                                                </select2>
                                                 <span v-if="errors.designation_id" class="help-block" v-text="errors.designation_id[0]"></span>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="control-label">Employee Unit : <span
+                                                                class="text-danger">*</span></label>
+                                                    <select class="form-control input-sm" id="unit_id"
+                                                        name="unit_id" v-model="basics.unit_id">
+                                                    <option value="">...Select Unit...</option>
+                                                    <option v-for="(unit,index) in units" :value="unit.id" v-text="unit.unit_name"></option>
+                                                </select>
+                                                </div>
+                                            </div>
+
+                                        <!-- <div class="col-md-2">
                                             <div class="form-group mt25">
                                                 <button type="button" id="add_new_designation_button"
                                                         onclick="modal_open('#add_new_designation_button','#add_new_designation_modal')"
@@ -123,7 +148,7 @@
                                                     Designation
                                                 </button>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                     <div class="row">
@@ -574,20 +599,19 @@
 
                 <!--- Personal Info -->
                 <div id="tab1_2" class="tab-pane @if(isset($id) && $tab == 'personal') active @endif">
+                    <div v-if="personals">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="personals.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="personals.first_name+' '+personals.middle_name+' '+personals.last_name"></span>
+                    </div>
+
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_personal_info_form" v-on:submit.prevent="addPersonalInfo" method="post">
                                 <input type="hidden" name="user_id" v-model="user_id" class="form-control input-sm">
 
                                     <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.user_id}">
-                                                <label class="control-label">Employee Full Name:</label>
-                                                <input type="text" :value="personals.first_name+' '+personals.last_name"
-                                                       class="form-control input-sm" disabled>
-                                                <span v-if="errors.user_id" class="text-danger" v-text=" errors.user_id[0]"></span>
-                                            </div>
-                                        </div>
 
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.father_name}">
@@ -607,6 +631,14 @@
                                                 <input type="text" name="mother_name" :value="(personals.details)?personals.details.mother_name:''"
                                                        class="form-control input-sm" placeholder="Enter Mother Name">
                                                 <span v-if="errors.mother_name" class="text-danger" v-text="errors.mother_name[0]">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.spouse_name}">
+                                                <label class="control-label">Spouse Name:</label>
+                                                <input type="text" name="spouse_name" :value="(personals.details)?personals.details.spouse_name:''" class="form-control input-sm" placeholder="Enter Spouse Name">
+                                                <span v-if="errors.spouse_name" class="text-danger" v-text=" errors.spouse_name[0]"></span>
                                             </div>
                                         </div>
 
@@ -675,8 +707,8 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.birth_date}">
                                                 <label class="control-label">Birth Date :</label>
-                                                <input type="text" name="birth_date" :value="(personals.details)?personals.details.birth_date:''"
-                                                       class="datepicker form-control input-sm"
+                                                <input type="text" name="birth_date" v-on:mouseover="myDatePicker" :value="(personals.details)?personals.details.birth_date:''"
+                                                       class="mydatepicker form-control input-sm"
                                                        placeholder="Enter Birth Date" readonly="readonly">
                                                 <span v-if="errors.birth_date" class="text-danger" v-text="errors.birth_date[0]">
                                             </div>
@@ -686,8 +718,8 @@
                                             <div class="form-group" :class="{'has-error': errors.joining_date}">
                                                 <label class="control-label">Joining Date : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="joining_date" :value="(personals.details)?personals.details.joining_date:''"
-                                                       class="datepicker form-control input-sm"
+                                                <input type="text" name="joining_date" v-on:mouseover="myDatePicker" :value="(personals.details)?personals.details.joining_date:''"
+                                                       class="mydatepicker form-control input-sm"
                                                        placeholder="Enter Joining Date" readonly="readonly">
                                                 <span v-if="errors.joining_date" class="text-danger" v-text="errors.joining_date[0]">
                                             </div>
@@ -725,7 +757,14 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.marital_status}">
                                                 <label class="control-label">Marital Status : <span class="text-danger">*</span></label>
-                                                <div class="radio-custom mb5">
+                                                 <select name="marital_status" class="form-control input-sm">
+                                                    <option value="">...Select Marital Status...</option>
+                                                    <option :selected="personals.details && personals.details.marital_status == 'single'">Single</option>
+                                                    <option :selected="personals.details && personals.details.marital_status == 'married'">Married</option>
+                                                    <option :selected="personals.details && personals.details.marital_status == 'separated'">Separated</option>
+                                                    <option :selected="personals.details && personals.details.marital_status == 'other'">Other</option>
+                                                </select>
+                                                <!-- <div class="radio-custom mb5">
                                                     <input id="married" name="marital_status" type="radio"
                                                            value="married"
                                                            :checked="personals.details && personals.details.marital_status == 'married'">
@@ -735,7 +774,7 @@
                                                            value="unmarried"
                                                            :checked="personals.details && personals.details.marital_status == 'unmarried'">
                                                     <label for="unmarried">Unmarried</label>
-                                                </div>
+                                                </div> -->
                                                 <span v-if="errors.marital_status" class="text-danger" v-text="errors.marital_status[0]">
                                             </div>
                                         </div>
@@ -760,7 +799,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.emergency_contact_person}">
                                                 <label class="control-label">Emergency Contact Person :</label>
                                                 <input type="text" name="emergency_contact_person"
@@ -770,7 +809,19 @@
                                                 <span v-if="errors.emergency_contact_person" class="text-danger" v-text="errors.emergency_contact_person[0]">
                                             </div>
                                         </div>
-                                        <div class="col-md-8">
+
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.emergency_contact_number}">
+                                                <label class="control-label">Emergency Contact Number :</label>
+                                                <input type="text" name="emergency_contact_number"
+                                                :value="(personals.details)?personals.details.emergency_contact_number:''"
+                                                       class="form-control input-sm"
+                                                       placeholder="Emergency Contact Number">
+                                                <span v-if="errors.emergency_contact_number" class="text-danger" v-text="errors.emergency_contact_number[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
                                             <div class="form-group" :class="{'has-error': errors.emergency_contact_address}">
                                                 <label class="control-label">Emergency Contact Address :</label>
                                                 <textarea name="emergency_contact_address" class="form-control input-sm"
@@ -816,15 +867,21 @@
 
                 <!--- Education Info -->
                 <div id="tab1_3" class="tab-pane @if(isset($id) && $tab == 'education') active @endif">
+                    <div v-if="educations">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="educations.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="educations.first_name+' '+educations.middle_name+' '+educations.last_name"></span>
+                    </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_education_from" v-on:submit.prevent="addNewEducation" method="post" enctype="multipart/form-data">
 
                                 <!-- start v-if -->
                                 <div v-if="educations.educations !=''">
-                                    <div v-for="(education, index) in educations.educations">
+                                    <div v-for="(education, index) in educations.educations" :class="index%2==0?'even':'odd'">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="control-label">Education Level :</label>
                                                     <input type="text"
@@ -833,7 +890,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="control-label">Institute :</label>
                                                     <input type="text" :value="education.institute.institute_name"
@@ -841,11 +898,18 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="control-label">Degree :</label>
                                                     <input type="text" :value="education.degree.degree_name"
                                                            class="form-control input-sm" disabled="disabled">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="control-label">Achievement:</label>
+                                                    <input type="text" :value="education.achievement" class="form-control input-sm" disabled="disabled">
                                                 </div>
                                             </div>
                                         </div>
@@ -896,13 +960,17 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3" v-if="education.certificate">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="control-label">Certificate:</label>
                                                     <div>
-                                                        <a :href="'/files/'+education.user_id+'/'+education.certificate" target="_blank" class="text-success">
+                                                        <a v-if="education.certificate" :href="'/files/'+education.user_id+'/'+education.certificate" target="_blank" class="text-success">
                                                             <i class="fa fa-2x fa-file-image-o"></i>
                                                             Click here to view certificate
+                                                        </a>
+                                                        <a v-else class="text-primary">
+                                                            <i class="fa fa-2x fa-file-image-o"></i>
+                                                            No certificate added.
                                                         </a>
                                                     </div>
                                                 </div>
@@ -921,8 +989,7 @@
                                             </div>
                                             <div class="col-md-1 pull-right">
                                                 <div class="form-group mt5">
-                                                    <button id="add_education" v-on:click.prevent="getDataByTabAndId('education',education.id),errors=[]"
-                                                    onclick="modal_open('#add_education','#add_new_education_modal')" 
+                                                    <button id="add_education" v-on:click.prevent="getDataByTabAndId('education',education.id,'#add_new_education_modal'),errors=[]"
                                                             class="btn btn-sm btn-success btn-gradient dark btn-block"
                                                             data-effect="mfp-with-fade"><span
                                                             class="glyphicons glyphicons-edit"></span> &nbsp; Edit
@@ -938,18 +1005,8 @@
 
                                 <!-- start v-else -->
                                 <div v-else>
+                                    <input type="hidden" name="user_id" :value="user_id">
                                     <div class="row">
-                                        <div class="col-md-3" v-if="educations !=''">
-                                            <div class="form-group" :class="{'has-error': errors.user_id}">
-                                                <label class="control-label">Employee Full Name:</label>
-                                                <input type="text" :value="educations.first_name+' '+educations.last_name"
-                                                       class="form-control input-sm" disabled>
-                                                <input type="hidden" name="user_id"
-                                                       :value="user_id"
-                                                       class="form-control input-sm">
-                                                <span v-if="errors.user_id" class="text-danger">@{{ errors.user_id[0]}}</span>
-                                            </div>
-                                        </div>
 
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.education_level_id}">
@@ -960,9 +1017,9 @@
                                                         v-model="education_level_id">
                                                     <option v-bind:value="''">---- Select Education Level ----</option>
                                                     <option v-bind:value="education_level.id"
-                                                            v-for="(education_level, index) in education_levels">@{{ education_level.education_level_name }}</option>
+                                                            v-for="(education_level, index) in education_levels" v-text="education_level.education_level_name"></option>
                                                 </select>
-                                                <span v-if="errors.education_level_id" class="text-danger">@{{ errors.education_level_id[0]}}</span>
+                                                <span v-if="errors.education_level_id" class="text-danger" v-text="errors.education_level_id[0]"></span>
                                             </div>
                                         </div>
 
@@ -970,12 +1027,12 @@
                                             <div class="form-group" :class="{'has-error': errors.institute_id}">
                                                 <label class="control-label">Institute : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="select2-single form-control input-sm" name="institute_id">
+                                                <select2 class="form-control input-sm" name="institute_id">
                                                     <option v-bind:value="''">---- Select Institute ----</option>
                                                     <option v-bind:value="institute.id"
-                                                            v-for="(institute, index) in institutes">@{{ institute.institute_name }}</option>
-                                                </select>
-                                                <span v-if="errors.institute_id" class="text-danger">@{{ errors.institute_id[0]}}</span>
+                                                            v-for="(institute, index) in institutes" v-text="institute.institute_name"></option>
+                                                </select2>
+                                                <span v-if="errors.institute_id" class="text-danger" v-text="errors.institute_id[0]"></span>
                                             </div>
                                         </div>
 
@@ -983,12 +1040,21 @@
                                             <div class="form-group" :class="{'has-error': errors.degree_id}">
                                                 <label class="control-label">Degree : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="select2-single form-control input-sm" name="degree_id">
+                                                <select2 class="form-control input-sm" name="degree_id">
                                                     <option v-bind:value="''">---- Select Degree ----</option>
                                                     <option v-bind:value="degree.id"
-                                                            v-for="(degree, index) in degrees">@{{ degree.degree_name }}</option>
-                                                </select>
-                                                <span v-if="errors.degree_id" class="text-danger">@{{ errors.degree_id[0]}}</span>
+                                                            v-for="(degree, index) in degrees" v-text="degree.degree_name"></option>
+                                                </select2>
+                                                <span v-if="errors.degree_id" class="text-danger" v-text="errors.degree_id[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.achievement}">
+                                                <label class="control-label">Achievement:</label>
+                                                <input type="text" name="achievement" class="form-control input-sm">
+                                                
+                                                <span v-if="errors.achievement" class="text-danger" v-text="errors.achievement[0]"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -998,18 +1064,9 @@
                                             <div class="form-group" :class="{'has-error': errors.pass_year}">
                                                 <label class="control-label">Pass Year : <span
                                                             class="text-danger">*</span></label>
-                                                <input type="text" name="pass_year" class="date form-control input-sm"
+                                                <input type="text" name="pass_year" class="date form-control input-sm" v-on:mouseover="datePickerYear"
                                                        readonly="">
-                                                <span v-if="errors.pass_year" class="text-danger">@{{ errors.pass_year[0]}}</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.certificate_file}">
-                                                <label class="control-label">Certificate:</label>
-                                                <input type="file" name="certificate_file"
-                                                       class="form-control btn-primary input-sm">
-                                                <span v-if="errors.certificate_file" class="text-danger">@{{ errors.certificate_file[0]}}</span>
+                                                <span v-if="errors.pass_year" class="text-danger" v-text="errors.pass_year[0]"></span>
                                             </div>
                                         </div>
 
@@ -1028,7 +1085,7 @@
                                                            v-on:click="showCgpa=false,showDivision=true">
                                                     <label for="result_type_division">Division</label>
                                                 </div>
-                                                <span v-if="errors.result_type" class="text-danger">@{{ errors.result_type[0]}}</span>
+                                                <span v-if="errors.result_type" class="text-danger" v-text=" errors.result_type[0]"></span>
                                             </div>
                                         </div>
 
@@ -1038,7 +1095,7 @@
                                                             class="text-danger">*</span></label>
                                                 <input type="text" name="cgpa"
                                                        class="form-control input-sm" placeholder="Enter CGPA">
-                                                <span v-if="errors.cgpa" class="text-danger">@{{ errors.cgpa[0]}}</span>
+                                                <span v-if="errors.cgpa" class="text-danger" v-text="errors.cgpa[0]"></span>
                                             </div>
                                         </div>
 
@@ -1058,7 +1115,16 @@
                                                         Third Division
                                                     </option>
                                                 </select>
-                                                <span v-if="errors.division" class="text-danger">@{{ errors.division[0]}}</span>
+                                                <span v-if="errors.division" class="text-danger" v-text="errors.division[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.certificate_file}">
+                                                <label class="control-label">Certificate:</label>
+                                                <input type="file" name="certificate_file"
+                                                       class="form-control btn-primary input-sm">
+                                                <span v-if="errors.certificate_file" class="text-danger" v-text="errors.certificate_file[0]"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -1112,6 +1178,12 @@
 
                 <!---  Experience Info -->
                 <div id="tab1_4" class="tab-pane @if(isset($id) && $tab == 'experience') active @endif">
+                    <div v-if="experiences">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="experiences.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="experiences.first_name+' '+experiences.middle_name+' '+experiences.last_name"></span>
+                    </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_experience_form" v-on:submit.prevent="addNewExperience" method="post">
@@ -1119,11 +1191,11 @@
                                 <!-- start v-if -->
                                 <div v-if="experiences.experiences !=''">
                                     <!-- start v-for in experiences   -->
-                                    <div v-for="(experience, index) in experiences.experiences">
+                                    <div v-for="(experience, index) in experiences.experiences" :class="index%2==0?'even':'odd'">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label class="control-label">company_name : <span
+                                                    <label class="control-label">Company Name : <span
                                                                 class="text-danger">*</span></label>
                                                     <input type="text" class="form-control input-sm"
                                                            :value="experience.company_name" disabled="disabled">
@@ -1158,7 +1230,7 @@
                                                     <label class="control-label">Job Duration : <span
                                                                 class="text-danger">*</span></label>
                                                     <input type="text" class="form-control input-sm"
-                                                           :value="experience.job_duration+' years'"
+                                                           :value="experience.job_duration"
                                                            disabled="disabled">
                                                 </div>
                                             </div>
@@ -1168,14 +1240,14 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="control-label">Job Responsibility : <span class="text-danger">*</span></label>
-                                                    <textarea type="text" class="form-control input-sm" disabled="disabled">@{{experience.job_responsibility}}</textarea>
+                                                    <textarea type="text" class="form-control input-sm" disabled="disabled" v-text="experience.job_responsibility"></textarea>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="control-label">Job Location : <span class="text-danger">*</span></label>
-                                                    <textarea type="text" class="form-control input-sm" disabled="disabled">@{{experience.job_location}}</textarea>
+                                                    <textarea type="text" class="form-control input-sm" disabled="disabled" v-text="experience.job_location"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -1192,9 +1264,7 @@
                                             </div>
                                             <div class="col-md-1 pull-right">
                                                 <div class="form-group mt5">
-                                                    <button id="add_new_experience_button" v-on:click.prevent="getDataByTabAndId('experience',experience.id),errors=[]"
-                                                    onclick="setTimeout(modal_open('#add_new_experience_button','#add_new_experience_modal'),5)" 
-                                                            class="btn btn-sm btn-success btn-gradient dark btn-block"
+                                                    <button id="add_new_experience_button" v-on:click.prevent="getDataByTabAndId('experience',experience.id,'#add_new_experience_modal'),errors=[]" class="btn btn-sm btn-success btn-gradient dark btn-block"
                                                             data-effect="mfp-with-fade"><span
                                                             class="glyphicons glyphicons-edit"></span> &nbsp; Edit
                                                     </button>
@@ -1215,7 +1285,7 @@
                                             <div class="form-group" :class="{'has-error': errors.company_name}">
                                                 <label class="control-label">Company Name : <span class="text-danger">*</span></label>
                                                 <input type="text" name="company_name" class="form-control input-sm">
-                                                <span v-if="errors.company_name" class="text-danger">@{{ errors.company_name[0]}}</span>
+                                                <span v-if="errors.company_name" class="text-danger" v-text="errors.company_name[0]"></span>
                                             </div>
                                         </div>
 
@@ -1223,31 +1293,31 @@
                                             <div class="form-group" :class="{'has-error': errors.position_held}">
                                                 <label class="control-label">Position Held : <span class="text-danger">*</span></label>
                                                 <input type="text" name="position_held" class="form-control input-sm">
-                                                <span v-if="errors.position_held" class="text-danger">@{{ errors.position_held[0]}}</span>
+                                                <span v-if="errors.position_held" class="text-danger" v-text="errors.position_held[0]"></span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_start_date}">
                                                 <label class="control-label">Job Start Date : <span class="text-danger">*</span></label>
-                                                <input type="text" id="job_start_date" v-on:click="datePicker" name="job_start_date" class="datepicker form-control input-sm" readonly="readonly">
-                                                <span v-if="errors.job_start_date" class="text-danger">@{{ errors.job_start_date[0]}}</span>
+                                                <input type="text" id="job_start_date" v-on:mouseover="myDatePicker" v-on:change="theDuration3" name="job_start_date" class="mydatepicker form-control input-sm" readonly="readonly">
+                                                <span v-if="errors.job_start_date" class="text-danger" v-text="errors.job_start_date[0]"></span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_end_date}">
                                                 <label class="control-label">Job End Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="job_end_date" v-on:click="datePicker" id="job_end_date" class="datepicker form-control input-sm" readonly="readonly">
-                                                <span v-if="errors.job_end_date" class="text-danger">@{{ errors.job_end_date[0]}}</span>
+                                                <input type="text" name="job_end_date" v-on:mouseover="myDatePicker" id="job_end_date" class="mydatepicker form-control input-sm" readonly="readonly">
+                                                <span v-if="errors.job_end_date" class="text-danger" v-text="errors.job_end_date[0]"></span>
                                             </div>
                                         </div>
 
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.job_duration}">
                                                 <label class="control-label">Job Duration : <span class="text-danger">*</span></label>
-                                                <input type="text" name="job_duration" v-on:click="theDuration" :value="job_duration" class="form-control input-sm" readonly="readonly">
-                                                <span v-if="errors.job_duration" class="text-danger">@{{ errors.job_duration[0]}}</span>
+                                                <input type="text" name="job_duration" v-on:click="theDuration" :value="job_duration" class="form-control input-sm">
+                                                <span v-if="errors.job_duration" class="text-danger" v-text="errors.job_duration[0]"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -1257,7 +1327,7 @@
                                             <div class="form-group" :class="{'has-error': errors.job_responsibility}">
                                                 <label class="control-label">Job Responsibility : <span class="text-danger">*</span></label>
                                                 <textarea type="text" name="job_responsibility" class="form-control input-sm"></textarea>
-                                                <span v-if="errors.job_responsibility" class="text-danger">@{{ errors.job_responsibility[0]}}</span>
+                                                <span v-if="errors.job_responsibility" class="text-danger" v-text="errors.job_responsibility[0]"></span>
                                             </div>
                                         </div>
 
@@ -1265,7 +1335,7 @@
                                             <div class="form-group" :class="{'has-error': errors.job_location}">
                                                 <label class="control-label">Job Location : <span class="text-danger">*</span></label>
                                                 <textarea type="text" name="job_location" class="form-control input-sm"></textarea>
-                                                <span v-if="errors.job_location" class="text-danger">@{{ errors.job_location[0]}}</span>
+                                                <span v-if="errors.job_location" class="text-danger" v-text="errors.job_location[0]"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -1316,6 +1386,12 @@
 
                 <!---  Salary Info -->
                 <div id="tab1_5" class="tab-pane @if(isset($id) && $tab == 'salary') active @endif">
+                    <div v-if="salaries">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="salaries.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="salaries.first_name+' '+salaries.middle_name+' '+salaries.last_name"></span>
+                    </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_salary_form" v-on:submit.prevent="addSalary" method="post">
@@ -1326,7 +1402,15 @@
                                         <div class="form-group" :class="{'has-error': errors.basic_salary}">
                                             <label class="control-label">Basic Salary Amount: <span class="text-danger">*</span></label>
                                             <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount">
-                                            <span v-if="errors.basic_salary" class="help-block">@{{errors.basic_salary[0]}}</span>
+                                            <span v-if="errors.basic_salary" class="help-block" v-text="errors.basic_salary[0]"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
+                                            <label class="control-label">Salary in Cache:</label>
+                                            <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache">
+                                            <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                         </div>
                                     </div>
 
@@ -1334,7 +1418,7 @@
                                         <div class="form-group" :class="{'has-error': errors.effective_date}">
                                             <label class="control-label">Salary Effective Date: <span class="text-danger">*</span></label>
                                             <input type="text" name="effective_date" :value="(salaries.effective_date)?salaries.effective_date:''" class="datepicker form-control input-sm">
-                                            <span v-if="errors.effective_date" class="help-block">@{{errors.effective_date[0]}}</span>
+                                            <span v-if="errors.effective_date" class="help-block" v-text="errors.effective_date[0]"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -1388,7 +1472,7 @@
                                 <div class="row" v-else>
                                     <div class="col-md-3 " v-for="salary in salaries.salaries">
                                         <div class="checkbox-custom mb5 pull-left">
-                                            <input :id="salary.basic_salary_info_id" type="checkbox" :name="'salary_info['+salary.basic_salary_info_id+'][id]'" :value="salary.basic_salary_info_id" :checked="salary.basic_salary_info_id">
+                                            <input :id="salary.basic_salary_info_id" type="checkbox" :name="'salary_info['+salary.basic_salary_info_id+'][id]'" checked="checked" :value="salary.basic_salary_info_id">
 
                                             <label :for="salary.basic_salary_info_id" v-text="(salary.salary_amount_type=='percent')?salary.basic_salary_info.salary_info_name+' (%) ':salary.basic_salary_info.salary_info_name+' ($) '"></label>
                                         </div>
@@ -1430,8 +1514,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_more_allownce_button"
-                                                    onclick="setTimeout(modal_open('#add_more_allownce_button','#add_more_allownce_modal'),5)" class="btn btn-sm btn-dark btn-gradient dark btn-block" v-on:click="getAllowanceNotinLevel"
+                                            <button id="add_more_allownce_button" v-on:click.prevent="getAllowanceNotinLevel('#add_more_allownce_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
                                                     data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add More Allowance
                                             </button>
                                         </div>
@@ -1524,6 +1607,12 @@
 
                 <!---  Nominee Info -->
                 <div id="tab1_6" class="tab-pane @if(isset($id) && $tab == 'nominee') active @endif">
+                    <div v-if="nominee">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="nominee.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="nominee.first_name+' '+nominee.middle_name+' '+nominee.last_name"></span>
+                    </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_nominee_form" v-on:submit.prevent="addNomineeInfo" method="post">
@@ -1705,6 +1794,12 @@
 
                 <!---  Training Info -->
                 <div id="tab1_7" class="tab-pane @if(isset($id) && $tab == 'training') active @endif">
+                    <div v-if="trainings">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="trainings.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="trainings.first_name+' '+trainings.middle_name+' '+trainings.last_name"></span>
+                    </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_training_form" v-on:submit.prevent="addNewTraining" method="post">
@@ -1900,6 +1995,12 @@
 
                 <!---  Reference Info -->
                 <div id="tab1_8" class="tab-pane @if(isset($id) && $tab == 'reference') active @endif">
+                    <div v-if="references">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="references.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="references.first_name+' '+references.middle_name+' '+references.last_name"></span>
+                    </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_reference_form" v-on:submit.prevent="addNewReference" method="post">
@@ -2072,6 +2173,12 @@
 
                 <!---  Children Info -->
                 <div id="tab1_9" class="tab-pane @if(isset($id) && $tab == 'children') active @endif">
+                    <div v-if="childrens">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="childrens.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="childrens.first_name+' '+childrens.middle_name+' '+childrens.last_name"></span>
+                    </div>
                     <div class="row mt20">
                         <div class="col-md-12">
                             <form id="add_children_form" v-on:submit.prevent="addNewChildren" method="post">
@@ -2243,6 +2350,12 @@
 
                 <!---  Language Info -->
                 <div id="tab1_10" class="tab-pane @if(isset($id) && $tab == 'language') active @endif">
+                    <div v-if="languages">
+                        <span class="text-info">Employee No : </span>
+                        <span v-text="languages.employee_no+', '"></span>
+                        <span class="text-info">Employee Full Name : </span>
+                        <span v-text="languages.first_name+' '+languages.middle_name+' '+languages.last_name"></span>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <form id="add_language_form" v-on:submit.prevent="addNewLanguage" method="post">

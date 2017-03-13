@@ -93,9 +93,9 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\EmployeeType');
     }
 
-    // public function branch(){
-    //     return $this->belongsTo('App\Models\Branch');
-    // }
+     public function branch(){
+         return $this->belongsTo('App\Models\Branch');
+     }
 
 
     public function designation(){
@@ -105,6 +105,10 @@ class User extends Authenticatable
 
     public function address(){
         return $this->hasOne('App\Models\EmployeeAddress');
+    }
+
+    public function unit(){
+        return $this->belongsTo('App\Models\Units');
     }
 
 
@@ -159,13 +163,13 @@ class User extends Authenticatable
 
 
     public function get_profile_info($employee_no){
-        return User::with('designation.department','designation.department','details.bloodGroup','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
+        return User::with('designation.department','designation.level','branch','unit','details.bloodGroup','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
     }
 
 
     public function get_user_data_by_user_tab($user_id,$tab){
         if($tab == ''){
-            $basic = User::with('designation','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
+            $basic = User::with('designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
             return response()->json($basic);
         }
 

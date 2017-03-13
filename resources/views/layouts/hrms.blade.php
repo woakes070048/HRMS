@@ -159,7 +159,6 @@
 
 <script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
 
-@yield('script')
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
@@ -228,6 +227,11 @@
             pickTime: false
         });
 
+        $('.mydatepicker').datetimepicker({
+            format: 'YYYY-MM-DD',
+            pickTime: false
+        });
+
         $('#datetimepicker1').datetimepicker();
         $('#datetimepicker2').datetimepicker();
         $('#datetimepicker3').datetimepicker({
@@ -237,6 +241,8 @@
 
     });
 </script>
+
+@yield('script')
 
 <?php $messages= ['success','danger','warning']; foreach($messages as $msg){?>
 @if(Session($msg))
