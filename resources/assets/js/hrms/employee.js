@@ -1,6 +1,31 @@
 // import Other_Allowance from "./../components/employee/other_allowance.vue";
 // Vue.component('other-allowance', Other_Allowance);
 
+// $(document).ready(function(){
+
+Vue.component('select2', {
+   props: ['value'],
+   template: '<select><slot></slot></select>',
+   mounted: function() {
+     var vm = this
+     $(this.$el)
+       .val(this.value).select2()
+       .on('change', function() {
+         vm.$emit('input', this.value)
+       })
+   },
+   watch: {
+     value: function(value) {
+       $(this.$el).select2('val', value)
+     }
+   },
+   destroyed: function() {
+     $(this.$el).off().select2('destroy')
+   }
+ });
+
+
+
 
 var employee = new Vue({
     el : '#employee',
@@ -16,7 +41,8 @@ var employee = new Vue({
         permanent_district_id:null,
 
         employeeTypes:[],
-        branchs:[],
+        branches:[],
+        designation_id:0,
         designations: [],
         units: [],
         allUnits:[],
@@ -59,6 +85,8 @@ var employee = new Vue({
         submit_button:null,
         errors: [],
         otherAllowance:[],
+        allow: [],
+
         singleEducation: [],
         singleExperience: [],
         singleTraining: [],
@@ -69,8 +97,9 @@ var employee = new Vue({
 
     mounted(){
         this.getTabData();
-        // $('#select').select2();
-        // $('#startDate').datepicker().on('changeDate', () => { this.startDate = $('#startDate').val() })
+
+        // $('#startDate').datepicker().on('changeDate', () => { this.startDate = $('#startDate').val() });
+
     },
 
 
@@ -94,6 +123,10 @@ var employee = new Vue({
 
         education_level_id: function(){
             this.getInstituteAndDegreeByEducationLevelId();
+        },
+
+        designation_id: function(id){
+            this.getUnitByDesignationId(id);
         }
 
     },
@@ -101,16 +134,28 @@ var employee = new Vue({
 
     methods : {
 
-        // allownaceHide(id){
-        //     this.allow[id] = 'tarek';
-        //     console.log(this.allow[id]);
-        // },
-
         theDuration(){
             var diff = Math.abs(new Date($('#job_start_date').val()) - new Date($('#job_end_date').val()));
             var year = 1000 * 60 * 60 * 24 * 30 * 12;
             var years = Math.abs(diff/year);
             this.job_duration =  years.toFixed(1);
+        },
+
+        theDuration2(){
+            var diff = Math.abs(new Date($('#job_start_date2').val()) - new Date($('#job_end_date2').val()));
+            var year = 1000 * 60 * 60 * 24 * 30 * 12;
+            var years = Math.abs(diff/year);
+            this.job_duration =  years.toFixed(1);
+        },
+
+        theDuration3(){
+            var diff = Math.abs(new Date($('#job_start_date3').val()) - new Date($('#job_end_date3').val()));
+            var year = 1000 * 60 * 60 * 24 * 30 * 12;
+            var years = Math.abs(diff/year);
+
+            this.singleExperience.job_start_date = $('#job_start_date3').val();
+            this.singleExperience.job_end_date = $('#job_end_date3').val();
+            this.singleExperience.job_duration =  years.toFixed(1);
         },
 
         // validateBeforeSubmit(){
@@ -140,26 +185,36 @@ var employee = new Vue({
             });
         },
 
+        myDatePicker(){
+            $('.mydatepicker').datetimepicker({
+                format: 'YYYY-MM-DD',
+                pickTime: false
+            });
+        },
+
         getTabData(){
 
             this.urlChange(this.tab);
             this.errors = [];
 
             if(this.tab == ''){
-                // this.getEmployeeType();
-                // this.getDesignations();
-                // this.getDivisions();
-                // this.getAllUnit();
-                // this.getBasic();
+                this.getBranches();
+                this.getEmployeeType();
+                this.getDesignations();
+                this.getDivisions();
+                this.getBasic();
             }
+
             if(this.tab == 'personal'){
                 this.getPersonals();
                 this.getBloodGroups();
             }
+
             if(this.tab == 'education'){
                 this.getEducationLevels();
                 this.getEducations();
             }
+
             if(this.tab == 'experience'){
                 this.getExperience();
             }
@@ -168,18 +223,23 @@ var employee = new Vue({
                 this.getLevelSalaryInfo();
                 this.getBanks();
             }
+
             if(this.tab == 'nominee'){
                 this.getNominee();
             }
+
             if(this.tab == 'training'){
                 this.getTrainings();
             }
+
             if(this.tab == 'reference'){
                 this.getReferences();
             }
+
             if(this.tab == 'children'){
                 this.getChildrens();
             }
+
             if(this.tab == 'language'){
                 this.getLanguage();
                 this.getLanguages();
@@ -278,7 +338,7 @@ var employee = new Vue({
             axios.get(url).then(response => {
                 this.childrens = response.data;
             // console.log(this.childrens);
-        });
+            });
         },
 
 
@@ -286,8 +346,16 @@ var employee = new Vue({
             var url = this.makeUrl();
             axios.get(url).then(response => {
                 this.languages = response.data;
-            console.log(this.languages);
-        });
+                console.log(this.languages);
+            });
+        },
+
+
+        getBranches(){
+            axios.get('/get-branches').then(response => {
+                this.branches = response.data;
+                console.log(this.branches);
+            });
         },
 
 
@@ -295,7 +363,7 @@ var employee = new Vue({
             axios.get('/get-employee-type').then(response => {
                 this.employeeTypes = response.data;
             console.log(this.employeeTypes);
-        });
+            });
         },
 
 
@@ -308,7 +376,7 @@ var employee = new Vue({
         getDepartments(){
             axios.get('/get-departments').then(response => {
                 this.departments = response.data;
-        });
+            });
         },
 
 
@@ -333,8 +401,8 @@ var employee = new Vue({
             });
         },
 
-        getUnitByDesignationId(e){
-            var id = e.target.value;
+        getUnitByDesignationId(id){
+            // var id = this.designation_id;
              axios.get('/get-unit-by-designation-id/'+id).then(response => {
                 this.units = response.data;
                 console.log(this.units);
@@ -389,6 +457,8 @@ var employee = new Vue({
 
         getInstituteAndDegreeByEducationLevelId(){
             var education_level_id = this.education_level_id;
+            this.institutes = [];
+            this.degrees = [];
             this.getInstituteByEducationLevelId(education_level_id);
             this.getDegreeByEducationLevelId(education_level_id);
         },
@@ -424,34 +494,31 @@ var employee = new Vue({
         },
 
 
-        getAllowanceNotinLevel(){
-            axios.get('/get-allowance-notin-level').then(response => {
+        getAllowanceNotinLevel(modal_id){
+            axios.get('/get-allowance-notin-level/'+this.allow).then(response => {
                 this.levelSalaryNotinLevels = response.data;
-            console.log(response.data);
-        });
+                setTimeout(this.modal_open(modal_id),5);
+            });
         },
 
 
         addMoreAllowance(id){
             var formData = $('#'+id).serializeArray();
-            var allow = [];
             var data;
+            var allowance_ids = [];
+
             for(data in formData){
-                allow.push(formData[data].value);
+                this.allow.push(formData[data].value);
+                allowance_ids.push(formData[data].value);
             }
 
-            axios.get('/get-allowance-by-ids/'+allow).then(response => {
-                this.otherAllowance = response.data;
-            jQuery(".mfp-close").trigger("click");
-            // jQuery(document).ready(function () {
-            //     $('.datepicker2').datetimepicker({
-            //         format: 'YYYY-MM-DD',
-            //         pickTime: false
-            //     });
-            // });
-        });
+            axios.get('/get-allowance-by-ids/'+allowance_ids).then(response => {
+                for(var data in response.data){
+                    this.otherAllowance.push(response.data[data]);
+                }
+                jQuery(".mfp-close").trigger("click");
+            });
         },
-
 
         getLanguage(){
             axios.get('/get-language').then(response => {
@@ -606,7 +673,7 @@ var employee = new Vue({
                 // console.log(response);
                 var data = response.data;
             this.errors = [];
-            this.job_duration = null;
+
             jQuery(".mfp-close").trigger("click");
             // console.log(this.educations);
             this.educations = data.data;
@@ -895,8 +962,24 @@ var employee = new Vue({
             });
         },
 
+        modal_open(form_id) {
+            $.magnificPopup.open({
+                removalDelay: 300,
+                items: {
+                    src: form_id
+                },
+                callbacks: {
+                    beforeOpen: function (e) {
+                        var Animation = "mfp-zoomIn";
+                        this.st.mainClass = Animation;
+                    }
+                },
+                midClick: true
+            });
+        },
 
-        getDataByTabAndId(data_tab,data_id){
+
+        getDataByTabAndId(data_tab,data_id,form_id){
             axios.get('/employee/'+add_edit+'/tab/'+data_tab+'/'+data_id).then(response => {
                 if(data_tab == 'education'){
                     this.singleEducation = response.data;
@@ -916,8 +999,18 @@ var employee = new Vue({
                 if(data_tab == 'language'){
                     this.singleLanguage = response.data;
                 }
+                setTimeout(this.modal_open(form_id),5);
+                
             });
         },
 
     },
 });
+
+
+
+
+// });
+
+
+
