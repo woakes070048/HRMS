@@ -19,6 +19,7 @@ use App\Models\EducationLevel;
 use App\Models\Institute;
 use App\Models\Degree;
 use App\Models\Language;
+use App\Models\Religion;
 
 use App\Models\Setting;
 
@@ -139,6 +140,10 @@ trait CommonService
 
     public function getLanguage(){
         return Language::where('status',1)->get();
+    }
+
+    public function getReligions(){
+        return Religion::all();
     }
 
 

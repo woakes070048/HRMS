@@ -202,7 +202,6 @@ Route::group(['prefix' => 'settings', 'namespace' => 'Pim'],function (){
     Route::get('/getSettings','SettingsController@getSettings');
     Route::post('/add','SettingsController@create');
     Route::post('/edit','SettingsController@update');
-    // Route::get('/delete/{id}/{indexId}','SettingsController@delete');
 });
 
 /******************** ...HRMS Emp Units Routes... **************/
@@ -210,8 +209,8 @@ Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
     Route::get('/index','BranchController@index');
     Route::get('/getBranch','BranchController@getBranch');
     Route::post('/add','BranchController@create');
-    // Route::post('/edit','BranchController@update');
-    // Route::get('/delete/{id}/{indexId}','BranchController@delete');
+    Route::post('/edit','BranchController@update');
+    Route::get('/delete/{id}/{indexId}','BranchController@delete');
 });
 
 
@@ -237,6 +236,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-allowance-by-ids/{ids}','CommonController@getAllowanceByIds');
     Route::get('get-allowance-notin-level/{ids?}','CommonController@getAllowanceNotinLevel');
     Route::get('get-language','CommonController@getLanguage');
+    Route::get('get-religions','CommonController@getReligions');
 
     Route::post('add-designation','CommonController@addDesignation');
     Route::post('add-language','CommonController@addLanguage');
