@@ -221,6 +221,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-employee-type','CommonController@getEmployeeType');
     Route::get('get-departments','CommonController@getDepartments');
     Route::get('get-levels','CommonController@getLevels');
+    Route::get('get-branches','CommonController@getBranches');
     Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
     Route::get('get-unit-by-designation-id/{id}','CommonController@getUnitByDesignationId');
@@ -234,7 +235,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-banks','CommonController@getBanks');
     Route::get('get-level-salary-info/{id}','CommonController@getLevelSalaryInfoByUser');
     Route::get('get-allowance-by-ids/{ids}','CommonController@getAllowanceByIds');
-    Route::get('get-allowance-notin-level','CommonController@getAllowanceNotinLevel');
+    Route::get('get-allowance-notin-level/{ids?}','CommonController@getAllowanceNotinLevel');
     Route::get('get-language','CommonController@getLanguage');
 
     Route::post('add-designation','CommonController@addDesignation');

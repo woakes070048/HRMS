@@ -25,12 +25,13 @@ class EmployeeBasicInfoRequest extends FormRequest
     {
 
         if($this->segment(3)){
-             $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
+//             $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
+             $employee_no ='required|regex:/[0-9a-zA-Z][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
              $email = 'required|email|unique:users,email,'.$this->segment(3);
              $password = 'nullable';
              $retype_pass = 'nullable';
         }else{
-             $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users';
+             $employee_no ='required|regex:/[0-9a-zA-Z][\-{1}][0-9]+$/|unique:users';
              $email = 'required|email|unique:users';
              $password = 'required|digits_between:6,16';
              $retype_pass = 'required|same:password';
@@ -45,7 +46,7 @@ class EmployeeBasicInfoRequest extends FormRequest
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
             'email' => $email,
-            'mobile_number' => 'required',
+            'mobile_number' => 'required|digits_between:10,17',
             'password' => $password,
             'retype_password' => $retype_pass,
             'present_division_id' => 'required',

@@ -15,8 +15,8 @@ class HrmsDesignationCreateSeeder extends Seeder
     	Designation::create([
     		'department_id' => 1,
     		'level_id' => 1,
-    		'designation_name' => 'Admin',
-    		'designation_description' => 'This is demo designation for Admin.',
+    		'designation_name' => 'HR Manager',
+    		'designation_description' => 'This is demo designation for HR Manager Level.',
     		'created_by' => 1,
     		'updated_by' => 1
 		]);

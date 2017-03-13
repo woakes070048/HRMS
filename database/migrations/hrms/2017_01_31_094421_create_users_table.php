@@ -18,9 +18,12 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('employee_no',100)->unique();
             $table->integer('employee_type_id')->unsigned();   
-            $table->decimal('basic_salary',9,2)->nullable();   
-            $table->date('effective_date')->nullable();   
+            $table->integer('branch_id')->unsigned();   
             $table->integer('designation_id')->unsigned();   
+            $table->integer('unit_id')->unsigned();   
+            $table->decimal('basic_salary',12,2)->nullable();   
+            $table->decimal('salary_in_cache',12,2)->nullable();   
+            $table->date('effective_date')->nullable();   
             $table->string('first_name', 45);            
             $table->string('middle_name', 45)->nullable();  
             $table->string('last_name', 45);            

@@ -1,4 +1,3 @@
-
 <div id="add_new_education_modal" style="max-width:700px" class="popup-basic mfp-with-anim mfp-hide">
     <div class="panel">
         <div class="panel-heading">
@@ -25,10 +24,10 @@
                                         <select class="form-control input-sm" name="education_level_id" v-model="education_level_id = singleEducation.institute.education_level_id" v-on:change="getInstituteAndDegreeByEducationLevelId()">
                                             <option v-bind:value="''">---- Select Education Level ----</option>
                                             <option v-bind:value="education_level.id"
-                                                    v-for="(education_level, index) in education_levels">@{{ education_level.education_level_name }}</option>
+                                                    v-for="(education_level, index) in education_levels" v-text="education_level.education_level_name"></option>
                                         </select>
                                         <span v-if="errors.education_level_id"
-                                              class="text-danger">@{{ errors.education_level_id[0]}}</span>
+                                              class="text-danger" v-text="errors.education_level_id[0]"></span>
                                     </div>
                                 </div>
 
@@ -38,9 +37,9 @@
                                         <select class="form-control input-sm" name="institute_id">
                                             <option v-bind:value="''">---- Select Institute ----</option>
                                             <option v-bind:value="institute.id"
-                                                    v-for="(institute, index) in institutes" :selected="singleEducation.institute_id == institute.id">@{{ institute.institute_name }}</option>
+                                                    v-for="(institute, index) in institutes" :selected="singleEducation.institute_id == institute.id" v-text="institute.institute_name"></option>
                                         </select>
-                                        <span v-if="errors.institute_id" class="text-danger">@{{ errors.institute_id[0]}}</span>
+                                        <span v-if="errors.institute_id" class="text-danger" v-text="errors.institute_id[0]"></span>
                                     </div>
                                 </div>
 
@@ -49,10 +48,10 @@
                                         <label class="control-label">Degree : <span class="text-danger">*</span></label>
                                         <select class="form-control input-sm" name="degree_id">
                                             <option v-bind:value="''">---- Select Degree ----</option>
-                                            <option v-bind:value="degree.id" v-for="(degree, index) in degrees" :selected="singleEducation.degree_id == degree.id">@{{ degree.degree_name }}</option>
+                                            <option v-bind:value="degree.id" v-for="(degree, index) in degrees" :selected="singleEducation.degree_id == degree.id" v-text="degree.degree_name"></option>
                                         </select>
                                         <span v-if="errors.degree_id"
-                                              class="text-danger">@{{ errors.degree_id[0]}}</span>
+                                              class="text-danger" v-text="errors.degree_id[0]"></span>
                                     </div>
                                 </div>
                             </div>
@@ -61,10 +60,10 @@
                                 <div class="col-md-4">
                                     <div class="form-group" :class="{'has-error': errors.pass_year}">
                                         <label class="control-label">Pass Year : <span class="text-danger">*</span></label>
-                                        <input type="text" name="pass_year" class="date form-control input-sm" :value="singleEducation.pass_year"
+                                        <input type="text" name="pass_year" v-on:mouseover="datePickerYear" class="date form-control input-sm" :value="singleEducation.pass_year"
                                                readonly="">
                                         <span v-if="errors.pass_year"
-                                              class="text-danger">@{{ errors.pass_year[0]}}</span>
+                                              class="text-danger" v-text="errors.pass_year[0]"></span>
                                     </div>
                                 </div>
 
@@ -82,7 +81,7 @@
                                                    value="division" v-on:click="showCgpa='',showDivision='division'">
                                             <label for="result_type_division">Division</label>
                                             <span v-if="errors.result_type"
-                                                  class="text-danger">@{{ errors.result_type[0]}}</span>
+                                                  class="text-danger" v-text="errors.result_type[0]"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -93,7 +92,7 @@
                                                     class="text-danger">*</span></label>
                                         <input type="text" name="cgpa" class="form-control input-sm"
                                                placeholder="Enter CGPA" :value="singleEducation.cgpa">
-                                        <span v-if="errors.cgpa" class="text-danger">@{{ errors.cgpa[0]}}</span>
+                                        <span v-if="errors.cgpa" class="text-danger" v-text="errors.cgpa[0]"></span>
                                     </div>
                                 </div>
 
@@ -106,8 +105,7 @@
                                             <option value="2" :selected="singleEducation.division ==2">Second Division</option>
                                             <option value="3" :selected="singleEducation.division ==3">Third Division</option>
                                         </select>
-                                        <span v-if="errors.division"
-                                              class="text-danger">@{{ errors.division[0] }}</span>
+                                        <span v-if="errors.division" class="text-danger" v-text="errors.division[0]"></span>
                                     </div>
                                 </div>
                             </div>
@@ -115,9 +113,17 @@
                             <div class="row">
                                 <div class="col-md-6" :class="{'has-error': errors.certificate_file}">
                                     <div class="form-group">
+                                        <label class="control-label">Achievement:</label>
+                                        <input type="text" name="education.achievement" class="form-control input-sm">
+                                        <span v-if="errors.achievement" class="text-danger" v-text="errors.achievement[0]"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6" :class="{'has-error': errors.certificate_file}">
+                                    <div class="form-group">
                                         <label class="control-label">New Certificate:</label>
                                         <input type="file" name="certificate_file" class="form-control btn-primary input-sm">
-                                        <span v-if="errors.certificate_file" class="text-danger">@{{ errors.certificate_file[0]}}</span>
+                                        <span v-if="errors.certificate_file" class="text-danger" v-text="errors.certificate_file[0]"></span>
                                     </div>
                                 </div>
 
@@ -147,10 +153,10 @@
                                                 v-model="education_level_id">
                                             <option v-bind:value="''">---- Select Education Level ----</option>
                                             <option v-bind:value="education_level.id"
-                                                    v-for="(education_level, index) in education_levels">@{{ education_level.education_level_name }}</option>
+                                                    v-for="(education_level, index) in education_levels" v-text="education_level.education_level_name"></option>
                                         </select>
                                         <span v-if="errors.education_level_id"
-                                              class="text-danger">@{{ errors.education_level_id[0]}}</span>
+                                              class="text-danger" v-text="errors.education_level_id[0]"></span>
                                     </div>
                                 </div>
 
@@ -160,9 +166,9 @@
                                         <select class="form-control input-sm" name="institute_id">
                                             <option v-bind:value="''">---- Select Institute ----</option>
                                             <option v-bind:value="institute.id"
-                                                    v-for="(institute, index) in institutes">@{{ institute.institute_name }}</option>
+                                                    v-for="(institute, index) in institutes" v-text="institute.institute_name"></option>
                                         </select>
-                                        <span v-if="errors.institute_id" class="text-danger">@{{ errors.institute_id[0]}}</span>
+                                        <span v-if="errors.institute_id" class="text-danger" v-text="errors.institute_id[0]"></span>
                                     </div>
                                 </div>
 
@@ -174,7 +180,7 @@
                                             <option v-bind:value="degree.id" v-for="(degree, index) in degrees">@{{ degree.degree_name }}</option>
                                         </select>
                                         <span v-if="errors.degree_id"
-                                              class="text-danger">@{{ errors.degree_id[0]}}</span>
+                                              class="text-danger" v-text="errors.degree_id[0]"></span>
                                     </div>
                                 </div>
                             </div>
@@ -183,10 +189,10 @@
                                 <div class="col-md-4">
                                     <div class="form-group" :class="{'has-error': errors.pass_year}">
                                         <label class="control-label">Pass Year : <span class="text-danger">*</span></label>
-                                        <input type="text" name="pass_year" class="date form-control input-sm"
+                                        <input type="text" name="pass_year" v-on:mouseover="datePickerYear" class="date form-control input-sm"
                                                readonly="">
                                         <span v-if="errors.pass_year"
-                                              class="text-danger">@{{ errors.pass_year[0]}}</span>
+                                              class="text-danger" v-text="errors.pass_year[0]"></span>
                                     </div>
                                 </div>
 
@@ -203,7 +209,7 @@
                                                    value="division" v-on:click="showCgpa=false,showDivision=true">
                                             <label for="result_type_division">Division</label>
                                             <span v-if="errors.result_type"
-                                                  class="text-danger">@{{ errors.result_type[0]}}</span>
+                                                  class="text-danger" v-text="errors.result_type[0]"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -229,18 +235,26 @@
                                             <option value="3">Third Division</option>
                                         </select>
                                         <span v-if="errors.division"
-                                              class="text-danger">@{{ errors.division[0] }}</span>
+                                              class="text-danger" v-text="errors.division[0]"></span>
                                     </div>
                                 </div>
 
                             </div>
 
                             <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Achievement:</label>
+                                        <input type="text" name="education.achievement" class="form-control input-sm">
+                                        <span v-if="errors.achievement" class="text-danger" v-text="errors.achievement[0]"></span>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6" :class="{'has-error': errors.certificate_file}">
                                     <div class="form-group">
                                         <label class="control-label">Certificate:</label>
                                         <input type="file" name="certificate_file" class="form-control btn-primary input-sm">
-                                        <span v-if="errors.certificate_file" class="text-danger">@{{ errors.certificate_file[0]}}</span>
+                                        <span v-if="errors.certificate_file" class="text-danger" v-text="errors.certificate_file[0]"></span>
                                     </div>
                                 </div>
                             </div>
