@@ -1685,7 +1685,7 @@
 
                                     <input type="number" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][amount]'" :value="levelSalaryInfo.basic_salary_info.salary_info_amount" class="col-md-2 form-control input-sm mb5">
 
-                                    <input type="text" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][effective_date]'" class="mydatepicker form-control input-sm">
+                                    <input type="text" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][effective_date]'" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm">
                                 </div>
 
                                 <!-- add other allowance -->
@@ -1704,7 +1704,7 @@
 
                                     <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
 
-                                    <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="mydatepicker2 form-control input-sm">
+                                    <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker">
                                 </div>
                             </div>
 
@@ -1719,7 +1719,7 @@
 
                                     <input type="number" :value="salary.salary_amount" class="col-md-2 form-control input-sm mb5" disabled="disabled">
 
-                                    <input type="text" :value="salary.salary_effective_date" class="mydatepicker form-control input-sm" disabled="disabled">
+                                    <input type="text" :value="salary.salary_effective_date" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker" disabled="disabled">
                                 </div>
                             </div>
 
