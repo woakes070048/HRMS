@@ -1641,7 +1641,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.basic_salary}">
                                         <label class="control-label">Basic Salary Amount: <span class="text-danger">*</span></label>
-                                        <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount">
+                                        <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount" v-model="basic_salary">
                                         <span v-if="errors.basic_salary" class="help-block" v-text="errors.basic_salary[0]"></span>
                                     </div>
                                 </div>
@@ -1649,7 +1649,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
                                         <label class="control-label">Salary in Cache:</label>
-                                        <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache">
+                                        <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache" v-model="salary_in_cache">
                                         <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                     </div>
                                 </div>
@@ -1689,10 +1689,15 @@
                                 </div>
 
                                 <!-- add other allowance -->
-                                <div class="col-md-3 mb15" v-for="allowance in otherAllowance">
+                                <div class="col-md-3 mb15" v-for="(allowance, index) in otherAllowance">
                                     <div class="checkbox-custom mb5 pull-left">
                                         
-                                        <input :id="allowance.id" type="checkbox" :name="'salary_info['+allowance.id+'][id]'" :value="allowance.id" checked="checked">
+                                        <input  :id="allowance.id" 
+                                                type="checkbox" 
+                                                :name="'salary_info['+allowance.id+'][id]'" 
+                                                :value="allowance.id" 
+                                                checked="checked"
+                                        >
 
                                         <label :for="allowance.id" v-text="(allowance.salary_info_amount_status==0)?allowance.salary_info_name+' (%) ':allowance.salary_info_name+' ($) '"></label>
                                     </div>

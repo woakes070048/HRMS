@@ -4,7 +4,7 @@ use App\Models\Branch;
 use Illuminate\Database\Seeder;
 
 class HrmsBranchCreateSeeder extends Seeder
-{
+{     
     /**
      * Run the database seeds.
      *
