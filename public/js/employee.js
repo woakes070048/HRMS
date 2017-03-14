@@ -54,6 +54,7 @@ var employee = new Vue({
         permanentPoliceStations: [],
 
         blood_group : [],
+        religions : [],
         personals: [],
 
         education_level_id: null,
@@ -211,6 +212,7 @@ var employee = new Vue({
             if(this.tab == 'personal'){
                 this.getPersonals();
                 this.getBloodGroups();
+                this.getReligions();
             }
 
             if(this.tab == 'education'){
@@ -447,6 +449,12 @@ var employee = new Vue({
         getBloodGroups(){
             axios.get('/get-blood-groups').then(
                 response => this.blood_group = response.data
+        );
+        },
+
+         getReligions(){
+            axios.get('/get-religions').then(
+                response => this.religions = response.data
         );
         },
 
