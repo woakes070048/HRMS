@@ -780,11 +780,15 @@
                                         </div>
 
                                         <div class="col-md-3">
-                                            <div class="form-group" :class="{'has-error': errors.religion}">
-                                                <label class="control-label">Religion :</label>
-                                                <input type="text" name="religion" :value="(personals.details)?personals.details.religion:''"
-                                                       class="form-control input-sm" placeholder="Enter Religion">
-                                                <span v-if="errors.religion" class="text-danger" v-text="errors.religion[0]">
+                                            <div class="form-group" :class="{'has-error': errors.religion_id}">
+                                                <label class="control-label">Religion : <span class="text-danger">*</span></label>
+
+                                               <select class="form-control input-sm" name="religion_id">
+                                                    <option value=" ">---- Select Religion ----</option>
+                                                    <option v-bind:value="religion.id" :selected="(personals.details && personals.details.religion_id == religion.id)"
+                                                            v-for="(religion, index) in religions" v-text="religion.religion_name"></option>
+                                                </select>
+                                                <span v-if="errors.religion_id" class="text-danger" v-text="errors.religion_id[0]">
                                             </div>
                                         </div>
 

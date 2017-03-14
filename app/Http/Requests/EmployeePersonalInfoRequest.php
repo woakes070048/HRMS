@@ -25,13 +25,13 @@ class EmployeePersonalInfoRequest extends FormRequest
     {
 
         if($this->segment(3)){
-             $national_id ='required|digits_between:17,20|unique:employee_details,user_id,'.$this->segment(3);
-             $passport_no = 'nullable|digits_between:16,20|unique:employee_details,user_id,'.$this->segment(3);
-             $tin_no = 'nullable|digits_between:6,20|unique:employee_details,user_id,'.$this->segment(3);
+             $national_id ='required|digits_between:10,20|unique:employee_details,user_id,'.$this->segment(3);
+             $passport_no = 'nullable|min:10|max:20|unique:employee_details,user_id,'.$this->segment(3);
+             $tin_no = 'nullable|min:6|max:20|unique:employee_details,user_id,'.$this->segment(3);
         }else{
-             $national_id = 'required|digits_between:17,20|unique:employee_details';
-             $passport_no = 'nullable|digits_between:16,20|unique:employee_details';
-             $tin_no = 'nullable|digits_between:6,20|unique:employee_details';
+             $national_id = 'required|digits_between:10,20|unique:employee_details';
+             $passport_no = 'nullable|min:10|max:20|unique:employee_details';
+             $tin_no = 'nullable|min:6|max:20|unique:employee_details';
         }
 
         return [
@@ -49,8 +49,16 @@ class EmployeePersonalInfoRequest extends FormRequest
             'joining_date' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
-            'religion' => 'nullable|alpha_spaces',
+            'religion_id' => 'required',
             'nationality' => 'nullable|alpha_spaces',
+        ];
+    }
+
+
+
+    public function attributes(){
+        return [
+            'religion_id' => 'religion'
         ];
     }
 

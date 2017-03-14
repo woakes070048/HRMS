@@ -91,6 +91,10 @@ table.tc-med-2 tbody td:first-child{
                 <td class="text-left">Level :</td>
                 <td class="text-right">{{$user->designation->level->level_name}}</td>
               </tr>
+              <tr>
+                <td class="text-left">Unit :</td>
+                <td class="text-right">{{$user->unit->unit_name}}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -162,7 +166,7 @@ table.tc-med-2 tbody td:first-child{
               </tr>
               <tr>
                 <td class="text-left">Religion :</td>
-                <td class="text-right">{{$user->details->religion}}</td>
+                <td class="text-right">{{$user->details->religion->religion_name}}</td>
               </tr>
               <tr>
                 <td class="text-left">Nationality :</td>
