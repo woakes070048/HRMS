@@ -1445,7 +1445,7 @@
 
                                         <input type="number" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][amount]'" :value="levelSalaryInfo.amount" class="col-md-2 form-control input-sm mb5">
 
-                                        <input type="text" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][effective_date]'" class="datepicker form-control input-sm">
+                                        <input type="text" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][effective_date]'" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm">
                                     </div>
 
                                         <!-- add other allowance -->
@@ -1464,7 +1464,7 @@
 
                                         <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
 
-                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="datepicker2 form-control input-sm">
+                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker">
                                     </div>
 
                                 </div>
@@ -1486,7 +1486,7 @@
 
                                         <input type="number" :name="'salary_info['+salary.basic_salary_info_id+'][amount]'" :value="salary.salary_amount" class="col-md-2 form-control input-sm mb5">
 
-                                        <input type="text" :value="salary.salary_effective_date" :name="'salary_info['+salary.basic_salary_info_id+'][effective_date]'" class="datepicker form-control input-sm">
+                                        <input type="text" :value="salary.salary_effective_date" :name="'salary_info['+salary.basic_salary_info_id+'][effective_date]'" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker">
                                     </div>
 
                                      <!-- add other allowance -->
@@ -1505,7 +1505,7 @@
 
                                         <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
 
-                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="datepicker2 form-control input-sm">
+                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker">
                                     </div>
                                 </div>
 
@@ -1748,7 +1748,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
                                                     <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_birth_date" class="datepicker form-control input-sm" readonly="readonly">
+                                                    <input type="text" name="nominee_birth_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                                     <span v-if="errors.nominee_birth_date" class="help-block" v-text="errors.nominee_birth_date[0]"></span>
                                                 </div>
                                             </div>
@@ -1947,14 +1947,14 @@
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.training_from_date}">
                                                 <label class="control-label">Training From Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_from_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_from_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_from_date" class="text-danger" v-text="errors.training_from_date[0]"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.training_to_date}">
                                                 <label class="control-label">Training To Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_to_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_to_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_to_date" class="text-danger" v-text="errors.training_to_date[0]"></span>
                                             </div>
                                         </div>
@@ -1964,14 +1964,14 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.training_passed_date}">
                                                 <label class="control-label">Training Passed Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_passed_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_passed_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_passed_date" class="text-danger" v-text="errors.training_passed_date[0]"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.training_participation_date}">
                                                 <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
-                                                <input type="text" name="training_participation_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="training_participation_date" v-on:mouserover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.training_participation_date" class="text-danger" v-text="errors.training_participation_date[0]"></span>
                                             </div>
                                         </div>
@@ -2308,7 +2308,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.children_birth_date}">
                                                 <label class="control-label">Children Birth Date  : <span class="text-danger">*</span></label>
-                                                <input type="text" name="children_birth_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly">
+                                                <input type="text" name="children_birth_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                                 <span v-if="errors.children_birth_date" class="text-danger">@{{ errors.children_birth_date[0]}}</span>
                                             </div>
                                         </div>
