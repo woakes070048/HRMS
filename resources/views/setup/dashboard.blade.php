@@ -25,39 +25,34 @@
                                 $sl = 1;
                             ?>
                             @foreach($users as $user)
-                                <tr 
-                                class="
-                                        {{-- @if($sl%2==0)
-                                            {{"success"}}
-                                        @else
-                                            {{"info"}}
-                                        @endif --}}
-                                ">
-                                    <td>{{ $sl++ }}</td>
-                                    <td>
-                                        <a href="{{url("setup/admin/details/$user->id")}}">{{$user->full_name}}</a>
-                                    </td>
-                                    <td>{{$user->email}}</td>
-                                    <td>
-                                        @if($user->user_type==1)
-                                            {{"Admin"}}
-                                        @else
-                                            {{"User"}}
-                                        @endif
-                                    </td>
-                                    <td>{{$user->mobile_number}}</td>
-                                    <td class="
-                                        @if($user->status==0)
-                                            {{"danger"}}
-                                        @endif
-                                    ">
-                                        @if($user->status == 1)
-                                            {{"Active"}}
-                                        @else
-                                            {{"Deactive"}}
-                                        @endif
-                                    </td>
-                                </tr>
+                                @if($user->user_type != 1)
+                                    <tr>
+                                        <td>{{ $sl++ }}</td>
+                                        <td>
+                                            <a href="{{url("setup/admin/details/$user->id")}}">{{$user->full_name}}</a>
+                                        </td>
+                                        <td>{{$user->email}}</td>
+                                        <td>
+                                            @if($user->user_type==1)
+                                                {{"Admin"}}
+                                            @else
+                                                {{"User"}}
+                                            @endif
+                                        </td>
+                                        <td>{{$user->mobile_number}}</td>
+                                        <td class="
+                                            @if($user->status==0)
+                                                {{"danger"}}
+                                            @endif
+                                        ">
+                                            @if($user->status == 1)
+                                                {{"Active"}}
+                                            @else
+                                                {{"Deactive"}}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>

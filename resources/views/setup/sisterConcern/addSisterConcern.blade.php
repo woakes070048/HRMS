@@ -41,6 +41,14 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="company_code" class="col-md-4 control-label">Company Code</label>
+
+                            <div class="col-md-6">
+                                <input id="company_code" type="text" class="form-control" name="company_code" value="{{ old('company_code') }}" autofocus>
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
                             <label for="first_name" class="col-md-4 control-label">First Name</label>
 

@@ -34,14 +34,14 @@
                                         <td >@{{ index+1 }}</td>
                                         <td>@{{ info.branch_name }}</td>
                                         <td>@{{ info.branch_email }}</td>
-                                        <td>@{{ info.branch_mobile }}</td>
+                                        <td>@{{ info.branch_mobile }} , @{{info.branch_phone}}</td>
                                         <td>@{{ info.branch_location }}</td>
                                         <td>@{{ info.branch_status==1?"Active":"Inactive" }}</td>
                                         <td>
-                                            <button type="button" @click="editUnit(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".unitEdit">
+                                            <button type="button" @click="editData(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".dataEdit">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button type="button" @click="deleteUnit(info.id, index)" class="btn btn-sm btn-danger">
+                                            <button type="button" @click="deleteData(info.id, index)" class="btn btn-sm btn-danger">
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
                                         </td>
@@ -60,197 +60,189 @@
     <div class="modal fade bs-example-modal-lg dataAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDataAdd">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Add New Branch</h4>
-              </div>
-              <form class="form-horizontal" @submit.prevent="saveBranch('addFormData')" id="addFormData">
-                <div class="modal-body">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add New Branch</h4>
+                </div>
+                <form class="form-horizontal" @submit.prevent="saveBranch('addFormData')" id="addFormData">
+                    <div class="modal-body">
 
-                    <div id="create-form-errors">
-                    </div>
-
-                    {{ csrf_field() }}
-
-                    <div class="form-group">
-                        <label for="branch_name" class="col-md-3 control-label">Branch Name</label>
-                        <div class="col-md-9">
-                            <input name="branch_name" class="form-control input-sm" v-model="branch_name" v-validate:branch_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_name') }" data-vv-as="branch name" type="text" placeholder="Branch Name">
+                        <div id="create-form-errors">
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="branch_email" class="col-md-3 control-label">Email</label>
-                        <div class="col-md-9">
-                            <input name="branch_email" class="form-control input-sm" v-model="branch_email" type="email" placeholder="Branch Email">
+                        {{ csrf_field() }}
+
+                        <div class="form-group">
+                            <label for="branch_name" class="col-md-3 control-label">Branch Name</label>
+                            <div class="col-md-9">
+                                <input name="branch_name" class="form-control input-sm" v-model="branch_name" v-validate:branch_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_name') }" data-vv-as="branch name" type="text" placeholder="Branch Name">
+                                <div v-show="errors.has('branch_name')" class="help text-danger">
+                                    <i v-show="errors.has('branch_name')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('branch_name') }}
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="branch_mobile" class="col-md-3 control-label">Mobile</label>
-                        <div class="col-md-9">
-                            <input name="branch_mobile" class="form-control input-sm" v-model="branch_mobile" v-validate:branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Unit name">
-                            <div v-show="errors.has('branch_mobile')" class="help text-danger">
-                                <i v-show="errors.has('branch_mobile')" class="fa fa-warning"></i> 
-                                @{{ errors.first('branch_mobile') }}
+                        <div class="form-group">
+                            <label for="branch_email" class="col-md-3 control-label">Email</label>
+                            <div class="col-md-9">
+                                <input name="branch_email" class="form-control input-sm" v-model="branch_email" type="email" placeholder="Branch Email">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="branch_mobile" class="col-md-3 control-label">Mobile</label>
+                            <div class="col-md-9">
+                                <input name="branch_mobile" class="form-control input-sm" v-model="branch_mobile" v-validate:branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Unit name">
+                                <div v-show="errors.has('branch_mobile')" class="help text-danger">
+                                    <i v-show="errors.has('branch_mobile')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('branch_mobile') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="branch_phone" class="col-md-3 control-label">Phone</label>
+                            <div class="col-md-9">
+                                <input name="branch_phone" class="form-control input-sm" v-model="branch_phone" type="text" placeholder="Branch Phone">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="branch_location" class="col-md-3 control-label">Location</label>
+                            <div class="col-md-9">
+                                <textarea name="branch_location" class="form-control input-sm" v-model="branch_location" data-vv-as="branch location" placeholder="Unit details"></textarea>
+                                <div v-show="errors.has('branch_location')" class="help text-danger">
+                                    <i v-show="errors.has('branch_location')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('branch_location') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-md-3 control-label"></label>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-success mb5">
+                                            <input type="radio" name="branch_status" id="active" v-model="branch_status" value="1">
+                                            <label for="active">Active</label>
+                                        </div>    
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-danger mb5">
+                                            <input type="radio" name="branch_status" id="inactive" v-model="branch_status" value="0">
+                                            <label for="inactive">Inactive</label>
+                                        </div>    
+                                    </div>
+                                </div>     
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="branch_phone" class="col-md-3 control-label">Phone</label>
-                        <div class="col-md-9">
-                            <input name="branch_phone" class="form-control input-sm" v-model="branch_phone" type="text" placeholder="Branch Phone">
-                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Branch</button>
                     </div>
-
-                    <div class="form-group">
-                        <label for="branch_location" class="col-md-3 control-label">Location</label>
-                        <div class="col-md-9">
-                            <textarea name="branch_location" class="form-control input-sm" v-model="branch_location" data-vv-as="branch location" placeholder="Unit details"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="" class="col-md-3 control-label"></label>
-                        <div class="col-md-9">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" name="branch_status" id="active" v-model="branch_status" value="1">
-                                        <label for="active">Active</label>
-                                    </div>    
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-danger mb5">
-                                        <input type="radio" name="branch_status" id="inactive" v-model="branch_status" value="0">
-                                        <label for="inactive">Inactive</label>
-                                    </div>    
-                                </div>
-                            </div>     
-                        </div>
-                    </div>
-                </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save Branch</button>
-              </div>
-
-              </form>
+                </form>
             </div>
         </div>
     </div>
     <!-- unitAdd modal end --> 
 
     <!-- salary Info Edit modal start -->
-    {{-- <div class="modal fade bs-example-modal-lg unitEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalUnitEdit">
+    <div class="modal fade bs-example-modal-lg dataEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDataEdit">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Edit Unit</h4>
-              </div>
-              <form class="form-horizontal department-create" @submit.prevent="updateUnit('updateUnitFormData')" id="updateUnitFormData">
-                
-                <div class="modal-body">
-
-                    <div id="edit-form-errors">
-                    </div>
-
-                    {{ csrf_field() }}
-
-                    <input type="hidden" name="hdn_id" data-vv-as="id" v-model="hdn_id">
-
-                    <div class="form-group">
-                        <label for="edit_unit_name" class="col-md-3 control-label">Unit Name</label>
-                        <div class="col-md-9">
-                            <input name="edit_unit_name" class="form-control input-sm" v-model="edit_unit_name" v-validate:edit_unit_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_unit_name') }" data-vv-as="unit name" type="text" placeholder="Unit name">
-                            <div v-show="errors.has('edit_unit_name')" class="help text-danger">
-                                <i v-show="errors.has('edit_unit_name')" class="fa fa-warning"></i> 
-                                @{{ errors.first('edit_unit_name') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit_unit_department_id" class="col-md-3 control-label">Department Name</label>
-                        <div class="col-md-9">
-                            <select class="form-control input-sm" name="edit_unit_department_id" v-model="edit_unit_department_id" v-validate:edit_unit_department_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_unit_department_id') }" data-vv-as="unit department">
-                                <option value="">Select Department</option>
-                                <option v-for="department in departments" v-bind:value="department.id"> 
-                                    @{{ department.department_name }} 
-                                </option>
-                            </select>
-                            <div v-show="errors.has('edit_unit_department_id')" class="help text-danger">
-                                <i v-show="errors.has('edit_unit_department_id')" class="fa fa-warning"></i> 
-                                @{{ errors.first('edit_unit_department_id') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">
-                        </label>
-                        <div class="col-md-9">
-                            <div class="checkbox-custom mb5">
-                                <input type="checkbox" @click="chk_parent==1?chk_parent=0:chk_parent=1" id="checkboxDefault3" :checked="0" name="chk_parent" v-model="chk_parent" value="1">
-                                <label for="checkboxDefault3"> If this unit have parent</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group" v-show="chk_parent == 1">
-                        <label for="edit_unit_parent_id" class="col-md-3 control-label">Parent Name</label>
-                        <div class="col-md-9">
-                            <select class="form-control input-sm" name="edit_unit_parent_id" v-model="edit_unit_parent_id" v-validate:edit_unit_parent_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_unit_parent_id') }" data-vv-as="unit parent">
-                                <option value="">Select Unit's Parent</option>
-                                <option v-for="unit in activeUnits" v-bind:value="unit.id"> @{{unit.unit_name}} </option>
-                            </select>
-                            <div v-show="errors.has('edit_unit_parent_id')" class="help text-danger">
-                                <i v-show="errors.has('edit_unit_parent_id')" class="fa fa-warning"></i> 
-                                @{{ errors.first('edit_unit_parent_id') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit_unit_details" class="col-md-3 control-label">Unit Details</label>
-                        <div class="col-md-9">
-                            <textarea name="edit_unit_details" class="form-control input-sm" v-model="edit_unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label"></label>
-                        <div class="col-md-9">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" name="edit_unit_status" id="edit_active" v-model="edit_unit_status" value="1">
-                                        <label for="edit_active">Active</label>
-                                    </div>    
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-danger mb5">
-                                        <input type="radio" name="edit_unit_status" id="edit_inactive" v-model="edit_unit_status" value="0">
-                                        <label for="edit_inactive">Inactive</label>
-                                    </div>    
-                                </div>
-                            </div>     
-                        </div>
-                    </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Edit Branch</h4>
                 </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default modal-edit-close-btn" id="modal-edit-close-btn" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">
-                    Update Unit
-                </button>
-              </div>
+                
+                <form class="form-horizontal" @submit.prevent="updateData('updateFormData')" id="updateFormData">
+                    <div class="modal-body">
 
-              </form>
+                        <div id="edit-form-errors">
+                        </div>
+
+                        {{ csrf_field() }}
+                        <input type="hidden" name="hdn_id" data-vv-as="id" v-model="hdn_id">
+
+                        <div class="form-group">
+                            <label for="edit_branch_name" class="col-md-3 control-label">Branch Name</label>
+                            <div class="col-md-9">
+                                <input name="edit_branch_name" class="form-control input-sm" v-model="edit_branch_name" v-validate:edit_branch_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_name') }" data-vv-as="branch name" type="text" placeholder="Branch Name">
+                                <div v-show="errors.has('edit_branch_name')" class="help text-danger">
+                                    <i v-show="errors.has('edit_branch_name')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('edit_branch_name') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_branch_email" class="col-md-3 control-label">Email</label>
+                            <div class="col-md-9">
+                                <input name="edit_branch_email" class="form-control input-sm" v-model="edit_branch_email" type="email" placeholder="Branch Email">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_branch_mobile" class="col-md-3 control-label">Mobile</label>
+                            <div class="col-md-9">
+                                <input name="edit_branch_mobile" class="form-control input-sm" v-model="edit_branch_mobile" v-validate:edit_branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Unit name">
+                                <div v-show="errors.has('edit_branch_mobile')" class="help text-danger">
+                                    <i v-show="errors.has('edit_branch_mobile')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('edit_branch_mobile') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_branch_phone" class="col-md-3 control-label">Phone</label>
+                            <div class="col-md-9">
+                                <input name="edit_branch_phone" class="form-control input-sm" v-model="edit_branch_phone" type="text" placeholder="Branch Phone">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_branch_location" class="col-md-3 control-label">Location</label>
+                            <div class="col-md-9">
+                                <textarea name="edit_branch_location" class="form-control input-sm" v-model="edit_branch_location" data-vv-as="branch location" placeholder="Unit details"></textarea>
+                                <div v-show="errors.has('edit_branch_location')" class="help text-danger">
+                                    <i v-show="errors.has('edit_branch_location')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('edit_branch_location') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-md-3 control-label"></label>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-success mb5">
+                                            <input type="radio" name="edit_branch_status" id="edit_active" v-model="edit_branch_status" value="1">
+                                            <label for="edit_active">Active</label>
+                                        </div>    
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-danger mb5">
+                                            <input type="radio" name="edit_branch_status" id="edit_inactive" v-model="edit_branch_status" value="0">
+                                            <label for="edit_inactive">Inactive</label>
+                                        </div>    
+                                    </div>
+                                </div>     
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default modal-close-btn" id="modal-edit-close-btn" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Branch</button>
+                    </div>
+                </form>
+              
             </div>
         </div>
-    </div> --}}
+    </div>
     <!-- salary Info Edit modal end --> 
 </div>
 @endsection
