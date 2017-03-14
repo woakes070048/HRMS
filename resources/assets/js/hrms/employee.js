@@ -1,7 +1,7 @@
 // import Other_Allowance from "./../components/employee/other_allowance.vue";
 // Vue.component('other-allowance', Other_Allowance);
 
-// $(document).ready(function(){
+$(document).ready(function(){
 
 Vue.component('select2', {
    props: ['value'],
@@ -1034,7 +1034,7 @@ var employee = new Vue({
 
 
 
-// });
+});
 
 
 
