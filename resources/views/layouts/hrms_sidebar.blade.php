@@ -7,6 +7,12 @@
         <!-- Start: Sidebar Menu -->
         <ul class="nav sidebar-menu">
             <li>
+                <a href="{{url('/')}}">
+                  <span class="glyphicon glyphicon-home"></span>
+                  <span class="sidebar-title">Dashboard</span>
+                </a>
+            </li>
+            <li>
                 <a class="accordion-toggle" href="#">
                     <span class="glyphicons glyphicons-group" aria-hidden="true"></span>
                     <span class="sidebar-title">Employee Management</span>

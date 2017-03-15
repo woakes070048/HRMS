@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Pim;
+namespace App\Http\Controllers\Setting;
 
 use App\Models\Setting;
 use App\Services\CommonService;
@@ -29,7 +29,8 @@ class SettingsController extends Controller
     public function index(){
 
     	$data['title'] = "Settings";
-    	return view('pim.settings', $data);
+        $data['settings'] = $this->getSettings();
+    	return view('setting.settings', $data);
     }
 
     public function getSettings(){
@@ -40,11 +41,9 @@ class SettingsController extends Controller
     public function create(Request $request){
 
         $this->validate($request, [
-            'field_name' => 'required',
             'field_value' => 'required',
         ],
         [
-            'field_name.required' => 'The name field is required.',
             'field_value.required'     => 'The value field is required.',
         ]);
 

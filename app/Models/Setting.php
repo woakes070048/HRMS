@@ -9,7 +9,7 @@ class Setting extends Model
     protected $fillable = ['field_name','field_value'];
 
 
-    public function getFieldNameFormatAttribute($value){
-    	return ucfirst(str_replace('_',' ',$value));
+    public function getFieldNameFormatAttribute(){
+    	return ucfirst(str_replace('_',' ',$this->field_name));
     }
 }
