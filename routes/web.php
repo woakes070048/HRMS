@@ -177,7 +177,7 @@ Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
 });
 
 /******************** ...HRMS Emp Settings Routes... **************/
-Route::group(['prefix' => 'settings', 'namespace' => 'Pim'],function (){
+Route::group(['prefix' => 'settings', 'namespace' => 'Setting'],function (){
     Route::get('/index','SettingsController@index');
     Route::get('/getSettings','SettingsController@getSettings');
     Route::post('/add','SettingsController@create');

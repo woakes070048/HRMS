@@ -29,19 +29,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(info,index) in allValues">
-                                        <td >@{{ index+1 }}</td>
-                                        <td>@{{ info.field_name }}</td>
-                                        <td>@{{ info.field_value }}</td>
+                                    <?php $sl=1; $index=0;?>
+                                    @foreach($settings as $setting)
+                                    <tr>
+                                        <td><?php echo $sl++;?></td>
+                                        <td>{{ $setting->field_name_format }}</td>
+                                        <td>{{ $setting->field_value }}</td>
                                         <td>
-                                            <button type="button" @click="editSettings(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".modalEdit">
+                                            <button type="button" @click="editSettings(<?php echo $setting->id;?>,<?php echo $index;?>)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".modalEdit">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            {{-- <button type="button" @click="deleteUnit(info.id, index)" class="btn btn-sm btn-danger">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button> --}}
                                         </td>
                                     </tr>
+                                    <?php $index++;?>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -53,7 +54,7 @@
     <!-- End: Content -->   
 
     <!-- modalAdd modal start -->
-    <div class="modal fade bs-example-modal-lg modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalAdd">
+<!--     <div class="modal fade bs-example-modal-lg modalAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalAdd">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -98,7 +99,7 @@
               </form>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- modalAdd modal end --> 
 
     <!-- salary Info Edit modal start -->
@@ -121,20 +122,9 @@
                     <input type="hidden" name="hdn_id" data-vv-as="id" v-model="hdn_id">
 
                     <div class="form-group">
-                        <label for="edit_field_name" class="col-md-3 control-label">Name</label>
+                        <label for="edit_field_value" class="col-md-3 control-label" v-text="edit_field_name"></label>
                         <div class="col-md-9">
-                            <input name="edit_field_name" class="form-control input-sm" v-model="edit_field_name" disabled="">
-                            <div v-show="errors.has('edit_field_name')" class="help text-danger">
-                                <i v-show="errors.has('edit_field_name')" class="fa fa-warning"></i> 
-                                @{{ errors.first('edit_field_name') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit_field_value" class="col-md-3 control-label">Value</label>
-                        <div class="col-md-9">
-                            <input name="edit_field_value" class="form-control input-sm" v-model="edit_field_value" v-validate:edit_field_value.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_field_value') }" data-vv-as="value" type="text" placeholder="Value">
+                            <input name="edit_field_value" class="form-control input-sm" v-model="edit_field_value">
                             <div v-show="errors.has('edit_field_value')" class="help text-danger">
                                 <i v-show="errors.has('edit_field_value')" class="fa fa-warning"></i> 
                                 @{{ errors.first('edit_field_value') }}
