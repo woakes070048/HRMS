@@ -29,7 +29,7 @@
                                     <tr>
                                         <td>{{ $sl++ }}</td>
                                         <td>
-                                            <a href="{{url("setup/admin/details/$user->id")}}">{{$user->full_name}}</a>
+                                            <a href="{{url("setup/details/$user->id")}}">{{$user->full_name}}</a>
                                         </td>
                                         <td>{{$user->email}}</td>
                                         <td>
