@@ -24,27 +24,15 @@ Route::group(['prefix'=>'signup','namespace'=>'Setup\Auth'], function(){
 
 
 /***************** ...Setup Dashboard Routes... ******************/
-Route::group(['prefix'=>'setup','middleware'=>'auth:setup'], function(){
+Route::group(['prefix'=>'setup','namespace'=>'Setup'], function(){
 
-	Route::get('/', function(){
-
-		if(Auth::user()->user_type == 1){
-			return redirect('setup/admin/home');
-		}
-		elseif(Auth::user()->user_type == 2){
-			return redirect('setup/user/home');
-		}
-	});
-});
-
-Route::group(['prefix'=>'setup/admin','namespace'=>'Setup','middleware'=>'auth:setup'], function(){
-
-	Route::get('/home','DashboardController@index');
-	Route::get('/details/{id}','UserDetailsController@index');
+    Route::get('/','DashboardController@index');
+    Route::get('/home','DashboardController@index');
+    Route::get('/details/{id}','UserDetailsController@index');
 });
 
 /*************** ... Setup Admin Sister Concern Routes... **************/
-Route::group(['prefix'=>'setup/admin/concern','namespace'=>'Setup','middleware'=>'auth:setup'], function(){
+Route::group(['prefix'=>'setup/concern','namespace'=>'Setup'], function(){
 	
 	Route::get('/add','SisterConcernController@add');
 	Route::post('/create','SisterConcernController@create');
@@ -57,18 +45,8 @@ Route::group(['prefix'=>'config','namespace'=>'Setup'], function(){
 	Route::post('/get_package_info', 'ConfigController@get_package_info');
 });
 
-Route::group(['prefix'=>'setup/user','namespace'=>'Setup\User','middleware'=>'auth:setup'], function(){
-
-	Route::get('/home','UserSetupDashboardController@index');
-	Route::get('concern/add','UserSisterConcernController@add');
-	Route::post('concern/create','UserSisterConcernController@create');
-});
-
 
 /******************************* ..End Setup System Route.. **********************************/
-
-
-
 
 
 

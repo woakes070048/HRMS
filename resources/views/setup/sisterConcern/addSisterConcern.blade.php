@@ -17,13 +17,7 @@
 
                  <div class="panel-body">
                     
-                    <form class="form-horizontal" role="form" method="POST" action="
-                        @if(Auth::user()->user_type == 1)
-                            {{ url('setup/admin/concern/create') }}
-                        @else
-                            {{ url('setup/user/concern/create') }}
-                        @endif
-                    ">
+                    <form class="form-horizontal" role="form" method="POST" action="{{ url('setup/concern/create') }}">
 
                         {{ csrf_field() }}
 
@@ -153,7 +147,7 @@
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary btn-submit">
                                     Setup
                                 </button>
                             </div>
