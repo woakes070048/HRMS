@@ -193,6 +193,18 @@ Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}/{indexId}','BranchController@delete');
 });
 
+/******************** ...HRMS Emp promotion/transfer Routes... **************/
+Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
+    Route::get('/index','PromotionController@index');
+    Route::get('/getPromotionsData','PromotionController@getPromotionsData');
+    // Route::get('/add','PromotionController@add');
+    // Route::post('/add','PromotionController@create');
+    // Route::get('/edit/{id}','PromotionController@edit');
+    // Route::post('/edit','PromotionController@update');
+    // Route::post('/edit/info','PromotionController@update_info');
+    // Route::get('/delete/{id}','PromotionController@delete');
+});
+
 
 
 /******************** ...HRMS Common Function Routes... **************/
