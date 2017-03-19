@@ -35,11 +35,17 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group{{ $errors->has('company_code') ? ' has-error' : '' }}">
                             <label for="company_code" class="col-md-4 control-label">Company Code</label>
 
                             <div class="col-md-6">
-                                <input id="company_code" type="text" class="form-control" name="company_code" value="{{ old('company_code') }}" autofocus>
+                                <input id="company_code" type="text" class="form-control" name="company_code" value="{{ old('company_code') }}">
+
+                                @if ($errors->has('company_code'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('company_code') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
@@ -47,7 +53,7 @@
                             <label for="first_name" class="col-md-4 control-label">First Name</label>
 
                             <div class="col-md-6">
-                                <input id="first_name" type="text" class="form-control" name="first_name" value="{{ old('first_name') }}" autofocus>
+                                <input id="first_name" type="text" class="form-control" name="first_name" value="{{ old('first_name') }}">
 
                                 @if ($errors->has('first_name'))
                                     <span class="help-block">
@@ -159,4 +165,18 @@
     </div>
 </div>
 
+@endsection
+
+@section('script')
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+        $(".btn-submit").click(function(event) {
+            
+            //***loading Overlay
+            $.LoadingOverlay("show");
+        });
+    });
+</script>
 @endsection

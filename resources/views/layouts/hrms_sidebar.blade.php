@@ -39,6 +39,11 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{url('promotion/index')}}">
+                            <span class="fa fa-level-up"></span> Transfer / Promotion
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{url('employee/index')}}"><span class="fa fa-users" aria-hidden="true"></span> Manage Employee</a>
                     </li>
                     
