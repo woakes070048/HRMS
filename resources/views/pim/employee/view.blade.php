@@ -91,6 +91,10 @@ table.tc-med-2 tbody td:first-child{
                 <td class="text-left">Level :</td>
                 <td class="text-right">{{$user->designation->level->level_name}}</td>
               </tr>
+              <tr>
+                <td class="text-left">Unit :</td>
+                <td class="text-right">{{$user->unit->unit_name}}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -162,7 +166,7 @@ table.tc-med-2 tbody td:first-child{
               </tr>
               <tr>
                 <td class="text-left">Religion :</td>
-                <td class="text-right">{{$user->details->religion}}</td>
+                <td class="text-right">{{$user->details->religion->religion_name}}</td>
               </tr>
               <tr>
                 <td class="text-left">Nationality :</td>
@@ -297,7 +301,7 @@ table.tc-med-2 tbody td:first-child{
             <div class="panel">
               <h4>Allowance Information :</h4>
               <div class="panel-body pb5">
-                 <table class="table table-striped table-hover" id="datatable1" cellspacing="0" width="100%">
+                 <table class="table table-striped table-hover" id="datatable2" cellspacing="0" width="100%">
                         <thead>
                           <tr class="bg-dark">
                               <th>SL No:</th>
@@ -341,18 +345,18 @@ table.tc-med-2 tbody td:first-child{
             <div class="panel">
               <div class="panel-body pb5">
 
-              @if($user->nominees)
+              @forelse($user->nominees as $nominees)
               <div class="col-md-10">
-                <h4>Nominee Name : {{$user->nominees->nominee_name}}</h4>
-                <h5>Relation : {{$user->nominees->nominee_relation}}</h5>
-                <h6>Birth Date : {{$user->nominees->nominee_birth_date}}</h6>
-                <p class="text-muted">Nominee Distribution : {{$user->nominees->nominee_distribution}}</p>
-                <p class="text-muted">Nominee Rest Distribution : {{$user->nominees->nominee_rest_distribution}}</p>
+                <h4>Nominee Name : {{$nominees->nominee_name}}</h4>
+                <h5>Relation : {{$nominees->nominee_relation}}</h5>
+                <h6>Birth Date : {{$nominees->nominee_birth_date}}</h6>
+                <p class="text-muted">Nominee Distribution : {{$nominees->nominee_distribution}}</p>
+                <p class="text-muted">Nominee Rest Distribution : {{$nominees->nominee_rest_distribution}}</p>
               </div>
               <div class="col-md-2">
-                <img src="@if($user->nominees->nominee_photo){{url('files/'.$user->id.'/'.$user->nominees->nominee_photo)}}@else{{url('img/placeholder.png')}}@endif" class="img-responsive">
+                <img src="@if($nominees->nominee_photo){{url('files/'.$user->id.'/'.$nominees->nominee_photo)}}@else{{url('img/placeholder.png')}}@endif" class="img-responsive">
               </div>
-              @else
+              @empty
                 <h5>No Data Available</h5>  
               @endforelse
 

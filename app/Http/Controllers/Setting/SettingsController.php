@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Pim;
+namespace App\Http\Controllers\Setting;
 
 use App\Models\Setting;
+use App\Services\CommonService;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 
 class SettingsController extends Controller
 {
+
+    use CommonService;
+
     public function __construct()
     {
         $this->middleware('auth:hrms');
@@ -24,7 +29,8 @@ class SettingsController extends Controller
     public function index(){
 
     	$data['title'] = "Settings";
-    	return view('pim.settings', $data);
+        $data['settings'] = $this->getSettings();
+    	return view('setting.settings', $data);
     }
 
     public function getSettings(){
@@ -35,11 +41,9 @@ class SettingsController extends Controller
     public function create(Request $request){
 
         $this->validate($request, [
-            'field_name' => 'required',
             'field_value' => 'required',
         ],
         [
-            'field_name.required' => 'The name field is required.',
             'field_value.required'     => 'The value field is required.',
         ]);
 
@@ -78,7 +82,8 @@ class SettingsController extends Controller
             $data['data'] = Setting::where('id',$request->hdn_id)->update([
                 'field_value' => $request->edit_field_value,
             ]);
-        
+            
+            $this->settings();
 
             $data['title'] = 'success';
             $data['message'] = 'settings successfully updated!';

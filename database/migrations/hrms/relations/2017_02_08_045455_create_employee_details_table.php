@@ -31,7 +31,7 @@ class CreateEmployeeDetailsTable extends Migration
             $table->string('phone_number',20)->nullable();
             $table->enum('gender',['male','female']);
             $table->enum('marital_status',['single','married','separated','other']);
-            $table->string('religion',50)->nullable();
+            $table->integer('religion_id')->unsigned();
             $table->string('nationality',50)->nullable();
             $table->string('emergency_contact_person',100)->nullable();
             $table->string('emergency_contact_number',100)->nullable();
@@ -41,7 +41,7 @@ class CreateEmployeeDetailsTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
-            // $table->foreign('blood_group_id')->references('id')->on('blood_groups')->onDelete('restrict');
+            $table->foreign('religion_id')->references('id')->on('religions')->onDelete('restrict');
         });
     }
 
@@ -54,7 +54,7 @@ class CreateEmployeeDetailsTable extends Migration
     {
         Schema::table('employee_details',function(Blueprint $table){
             $table->dropForeign('employee_details_user_id_foreign');
-            $table->dropForeign('employee_details_blood_group_id_foreign');
+            $table->dropForeign('employee_details_religion_id_foreign');
         });
         Schema::dropIfExists('employee_details');
     }
