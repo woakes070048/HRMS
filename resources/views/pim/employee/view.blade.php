@@ -301,7 +301,7 @@ table.tc-med-2 tbody td:first-child{
             <div class="panel">
               <h4>Allowance Information :</h4>
               <div class="panel-body pb5">
-                 <table class="table table-striped table-hover" id="datatable1" cellspacing="0" width="100%">
+                 <table class="table table-striped table-hover" id="datatable2" cellspacing="0" width="100%">
                         <thead>
                           <tr class="bg-dark">
                               <th>SL No:</th>

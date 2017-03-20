@@ -70,7 +70,7 @@ class EmployeeController extends Controller
      * @return $this
      */
     public function index(){
-        $data['users'] = User::with('designation','createdBy')->orderBy('id','desc')->get();
+        $data['users'] = User::with('designation','createdBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['sidevar_hide'] = 1;
         return view('pim.employee.index')->with($data);
     }
@@ -791,11 +791,15 @@ class EmployeeController extends Controller
     public function editEmployee(EmployeeBasicInfoRequest $request){
 
         try{
-            Artisan::call('db:connect');
+            if($request->old_email != $request->email){
+                Artisan::call('db:connect');
+                UserEmails::where('email',$request->old_email)->where('config_id',Session('config_id'))->update(['email' => $request->email]);
 
-            UserEmails::where('email',$request->email)->where('config_id',Session('config_id'))->update([
-                'email' => $request->email,
-            ]);
+                dispatch(new UserEmailUpdate());
+                }
+            }
+
+            $request->offsetUnset('old_email');
 
             Artisan::call("db:connect", ['database' => Session('database')]);
             DB::beginTransaction();
@@ -1071,6 +1075,31 @@ class EmployeeController extends Controller
 
     public function deleteEmployee($employee_id){
         return redirect()->back();
+    }
+
+
+    public function statusChange(Request $request){
+        try{
+            $status = ($request->status == 'Active')?1:0;
+            $user = User::find($request->id);
+            $user->status = $status;
+            $user->save();
+
+            $data['status'] = 'success';
+            $data['statusType'] = 'OK';
+            $data['code'] = 200;
+            $data['title'] = 'Success!';
+            $data['message'] = "<strong class='text-info'>".$user->first_name.' '.$user->last_name.'</strong> Account Successfully '.$request->status;
+            return response()->json($data,200);
+        }catch(\Exception $e){
+            $data['status'] = 'danger';
+            $data['statusType'] = 'NotOk';
+            $data['code'] = 500;
+            $data['type'] = null;
+            $data['title'] = 'Error!';
+            $data['message'] = "<strong class='text-info'>".$user->first_name.' '.$user->last_name.'</strong> Account Not '.$request->status;
+            return response()->json($data,500);
+        }
     }
 
 

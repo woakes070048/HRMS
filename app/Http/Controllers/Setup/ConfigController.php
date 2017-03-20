@@ -127,14 +127,9 @@ class ConfigController extends Controller
                     'mobile_number'  => $mobile_number,
 	    		]);
 
-            Setting::create([
-                    'field_name' => "company_name",
-                    'field_value' => $company_name,
-                ]);
-
-            Setting::create([
-                    'field_name' => "company_code",
-                    'field_value' => empty($company_code)?"00":$company_code,
+            Setting::insert([
+                    ['field_name' => "company_name",'field_value' => $company_name],
+                    ['field_name' => "company_code",'field_value' => empty($company_code)?"00":$company_code]
                 ]);
 
 	    	$request->session()->flash('success','Application successfully setup!');
