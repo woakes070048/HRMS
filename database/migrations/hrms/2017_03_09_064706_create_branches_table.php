@@ -21,6 +21,8 @@ class CreateBranchesTable extends Migration
             $table->string('branch_phone',45)->nullable();
             $table->text('branch_location')->nullable();
             $table->boolean('branch_status')->default(1)->comment='1=active, 0=inactive';
+            $table->integer('created_by')->default(0);    
+            $table->integer('updated_by')->default(0);
             $table->timestamps();
         });
     }

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Setup\Config;
+use App\Services\CommonService;
 
 use Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 
 class DashboardController extends Controller
 {
+    use CommonService;
 
 	protected $auth;
 
@@ -27,15 +27,22 @@ class DashboardController extends Controller
     public function index(){
         if(Session('config_id')){
             $data['sisterConcern'] = $this->getSisterConcern(Session('config_id'));
+            $data['motherConcern'] = $this->getMotherConcern(Session('config_id'));
+   
+            Session([
+                'sisterConcern' => $data['sisterConcern']->toArray(),
+                'motherConcern' => $data['motherConcern']->toArray()
+                ]);
+            // dd($data['sisterConcern']->toArray());
+            // dd($data['motherConcern']->toArray());
+
+        }else{
+            $data['sisterConcern'] = [];
+            $data['motherConcern'] = [];
         }
-    	return view('dashboard');
+    	return view('dashboard')->with($data);
     }
 
-
-    public function getSisterConcern($config_id){
-        Artisan::call('db:connect');
-        return Config::where('parent_id',$config_id)->get();
-    }
 
 
 }

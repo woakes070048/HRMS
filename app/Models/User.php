@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'employee_no','branch_id','unit_id','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
+        'employee_no','employee_type_id','branch_id','designation_id','unit_id','supervisor_id','first_name','status','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
 
     ];
 
@@ -58,7 +58,7 @@ class User extends Authenticatable
 
 
     public function getFullNameAttribute(){
-        return ucfirst($this->first_name). ' ' .ucfirst($this->last_name);
+        return ucfirst($this->first_name).' '.ucfirst($this->middle_name).' ' .ucfirst($this->last_name).' '.ucfirst($this->nick_name);
     }
 
 
@@ -68,6 +68,10 @@ class User extends Authenticatable
 
 
     public function getCreatedAtAttribute($value){
+        return Carbon::parse($value)->format('d M Y');
+    }
+
+    public function getUpdatedAtAttribute($value){
         return Carbon::parse($value)->format('d M Y');
     }
 
@@ -89,6 +93,10 @@ class User extends Authenticatable
         }
     }
 
+
+
+    /********** Star Relations ******************/
+
     public function employeeType(){
         return $this->belongsTo('App\Models\EmployeeType');
     }
@@ -100,6 +108,10 @@ class User extends Authenticatable
 
     public function designation(){
         return $this->belongsTo('App\Models\Designation');
+    }
+
+    public function supervisor(){
+        return $this->belongsTo('App\Models\User');
     }
     
 
@@ -163,13 +175,13 @@ class User extends Authenticatable
 
 
     public function get_profile_info($employee_no){
-        return User::with('designation.department','designation.level','branch','unit','details.bloodGroup','details.religion','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
+        return User::with('supervisor','designation.department','designation.level','branch','unit','details.bloodGroup','details.religion','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
     }
 
 
     public function get_user_data_by_user_tab($user_id,$tab){
         if($tab == ''){
-            $basic = User::with('designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
+            $basic = User::with('supervisor','designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
             return response()->json($basic);
         }
 

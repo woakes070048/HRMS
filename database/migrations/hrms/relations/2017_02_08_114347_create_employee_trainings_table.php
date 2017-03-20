@@ -17,7 +17,7 @@ class CreateEmployeeTrainingsTable extends Migration
             $table->engine ='InnoDB';
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('training_code',20);
+            $table->string('training_code',20)->nullable();
             $table->string('training_title',200);
             $table->date('training_from_date');
             $table->date('training_to_date');

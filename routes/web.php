@@ -67,6 +67,11 @@ Route::group(['prefix' => '/','namespace'=>'Auth'], function(){
 });
 
 
+/******************* ...HRMS Switch Account... ************************/
+Route::group(['prefix' => '/switch','namespace' => 'Auth'],function(){
+    Route::post('/account/{database_name}/{config_id}','SwitchAccountController@switchAccount');
+});
+
 
 /***************** ...HRMS Dashboard Routes... ******************/
 Route::group(['prefix' => '/'], function(){
@@ -87,6 +92,7 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::post('/edit/{userId}','EmployeeController@editEmployee');
 
     Route::get('/delete/{id}','EmployeeController@deleteEmployee');
+    Route::post('/status-change','EmployeeController@statusChange');
 
     Route::post('/add/{userId}/personal/','EmployeeController@addPersonalInfo');
     Route::post('/edit/{userId}/personal','EmployeeController@editPersonalInfo');
@@ -216,6 +222,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
     Route::get('get-unit-by-designation-id/{id}','CommonController@getUnitByDesignationId');
+    Route::get('get-supervisor-by-designation-id/{id}','CommonController@getSupervisorByDesignationId');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
     Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');

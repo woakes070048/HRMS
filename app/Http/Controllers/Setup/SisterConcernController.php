@@ -89,6 +89,11 @@ class SisterConcernController extends Controller
                     'mobile_number'  => $mobile_number,
                 ]);
 
+            Setting::insert([
+                    ['field_name' => "company_name",'field_value' => $company_name],
+                    ['field_name' => "company_code",'field_value' => empty($company_code)?"00":$company_code]
+                ]);
+
 	    	DB::commit();
 
 	    	$request->session()->flash('success','Application successfully setup!');
