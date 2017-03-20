@@ -42,8 +42,7 @@ class SwitchAccountController extends Controller
 
     public function switchAccount($database_name,$config_id){
 
-    	Artisan::call('db:connect',['database' => $database_name]);
-
+        Artisan::call('db:connect',['database' => $database_name]);
     	$check_user_exists = User::where('email',$this->auth->email)->first();
 
     	if($check_user_exists){

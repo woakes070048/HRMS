@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Pim;
 
 
-use App\Models\EmployeeSalaryAccount;
 use App\Models\Setup\UserEmails;
 
 use App\Models\User;
@@ -17,8 +16,10 @@ use App\Models\EmployeeTraining;
 use App\Models\EmployeeReference;
 use App\Models\EmployeeChildren;
 use App\Models\EmployeeLanguage;
+use App\Models\EmployeeSalaryAccount;
 
 use App\Services\CommonService;
+use App\Jobs\UserEmailUpdate;
 
 use App\Http\Requests\EmployeeBasicInfoRequest;
 use App\Http\Requests\EmployeePersonalInfoRequest;
@@ -32,12 +33,13 @@ use App\Http\Requests\EmployeeChildrenRequest;
 use App\Http\Requests\EmployeeLanguageRequest;
 
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
+
+use App\Http\Controllers\Controller;
 
 class EmployeeController extends Controller
 {
@@ -795,8 +797,8 @@ class EmployeeController extends Controller
                 Artisan::call('db:connect');
                 UserEmails::where('email',$request->old_email)->where('config_id',Session('config_id'))->update(['email' => $request->email]);
 
-                dispatch(new UserEmailUpdate());
-                }
+                dispatch(new UserEmailUpdate($request->all()));
+                
             }
 
             $request->offsetUnset('old_email');
