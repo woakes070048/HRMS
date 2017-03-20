@@ -75,6 +75,9 @@
 <script src="{{asset('js/main.js')}}"></script>
 <script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
 
+<script src="{{asset('js/loadingoverlay.min.js')}}"></script>
+<script src="{{asset('js/loadingoverlay_progress.min.js')}}"></script>
+
 <script type="text/javascript">
     
     $.ajaxSetup({

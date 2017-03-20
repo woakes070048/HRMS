@@ -160,9 +160,9 @@
         </div>
     </div>
 
-    <div align="center" style="margin-top: 60px;" class="loader-cls">
+    {{-- <div align="center" style="margin-top: 60px;" class="loader-cls">
        <img src="{{URL::asset("/img/ripple.gif")}}"> 
-    </div>
+    </div> --}}
 
 @endsection
 
@@ -171,17 +171,14 @@
     <script src="{{asset('admin-tools/admin-forms/js/jquery.validate.min.js')}}"></script>
     <script src="{{asset('admin-tools/admin-forms/js/jquery.steps.min.js')}}"></script>
 
-
   <script type="text/javascript">
 
     jQuery(document).ready(function() {
 
-    $('.loader-cls').hide();
     $('.credit_or_debit_div').hide();    
     $('.internet_banking_div').hide(); 
     $('#credit_or_debit').attr('required', true);
     $('#internet_banking').attr('required', true);
-
 
     "use strict";
 
@@ -216,8 +213,8 @@
       },
       onFinished: function(event, currentIndex) {
 
-            $('.main-div').hide();
-            $('.loader-cls').show();
+        //***loading Overlay
+        $.LoadingOverlay("show");
         
         //************* Post form ************
             $.ajax({
@@ -227,8 +224,7 @@
             })
             .done(function(data) {
 
-                //$('.main-div').show();
-                $('.loader-cls').hide();
+                $.LoadingOverlay("hide"); //***loading Overlay
 
                 swal({
                     title: "Success!",
@@ -245,8 +241,7 @@
             })
             .fail(function(data) {
 
-                $('.main-div').show();
-                $('.loader-cls').hide();
+                $.LoadingOverlay("hide");  //***loading Overlay
 
                 var errors = data.responseJSON;
 
