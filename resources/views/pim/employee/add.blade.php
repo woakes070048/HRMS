@@ -114,9 +114,9 @@
                                                                 class="text-danger">*</span></label>
                                                    <select2 class="form-control input-sm" id="designation_id"
                                                         name="designation_id" v-model="designation_id = basics.designation_id" disabled="disabled">
-                                                    <option value="">...Select Employee Designation...</option>
-                                                    <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'"></option>
-                                                </select2>
+                                                        <option value="">...Select Employee Designation...</option>
+                                                        <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'"></option>
+                                                    </select2>
                                                 </div>
                                             </div>
 
