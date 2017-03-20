@@ -16,7 +16,7 @@ class Units extends Model
 		return $this->belongsTo('App\Models\Department', 'unit_departments_id');
 	}
 
-	//each category might have one parent
+	// each category might have one parent
 	public function parent(){
 		return $this->belongsTo('App\Models\Units', 'unit_parent_id');
 	}

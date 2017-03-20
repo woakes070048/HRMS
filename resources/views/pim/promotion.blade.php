@@ -1,10 +1,18 @@
 @extends('layouts.hrms')
 
 @section('style')
-    
+    <style type="text/css" media="screen">
+        html, body {
+          font: 13px/18px sans-serif;
+        }
+        select {
+          min-width: 300px;
+        }
+    </style>
 @endsection
 
 @section('content')
+
 <div id="mainDiv">
     <!-- Begin: Content -->
     <section id="content" class="animated fadeIn">
@@ -13,7 +21,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">Promotion/Transfer</span>
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".unitAdd" style="margin-top: 12px;">Add New Data</button>
+                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".newDataAdd" style="margin-top: 12px;">Add New Data</button>
                     </div>
                     <div class="panel-body">
                         <div id="showData">
@@ -66,116 +74,93 @@
             </div>
         </div>
     </section>
+
     <!-- End: Content -->   
 
-    <!-- unitAdd modal start -->
-    {{-- <div class="modal fade bs-example-modal-lg unitAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalUnitAdd">
+    <!-- Add modal start -->
+    <div class="modal fade bs-example-modal-lg newDataAdd" role="dialog" aria-labelledby="myLargeModalLabel" id="modalAdd">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Add New Unit</h4>
-              </div>
-              <form class="form-horizontal" @submit.prevent="saveUnit('addUnitFormData')" id="addUnitFormData">
-                <div class="modal-body">
-
-                    <div id="create-form-errors">
-                    </div>
-
-                    {{ csrf_field() }}
-
-                    <div class="form-group">
-                        <label for="name" class="col-md-3 control-label">Unit Name</label>
-                        <div class="col-md-9">
-                            <input name="unit_name" class="form-control input-sm" v-model="unit_name" v-validate:unit_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_name') }" data-vv-as="unit name" type="text" placeholder="Unit name">
-                            <div v-show="errors.has('unit_name')" class="help text-danger">
-                                <i v-show="errors.has('unit_name')" class="fa fa-warning"></i> 
-                                @{{ errors.first('unit_name') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="unit_department_id" class="col-md-3 control-label">Department Name</label>
-                        <div class="col-md-9">
-                            <select class="form-control input-sm" name="unit_department_id" v-model="unit_department_id" v-validate:unit_department_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_department_id') }" data-vv-as="unit department">
-                                <option value="">Select Department</option>
-                                <option v-for="department in departments" v-bind:value="department.id"> 
-                                    @{{ department.department_name }} 
-                                </option>
-                            </select>
-                            <div v-show="errors.has('unit_department_id')" class="help text-danger">
-                                <i v-show="errors.has('unit_department_id')" class="fa fa-warning"></i> 
-                                @{{ errors.first('unit_department_id') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label">
-                        </label>
-                        <div class="col-md-9">
-                            <div class="checkbox-custom mb5">
-                                <input type="checkbox" @click="chk_parent==1?chk_parent=0:chk_parent=1" id="checkboxDefault3" name="chk_parent" value="1">
-                                <label for="checkboxDefault3"> If this unit have parent</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group" v-show="chk_parent == 1">
-                        <label for="amount" class="col-md-3 control-label">Parent Name</label>
-                        <div class="col-md-9">
-                            <select class="form-control input-sm" name="unit_parent_id" v-model="unit_parent_id" v-validate:unit_parent_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_parent_id') }" data-vv-as="unit parent">
-                                <option value="">Select Unit's Parent</option>
-                                <option v-for="unit in activeUnits" v-bind:value="unit.id"> @{{unit.unit_name}} </option>
-                            </select>
-                            <div v-show="errors.has('unit_parent_id')" class="help text-danger">
-                                <i v-show="errors.has('unit_parent_id')" class="fa fa-warning"></i> 
-                                @{{ errors.first('unit_parent_id') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="unit_details" class="col-md-3 control-label">Unit Details</label>
-                        <div class="col-md-9">
-                            <textarea name="unit_details" class="form-control input-sm" v-model="unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="amount" class="col-md-3 control-label"></label>
-                        <div class="col-md-9">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-success mb5">
-                                        <input type="radio" name="unit_status" id="active" v-model="unit_status" value="1">
-                                        <label for="active">Active</label>
-                                    </div>    
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="radio-custom radio-danger mb5">
-                                        <input type="radio" name="unit_status" id="inactive" v-model="unit_status" value="0">
-                                        <label for="inactive">Inactive</label>
-                                    </div>    
-                                </div>
-                            </div>     
-                        </div>
-                    </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add New Info</h4>
                 </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Save Unit</button>
-              </div>
+                <form class="form-horizontal" @submit.prevent="saveUnit('addUnitFormData')" id="addUnitFormData">
+                    <div class="modal-body">
 
-              </form>
+                        <div id="create-form-errors">
+                        </div>
+
+                        {{ csrf_field() }}
+
+                        <div class="form-group">
+                            <label for="to_designation" class="col-md-3 control-label">Select User @{{ user_id }}</label>
+                            <div class="col-md-9">
+                                <select2 v-model="user_id" style="
+                                width: 100%;color: #555555;
+                                border: 1px solid #dddddd;
+                                transition: border-color ease-in-out .15s;
+                                height: 30px;
+                                padding: 5px 10px;
+                                font-size: 12px;
+                                line-height: 1.5;
+                                border-radius: 2px;"
+                                >
+                                    <option disabled value="0">Select Single User</option>
+                                    <option v-for="(info,index) in users" 
+                                        :value="info.id" 
+                                        v-text="info.first_name+' '+info.last_name"
+                                    >Select one</option>
+                                </select2>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name" class="col-md-3 control-label">Current Designation</label>
+                            <div class="col-md-9">
+                                <input name="from_designation" disabled="disabled" class="form-control input-sm" v-model="from_designation" type="text">
+                                {{-- <div v-show="errors.has('from_designation')" class="help text-danger">
+                                    <i v-show="errors.has('from_designation')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('from_designation') }}
+                                </div> --}}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="to_designation" class="col-md-3 control-label">New Designation</label>
+                            <div class="col-md-9">
+                                <select class="form-control input-sm" name="to_designation" v-model="to_designation">
+                                    <option value="0">Select Department</option>
+                                    {{-- <option v-for="department in departments" v-bind:value="department.id"> 
+                                        @{{ department.department_name }} 
+                                    </option> --}}
+                                </select>
+                                {{-- <div v-show="errors.has('to_designation')" class="help text-danger">
+                                    <i v-show="errors.has('to_designation')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('to_designation') }}
+                                </div> --}}
+                            </div>
+                        </div>
+
+                        {{-- <div class="form-group">
+                            <label for="unit_details" class="col-md-3 control-label">Unit Details</label>
+                            <div class="col-md-9">
+                                <textarea name="unit_details" class="form-control input-sm" v-model="unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
+                            </div>
+                        </div> --}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Unit</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div> --}}
-    <!-- unitAdd modal end --> 
+    </div>
+    <!-- Add modal end --> 
 
     <!-- salary Info Edit modal start -->
-    {{-- <div class="modal fade bs-example-modal-lg unitEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalUnitEdit">
+   {{--  <div class="modal fade bs-example-modal-lg unitEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalUnitEdit">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -284,11 +269,31 @@
         </div>
     </div> --}}
     <!-- salary Info Edit modal end --> 
+
+    {{-- <div>
+        <p>Selected: @{{ selected }}</p>
+        <select2 v-model="selected">
+            <option disabled value="0">Select one</option>
+            <option v-for="(designation,index) in designations" 
+                :value="designation.id" 
+                v-text="designation.designation_name+'-('+designation.level.level_name+')-('+designation.department.department_name+')'"
+            >Select one</option>
+        </select2>
+    </div> --}}
+
 </div>
+
+
+
 @endsection
 
 @section('script')
 
-<script src="{{asset('js/promotion.js')}}"></script>
+<script type="text/javascript">
+
+    
+</script>
+
+<script src="{{asset('/js/promotion.js')}}"></script>
 
 @endsection

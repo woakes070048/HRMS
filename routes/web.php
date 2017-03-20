@@ -203,6 +203,7 @@ Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
 Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
     Route::get('/index','PromotionController@index');
     Route::get('/getPromotionsData','PromotionController@getPromotionsData');
+    Route::get('/getSingelUser/{id}','PromotionController@getSingelUser');
     // Route::get('/add','PromotionController@add');
     // Route::post('/add','PromotionController@create');
     // Route::get('/edit/{id}','PromotionController@edit');
@@ -216,6 +217,7 @@ Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
 /******************** ...HRMS Common Function Routes... **************/
 Route::group(['prefix' => '/'], function(){
     Route::get('get-employee-type','CommonController@getEmployeeType');
+    Route::get('get-employee','CommonController@getEmployee');
     Route::get('get-departments','CommonController@getDepartments');
     Route::get('get-levels','CommonController@getLevels');
     Route::get('get-branches','CommonController@getBranches');
