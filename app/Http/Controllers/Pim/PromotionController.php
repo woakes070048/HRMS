@@ -14,6 +14,7 @@ use App\Models\Level;
 
 class PromotionController extends Controller
 {
+
     public function __construct()
     {
         $this->middleware('auth:hrms');
@@ -25,19 +26,22 @@ class PromotionController extends Controller
         });
     }
 
-    public function index(){
+    public function findParent($levelId, $parentAry){
+            
+        $val = Level::where('id',$levelId)->first();
 
-        $val = Designation::find(4);
+        if($val->parent_id > 0){
 
-        $find_same_level_desig = Designation::where('level_id',$val->level_id)->get();
-        //var_dump($find_same_level_desig);
-
-        foreach($find_same_level_desig as $info)
-        {
-            echo $info->designation_name."<br>";
+            array_push($parentAry, $val->parent_id);
+            // echo $val->parent_id." *-*";
+            return $this->findParent($val->parent_id, $parentAry);
         }
 
-        die();
+        return $parentAry;
+    }
+
+    public function index(){
+        
     	$data['title'] = "Promotions/Transfer";
         return view('pim.promotion', $data);
     }
@@ -49,6 +53,27 @@ class PromotionController extends Controller
 
     public function getSingelUser($id){
 
-        return User::with('branch', 'designation.department','designation.level', 'unit')->where('id', $id)->first();
+        $data['multi_values'] = User::with('branch', 'designation.department','designation.level', 'unit.department', 'supervisor')->where('id', $id)->first();
+        //designation + units
+
+        //=== find upper designation ===
+        //get existing designation .. get existing level ... get upper level
+        //using level whereIn designation
+        $designationId = $data['multi_values']->designation_id;
+        $val = Designation::find($designationId);
+        $parentAry = [];
+        $parentAry = $this->findParent($val->level_id, $parentAry);
+        array_push($parentAry , $val->level_id); //push same level id
+
+        $data['to_designation'] = Designation::with('department.units','level')->whereIn('level_id', $parentAry)->get();
+        
+        foreach($data['to_designation'] as $val){
+            $designationIdAry[] = $val->id;
+        }
+
+        $data['to_supervisor'] = User::whereIn('designation_id', $designationIdAry)->where('id','!=',$id)->get();
+        //===============================
+
+        return $data;
     }
 }
