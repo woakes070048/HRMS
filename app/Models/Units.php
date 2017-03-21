@@ -12,6 +12,10 @@ class Units extends Model
 		return $this->hasOne('App\Models\Department', 'id', 'unit_departments_id');
 	}
 
+	public function promotionDepartment(){
+		return $this->belongsTo('App\Models\Department', 'unit_departments_id');
+	}
+
 	//each category might have one parent
 	public function parent(){
 		return $this->belongsTo('App\Models\Units', 'unit_parent_id');

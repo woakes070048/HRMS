@@ -69,7 +69,7 @@ class ConfigController extends Controller
 
      	DB::beginTransaction();
 
-        try{
+        // try{
 
             $setup_user = SetupUser::create([
                 'first_name' => $first_name,
@@ -134,16 +134,16 @@ class ConfigController extends Controller
 
 	    	$request->session()->flash('success','Application successfully setup!');
 
-	    }catch(\Exception $e){
-	    	Artisan::call('db:connect');
-	    	DB::rollback();
+	    // }catch(\Exception $e){
+	    // 	Artisan::call('db:connect');
+	    // 	DB::rollback();
 
-	    	Artisan::call('db:connect', ['database'=> $database_name]);
-	    	Artisan::call("migrate:hrms:rollback");
-	    	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
+	    // 	Artisan::call('db:connect', ['database'=> $database_name]);
+	    // 	Artisan::call("migrate:hrms:rollback");
+	    // 	DB::statement('DROP DATABASE IF EXISTS '.$database_name);
 
-	    	$request->session()->flash('danger','Application setup not success!');
-	    }
+	    // 	$request->session()->flash('danger','Application setup not success!');
+	    // }
 
         DB::commit();
 
