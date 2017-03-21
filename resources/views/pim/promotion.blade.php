@@ -94,7 +94,7 @@
                         {{ csrf_field() }}
 
                         <div class="form-group">
-                            <label for="to_designation" class="col-md-3 control-label">Select User @{{ user_id }}</label>
+                            <label for="to_designation" class="col-md-3 control-label">Select User </label>
                             <div class="col-md-9">
                                 <select2 v-model="user_id" style="
                                 width: 100%;color: #555555;
@@ -110,48 +110,111 @@
                                     <option v-for="(info,index) in users" 
                                         :value="info.id" 
                                         v-text="info.first_name+' '+info.last_name"
-                                    >Select one</option>
+                                    ></option>
                                 </select2>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="name" class="col-md-3 control-label">Current Designation</label>
+                            <label for="from_designation_id" class="col-md-3 control-label">Current Designation</label>
                             <div class="col-md-9">
-                                <input name="from_designation" disabled="disabled" class="form-control input-sm" v-model="from_designation" type="text">
-                                {{-- <div v-show="errors.has('from_designation')" class="help text-danger">
-                                    <i v-show="errors.has('from_designation')" class="fa fa-warning"></i> 
-                                    @{{ errors.first('from_designation') }}
-                                </div> --}}
+                                <input name="from_designation_id" disabled="disabled" class="form-control input-sm" v-model="from_designation" type="text">
+                                {{-- 
+                                <div v-show="errors.has('from_designation_id')" class="help text-danger">
+                                    <i v-show="errors.has('from_designation_id')" class="fa fa-warning"></i> 
+                                    @{{ errors.first('from_designation_id') }}
+                                </div> 
+                                --}}
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="to_designation" class="col-md-3 control-label">New Designation</label>
+                            <label for="to_designation_id" class="col-md-3 control-label">New Designation</label>
                             <div class="col-md-9">
-                                <select class="form-control input-sm" name="to_designation" v-model="to_designation">
-                                    <option value="0">Select Department</option>
-                                    {{-- <option v-for="department in departments" v-bind:value="department.id"> 
-                                        @{{ department.department_name }} 
-                                    </option> --}}
-                                </select>
-                                {{-- <div v-show="errors.has('to_designation')" class="help text-danger">
-                                    <i v-show="errors.has('to_designation')" class="fa fa-warning"></i> 
-                                    @{{ errors.first('to_designation') }}
-                                </div> --}}
+                                <select2 v-model="to_designation_id" style="
+                                width: 100%;color: #555555;
+                                border: 1px solid #dddddd;
+                                transition: border-color ease-in-out .15s;
+                                height: 30px;
+                                padding: 5px 10px;
+                                font-size: 12px;
+                                line-height: 1.5;
+                                border-radius: 2px;"
+                                >
+                                    <option disabled value="0">Select New Designation</option>
+                                    <option v-for="(info,index) in designation_select2" 
+                                        :value="info.id" 
+                                        v-text="info.designation_name+'-('+info.level.level_name+')-('+info.department.department_name+')'"
+                                    ></option>
+                                </select2>
                             </div>
                         </div>
 
-                        {{-- <div class="form-group">
-                            <label for="unit_details" class="col-md-3 control-label">Unit Details</label>
+                        <div class="form-group">
+                            <label for="from_unit_id" class="col-md-3 control-label">Current Unit</label>
                             <div class="col-md-9">
-                                <textarea name="unit_details" class="form-control input-sm" v-model="unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
+                                <input name="from_unit_id" disabled="disabled" class="form-control input-sm" v-model="from_unit" type="text">
                             </div>
-                        </div> --}}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="to_unit_id" class="col-md-3 control-label">New Unit</label>
+                            <div class="col-md-9">
+                                <select name="to_unit_id" class="form-control input-sm">
+                                    <option value="0">Select New Unit</option>
+                                    <option v-for="info in unit_select2" 
+                                        :value="info.id" 
+                                        v-text="info.unit_name"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="from_branch_id" class="col-md-3 control-label">Current Branch</label>
+                            <div class="col-md-9">
+                                <input name="from_branch_id" disabled="disabled" class="form-control input-sm" v-model="from_branch" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="to_branch_id" class="col-md-3 control-label">New Branch</label>
+                            <div class="col-md-9">
+                                <select name="to_branch_id" class="form-control input-sm">
+                                    <option value="0">Select New Branch</option>
+                                    <option v-for="info in branch_select2" 
+                                        :value="info.id" 
+                                        v-text="info.branch_name"
+                                        v-if="info.branch_name != from_branch"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="from_supervisor_id" class="col-md-3 control-label">Current Supervisor</label>
+                            <div class="col-md-9">
+                                <input name="from_supervisor_id" disabled="disabled" class="form-control input-sm" v-model="from_supervisor" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="to_supervisor_id" class="col-md-3 control-label">New Supervisor</label>
+                            <div class="col-md-9">
+                                <select name="to_supervisor_id" class="form-control input-sm">
+                                    <option value="0">Select New Supervisor</option>
+                                    <option v-for="info in supervisor_select2" 
+                                        :value="info.id" 
+                                        v-text="info.first_name+' '+info.last_name"
+                                        v-if="info.id != chk_supervisor_old_id"
+                                    ></option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Unit</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
             </div>
