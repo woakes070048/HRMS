@@ -43,7 +43,7 @@ class EmployeeBasicInfoRequest extends FormRequest
             'branch_id' => 'required|numeric',
             'designation_id' => 'required|numeric',
             'unit_id' => 'required|numeric',
-            'supervisor_id' => 'required|numeric',
+            // 'supervisor_id' => 'required|numeric',
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
             'email' => $email,
@@ -69,6 +69,7 @@ class EmployeeBasicInfoRequest extends FormRequest
     public function attributes(){
         return [
             'designation_id' => 'employee designation',
+            'unit_id' => 'employee unit',
             'employee_type_id' => 'employee type',
             'supervisor_id' => 'employee supervisor',
 
