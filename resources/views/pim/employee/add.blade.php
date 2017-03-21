@@ -132,7 +132,7 @@
 
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label class="control-label">Employee Supervisor : <span class="text-danger">*</span></label>
+                                                    <label class="control-label">Employee Supervisor :</label>
                                                     <input type="text" :value="(basics.supervisor)?basics.supervisor.first_name+' '+basics.supervisor.last_name+' ( '+basics.supervisor.employee_no+' )':'no supervisor'" disabled="disabled"
                                                            class="form-control input-sm">
                                                 </div>
@@ -401,10 +401,10 @@
                                             <div class="form-group" :class="{'has-error': errors.unit_id}">
                                                 <label class="control-label">Employee Unit : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="form-control input-sm" id="unit_id" name="unit_id">
+                                                <select2 class="form-control input-sm" id="unit_id" name="unit_id">
                                                     <option value="">...Select Unit...</option>
                                                     <option v-for="(unit,index) in units" :value="unit.id" v-text="unit.unit_name"></option>
-                                                </select>
+                                                </select2>
                                                 <span v-if="errors.unit_id" class="help-block" v-text="errors.unit_id[0]"></span>
                                             </div>
                                         </div>
@@ -425,12 +425,11 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.supervisor_id}">
-                                                <label class="control-label">Employee Supervisor : <span
-                                                            class="text-danger">*</span></label>
+                                                <label class="control-label">Employee Supervisor : </label>
                                                 <select2 class="form-control select-sm input-sm" id="supervisor_id"
                                                         name="supervisor_id">
                                                     <option value="">...Select Employee Supervisor...</option>
-                                                    <option v-for="(supervisor,index) in supervisors" :value="supervisor.user_id" v-text="supervisor.fullname+' - ('+supervisor.level_name+' ) - ( '+supervisor.department_name+' )'"></option>
+                                                    <option v-for="(supervisor,index) in supervisors" :value="supervisor.id" v-text="supervisor.fullname+' - ('+supervisor.designation_name+' ) - ( '+supervisor.level_name+' )'"></option>
                                                 </select2>
                                                 <span v-if="errors.supervisor_id" class="help-block" v-text="errors.supervisor_id[0]"></span>
                                             </div>
@@ -1077,10 +1076,10 @@
                                                 <label class="control-label">Marital Status : <span class="text-danger">*</span></label>
                                                 <select name="marital_status" class="form-control input-sm">
                                                     <option value="">...Select Marital Status...</option>
-                                                    <option>Single</option>
-                                                    <option>Married</option>
-                                                    <option>Separated</option>
-                                                    <option>Other</option>
+                                                    <option value="single"> Single</option>
+                                                    <option value="married"> Married</option>
+                                                    <option value="separated"> Separated</option>
+                                                    <option value="other"> Other</option>
                                                 </select>
                                                 <span v-if="errors.marital_status" class="text-danger" v-text="errors.marital_status[0]"></span>
                                                <!--  <div class="radio-custom mb5">

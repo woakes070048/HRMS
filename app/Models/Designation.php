@@ -13,8 +13,12 @@ class Designation extends Model
     	return $this->hasOne('App\Models\Department', 'id', 'department_id');
     }
 
+    // public function level(){
+    // 	return $this->hasOne('App\Models\Level', 'id', 'level_id')->with('sibling');
+    // }
+
     public function level(){
-    	return $this->hasOne('App\Models\Level', 'id', 'level_id');
+        return $this->hasOne('App\Models\Level', 'id', 'level_id');
     }
 
     public function user(){

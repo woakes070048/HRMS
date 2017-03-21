@@ -42,7 +42,6 @@ class UserEmailUpdate implements ShouldQueue
             // dd($sisterConcern);
             foreach($sisterConcern as $sinfo){
                 Artisan::call("db:connect", ['database' => $sinfo['database_name']]);
-                // $check_user_exists = User::where('email',$this->requestData->old_email)->first();
                 $user->where('email',$this->requestData['old_email'])
                                         ->update(['email' => $this->requestData['email']]);
             }
@@ -53,10 +52,8 @@ class UserEmailUpdate implements ShouldQueue
             $motherConcern = Session('motherConcern');
             // dd($this->requestData);
             // dd($sisterConcern);
-            // dd($this->requestData->old_email);
             foreach($motherConcern as $minfo){
                 Artisan::call("db:connect", ['database' => $minfo['database_name']]);
-                // $check_user_exists = User::where('email',$this->requestData->old_email)->first();
                 $user->where('email',$this->requestData['old_email'])->update(['email' => $this->requestData['email']]);
             }
         }

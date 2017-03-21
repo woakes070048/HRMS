@@ -734,7 +734,7 @@ class EmployeeController extends Controller
 
 
 
-/********************************** Edit Employee Information Functions *************************************************/
+/********************** Edit Employee Information Functions ********************************/
 
     public function showEmployeeEditForm(Request $request){
         $data['sidevar_hide'] = 1;
@@ -798,7 +798,6 @@ class EmployeeController extends Controller
                 UserEmails::where('email',$request->old_email)->where('config_id',Session('config_id'))->update(['email' => $request->email]);
 
                 dispatch(new UserEmailUpdate($request->all()));
-                
             }
 
             $request->offsetUnset('old_email');

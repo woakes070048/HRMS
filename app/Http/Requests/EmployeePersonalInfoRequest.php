@@ -37,7 +37,7 @@ class EmployeePersonalInfoRequest extends FormRequest
         return [
             'father_name' => 'required|alpha_spaces_dot',
             'mother_name' => 'required|alpha_spaces_dot',
-            'spouse_name' => 'required|alpha_spaces_dot',
+            'spouse_name' => 'required_if:marital_status,married',
             'national_id' => $national_id,
             'passport_no' => $passport_no,
             'tin_no' => $tin_no,

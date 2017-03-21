@@ -47,6 +47,7 @@ var employee = new Vue({
         branches:[],
         designation_id:0,
         designations: [],
+        unit_id:0,
         units: [],
         supervisor_id:0,
         supervisors: [],
@@ -57,7 +58,7 @@ var employee = new Vue({
         permanentDistricts: [],
         policeStations: [],
         permanentPoliceStations: [],
-
+        
         blood_group : [],
         religions : [],
         personals: [],
