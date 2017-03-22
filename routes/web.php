@@ -126,12 +126,12 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
 
     Route::post('/add/{userId}/language/','EmployeeController@addEditLanguage');
     Route::post('/edit/{userId}/language/','EmployeeController@addEditLanguage');
-    Route::post('/delete/{id}/language/','EmployeeController@deleteEmployeeData');
+    Route::delete('/delete/{id}/language/','EmployeeController@deleteEmployeeData');
 
 });
 
 
-/******************** ...HRMS Emp Level Routes... **************/
+/******************** ...HRMS Employee Level Routes... **************/
 Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::get('/index','LevelController@index');
     Route::get('/add','LevelController@add');
@@ -143,7 +143,7 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
 });
 
 
-/******************** ...HRMS Emp Department Routes... **************/
+/******************** ...HRMS Employee Department Routes... **************/
 Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
     Route::get('/index','DepartmentController@index');
     Route::post('/add','DepartmentController@create');
@@ -153,7 +153,7 @@ Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
 });
 
 
-/******************** ...HRMS Emp Designations Routes... **************/
+/******************** ...HRMS Employee Designations Routes... **************/
 Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
     Route::get('/index','DesignationController@index');
     Route::post('/add','DesignationController@create');
@@ -163,7 +163,7 @@ Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
 });
 
 
-/******************** ...HRMS Emp SalaryInfo Routes... **************/
+/******************** ...HRMS Employee SalaryInfo Routes... **************/
 Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
     Route::get('/index','SalaryInfoController@index');
     Route::get('/getAllInfo','SalaryInfoController@getAllInfo');
@@ -173,7 +173,8 @@ Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}/{indexId}','SalaryInfoController@delete');
 });
 
-/******************** ...HRMS Emp Units Routes... **************/
+
+/******************** ...HRMS Employee Units Routes... **************/
 Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
     Route::get('/index','UnitController@index');
     Route::get('/getUnits','UnitController@getUnits');
@@ -182,7 +183,8 @@ Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}/{indexId}','UnitController@delete');
 });
 
-/******************** ...HRMS Emp Settings Routes... **************/
+
+/******************** ...HRMS Employee Settings Routes... **************/
 Route::group(['prefix' => 'settings', 'namespace' => 'Setting'],function (){
     Route::get('/index','SettingsController@index');
     Route::get('/getSettings','SettingsController@getSettings');
@@ -190,7 +192,8 @@ Route::group(['prefix' => 'settings', 'namespace' => 'Setting'],function (){
     Route::post('/edit','SettingsController@update');
 });
 
-/******************** ...HRMS Emp Units Routes... **************/
+
+/******************** ...HRMS Employee Branch Routes... **************/
 Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
     Route::get('/index','BranchController@index');
     Route::get('/getBranch','BranchController@getBranch');
@@ -199,7 +202,18 @@ Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}/{indexId}','BranchController@delete');
 });
 
-/******************** ...HRMS Emp promotion/transfer Routes... **************/
+
+/******************** ...HRMS Employee Bank Routes... **************/
+Route::group(['prefix' => 'bank', 'namespace' => 'Pim'],function (){
+    Route::get('/index','BankController@index');
+    Route::post('/add','BankController@create');
+    Route::get('/edit/{id}','BankController@edit');
+    Route::post('/edit','BankController@update');
+    Route::delete('/delete/{id}','BankController@delete');
+});
+
+
+/******************** ...HRMS Employee promotion/transfer Routes... **************/
 Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
     Route::get('/index','PromotionController@index');
     Route::get('/getPromotionsData','PromotionController@getPromotionsData');

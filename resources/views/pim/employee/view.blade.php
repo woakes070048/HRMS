@@ -25,15 +25,15 @@ table.tc-med-2 tbody td:first-child{
       </div>                      
       <div class="media-body va-m">
         <h2 class="media-heading">{{$user->fullname}}
-          <small> - Profile (@if($user->status ==1) active @else inactive @endif account)</small>
+          <small> - Profile (@if($user->status ==1) active @else inactive @endif account )</small>
         </h2>
-        <p class="lead">{{$user->designation->designation_name}} ( Joining Date - {{$user->details->joining_date or ''}}, Profile Opening Date - {{$user->created_at}})</p>
-        <h3 class="media-heading">Present Address
+        <p class="lead">{{$user->designation->designation_name}} <small>( Joining Date - {{$user->details->joining_date_format or ''}}, Profile Opening Date - {{$user->created_at}} )</small></p>
+        <h4 class="media-heading">Present Address
           <small> - {{$user->address->present_postoffice or ''}}, {{$user->address->presentPoliceStation->police_station_name or ''}}, {{$user->address->presentDistrict->district_name or ''}}, {{$user->address->presentDivision->division_name or ''}}.</small>
-        </h3>
-        <h3 class="media-heading">Parmanent Address
+        </h4>
+        <h4 class="media-heading">Parmanent Address
           <small> - {{$user->address->permanent_postoffice or ''}}, {{$user->address->permanentPoliceStation->police_station_name or ''}}, {{$user->address->permanentDistrict->district_name or ''}}, {{$user->address->permanentDivision->division_name or ''}}.</small>
-        </h3>
+        </h4>
       </div>
     </div>
 </div>
@@ -80,6 +80,10 @@ table.tc-med-2 tbody td:first-child{
                 <td class="text-right">{{$user->mobile_number}}</td>
               </tr>
               <tr>
+                <td class="text-left">Supervisor :</td>
+                <td class="text-right">@if($user->supervisor){{$user->supervisor->fullname}}@endif</td>
+              </tr>
+              <tr>
                 <td class="text-left">Designation :</td>
                 <td class="text-right">{{$user->designation->designation_name}}</td>
               </tr>
@@ -119,6 +123,10 @@ table.tc-med-2 tbody td:first-child{
               <tr>
                 <td class="text-left">Mother Name :</td>
                 <td class="text-right">{{$user->details->mother_name}}</td>
+              </tr>
+              <tr>
+                <td class="text-left">Spouse Name :</td>
+                <td class="text-right">{{$user->details->spouse_name}}</td>
               </tr>
                <tr>
                 <td class="text-left">Personal Email :</td>

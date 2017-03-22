@@ -16,6 +16,7 @@ use App\Services\CommonService;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Session;
 
 use App\Http\Controllers\Controller;
 
@@ -61,9 +62,9 @@ class SwitchAccountController extends Controller
     	if(Auth::guard('hrms')->loginUsingId($user_id)){
     		Session(['database'=>$database_name, 'config_id' => $config_id]);
     		$this->settings();
-    		\Session::flash('success','Account successfully switch.');
+    		Session::flash('success','Account successfully switch.');
     	}else{
-    		\Session::flash('danger','Account not switch.');
+    		Session::flash('danger','Account not switch.');
     	}
     	return redirect()->back();
     }
@@ -122,7 +123,10 @@ class SwitchAccountController extends Controller
 	    		// }
 	    	// }
 
-	    	$this->switchAccountRegister($database_name,$config_id);
+            Artisan::call('db:connect',['database' => Session('database')]);
+            Session::flash('danger','Account not switch.Try again.');
+            return redirect()->back();
+	    	// $this->switchAccountRegister($database_name,$config_id);
 	    }
     }
 

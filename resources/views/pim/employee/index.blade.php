@@ -25,6 +25,7 @@
                 <!-- <th>Unit</th> -->
                 <th>Image</th>
                 <th>Created By</th>
+                <th>Updated By</th>
                 <th>Created Date</th>
                 <th>Updated Date</th>
                 <th>Action</th>
@@ -42,6 +43,7 @@
                 <!-- <th>Unit</th> -->
                 <th>Image</th>
                 <th>Created By</th>
+                <th>Updated By</th>
                 <th>Created Date</th>
                 <th>Updated Date</th>
                 <th>Action</th>
@@ -56,9 +58,9 @@
                    <td>{{$user->fullname}}</td>
                    <td>{{$user->email}}</td>
                    <td>{{$user->designation->designation_name}}</td>
-                   <!-- <td>{{$user->designation->level->level_name}}</td> -->
+                  
                    <td>{{$user->designation->department->department_name}}</td>
-                   <!-- <td>{{$user->unit->unit_name}}</td> -->
+              
                    <td>
                       @if($user->photo)
                        <img src="{{$user->full_image}}" alt="{{$user->fullname}}" width="50px">
@@ -67,6 +69,7 @@
                        @endif
                    </td>
                    <td>@if($user->createdBy) {{$user->createdBy->fullname}} @else Maybe system @endif</td>
+                   <td>@if($user->updatedBy) {{$user->updatedBy->fullname}} @else Maybe system @endif</td>
                    <td>{{$user->created_at}}</td>
                    <td>{{$user->updated_at}}</td>
                    <td>
