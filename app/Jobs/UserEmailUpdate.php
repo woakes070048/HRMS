@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,6 +16,9 @@ class UserEmailUpdate implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $tries = 5;
+
+    public $timeout = 120;
 
     protected $requestData;
 
@@ -57,7 +61,10 @@ class UserEmailUpdate implements ShouldQueue
                 $user->where('email',$this->requestData['old_email'])->update(['email' => $this->requestData['email']]);
             }
         }
+    }
 
+
+    public function failed(Exception $exception){
 
     }
 
