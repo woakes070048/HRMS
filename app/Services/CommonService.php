@@ -39,11 +39,13 @@ trait CommonService
         }
     }
 
-
     public function getEmployeeType(){
         return EmployeeType::where('status',1)->get();
     }
 
+    public function getEmployee(){
+        return User::where('status',1)->get();
+    }
 
     public function getBranches(){
         return Branch::where('branch_status',1)->get();
