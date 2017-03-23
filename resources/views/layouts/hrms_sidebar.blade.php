@@ -45,6 +45,11 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{url('bank/index')}}">
+                            <span class="fa fa-level-up"></span> Bank
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{url('promotion/index')}}">
                             <span class="fa fa-level-up"></span> Transfer / Promotion
                         </a>

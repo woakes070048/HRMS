@@ -13,8 +13,20 @@ class Level extends Model
     }
 
 
+    // public function parent(){
+    // 	return $this->belongsTo('App\Models\Level')->with('sibling');
+    // }
+
+    // public function sibling(){
+    //     return $this->hasMany('App\Models\Level','parent_id','parent_id');
+    // }
+
     public function parent(){
-    	return $this->belongsTo('App\Models\Level','parent_id');
+        return $this->belongsTo('App\Models\Level');
+    }
+
+    public function parentRecursive(){
+        return $this->parent()->with('parentRecursive');
     }
 
 

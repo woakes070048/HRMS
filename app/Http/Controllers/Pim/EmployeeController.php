@@ -72,7 +72,8 @@ class EmployeeController extends Controller
      * @return $this
      */
     public function index(){
-        $data['users'] = User::with('designation','createdBy')->where('status','!=',2)->orderBy('id','desc')->get();
+        $data['title'] = 'Employee List';
+        $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['sidevar_hide'] = 1;
         return view('pim.employee.index')->with($data);
     }
@@ -734,7 +735,7 @@ class EmployeeController extends Controller
 
 
 
-/********************************** Edit Employee Information Functions *************************************************/
+/********************** Edit Employee Information Functions ********************************/
 
     public function showEmployeeEditForm(Request $request){
         $data['sidevar_hide'] = 1;
@@ -798,7 +799,6 @@ class EmployeeController extends Controller
                 UserEmails::where('email',$request->old_email)->where('config_id',Session('config_id'))->update(['email' => $request->email]);
 
                 dispatch(new UserEmailUpdate($request->all()));
-                
             }
 
             $request->offsetUnset('old_email');
