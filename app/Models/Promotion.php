@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Promotion extends Model
 {
-	protected $fillable = ['user_id','from_supervisor_id','to_supervisor_id','form_branch_id','to_branch_id', 'from_designation_id', 'to_designation_id', 'from_unit_id', 'to_unit_id', 'transfer_effective_date', '	promotion_type', 'promotion_status', 'remarks', 'created_by', 'updated_by'];
+	protected $fillable = ['user_id','from_supervisor_id','to_supervisor_id','from_branch_id','to_branch_id', 'from_designation_id', 'to_designation_id', 'from_unit_id', 'to_unit_id', 'transfer_effective_date', 'promotion_type', 'promotion_status', 'remarks', 'created_by', 'updated_by'];
 
 	public function user(){
 		return $this->belongsTo('App\Models\User', 'user_id');
@@ -17,7 +17,7 @@ class Promotion extends Model
 	}
 
 	public function current_designation(){
-		return $this->belongsTo('App\Models\Designation', 'from_designation_id');
+		return $this->belongsTo('App\Models\Designation', 'to_designation_id');
 	}
 
 	public function prev_branch(){
