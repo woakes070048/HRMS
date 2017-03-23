@@ -19,6 +19,7 @@
                             <tr class="success">
                                 <th>sl</th>
                                 <th>Name</th>
+                                <th>Parent</th>
                                 <th>Salary</th>
                                 <th>Salary Info</th>
                                 <th>Description</th>
@@ -32,6 +33,7 @@
                             <tr>
                                 <td>{{ $sl++ }}</td>
                                 <td>{{ $level->level_name }}</td>
+                                <td>{{ ($level->parent_id > 0)?$level->parent->level_name:'' }}</td>
                                 <td>{{ $level->level_salary_amount }}</td>
                                 <td>
                                     @if($level->salaryInfo->count() > 0)

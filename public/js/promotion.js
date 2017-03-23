@@ -1,7 +1,3 @@
-// import Vue from 'vue';
-// import VeeValidate from 'vee-validate';
-
-// Vue.use(VeeValidate);
 Vue.component('select2', {
     props: ['options', 'value'],
     template: '<select><slot></slot></select>',
@@ -154,14 +150,16 @@ new Vue({
             this.edit_user_id = this.allData[index].user.first_name+' '+this.allData[index].user.last_name;
 
             this.edit_formType = this.allData[index].promotion_type;
-            this.edit_from_designation = this.allData[index].current_designation.designation_name+'-('+this.allData[index].current_designation.department.department_name+')-('+this.allData[index].current_designation.level.level_name+')';
-			this.edit_from_unit = (this.allData[index].current_unit)?this.allData[index].current_unit.unit_name:'';
-			this.edit_from_branch = (this.allData[index].current_branch)?this.allData[index].current_branch.branch_name:'';
-			this.edit_from_supervisor = (this.allData[index].current_supervisor)?this.allData[index].current_supervisor.first_name:'';
+            this.edit_from_designation = this.allData[index].prev_designation.designation_name+'-('+this.allData[index].prev_designation.department.department_name+')-('+this.allData[index].prev_designation.level.level_name+')';
+			this.edit_from_unit = (this.allData[index].prev_unit)?this.allData[index].prev_unit.unit_name:'';
+			this.edit_from_branch = (this.allData[index].prev_branch)?this.allData[index].prev_branch.branch_name:'';
+			this.edit_from_supervisor = (this.allData[index].prev_supervisor)?this.allData[index].prev_supervisor.first_name:'';
 			this.edit_effective_date = this.allData[index].transfer_effective_date;
 			this.edit_remarks = this.allData[index].remarks;
 
-            this.edit_to_designation_id = this.allData[index].current_designation.id;
+            // this.edit_to_designation_id = this.allData[index].current_designation.id;
+            // this.edit_to_designation_id = this.allData[index].current_designation.id;
+            
 
             axios.get('/promotion/getSingelUser/'+userId).then(response => {
                 this.edit_designation_select2 = response.data.to_designation;

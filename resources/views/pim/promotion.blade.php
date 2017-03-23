@@ -300,7 +300,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="edit_from_designation_id" class="col-md-3 control-label">Current Designation:</label>
+                        <label for="edit_from_designation_id" class="col-md-3 control-label">Previous Designation:</label>
                         <div class="col-md-9">
                             <input readonly="readonly" class="form-control input-sm" v-model="edit_from_designation" type="text">
 
@@ -332,7 +332,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="edit_from_unit_id" class="col-md-3 control-label">Current Unit:</label>
+                        <label for="edit_from_unit_id" class="col-md-3 control-label">Previous Unit:</label>
                         <div class="col-md-9">
                             <input readonly="readonly" class="form-control input-sm" v-model="edit_from_unit" type="text">
 
@@ -354,7 +354,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="edit_from_branch_id" class="col-md-3 control-label">Current Branch:</label>
+                        <label for="edit_from_branch_id" class="col-md-3 control-label">Previous Branch:</label>
                         <div class="col-md-9">
                             <input readonly="readonly" class="form-control input-sm" v-model="edit_from_branch" type="text">
 
@@ -377,7 +377,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="edit_from_supervisor_id" class="col-md-3 control-label">Current Supervisor:</label>
+                        <label for="edit_from_supervisor_id" class="col-md-3 control-label">Previous Supervisor:</label>
                         <div class="col-md-9">
                             <input readonly="readonly" class="form-control input-sm" v-model="edit_from_supervisor" type="text">
 

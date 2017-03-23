@@ -27,8 +27,9 @@ class LevelController extends Controller
     public function index(){
 
     	$data['title'] = "Employee Levels-HRMS";
-    	$data['levels'] = Level::with('salaryInfo')
-                        ->where('status',1)->orderBy('id','DESC')->get();
+    	$data['levels'] = Level::with('salaryInfo','parent')
+                        ->where('status',1)
+                        ->orderBy('id','DESC')->get();
 
         return view('pim.level.levels', $data);
     }
@@ -38,7 +39,7 @@ class LevelController extends Controller
     	$data['title'] = "Employee Levels Add-HRMS";
     	$data['info'] = "";
         $data['salary_info'] = BasicSalaryInfo::all();
-        //$data['selected_info_id'] = array();
+        $data['parents'] = Level::where('status',1)->get();
 
         return view('pim.level.add', $data);
     }
@@ -47,8 +48,21 @@ class LevelController extends Controller
 
         $this->validate($request, [
             'name' => 'required',
-            'salary_amount' => 'required'
+            'salary_amount' => 'required',
+            'chk_parent' => 'nullable',
+            'parent_id' => 'required_if:chk_parent,1',
+        ],
+        [
+            'parent_id.required_if'     => 'The parent field is required if level have parent.',
         ]);
+
+        if($request->chk_parent == 1){
+
+            $parent_id = $request->parent_id;
+        }
+        else{
+            $parent_id = 0;
+        }
 
         $percent = $request->salryInfoPercent;
         $infoId = $request->salryInfoId;
@@ -58,13 +72,13 @@ class LevelController extends Controller
         $status = $request->status;
 
         $length = count($infoId);
-
     	
         DB::beginTransaction();
 
         try {
     		$save = new Level;
-    		$save->level_name = $name;
+            $save->level_name = $name;
+    		$save->parent_id = $parent_id;
             $save->level_salary_amount =  $salary_amount;
     		$save->description = $description;
     		$save->status = $status;
@@ -102,8 +116,9 @@ class LevelController extends Controller
     public function edit($id){
 
     	$data['title'] = "Edit Employee Levels-HRMS";
-    	$data['info'] = Level::with('salaryInfo')->find($id);
+    	$data['info'] = Level::with('salaryInfo','parent')->find($id);
         $data['salary_info'] = BasicSalaryInfo::all();
+        $data['parents'] = Level::where('status',1)->get();
 
         return view('pim.level.add', $data);
     }
@@ -111,9 +126,22 @@ class LevelController extends Controller
     public function update(Request $request){
 
     	$this->validate($request, [
-		    'name' => 'required',
-            'salary_amount' => 'required'
-		]);
+            'name' => 'required',
+            'salary_amount' => 'required',
+            'chk_parent' => 'nullable',
+            'parent_id' => 'required_if:chk_parent,1',
+        ],
+        [
+            'parent_id.required_if'     => 'The parent field is required if level have parent.',
+        ]);
+
+        if($request->chk_parent == 1){
+
+            $parent_id = $request->parent_id;
+        }
+        else{
+            $parent_id = 0;
+        }
 
         $id = $request->id;
         $percent = $request->salryInfoPercent;
@@ -130,6 +158,7 @@ class LevelController extends Controller
         try {
             $save = Level::find($id);
             $save->level_name = $name;
+            $save->parent_id = $parent_id;
             $save->level_salary_amount =  $salary_amount;
             $save->description = $description;
             $save->status = $status;
