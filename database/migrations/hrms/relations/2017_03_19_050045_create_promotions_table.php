@@ -35,7 +35,7 @@ class CreatePromotionsTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
 
-            $table->foreign('form_branch_id')->references('id')->on('branches')->onDelete('restrict');
+            $table->foreign('from_branch_id')->references('id')->on('branches')->onDelete('restrict');
             $table->foreign('to_branch_id')->references('id')->on('branches')->onDelete('restrict');
 
             $table->foreign('from_designation_id')->references('id')->on('designations')->onDelete('restrict');
