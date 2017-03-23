@@ -52,6 +52,7 @@ class User extends Authenticatable
         return ucfirst($value);
     }
 
+
     public function getNickNameAttribute($value){
         return ucfirst($value);
     }
@@ -71,6 +72,7 @@ class User extends Authenticatable
         return Carbon::parse($value)->format('d M Y');
     }
 
+
     public function getUpdatedAtAttribute($value){
         return Carbon::parse($value)->format('d M Y');
     }
@@ -78,6 +80,16 @@ class User extends Authenticatable
 
     public function createdBy(){
         return $this->belongsTo('App\Models\User','created_by','id');
+    }
+
+
+    public function updatedBy(){
+        return $this->belongsTo('App\Models\User','updated_by','id');
+    }
+
+
+    public function getJoiningDateFormatAttribute($value){
+        return Carbon::parse($value)->format('M d Y');
     }
 
 

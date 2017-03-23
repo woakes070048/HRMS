@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Promotion extends Model
 {
+
 	protected $fillable = ['user_id','from_supervisor_id','to_supervisor_id','from_branch_id','to_branch_id', 'from_designation_id', 'to_designation_id', 'from_unit_id', 'to_unit_id', 'transfer_effective_date', 'promotion_type', 'promotion_status', 'remarks', 'created_by', 'updated_by'];
 
 	public function user(){

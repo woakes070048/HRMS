@@ -26,7 +26,7 @@ Vue.component('select2', {
  });
 
 
-// $(document).ready(function(){
+$(document).ready(function(){
 
 // $('body').LoadingOverlay("hide");
 
@@ -47,6 +47,7 @@ var employee = new Vue({
         branches:[],
         designation_id:0,
         designations: [],
+        unit_id:0,
         units: [],
         supervisor_id:0,
         supervisors: [],
@@ -57,7 +58,7 @@ var employee = new Vue({
         permanentDistricts: [],
         policeStations: [],
         permanentPoliceStations: [],
-
+        
         blood_group : [],
         religions : [],
         personals: [],
@@ -580,7 +581,7 @@ var employee = new Vue({
 
 
         addLanguage(id){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             var formData = $('#'+id).serialize();
             axios.post('/add-language',formData)
                 .then((response) => {
@@ -632,7 +633,7 @@ var employee = new Vue({
 
 
         addEmployeeBasicInfo(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
 
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -670,7 +671,7 @@ var employee = new Vue({
 
         addPersonalInfo(e){
             // var form = document.querySelector("#"+id);
-             $('#employee > .panel > .panel-body').LoadingOverlay("show");
+             $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
             this.submit_button = null;
@@ -706,7 +707,7 @@ var employee = new Vue({
 
 
         addNewEducation(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var form = document.querySelector("#"+id);
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -747,7 +748,7 @@ var employee = new Vue({
 
 
         addNewExperience(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -787,7 +788,7 @@ var employee = new Vue({
 
 
         addSalary(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -839,7 +840,7 @@ var employee = new Vue({
 
 
         addNomineeInfo(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
             this.submit_button = null;
@@ -876,7 +877,7 @@ var employee = new Vue({
 
 
         addNewTraining(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -916,7 +917,7 @@ var employee = new Vue({
 
 
         addNewReference(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -956,7 +957,7 @@ var employee = new Vue({
 
 
         addNewChildren(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -995,7 +996,7 @@ var employee = new Vue({
 
 
         addNewLanguage(e){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
 
@@ -1003,7 +1004,7 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
-                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                $('#employee').LoadingOverlay("hide");
                 var data = response.data;
                 this.errors = [];
                 jQuery(".mfp-close").trigger("click");
@@ -1011,7 +1012,7 @@ var employee = new Vue({
                 this.showMessage(data);
             })
             .catch(error => {
-                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                $('#employee').LoadingOverlay("hide");
                 console.log(error);
                 if(error.response.status == 500 || error.response.data.status == 'danger'){
                     var error = error.response.data;
@@ -1029,17 +1030,17 @@ var employee = new Vue({
             if(ck == false){
                 return false;
             }
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $('#employee').LoadingOverlay("show");
 
             axios.delete('/employee/delete/'+id+'/'+tab)
                 .then((response) => {
-                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                $('#employee').LoadingOverlay("hide");
                 var data = response.data;
                 this.showMessage(data);
                 this.getTabData();
             })
             .catch(error => {
-                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                $('#employee').LoadingOverlay("hide");
                 console.log(error);
                 if(error.response.status == 500 || error.response.data.status == 'danger'){
                     var error = error.response.data;
@@ -1069,9 +1070,9 @@ var employee = new Vue({
 
 
         getDataByTabAndId(data_tab,data_id,form_id){
-            $('#employee > .panel > .panel-body').LoadingOverlay("show");
+            $(form_id).LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             axios.get('/employee/'+add_edit+'/tab/'+data_tab+'/'+data_id).then(response => {
-                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                $(form_id).LoadingOverlay("hide");
                 if(data_tab == 'education'){
                     this.singleEducation = response.data;
                 }
@@ -1104,7 +1105,7 @@ var employee = new Vue({
 
 
 
-// });
+});
 
 
 

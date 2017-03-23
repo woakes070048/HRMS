@@ -266,7 +266,7 @@
             addclass: 'stack_top_right',
             type: '{{$msg}}',
             width: '290px',
-            delay: 1500
+            delay: 2000
         });
     </script>
 @endif
