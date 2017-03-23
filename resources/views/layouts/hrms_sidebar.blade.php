@@ -7,6 +7,12 @@
         <!-- Start: Sidebar Menu -->
         <ul class="nav sidebar-menu">
             <li>
+                <a href="{{url('/')}}">
+                  <span class="glyphicon glyphicon-home"></span>
+                  <span class="sidebar-title">Dashboard</span>
+                </a>
+            </li>
+            <li>
                 <a class="accordion-toggle" href="#">
                     <span class="glyphicons glyphicons-group" aria-hidden="true"></span>
                     <span class="sidebar-title">Employee Management</span>
@@ -36,6 +42,16 @@
                     <li>
                         <a href="{{url('branch/index')}}">
                             <span class="fa fa-level-up"></span> Branch
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{url('bank/index')}}">
+                            <span class="fa fa-level-up"></span> Bank
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{url('promotion/index')}}">
+                            <span class="fa fa-level-up"></span> Transfer / Promotion
                         </a>
                     </li>
                     <li>

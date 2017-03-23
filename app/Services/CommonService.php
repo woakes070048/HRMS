@@ -23,6 +23,9 @@ use App\Models\Religion;
 
 use App\Models\Setting;
 
+use Auth;
+use App\Models\Setup\Config;
+use Illuminate\Support\Facades\Artisan;
 
 trait CommonService
 {
@@ -36,11 +39,13 @@ trait CommonService
         }
     }
 
-
     public function getEmployeeType(){
         return EmployeeType::where('status',1)->get();
     }
 
+    public function getEmployee(){
+        return User::where('status',1)->get();
+    }
 
     public function getBranches(){
         return Branch::where('branch_status',1)->get();
@@ -71,6 +76,89 @@ trait CommonService
         $units =  Designation::with('department.units')->orderBy('id','desc')->find($id);
         return $units->department->units;
     }
+
+
+    public function levelRecursive($parentRecursive,$data){
+        if($parentRecursive){
+            array_push($data,$parentRecursive->id);
+            return $this->levelRecursive($parentRecursive->parentRecursive,$data);
+        }
+        return $data;
+    }
+
+
+    public function getSupervisorByDesignationId($id){
+        $designations = Designation::with('level.parentRecursive')->find($id);
+        $data[] = $designations->level->id;
+        $dataRecursive = $this->levelRecursive($designations->level->parentRecursive,$data);
+        // $supervisor = Designation::with('user')->whereIn('level_id',$dataRecursive)->get();
+        $supervisor = User::select('users.*',\DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
+                        ->join('designations','designations.id','=','users.designation_id')
+                        ->join('levels','levels.id','=','designations.level_id')
+                        ->whereIn('designations.level_id',$dataRecursive)->get(); 
+        return $supervisor;              
+        // dd($supervisor);
+    }
+
+
+    // public function getSupervisorByDesignationId($id){
+        // $designations = Designation::with([
+        //     'level.designation.user' => function($query){$query->where('users.id','!=',Auth::guard('hrms')->user()->id);},
+        //     'level.parent.designation.user' => function($query){$query->where('users.id','!=',Auth::guard('hrms')->user()->id);}
+        //     ])->find($id);
+
+        // $designations = Designation::with('level.designation.user','level.parent.designation.user')->find($id);
+
+        // $designations = Designation::with('level.parentRecursive')->find($id);
+        // dd($designations);
+        // dd($designations->level->id);
+
+        // $data = [];
+        // $data[] = $designations->level->id;
+        // dd($data);
+        // $dataRecursive = $this->levelRecursive($designations->level->parentRecursive,$data);
+
+        // dd($dataRecursive);
+
+        // foreach($designations->level->designation as $dinfo){
+        //     $level_name = $dinfo->level->level_name;
+        //     $department_name = $dinfo->department->department_name;
+
+        //     foreach($dinfo->user as $uinfo){
+        //         $data[] = [
+        //             'designation_name' => $dinfo->designation_name,
+        //             'level_name' => $level_name,
+        //             'department_name' => $department_name,
+        //             'fullname' => $uinfo->fullname,
+        //             'employee_no' => $uinfo->employee_no,
+        //             'user_id' => $uinfo->id,
+        //         ];
+        //     }
+        // }
+
+        // if($designations->level->parent){
+        //     foreach($designations->level->parent->designation as $dinfo){
+        //         $level_name = $dinfo->level->level_name;
+        //         $department_name = $dinfo->department->department_name;
+
+        //         foreach($dinfo->user as $uinfo){
+        //             $data[] = [
+        //                 'designation_name' => $dinfo->designation_name,
+        //                 'level_name' => $level_name,
+        //                 'department_name' => $department_name,
+        //                 'fullname' => $uinfo->fullname,
+        //                 'employee_no' => $uinfo->employee_no,
+        //                 'user_id' => $uinfo->id,
+        //             ];
+        //         }
+        //     }
+        // }
+
+        // return response()->json($data);
+
+        // dd($data);
+        // dd($designations);
+    // }
 
 
 	public function getDivisions(){
@@ -141,9 +229,22 @@ trait CommonService
     public function getLanguage(){
         return Language::where('status',1)->get();
     }
+    
 
     public function getReligions(){
         return Religion::all();
+    }
+
+
+    public function getSisterConcern($config_id){
+        Artisan::call('db:connect');
+        return Config::find($config_id)->sister()->get();
+    }
+
+
+    public function getMotherConcern($config_id){
+        Artisan::call('db:connect');
+        return Config::find($config_id)->mother()->get();
     }
 
 

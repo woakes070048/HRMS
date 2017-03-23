@@ -9,15 +9,12 @@
     <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
 
     <style type="text/css">
-        .odd{
-            background: #f5f5f5;
-            padding: 20px 15px 0px;
-            margin: -20px -15px -0px;
-        }
-        .even{
-            padding: 10px 15px 0px;
-            margin: 0px -15px;
-        }
+        .odd{background: #f5f5f5;padding: 20px 15px 0px;margin: -20px -15px -0px;}
+        .even{padding: 10px 15px 0px;margin: 0px -15px;}
+
+        .select2-container .select2-selection--single{height:32px!important}
+        .select2-container--default .select2-selection--single .select2-selection__rendered{line-height:30px!important}
+        .select2-container--default .select2-selection--single .select2-selection__arrow{height:30px!important}
     </style>
 @endsection
 
@@ -114,9 +111,9 @@
                                                                 class="text-danger">*</span></label>
                                                    <select2 class="form-control input-sm" id="designation_id"
                                                         name="designation_id" v-model="designation_id = basics.designation_id" disabled="disabled">
-                                                    <option value="">...Select Employee Designation...</option>
-                                                    <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'"></option>
-                                                </select2>
+                                                        <option value="">...Select Employee Designation...</option>
+                                                        <option v-for="(designation,index) in designations" :value="designation.id" v-text="designation.designation_name+' - ('+designation.level.level_name+' ) - ( '+designation.department.department_name+' )'"></option>
+                                                    </select2>
                                                 </div>
                                             </div>
 
@@ -132,6 +129,15 @@
                                         </div>
 
                                         <div class="row">
+
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="control-label">Employee Supervisor :</label>
+                                                    <input type="text" :value="(basics.supervisor)?basics.supervisor.first_name+' '+basics.supervisor.last_name+' ( '+basics.supervisor.employee_no+' )':'no supervisor'" disabled="disabled"
+                                                           class="form-control input-sm">
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label class="control-label">First Name : <span class="text-danger">*</span></label>
@@ -140,7 +146,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label class="control-label">Middle Name : </label>
                                                     <input type="text" :value="basics.middle_name" disabled="disabled"
@@ -148,7 +154,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label class="control-label">Last Name : <span
                                                                 class="text-danger">*</span></label>
@@ -158,7 +164,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label class="control-label">Nick Name</label>
                                                     <input type="text" name="nick_name"
@@ -395,11 +401,10 @@
                                             <div class="form-group" :class="{'has-error': errors.unit_id}">
                                                 <label class="control-label">Employee Unit : <span
                                                             class="text-danger">*</span></label>
-                                                <select class="form-control input-sm" id="unit_id"
-                                                        name="unit_id">
+                                                <select2 class="form-control input-sm" id="unit_id" name="unit_id">
                                                     <option value="">...Select Unit...</option>
                                                     <option v-for="(unit,index) in units" :value="unit.id" v-text="unit.unit_name"></option>
-                                                </select>
+                                                </select2>
                                                 <span v-if="errors.unit_id" class="help-block" v-text="errors.unit_id[0]"></span>
                                             </div>
                                         </div>
@@ -417,6 +422,19 @@
                                     </div>
 
                                     <div class="row">
+
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.supervisor_id}">
+                                                <label class="control-label">Employee Supervisor : </label>
+                                                <select2 class="form-control select-sm input-sm" id="supervisor_id"
+                                                        name="supervisor_id">
+                                                    <option value="">...Select Employee Supervisor...</option>
+                                                    <option v-for="(supervisor,index) in supervisors" :value="supervisor.id" v-text="supervisor.fullname+' - ('+supervisor.designation_name+' ) - ( '+supervisor.level_name+' )'"></option>
+                                                </select2>
+                                                <span v-if="errors.supervisor_id" class="help-block" v-text="errors.supervisor_id[0]"></span>
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.first_name}">
                                                 <label class="control-label">First Name : <span
@@ -427,7 +445,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="control-label">Middle Name : </label>
                                                 <input type="text" name="middle_name"
@@ -435,7 +453,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group" :class="{'has-error': errors.last_name}">
                                                 <label class="control-label">Last Name : <span
                                                             class="text-danger">*</span></label>
@@ -445,7 +463,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="control-label">Nick Name</label>
                                                 <input type="text" name="nick_name"
@@ -498,7 +516,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-2 pt50">
+                                        <div class="col-md-2 pt50" :class="{'has-error': errors.image}">
                                             <label class="control-label">Employee Photo :</label>
                                             <div class="fileupload-new fileupload admin-form" data-provides="fileupload">
                                                 <div class="fileupload-preview thumbnail mb15">
@@ -510,6 +528,7 @@
                                                     <input type="file" name="image">
                                                 </span>
                                             </div>
+                                            <span v-if="errors.image" class="help-block" v-text="errors.image[0]"></span>
                                         </div>
 
 
@@ -1057,10 +1076,10 @@
                                                 <label class="control-label">Marital Status : <span class="text-danger">*</span></label>
                                                 <select name="marital_status" class="form-control input-sm">
                                                     <option value="">...Select Marital Status...</option>
-                                                    <option>Single</option>
-                                                    <option>Married</option>
-                                                    <option>Separated</option>
-                                                    <option>Other</option>
+                                                    <option value="single"> Single</option>
+                                                    <option value="married"> Married</option>
+                                                    <option value="separated"> Separated</option>
+                                                    <option value="other"> Other</option>
                                                 </select>
                                                 <span v-if="errors.marital_status" class="text-danger" v-text="errors.marital_status[0]"></span>
                                                <!--  <div class="radio-custom mb5">
@@ -1650,7 +1669,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.basic_salary}">
                                         <label class="control-label">Basic Salary Amount: <span class="text-danger">*</span></label>
-                                        <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount">
+                                        <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount" v-model="basic_salary">
                                         <span v-if="errors.basic_salary" class="help-block" v-text="errors.basic_salary[0]"></span>
                                     </div>
                                 </div>
@@ -1658,7 +1677,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
                                         <label class="control-label">Salary in Cache:</label>
-                                        <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache">
+                                        <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache" v-model="salary_in_cache">
                                         <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                     </div>
                                 </div>
@@ -1698,10 +1717,15 @@
                                 </div>
 
                                 <!-- add other allowance -->
-                                <div class="col-md-3 mb15" v-for="allowance in otherAllowance">
+                                <div class="col-md-3 mb15" v-for="(allowance, index) in otherAllowance">
                                     <div class="checkbox-custom mb5 pull-left">
                                         
-                                        <input :id="allowance.id" type="checkbox" :name="'salary_info['+allowance.id+'][id]'" :value="allowance.id" checked="checked">
+                                        <input  :id="allowance.id" 
+                                                type="checkbox" 
+                                                :name="'salary_info['+allowance.id+'][id]'" 
+                                                :value="allowance.id" 
+                                                checked="checked"
+                                        >
 
                                         <label :for="allowance.id" v-text="(allowance.salary_info_amount_status==0)?allowance.salary_info_name+' (%) ':allowance.salary_info_name+' ($) '"></label>
                                     </div>

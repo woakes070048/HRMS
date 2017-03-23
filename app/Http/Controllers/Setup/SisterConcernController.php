@@ -34,7 +34,8 @@ class SisterConcernController extends Controller
 
     public function create(AddSisterConcern $request){
 
-	    $database_name = $this->makeDatabaseName($request->company_name);
+        $ConfigController = new ConfigController();
+	    $database_name = $ConfigController->makeDatabaseName($request->company_name);
 
         $company_name          = $request->company_name;
         $company_code          = $request->company_code;
@@ -76,14 +77,22 @@ class SisterConcernController extends Controller
             Artisan::call("db:seed");
 
 	    	User::create([
-	    			'employee_no'    => '0-00', 
-                    'designation_id' => 1,   
-                    'first_name'     => $first_name, 
+                    'employee_no'    => $config->company_code.'-0000',
+                    'employee_type_id' => 1,
+                    'branch_id' => 1,
+                    'designation_id' => 1,
+                    'unit_id' => 1,
+                    'first_name'     => $first_name,
                     'last_name'      => $last_name,    
                     'email'          => $email, 
                     'password'       => bcrypt($password),  
                     'mobile_number'  => $mobile_number,
-	    		]);
+                ]);
+
+            Setting::insert([
+                    ['field_name' => "company_name",'field_value' => $company_name],
+                    ['field_name' => "company_code",'field_value' => empty($company_code)?"00":$company_code]
+                ]);
 
 	    	DB::commit();
 
@@ -103,13 +112,4 @@ class SisterConcernController extends Controller
     	return back();
     }
 
-    private function makeDatabaseName($database){
-        if(stristr($database,' ')){
-            $database = str_replace(' ', '_', $database);
-            if(stristr($database,'-')){
-                $database = str_replace(' ', '_', $database);
-            }
-        }
-        return $database;
-    }
 }

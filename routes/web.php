@@ -24,27 +24,15 @@ Route::group(['prefix'=>'signup','namespace'=>'Setup\Auth'], function(){
 
 
 /***************** ...Setup Dashboard Routes... ******************/
-Route::group(['prefix'=>'setup','middleware'=>'auth:setup'], function(){
+Route::group(['prefix'=>'setup','namespace'=>'Setup'], function(){
 
-	Route::get('/', function(){
-
-		if(Auth::user()->user_type == 1){
-			return redirect('setup/admin/home');
-		}
-		elseif(Auth::user()->user_type == 2){
-			return redirect('setup/user/home');
-		}
-	});
-});
-
-Route::group(['prefix'=>'setup/admin','namespace'=>'Setup','middleware'=>'auth:setup'], function(){
-
-	Route::get('/home','DashboardController@index');
-	Route::get('/details/{id}','UserDetailsController@index');
+    Route::get('/','DashboardController@index');
+    Route::get('/home','DashboardController@index');
+    Route::get('/details/{id}','UserDetailsController@index');
 });
 
 /*************** ... Setup Admin Sister Concern Routes... **************/
-Route::group(['prefix'=>'setup/admin/concern','namespace'=>'Setup','middleware'=>'auth:setup'], function(){
+Route::group(['prefix'=>'setup/concern','namespace'=>'Setup'], function(){
 	
 	Route::get('/add','SisterConcernController@add');
 	Route::post('/create','SisterConcernController@create');
@@ -57,18 +45,8 @@ Route::group(['prefix'=>'config','namespace'=>'Setup'], function(){
 	Route::post('/get_package_info', 'ConfigController@get_package_info');
 });
 
-Route::group(['prefix'=>'setup/user','namespace'=>'Setup\User','middleware'=>'auth:setup'], function(){
-
-	Route::get('/home','UserSetupDashboardController@index');
-	Route::get('concern/add','UserSisterConcernController@add');
-	Route::post('concern/create','UserSisterConcernController@create');
-});
-
 
 /******************************* ..End Setup System Route.. **********************************/
-
-
-
 
 
 
@@ -88,6 +66,11 @@ Route::group(['prefix' => '/','namespace'=>'Auth'], function(){
     Route::post('password/reset', 'ResetPasswordController@reset');
 });
 
+
+/******************* ...HRMS Switch Account... ************************/
+Route::group(['prefix' => '/switch','namespace' => 'Auth'],function(){
+    Route::post('/account/{database_name}/{config_id}','SwitchAccountController@switchAccount');
+});
 
 
 /***************** ...HRMS Dashboard Routes... ******************/
@@ -109,6 +92,7 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::post('/edit/{userId}','EmployeeController@editEmployee');
 
     Route::get('/delete/{id}','EmployeeController@deleteEmployee');
+    Route::post('/status-change','EmployeeController@statusChange');
 
     Route::post('/add/{userId}/personal/','EmployeeController@addPersonalInfo');
     Route::post('/edit/{userId}/personal','EmployeeController@editPersonalInfo');
@@ -142,12 +126,12 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
 
     Route::post('/add/{userId}/language/','EmployeeController@addEditLanguage');
     Route::post('/edit/{userId}/language/','EmployeeController@addEditLanguage');
-    Route::post('/delete/{id}/language/','EmployeeController@deleteEmployeeData');
+    Route::delete('/delete/{id}/language/','EmployeeController@deleteEmployeeData');
 
 });
 
 
-/******************** ...HRMS Emp Level Routes... **************/
+/******************** ...HRMS Employee Level Routes... **************/
 Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::get('/index','LevelController@index');
     Route::get('/add','LevelController@add');
@@ -159,7 +143,7 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
 });
 
 
-/******************** ...HRMS Emp Department Routes... **************/
+/******************** ...HRMS Employee Department Routes... **************/
 Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
     Route::get('/index','DepartmentController@index');
     Route::post('/add','DepartmentController@create');
@@ -169,7 +153,7 @@ Route::group(['prefix' => '/department', 'namespace' => 'Pim'],function (){
 });
 
 
-/******************** ...HRMS Emp Designations Routes... **************/
+/******************** ...HRMS Employee Designations Routes... **************/
 Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
     Route::get('/index','DesignationController@index');
     Route::post('/add','DesignationController@create');
@@ -179,7 +163,7 @@ Route::group(['prefix' => '/designation', 'namespace' => 'Pim'],function (){
 });
 
 
-/******************** ...HRMS Emp SalaryInfo Routes... **************/
+/******************** ...HRMS Employee SalaryInfo Routes... **************/
 Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
     Route::get('/index','SalaryInfoController@index');
     Route::get('/getAllInfo','SalaryInfoController@getAllInfo');
@@ -189,7 +173,8 @@ Route::group(['prefix' => 'salaryInfo', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}/{indexId}','SalaryInfoController@delete');
 });
 
-/******************** ...HRMS Emp Units Routes... **************/
+
+/******************** ...HRMS Employee Units Routes... **************/
 Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
     Route::get('/index','UnitController@index');
     Route::get('/getUnits','UnitController@getUnits');
@@ -198,15 +183,17 @@ Route::group(['prefix' => 'unit', 'namespace' => 'Pim'],function (){
     Route::get('/delete/{id}/{indexId}','UnitController@delete');
 });
 
-/******************** ...HRMS Emp Settings Routes... **************/
-Route::group(['prefix' => 'settings', 'namespace' => 'Pim'],function (){
+
+/******************** ...HRMS Employee Settings Routes... **************/
+Route::group(['prefix' => 'settings', 'namespace' => 'Setting'],function (){
     Route::get('/index','SettingsController@index');
     Route::get('/getSettings','SettingsController@getSettings');
     Route::post('/add','SettingsController@create');
     Route::post('/edit','SettingsController@update');
 });
 
-/******************** ...HRMS Emp Units Routes... **************/
+
+/******************** ...HRMS Employee Branch Routes... **************/
 Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
     Route::get('/index','BranchController@index');
     Route::get('/getBranch','BranchController@getBranch');
@@ -216,16 +203,41 @@ Route::group(['prefix' => 'branch', 'namespace' => 'Pim'],function (){
 });
 
 
+/******************** ...HRMS Employee Bank Routes... **************/
+Route::group(['prefix' => 'bank', 'namespace' => 'Pim'],function (){
+    Route::get('/index','BankController@index');
+    Route::post('/add','BankController@create');
+    Route::get('/edit/{id}','BankController@edit');
+    Route::post('/edit','BankController@update');
+    Route::delete('/delete/{id}','BankController@delete');
+});
+
+
+/******************** ...HRMS Employee promotion/transfer Routes... **************/
+Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
+    Route::get('/index','PromotionController@index');
+    Route::get('/getPromotionsData','PromotionController@getPromotionsData');
+    Route::get('/getSingelUser/{id}','PromotionController@getSingelUser');
+    Route::post('/add','PromotionController@create');
+    // Route::get('/edit/{id}','PromotionController@edit');
+    // Route::post('/edit','PromotionController@update');
+    // Route::post('/edit/info','PromotionController@update_info');
+    // Route::get('/delete/{id}','PromotionController@delete');
+});
+
+
 
 /******************** ...HRMS Common Function Routes... **************/
 Route::group(['prefix' => '/'], function(){
     Route::get('get-employee-type','CommonController@getEmployeeType');
+    Route::get('get-employee','CommonController@getEmployee');
     Route::get('get-departments','CommonController@getDepartments');
     Route::get('get-levels','CommonController@getLevels');
     Route::get('get-branches','CommonController@getBranches');
     Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
     Route::get('get-unit-by-designation-id/{id}','CommonController@getUnitByDesignationId');
+    Route::get('get-supervisor-by-designation-id/{id}','CommonController@getSupervisorByDesignationId');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
     Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');

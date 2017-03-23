@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Pim;
 
 
-use App\Models\EmployeeSalaryAccount;
 use App\Models\Setup\UserEmails;
 
 use App\Models\User;
@@ -17,8 +16,10 @@ use App\Models\EmployeeTraining;
 use App\Models\EmployeeReference;
 use App\Models\EmployeeChildren;
 use App\Models\EmployeeLanguage;
+use App\Models\EmployeeSalaryAccount;
 
 use App\Services\CommonService;
+use App\Jobs\UserEmailUpdate;
 
 use App\Http\Requests\EmployeeBasicInfoRequest;
 use App\Http\Requests\EmployeePersonalInfoRequest;
@@ -32,12 +33,13 @@ use App\Http\Requests\EmployeeChildrenRequest;
 use App\Http\Requests\EmployeeLanguageRequest;
 
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
+
+use App\Http\Controllers\Controller;
 
 class EmployeeController extends Controller
 {
@@ -70,7 +72,8 @@ class EmployeeController extends Controller
      * @return $this
      */
     public function index(){
-        $data['users'] = User::with('designation','createdBy')->orderBy('id','desc')->get();
+        $data['title'] = 'Employee List';
+        $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['sidevar_hide'] = 1;
         return view('pim.employee.index')->with($data);
     }
@@ -732,7 +735,7 @@ class EmployeeController extends Controller
 
 
 
-/********************************** Edit Employee Information Functions *************************************************/
+/********************** Edit Employee Information Functions ********************************/
 
     public function showEmployeeEditForm(Request $request){
         $data['sidevar_hide'] = 1;
@@ -791,11 +794,14 @@ class EmployeeController extends Controller
     public function editEmployee(EmployeeBasicInfoRequest $request){
 
         try{
-            Artisan::call('db:connect');
+            if($request->old_email != $request->email){
+                Artisan::call('db:connect');
+                UserEmails::where('email',$request->old_email)->where('config_id',Session('config_id'))->update(['email' => $request->email]);
 
-            UserEmails::where('email',$request->email)->where('config_id',Session('config_id'))->update([
-                'email' => $request->email,
-            ]);
+                dispatch(new UserEmailUpdate($request->all()));
+            }
+
+            $request->offsetUnset('old_email');
 
             Artisan::call("db:connect", ['database' => Session('database')]);
             DB::beginTransaction();
@@ -1071,6 +1077,31 @@ class EmployeeController extends Controller
 
     public function deleteEmployee($employee_id){
         return redirect()->back();
+    }
+
+
+    public function statusChange(Request $request){
+        try{
+            $status = ($request->status == 'Active')?1:0;
+            $user = User::find($request->id);
+            $user->status = $status;
+            $user->save();
+
+            $data['status'] = 'success';
+            $data['statusType'] = 'OK';
+            $data['code'] = 200;
+            $data['title'] = 'Success!';
+            $data['message'] = "<strong class='text-info'>".$user->first_name.' '.$user->last_name.'</strong> Account Successfully '.$request->status;
+            return response()->json($data,200);
+        }catch(\Exception $e){
+            $data['status'] = 'danger';
+            $data['statusType'] = 'NotOk';
+            $data['code'] = 500;
+            $data['type'] = null;
+            $data['title'] = 'Error!';
+            $data['message'] = "<strong class='text-info'>".$user->first_name.' '.$user->last_name.'</strong> Account Not '.$request->status;
+            return response()->json($data,500);
+        }
     }
 
 

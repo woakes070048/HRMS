@@ -6,7 +6,7 @@ use App\Models\Setup\User as SetupUser;
 use App\Models\Setup\Config;
 use App\Models\Setup\Package;
 use App\Models\Setup\Payment;
-
+use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -17,7 +17,9 @@ class UserDetailsController extends Controller
     }
 
 
-    public function index($id){
+    public function index($id=null){
+
+        $id=($id)?$id:Auth::user('setup')->id;
 
     	$data['title'] = "User Details-HRMS";
     	$data['config_info'] = Config::where('user_id',$id)->first();

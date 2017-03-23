@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CommonService;
+
 use Auth;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    use CommonService;
 
 	protected $auth;
 
@@ -22,6 +25,24 @@ class DashboardController extends Controller
 
 
     public function index(){
-    	return view('dashboard');
+        if(Session('config_id')){
+            $data['sisterConcern'] = $this->getSisterConcern(Session('config_id'));
+            $data['motherConcern'] = $this->getMotherConcern(Session('config_id'));
+   
+            Session([
+                'sisterConcern' => $data['sisterConcern']->toArray(),
+                'motherConcern' => $data['motherConcern']->toArray()
+                ]);
+            // dd($data['sisterConcern']->toArray());
+            // dd($data['motherConcern']->toArray());
+
+        }else{
+            $data['sisterConcern'] = [];
+            $data['motherConcern'] = [];
+        }
+    	return view('dashboard')->with($data);
     }
+
+
+
 }

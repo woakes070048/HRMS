@@ -129,6 +129,7 @@
 <script src="{{asset('js/hrms.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
+<script src="{{asset('js/jquery-overlay.min.js')}}"></script>
 
 <!-- PNotify -->
 <script src="{{asset('vendor/plugins/pnotify/pnotify.js')}}"></script>
@@ -160,7 +161,9 @@
 <script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
 
 
+
 <script type="text/javascript">
+
     jQuery(document).ready(function() {
         "use strict";
         // Init Theme Core
@@ -169,6 +172,14 @@
         Demo.init();
 
         $('#datatable1').dataTable({
+            "paging":   true,
+            "searching": true,
+            "info": true,
+            "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
+
+        });
+
+        $('#datatable2').dataTable({
             "paging":   false,
             "searching": true,
             "info": false,
@@ -176,14 +187,14 @@
 
         });
 
-        $('#datatable2').dataTable({
+        $('#datatable3').dataTable({
             "sDom": 't<"dt-panelfooter clearfix"ip>',
             "oTableTools": {
                 "sSwfPath": "vendor/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf"
             }
         });
 
-        $('#datatable3').dataTable({
+        $('#datatable4').dataTable({
             "aoColumnDefs": [{
                 'bSortable': false,
                 'aTargets': [-1]
@@ -255,7 +266,7 @@
             addclass: 'stack_top_right',
             type: '{{$msg}}',
             width: '290px',
-            delay: 1500
+            delay: 2000
         });
     </script>
 @endif

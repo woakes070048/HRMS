@@ -1,7 +1,8 @@
 // import Other_Allowance from "./../components/employee/other_allowance.vue";
 // Vue.component('other-allowance', Other_Allowance);
 
-// $(document).ready(function(){
+
+// $('body').LoadingOverlay("show");
 
 Vue.component('select2', {
    props: ['value'],
@@ -25,7 +26,9 @@ Vue.component('select2', {
  });
 
 
+$(document).ready(function(){
 
+// $('body').LoadingOverlay("hide");
 
 var employee = new Vue({
     el : '#employee',
@@ -44,7 +47,10 @@ var employee = new Vue({
         branches:[],
         designation_id:0,
         designations: [],
+        unit_id:0,
         units: [],
+        supervisor_id:0,
+        supervisors: [],
         allUnits:[],
 
         divisions: [],
@@ -52,7 +58,7 @@ var employee = new Vue({
         permanentDistricts: [],
         policeStations: [],
         permanentPoliceStations: [],
-
+        
         blood_group : [],
         religions : [],
         personals: [],
@@ -72,6 +78,8 @@ var employee = new Vue({
         showCgpa: true,
         job_duration: null,
 
+        basic_salary:null,
+        salary_in_cache:null,
         levelSalaryNotinLevels:[],
         levelSalaryInfos: [],
         salaries:[],
@@ -100,11 +108,14 @@ var employee = new Vue({
     },
 
     mounted(){
+        // $('body').LoadingOverlay("hide");
         this.getTabData();
-
         // $('#startDate').datepicker().on('changeDate', () => { this.startDate = $('#startDate').val() });
-
     },
+
+    // computed:{
+
+    // },
 
 
     watch : {
@@ -130,7 +141,10 @@ var employee = new Vue({
         },
 
         designation_id: function(id){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show");
         	this.getUnitByDesignationId(id);
+            this.getSupervisorByDesignationId(id);
+            $('#employee > .panel > .panel-body').LoadingOverlay("hide");
         }
 
     },
@@ -197,16 +211,19 @@ var employee = new Vue({
         },
 
         getTabData(){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show");
 
             this.urlChange(this.tab);
             this.errors = [];
 
             if(this.tab == ''){
+                
                 this.getBranches();
                 this.getEmployeeType();
                 this.getDesignations();
                 this.getDivisions();
 				this.getBasic();
+                
             }
 
             if(this.tab == 'personal'){
@@ -249,6 +266,7 @@ var employee = new Vue({
                 this.getLanguage();
                 this.getLanguages();
             }
+            $('#employee > .panel > .panel-body').LoadingOverlay("hide");
         },
 
 
@@ -399,6 +417,7 @@ var employee = new Vue({
             });
         },
 
+
         getAllUnit(){
              axios.get('/get-units').then(response => {
                 this.allUnits = response.data;
@@ -406,11 +425,20 @@ var employee = new Vue({
             });
         },
 
+
         getUnitByDesignationId(id){
         	// var id = this.designation_id;
              axios.get('/get-unit-by-designation-id/'+id).then(response => {
                 this.units = response.data;
                 console.log(this.units);
+            });
+        },
+
+
+        getSupervisorByDesignationId(id){
+             axios.get('/get-supervisor-by-designation-id/'+id).then(response => {
+                this.supervisors = response.data;
+                console.log(this.supervisors);
             });
         },
 
@@ -553,26 +581,29 @@ var employee = new Vue({
 
 
         addLanguage(id){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             var formData = $('#'+id).serialize();
             axios.post('/add-language',formData)
                 .then((response) => {
                 // console.log(response);
-                var data = response.data;
-            this.errors = [];
-            this.language.push(response.data.data);
-            jQuery(".mfp-close").trigger("click");
-            this.showMessage(data);
-        })
-        .catch(error => {
+                    var data = response.data;
+                this.errors = [];
+                this.language.push(response.data.data);
+                jQuery(".mfp-close").trigger("click");
+                this.showMessage(data);
+                 $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+            })
+            .catch(error => {
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                 $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
@@ -602,6 +633,7 @@ var employee = new Vue({
 
 
         addEmployeeBasicInfo(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
 
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -611,33 +643,35 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
-
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 var data = response.data;
-            this.user_id = data.data.id;
-            this.errors = [];
-            this.basics = data.data;
-            this.showMessage(data);
-            console.log(data);
-            if(data.type){
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
-        })
-        .catch(error => {
-                console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                this.user_id = data.data.id;
+                this.errors = [];
+                this.basics = data.data;
+                this.showMessage(data);
+                console.log(data);
+                if(data.type){
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
+            })
+            .catch(error => {
+                    console.log(error);
+                    $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         addPersonalInfo(e){
             // var form = document.querySelector("#"+id);
+             $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
             this.submit_button = null;
@@ -646,32 +680,34 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
-
+                 $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 var data = response.data;
-            this.errors = [];
-            this.personals = data.data;
-            this.showMessage(data);
+                this.errors = [];
+                this.personals = data.data;
+                this.showMessage(data);
 
-            if(data.type){
-                // this.urlChange(data.type);
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
-        })
-        .catch(error => {
+                if(data.type){
+                    // this.urlChange(data.type);
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
+            })
+            .catch(error => {
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         addNewEducation(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var form = document.querySelector("#"+id);
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -682,34 +718,37 @@ var employee = new Vue({
             axios.post(url,formData)
                 .then((response) => {
                 // console.log(response);
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 var data = response.data;
-            this.errors = [];
+                this.errors = [];
 
-            jQuery(".mfp-close").trigger("click");
-            // console.log(this.educations);
-            this.educations = data.data;
-            this.showMessage(data);
+                jQuery(".mfp-close").trigger("click");
+                // console.log(this.educations);
+                this.educations = data.data;
+                this.showMessage(data);
 
-            if(data.type){
-                // this.urlChange(data.type);
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
-        })
-        .catch(error => {
+                if(data.type){
+                    // this.urlChange(data.type);
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
+            })
+            .catch(error => {
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                 $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         addNewExperience(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -719,34 +758,37 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 // console.log(response.data.data);
                 var data = response.data;
-            this.errors = [];
-            jQuery(".mfp-close").trigger("click");
-            this.experiences = data.data;
-            this.showMessage(data);
+                this.errors = [];
+                jQuery(".mfp-close").trigger("click");
+                this.experiences = data.data;
+                this.showMessage(data);
 
-            if(data.type){
-                // this.urlChange(data.type);
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
+                if(data.type){
+                    // this.urlChange(data.type);
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
 
-        })
-        .catch(error => {
+            })
+            .catch(error => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         addSalary(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -756,30 +798,32 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
+                    $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 // console.log(response);
                 var data = response.data;
-            this.errors = [];
-            this.salaries = data.data;
-            this.otherAllowance = [];
-            this.showMessage(data);
-
-            if(data.type){
-                // this.urlChange(data.type);
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
-
-        })
-        .catch(error => {
                 this.errors = [];
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                this.salaries = data.data;
+                this.otherAllowance = [];
+                this.showMessage(data);
 
-        });
+                if(data.type){
+                    // this.urlChange(data.type);
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
+
+            })
+            .catch(error => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                this.errors = [];
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
+
+            });
         },
 
 
@@ -796,6 +840,7 @@ var employee = new Vue({
 
 
         addNomineeInfo(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
             this.submit_button = null;
@@ -804,6 +849,7 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 var data = response.data;
                 this.errors = [];
                 jQuery(".mfp-close").trigger("click");
@@ -818,7 +864,8 @@ var employee = new Vue({
                 }
             })
             .catch((error)=>{
-                    console.log(error);
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
+                console.log(error);
                 if(error.response.status == 500 || error.response.data.status == 'danger'){
                     var error = error.response.data;
                     this.showMessage(error);
@@ -830,6 +877,7 @@ var employee = new Vue({
 
 
         addNewTraining(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -839,34 +887,37 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 // console.log(response);
                 var data = response.data;
-            this.errors = [];
-            jQuery(".mfp-close").trigger("click");
-            this.trainings = data.data;
-            this.showMessage(data);
+                this.errors = [];
+                jQuery(".mfp-close").trigger("click");
+                this.trainings = data.data;
+                this.showMessage(data);
 
-            if(data.type){
-                // this.urlChange(data.type);
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
+                if(data.type){
+                    // this.urlChange(data.type);
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
 
-        })
-        .catch(error => {
+            })
+            .catch(error => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         addNewReference(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -876,34 +927,37 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 // console.log(response);
                 var data = response.data;
-            this.errors = [];
-            jQuery(".mfp-close").trigger("click");
-            this.references = data.data;
-            this.showMessage(data);
+                this.errors = [];
+                jQuery(".mfp-close").trigger("click");
+                this.references = data.data;
+                this.showMessage(data);
 
-            if(data.type){
-                // this.urlChange(data.type);
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
+                if(data.type){
+                    // this.urlChange(data.type);
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
 
-        })
-        .catch(error => {
+            })
+            .catch(error => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         addNewChildren(e){
+            $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
             formData.append(this.submit_button,this.submit_button);
@@ -913,34 +967,36 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
-
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 var data = response.data;
-            this.errors = [];
-            jQuery(".mfp-close").trigger("click");
-            this.childrens = data.data;
-            this.showMessage(data);
+                this.errors = [];
+                jQuery(".mfp-close").trigger("click");
+                this.childrens = data.data;
+                this.showMessage(data);
 
-            if(data.type){
-                // this.urlChange(data.type);
-                // jQuery("#"+data.type).trigger("click");
-                setTimeout(function(){document.getElementById(data.type).click();},5);
-            }
+                if(data.type){
+                    // this.urlChange(data.type);
+                    // jQuery("#"+data.type).trigger("click");
+                    setTimeout(function(){document.getElementById(data.type).click();},5);
+                }
 
-        })
-        .catch(error => {
+            })
+            .catch(error => {
+                $('#employee > .panel > .panel-body').LoadingOverlay("hide");
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
         addNewLanguage(e){
+            $('#employee').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             // var formData = $('#'+id).serialize();
             var formData = new FormData(e.target);
 
@@ -948,22 +1004,24 @@ var employee = new Vue({
 
             axios.post(url,formData)
                 .then((response) => {
+                $('#employee').LoadingOverlay("hide");
                 var data = response.data;
-            this.errors = [];
-            jQuery(".mfp-close").trigger("click");
-            this.languages = data.data;
-            this.showMessage(data);
-        })
-        .catch(error => {
+                this.errors = [];
+                jQuery(".mfp-close").trigger("click");
+                this.languages = data.data;
+                this.showMessage(data);
+            })
+            .catch(error => {
+                $('#employee').LoadingOverlay("hide");
                 console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
@@ -972,15 +1030,18 @@ var employee = new Vue({
             if(ck == false){
                 return false;
             }
+            $('#employee').LoadingOverlay("show");
 
             axios.delete('/employee/delete/'+id+'/'+tab)
                 .then((response) => {
+                $('#employee').LoadingOverlay("hide");
                 var data = response.data;
-            this.showMessage(data);
-            this.getTabData();
+                this.showMessage(data);
+                this.getTabData();
             })
             .catch(error => {
-                    console.log(error);
+                $('#employee').LoadingOverlay("hide");
+                console.log(error);
                 if(error.response.status == 500 || error.response.data.status == 'danger'){
                     var error = error.response.data;
                     this.showMessage(error);
@@ -1009,7 +1070,9 @@ var employee = new Vue({
 
 
         getDataByTabAndId(data_tab,data_id,form_id){
+            $(form_id).LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
             axios.get('/employee/'+add_edit+'/tab/'+data_tab+'/'+data_id).then(response => {
+                $(form_id).LoadingOverlay("hide");
                 if(data_tab == 'education'){
                     this.singleEducation = response.data;
                 }
@@ -1042,7 +1105,7 @@ var employee = new Vue({
 
 
 
-// });
+});
 
 
 

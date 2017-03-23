@@ -13,7 +13,7 @@
                 <div class="col-md-12">
                     <form id="add_new_language_form" method="post" v-on:submit.prevent="addNewLanguage">
                         <input type="hidden" name="user_id" v-model="user_id">
-                        <input type="hidden" name="user_id" v-if="singleLanguage !=''" v-model="singleLanguage.id">
+                        <input type="hidden" name="id" v-if="singleLanguage !=''" v-model="singleLanguage.id">
 
                         <div class="row">
                             <div class="col-md-6">

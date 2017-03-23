@@ -16,6 +16,7 @@ class CreateLevelsTable extends Migration
         Schema::create('levels', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
+            $table->integer('parent_id')->default(0);
             $table->string('level_name',100);
             $table->double('level_salary_amount', 11, 2)->default(0);
             $table->boolean('status')->default(1)->comment='0=active, 1=inactive';
