@@ -35,6 +35,38 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="amount" class="col-md-2 control-label">
+                                        </label>
+                                        <div class="col-md-9">
+                                            <div class="checkbox-custom mb5">
+                                                <input type="checkbox" class="chk_parent" id="checkboxDefault3" name="chk_parent" {{ ($errors->has('parent_id') || old('parent_id')) ? "checked" : '' }} value="1">
+                                                <label for="checkboxDefault3"> This level have parent</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group parent-cls{{ $errors->has('parent_id') ? ' has-error' : '' }}">
+                                        <label for="parent_id" class="col-md-2 control-label">Parent Name</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control input-sm" name="parent_id">
+                                                <option value="">Select Level's Parent</option>
+                                                @if($parents)
+                                                    @foreach($parents as $info)
+                                                        <option value="{{$info->id}}" 
+                                                        {{($info->id == old('parent_id'))?"selected":''}}
+                                                        >{{ $info->level_name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            @if ($errors->has('parent_id'))
+                                                <span class="help-block">
+                                                    <strong>{{ $errors->first('parent_id') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+
                                     <div class="form-group{{ $errors->has('salary_amount') ? ' has-error' : '' }}">
                                         <label for="salary_amount" class="col-md-2 control-label">Salary Amount</label>
 
@@ -214,6 +246,40 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="amount" class="col-md-2 control-label">
+                                        </label>
+                                        <div class="col-md-9">
+                                            <div class="checkbox-custom mb5">
+                                                <input type="checkbox" class="chk_parent" id="checkboxDefault3" name="chk_parent" {{ ($errors->has('parent_id') || $info->parent_id > 0) ? "checked" : '' }} value="1">
+                                                <label for="checkboxDefault3"> This level have parent</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group parent-cls{{ $errors->has('parent_id') ? ' has-error' : '' }}">
+                                        <label for="parent_id" class="col-md-2 control-label">Parent Name</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control input-sm" name="parent_id">
+                                                <option value="">Select Level's Parent</option>
+                                                @if($parents)
+                                                    @foreach($parents as $val)
+                                                        @if($val->id != $info->id)
+                                                            <option value="{{$val->id}}" 
+                                                            {{($val->id == $info->parent_id)?"selected":''}}
+                                                            >{{ $val->level_name }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            @if ($errors->has('parent_id'))
+                                                <span class="help-block">
+                                                    <strong>{{ $errors->first('parent_id') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+
                                     <div class="form-group{{ $errors->has('salary_amount') ? ' has-error' : '' }}">
                                         <label for="salary_amount" class="col-md-2 control-label">Salary Amount</label>
 
@@ -377,8 +443,31 @@
         </div>
     </section>
     <!-- End: Content -->   
+@endsection
 
 
+@section('script')
+<script type="text/javascript">
+    
+    $(document).ready(function() {
+        
+        if($('input.chk_parent').is(':checked')){  
+            $('.parent-cls').show();
+        }
+        else{
+            $('.parent-cls').hide();
+        }
 
+        $('.chk_parent').click(function(event){
 
+            if($('input.chk_parent').is(':checked')){
+                
+                $('.parent-cls').show();
+            }
+            else{
+                $('.parent-cls').hide();
+            }
+        });
+    });
+</script>
 @endsection
