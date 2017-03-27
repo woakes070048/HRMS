@@ -49,13 +49,13 @@
                                         <td v-text="info.user.first_name +' '+ info.user.last_name"></td>
                                         <td v-text="
                                         info.current_designation.designation_name+'-('+
-                                        info.current_designation.department.department_name+')-('+
-                                        info.current_designation.level.level_name+')'"
+                                        info.current_designation.level.level_name+')-('+
+                                        info.current_designation.department.department_name+')'"
                                         ></td>
                                         <td v-text="
                                         info.prev_designation.designation_name+'-('+
-                                        info.prev_designation.department.department_name+')-('+
-                                        info.prev_designation.level.level_name+')'"
+                                        info.prev_designation.level.level_name+')-('+
+                                        info.prev_designation.department.department_name+')'"
                                         ></td>
                                         <td v-text="info.prev_branch.branch_name+' TO '+info.current_branch.branch_name"></td>
                                         <td v-text="info.current_unit.unit_name +'-( '+info.current_unit.promotion_department.department_name+')'"></td>
@@ -63,10 +63,10 @@
                                         info.prev_unit.unit_name+'-('+info.prev_unit.promotion_department.department_name+')'"
                                         ></td>
                                         <td>
-                                            <span v-if="info.current_supervisor" v-text="info.current_supervisor.first_name"></span>
+                                            <span v-if="info.current_supervisor" v-text="info.current_supervisor.first_name+' '+info.current_supervisor.last_name"></span>
                                         </td>
                                         <td>
-                                            <span v-if="info.prev_supervisor" v-text="info.prev_supervisor.first_name"></span>
+                                            <span v-if="info.prev_supervisor" v-text="info.prev_supervisor.first_name+' '+info.prev_supervisor.last_name"></span>
                                         </td>
                                         <td v-text="info.transfer_effective_date"></td>
                                         <td>
@@ -261,8 +261,8 @@
     </div>
     <!-- Add modal end --> 
 
-    <!-- Edit modal start -->
-    <div class="modal fade bs-example-modal-lg dataEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalEdit">
+    <!-- Edit modal start /dataEdit -->
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalEdit">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -311,23 +311,13 @@
                     <div class="form-group">
                         <label for="edit_to_designation_id" class="col-md-3 control-label">New Designation:</label>
                         <div class="col-md-9">
-                            <select2 name="edit_to_designation_id" v-model="edit_to_designation_id" style="
-                            width: 100%;color: #555555;
-                            border: 1px solid #dddddd;
-                            transition: border-color ease-in-out .15s;
-                            height: 30px;
-                            padding: 5px 10px;
-                            font-size: 12px;
-                            line-height: 1.5;
-                            border-radius: 2px;"
-                            >
-                                <option disabled value="0">Select New Designation</option>
-                                <option v-for="(info,index) in edit_designation_select2" 
+                            <select name="edit_to_designation_id" v-model="edit_to_designation_id" class="form-control input-sm" v-on:click="onClickEditDesignation">
+                                <option disabled="" value="0">Select New Designation</option>
+                                <option v-for="info in edit_designation_select2" 
                                     :value="info.id" 
                                     v-text="info.designation_name+'-('+info.level.level_name+')-('+info.department.department_name+')'"
-                                    :selected="info.id == edit_to_designation_id"
                                 ></option>
-                            </select2>
+                            </select>
                         </div>
                     </div>
 
@@ -348,6 +338,7 @@
                                 <option v-for="info in edit_unit_select2" 
                                     :value="info.id" 
                                     v-text="info.unit_name"
+                                    :selected="info.id==edit_to_unit_id"
                                 ></option>
                             </select>
                         </div>
@@ -371,6 +362,7 @@
                                     :value="info.id" 
                                     v-text="info.branch_name"
                                     v-if="info.branch_name != from_branch"
+                                    :selected="info.id==edit_to_branch_id"
                                 ></option>
                             </select>
                         </div>
@@ -394,6 +386,7 @@
                                     :value="info.id" 
                                     v-text="info.first_name+' '+info.last_name"
                                     v-if="info.id != from_supervisor_id"
+                                    :selected="info.id==edit_to_supervisor_id"
                                 ></option>
                             </select>
                         </div>

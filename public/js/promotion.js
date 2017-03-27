@@ -57,10 +57,12 @@ new Vue({
 		edit_to_designation_id: '',
 		edit_designation_select2: [],
 		edit_from_unit: '',
-		edit_from_unit_id: '',
+        edit_from_unit_id: '',
+		edit_to_unit_id: '',
 		edit_unit_select2: [],
 		edit_from_branch: '',
 		edit_from_branch_id: '',
+        edit_to_branch_id: '',
 		edit_branch_select2: [],
 		edit_from_supervisor: '',
 		edit_from_supervisor_id: 0,
@@ -92,11 +94,12 @@ new Vue({
                 this.unit_select2 = response.data;
             });
 		},
-		edit_to_designation_id: function(id){
-			axios.get('/get-unit-by-designation-id/'+id).then(response => {
-                this.edit_unit_select2 = response.data;
-            });
-		}
+		// edit_to_designation_id: function(id){
+		// 	axios.get('/get-unit-by-designation-id/'+id).then(response => {
+  //               this.edit_unit_select2 = response.data;
+  //           });
+  //               alert('iddd4');
+		// }
 	},
 	methods:{
 		getAllData(){
@@ -146,24 +149,82 @@ new Vue({
         	this.unitIndex = index;
             this.hdn_id = id;
 
-            var userId = this.allData[index].user.id;
-            this.edit_user_id = this.allData[index].user.first_name+' '+this.allData[index].user.last_name;
+            axios.get('/get-branches').then(response => this.edit_branch_select2 = response.data);
 
+            var userId = this.allData[index].user.id;
+
+            axios.get('/promotion/getSingelUser/'+userId).then(response => {
+                this.edit_designation_select2 = response.data.to_designation;
+                this.edit_supervisor_select2 = response.data.to_supervisor;
+            });
+            
+            this.edit_user_id = this.allData[index].user.first_name+' '+this.allData[index].user.last_name;
             this.edit_formType = this.allData[index].promotion_type;
-            this.edit_from_designation = this.allData[index].prev_designation.designation_name+'-('+this.allData[index].prev_designation.department.department_name+')-('+this.allData[index].prev_designation.level.level_name+')';
+            this.edit_from_designation = this.allData[index].prev_designation.designation_name+'-('+this.allData[index].prev_designation.level.level_name+')-('+this.allData[index].prev_designation.department.department_name+')';
 			this.edit_from_unit = (this.allData[index].prev_unit)?this.allData[index].prev_unit.unit_name:'';
 			this.edit_from_branch = (this.allData[index].prev_branch)?this.allData[index].prev_branch.branch_name:'';
 			this.edit_from_supervisor = (this.allData[index].prev_supervisor)?this.allData[index].prev_supervisor.first_name:'';
 			this.edit_effective_date = this.allData[index].transfer_effective_date;
 			this.edit_remarks = this.allData[index].remarks;
 
-            // this.edit_to_designation_id = this.allData[index].current_designation.id;
-            // this.edit_to_designation_id = this.allData[index].current_designation.id;
-            
+            this.edit_to_designation_id = this.allData[index].current_designation.id;
+            //console.log(this.edit_to_designation_id);
 
-            axios.get('/promotion/getSingelUser/'+userId).then(response => {
-                this.edit_designation_select2 = response.data.to_designation;
-            	this.edit_supervisor_select2 = response.data.to_supervisor;
+            axios.get('/get-unit-by-designation-id/'+this.edit_to_designation_id).then(response => {
+                this.edit_unit_select2 = response.data;
+            });
+
+            this.edit_to_unit_id = this.allData[index].current_unit.id;
+            this.edit_to_branch_id = (this.allData[index].current_branch)?this.allData[index].current_branch.id:'';
+            this.edit_to_supervisor_id = (this.allData[index].current_supervisor)?this.allData[index].current_supervisor.id:'';
+
+            $.LoadingOverlay("show");
+
+            setTimeout(function(){
+               $('#modalEdit').modal('show');
+               $.LoadingOverlay("hide");
+            }, 1000);
+        },
+        onClickEditDesignation(){
+
+            var val = this.edit_to_designation_id>0?this.edit_to_designation_id:0;
+            axios.get('/get-unit-by-designation-id/'+val).then(response => {
+                this.edit_unit_select2 = response.data;
+            });
+        },
+        updateData: function(updateFormId){
+            
+            var formData = $('#'+updateFormId).serialize();
+
+            axios.post('/promotion/edit', formData)
+            .then(response => { 
+               
+                $('#edit-form-errors').html('');
+                document.getElementById("modal-edit-close-btn").click();
+                
+                this.getAllData();  //call method
+
+                new PNotify({
+                    title: response.data.title+' Message',
+                    text: response.data.message,
+                    shadow: true,
+                    addclass: 'stack_top_right',
+                    type: response.data.title,
+                    width: '290px',
+                    delay: 1500
+                });
+
+                console.log(response.data.data);
+            })
+            .catch( (error) => {
+                var errors = error.response.data;
+
+                var errorsHtml = '<div class="alert alert-danger"><ul>';
+                $.each( errors , function( key, value ) {
+                    errorsHtml += '<li>' + value[0] + '</li>';
+                });
+                errorsHtml += '</ul></di>';
+                $( '#edit-form-errors' ).html( errorsHtml );
             });
         }
 	}

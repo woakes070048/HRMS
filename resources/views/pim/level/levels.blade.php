@@ -33,7 +33,11 @@
                             <tr>
                                 <td>{{ $sl++ }}</td>
                                 <td>{{ $level->level_name }}</td>
-                                <td>{{ ($level->parent_id > 0)?$level->parent->level_name:'' }}</td>
+                                <td>
+                                    @if($level->parent_id > 0)
+                                        {{ !empty($level->parent)?$level->parent->level_name:'' }}
+                                    @endif
+                                </td>
                                 <td>{{ $level->level_salary_amount }}</td>
                                 <td>
                                     @if($level->salaryInfo->count() > 0)

@@ -93,7 +93,7 @@
                         <div class="form-group">
                             <label for="branch_mobile" class="col-md-3 control-label">Mobile</label>
                             <div class="col-md-9">
-                                <input name="branch_mobile" class="form-control input-sm" v-model="branch_mobile" v-validate:branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Unit name">
+                                <input name="branch_mobile" class="form-control input-sm" v-model="branch_mobile" v-validate:branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile">
                                 <div v-show="errors.has('branch_mobile')" class="help text-danger">
                                     <i v-show="errors.has('branch_mobile')" class="fa fa-warning"></i> 
                                     @{{ errors.first('branch_mobile') }}
@@ -111,7 +111,7 @@
                         <div class="form-group">
                             <label for="branch_location" class="col-md-3 control-label">Location</label>
                             <div class="col-md-9">
-                                <textarea name="branch_location" class="form-control input-sm" v-model="branch_location" data-vv-as="branch location" placeholder="Unit details"></textarea>
+                                <textarea name="branch_location" class="form-control input-sm" v-model="branch_location" data-vv-as="branch location" placeholder="Branch Location"></textarea>
                                 <div v-show="errors.has('branch_location')" class="help text-danger">
                                     <i v-show="errors.has('branch_location')" class="fa fa-warning"></i> 
                                     @{{ errors.first('branch_location') }}
@@ -188,7 +188,7 @@
                         <div class="form-group">
                             <label for="edit_branch_mobile" class="col-md-3 control-label">Mobile</label>
                             <div class="col-md-9">
-                                <input name="edit_branch_mobile" class="form-control input-sm" v-model="edit_branch_mobile" v-validate:edit_branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Unit name">
+                                <input name="edit_branch_mobile" class="form-control input-sm" v-model="edit_branch_mobile" v-validate:edit_branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile">
                                 <div v-show="errors.has('edit_branch_mobile')" class="help text-danger">
                                     <i v-show="errors.has('edit_branch_mobile')" class="fa fa-warning"></i> 
                                     @{{ errors.first('edit_branch_mobile') }}
@@ -206,7 +206,7 @@
                         <div class="form-group">
                             <label for="edit_branch_location" class="col-md-3 control-label">Location</label>
                             <div class="col-md-9">
-                                <textarea name="edit_branch_location" class="form-control input-sm" v-model="edit_branch_location" data-vv-as="branch location" placeholder="Unit details"></textarea>
+                                <textarea name="edit_branch_location" class="form-control input-sm" v-model="edit_branch_location" data-vv-as="branch location" placeholder="Branch Location"></textarea>
                                 <div v-show="errors.has('edit_branch_location')" class="help text-danger">
                                     <i v-show="errors.has('edit_branch_location')" class="fa fa-warning"></i> 
                                     @{{ errors.first('edit_branch_location') }}
