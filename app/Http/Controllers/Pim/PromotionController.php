@@ -83,12 +83,10 @@ class PromotionController extends Controller
             'effective_date' => 'required',
         ],
         [
-            'unit_department_id.required' => 'The unit department field is required.',
             'user_id.required'     => 'Please select a user first.',
         ]);
 
-        // try{
-            
+        try{
             $data['data'] = Promotion::create([
                 'user_id' => $request->user_id,
                 'from_supervisor_id' => $request->from_supervisor_id ,
@@ -109,11 +107,43 @@ class PromotionController extends Controller
             $data['title'] = 'success';
             $data['message'] = 'data successfully added!';
 
-        // }catch (\Exception $e) {
+        }catch (\Exception $e) {
             
-        //    $data['title'] = 'danger';
-        //     $data['message'] = 'data not added!';
-        // }
+           $data['title'] = 'danger';
+            $data['message'] = 'data not added!';
+        }
+
+        return response()->json($data);
+    }
+
+    public function update(Request $request){
+
+        $this->validate($request, [
+            'edit_form_type' => 'required',
+            'edit_effective_date' => 'required',
+        ]);
+
+        try{
+            $data['data'] = Promotion::where('id',$request->hdn_id)->update([
+                'to_supervisor_id' => ($request->edit_to_supervisor_id > 0)?$request->edit_to_supervisor_id:$request->edit_from_supervisor_id ,
+                'to_branch_id' => ($request->edit_to_branch_id > 0)?$request->edit_to_branch_id:$request->edit_from_branch_id ,
+                'to_designation_id' => ($request->edit_to_designation_id > 0)?$request->edit_to_designation_id:$request->edit_from_designation_id ,
+                'to_unit_id' => ($request->edit_to_unit_id > 0)?$request->edit_to_unit_id:$request->edit_from_unit_id ,
+                'transfer_effective_date' => $request->edit_effective_date ,
+                'promotion_type' => $request->edit_form_type ,
+                'promotion_status' => 1 ,
+                'remarks' => $request->edit_remarks ,
+                'updated_by' => Auth::user()->id ,
+            ]);
+        
+            $data['title'] = 'success';
+            $data['message'] = 'data successfully updated!';
+
+        }catch (\Exception $e){
+            
+            $data['title'] = 'danger';
+            $data['message'] = 'data not added!';
+        }
 
         return response()->json($data);
     }

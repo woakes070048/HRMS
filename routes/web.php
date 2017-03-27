@@ -220,7 +220,7 @@ Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
     Route::get('/getSingelUser/{id}','PromotionController@getSingelUser');
     Route::post('/add','PromotionController@create');
     // Route::get('/edit/{id}','PromotionController@edit');
-    // Route::post('/edit','PromotionController@update');
+    Route::post('/edit','PromotionController@update');
     // Route::post('/edit/info','PromotionController@update_info');
     // Route::get('/delete/{id}','PromotionController@delete');
 });
