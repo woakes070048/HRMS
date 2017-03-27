@@ -28,7 +28,6 @@ class LevelController extends Controller
 
     	$data['title'] = "Employee Levels-HRMS";
     	$data['levels'] = Level::with('salaryInfo','parent')
-                        ->where('status',1)
                         ->orderBy('id','DESC')->get();
 
         return view('pim.level.levels', $data);
