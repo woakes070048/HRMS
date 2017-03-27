@@ -1026,28 +1026,43 @@ var employee = new Vue({
 
 
         deleteEmployeeData(id,tab){
-            var ck = confirm("Are you sure delete this?");
-            if(ck == false){
-                return false;
-            }
-            $('#employee').LoadingOverlay("show");
+            // var ck = confirm("Are you sure delete this?");
+            // if(ck == false){
+            //     return false;
+            // }
+            var vueThis = this;
+            swal({
+              title: "Are you sure?",
+              text: "You will not be able to recover this imaginary data!",
+              // type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Yes, delete it!",
+              closeOnConfirm: false
+            },
+            function(){
+                $('#employee').LoadingOverlay("show");
 
-            axios.delete('/employee/delete/'+id+'/'+tab)
-                .then((response) => {
-                $('#employee').LoadingOverlay("hide");
-                var data = response.data;
-                this.showMessage(data);
-                this.getTabData();
-            })
-            .catch(error => {
-                $('#employee').LoadingOverlay("hide");
-                console.log(error);
-                if(error.response.status == 500 || error.response.data.status == 'danger'){
-                    var error = error.response.data;
-                    this.showMessage(error);
-                }else if(error.response.status == 422){
-                    this.errors = error.response.data;
-                }
+                axios.delete('/employee/delete/'+id+'/'+tab)
+                    .then((response) => {
+                    $('#employee').LoadingOverlay("hide");
+                    var data = response.data;
+                    // this.showMessage(data);
+                    swal("Deleted!", data.message, "success");
+                    vueThis.getTabData();
+                })
+                .catch(error => {
+                    $('#employee').LoadingOverlay("hide");
+                    console.log(error);
+                    if(error.response.status == 500 || error.response.data.status == 'danger'){
+                        var error = error.response.data;
+                        // this.showMessage(error);
+                        swal("Cancelled", error.message, "error");
+                    }else if(error.response.status == 422){
+                        vueThis.errors = error.response.data;
+                    }
+
+                });
 
             });
         },
