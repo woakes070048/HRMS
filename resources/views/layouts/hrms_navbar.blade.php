@@ -7,14 +7,15 @@
     </div>
 
     <ul class="nav navbar-nav navbar-right">
-       <!--  <li>
+<!--         <li>
             <div class="navbar-btn btn-group">
                 <a href="#" class="topbar-menu-toggle btn btn-sm" data-toggle="button">
                     <span class="ad ad-wand"></span>
                 </a>
             </div>
-        </li>
-        <li class="dropdown menu-merge">
+        </li> -->
+
+<!--         <li class="dropdown menu-merge">
             <div class="navbar-btn btn-group">
                 <button data-toggle="dropdown" class="btn btn-sm dropdown-toggle">
                     <span class="fa fa-bell-o fs14 va-m"></span>
@@ -373,8 +374,8 @@
                     </div>
                 </div>
             </div>
-        </li> -->
-        <!-- <li class="dropdown menu-merge">
+        </li>
+        <li class="dropdown menu-merge">
             <div class="navbar-btn btn-group">
                 <button data-toggle="dropdown" class="btn btn-sm dropdown-toggle">
                     <span class="flag-xs flag-us"></span>
@@ -395,17 +396,18 @@
                 </ul>
             </div>
         </li> -->
-<!--         <li class="menu-divider hidden-xs">
-            <i class="fa fa-circle"></i>
-        </li> -->
+
+        <li class="menu-divider">
+            <i class="fa fa-circle text-success"></i>
+        </li>
         <li class="dropdown menu-merge">
             <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown">
                 @if(empty($auth->photo))
                 <img src="{{asset('img/placeholder.png')}}" alt="avatar" class="mw30 br64">
                 @else
-                <img src="{{$auth->full_image}}" alt="{{$auth->full_name}}" class="mw30 br64">
+                <img src="{{$auth->full_image}}" alt="{{$auth->first_name_last_name}}" class="mw30 br64">
                 @endif
-                <span class="hidden-xs pl15"> {{$auth->full_name}} </span>
+                <span class="hidden-xs pl15"> {{$auth->first_name_last_name}} </span>
                 <span class="caret caret-tp hidden-xs"></span>
             </a>
             <ul class="dropdown-menu list-group dropdown-persist w250" role="menu">
