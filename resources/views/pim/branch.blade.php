@@ -93,7 +93,11 @@
                         <div class="form-group">
                             <label for="branch_mobile" class="col-md-3 control-label">Mobile</label>
                             <div class="col-md-9">
+<<<<<<< HEAD
                                 <input name="branch_mobile" class="form-control input-sm" v-model="branch_mobile" v-validate:branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile">
+=======
+                                <input name="branch_mobile" class="form-control input-sm" v-model="branch_mobile" v-validate:branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile Number">
+>>>>>>> c5d29257ba7a55ef344e40751dc0773b22eb3159
                                 <div v-show="errors.has('branch_mobile')" class="help text-danger">
                                     <i v-show="errors.has('branch_mobile')" class="fa fa-warning"></i> 
                                     @{{ errors.first('branch_mobile') }}
@@ -188,7 +192,7 @@
                         <div class="form-group">
                             <label for="edit_branch_mobile" class="col-md-3 control-label">Mobile</label>
                             <div class="col-md-9">
-                                <input name="edit_branch_mobile" class="form-control input-sm" v-model="edit_branch_mobile" v-validate:edit_branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile">
+                                <input name="edit_branch_mobile" class="form-control input-sm" v-model="edit_branch_mobile" v-validate:edit_branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile Number">
                                 <div v-show="errors.has('edit_branch_mobile')" class="help text-danger">
                                     <i v-show="errors.has('edit_branch_mobile')" class="fa fa-warning"></i> 
                                     @{{ errors.first('edit_branch_mobile') }}
