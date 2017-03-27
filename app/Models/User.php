@@ -58,6 +58,11 @@ class User extends Authenticatable
     }
 
 
+    public function getFirstNameLastNameAttribute(){
+        return ucfirst($this->first_name).' '.ucfirst($this->last_name);
+    }
+
+
     public function getFullNameAttribute(){
         return ucfirst($this->first_name).' '.ucfirst($this->middle_name).' ' .ucfirst($this->last_name).' '.ucfirst($this->nick_name);
     }

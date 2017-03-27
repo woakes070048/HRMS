@@ -1,3 +1,5 @@
+ $(document).on('ready',function(){
+
   new Vue({
     el: '#bank_list',
     data:{
@@ -8,19 +10,35 @@
 
     mounted(){
       this.getBanks();
-      // this.dataTableCall();
     },
+
+    // watch:{
+    //   banks:function(){
+    //     setTimeout(function() {
+    //         this.dataTableCall();
+    //     }, 1000);
+    //   }
+
+    // },
+
+    // destroyed(){
+    //   this.dataTableCall();
+    // },
+
+    // beforeDestroy(){
+    //   this.dataTableCall();
+    // },
+
 
     methods:{
 
       dataTableCall(){
         $('#datatableCall').dataTable({
-            "paging":   true,
-            "searching": true,
-            "info": true,
-            "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
-
-        });
+          "paging":   true,
+          "searching": true,
+          "info": true,
+          "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
+        }); 
       },
 
       showMessage(data){
@@ -59,6 +77,7 @@
 
         axios.get('/bank/index').then((response) => {
           this.banks = response.data;
+        
         }).catch((error)=>{
           alert('please reload page.');
         });
@@ -194,3 +213,6 @@
     }
 
   });
+
+
+});
