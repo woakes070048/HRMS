@@ -137,12 +137,12 @@ class PromotionController extends Controller
             ]);
         
             $data['title'] = 'success';
-            $data['message'] = 'unit successfully updated!';
+            $data['message'] = 'data successfully updated!';
 
         }catch (\Exception $e){
             
             $data['title'] = 'danger';
-            $data['message'] = 'unit not added!';
+            $data['message'] = 'data not added!';
         }
 
         return response()->json($data);
