@@ -153,7 +153,7 @@
                                             <div class="form-group" :class="{'has-error': errors.supervisor_id}">
                                                 <label class="control-label">Employee Supervisor : </label>
                                                 <select class="form-control select-sm input-sm" id="supervisor_id" name="supervisor_id" v-model="supervisor_id = basics.supervisor_id">
-                                                    <option value="">...Select Employee Supervisor...</option>
+                                                    <option value="0">...Select Employee Supervisor...</option>
                                                     <option v-for="(supervisor,index) in supervisors" :value="supervisor.id" v-text="supervisor.fullname+' - ('+supervisor.designation_name+' ) - ( '+supervisor.level_name+' )'"></option>
                                                 </select>
                                                 <span v-if="errors.supervisor_id" class="help-block" v-text="errors.supervisor_id[0]"></span>

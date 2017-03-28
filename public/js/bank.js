@@ -155,23 +155,38 @@
 
 
       deleteBank(id,index_id){
-        // alert(index_id);
-        // this.banks.splice(index_id,1);
-       var ck = confirm("Are you sure delete this?");
-        if(ck == false){
-            return false;
-        }
 
-        $('body').LoadingOverlay("show");    
-        axios.delete('/bank/delete/'+id).then((response) => {
-          this.banks.splice(index_id,1);
-          $.LoadingOverlay("hide");
-          this.showMessage(error.response.data);
+       // var ck = confirm("Are you sure delete this?");
+       //  if(ck == false){
+       //      return false;
+       //  }
 
-        }).catch((error)=>{
-          $.LoadingOverlay("hide");
-          this.showMessage(error.response.data);
+       var vueThis = this;
+
+       swal({
+          title: "Are you sure?",
+          text: "You will not be able to recover this imaginary data!",
+          // type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Yes, delete it!",
+          closeOnConfirm: false
+        },
+        function(){
+            $('body').LoadingOverlay("show");    
+            axios.delete('/bank/delete/'+id).then((response) => {
+              vueThis.banks.splice(index_id,1);
+              $.LoadingOverlay("hide");
+              // vueThis.showMessage(error.response.data);
+              swal("Deleted!", "Your imaginary file has been deleted.", "success");
+
+            }).catch((error)=>{
+              $.LoadingOverlay("hide");
+              // vueThis.showMessage(error.response.data);
+              swal("Cancelled", "Your imaginary file is safe :)", "error");
+            });
         });
+
       },
 
       changeStatus(e,id){

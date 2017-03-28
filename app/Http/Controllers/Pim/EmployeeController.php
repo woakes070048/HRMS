@@ -148,8 +148,19 @@ class EmployeeController extends Controller
                     'email' => $request->email,
                 ]);
             }else{
-                $request->session()->flash('danger','Employee Email Already Exits!');
-                return redirect()->back()->withInput();
+               
+                if($request->ajax()){
+                    $data['status'] = 'danger';
+                    $data['statusType'] = 'NotOk';
+                    $data['code'] = 500;
+                    $data['type'] = null;
+                    $data['title'] = 'Error!';
+                    $data['message'] = 'Employee Email Already Exits!';
+                    return response()->json($data,500);
+                }else{
+                    $request->session()->flash('danger','Employee Email Already Exits!');
+                    return redirect()->back()->withInput();
+                }
             }
 
             Artisan::call("db:connect", ['database' => Session('database')]);

@@ -43,7 +43,7 @@
                 <th>Action</th>
             </tr>
             </tfoot>
-            <tbody>
+            <tbody v-if="banks !=''">
                 <tr v-for="(bank,index) in banks">
                    <td>@{{index+1}}</td>
                    <td>@{{bank.bank_code}}</td>
@@ -67,6 +67,12 @@
                        </div>
                    </td>
                 </tr>
+            </tbody>
+
+            <tbody v-else>
+              <tr>
+                <td colspan="7">No data available</td>
+              </tr>
             </tbody>
             
         </table>
