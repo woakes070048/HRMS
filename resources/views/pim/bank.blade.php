@@ -33,7 +33,7 @@
             </tr>
             </thead>
             <tfoot>
-            <tr class="bg-dark">
+            <tr class="bg-dark" style="background: #f2f2f2!important">
                 <th>SL:</th>
                 <th>Bank Code</th>
                 <th>Bank Name</th>
