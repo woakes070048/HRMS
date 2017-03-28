@@ -207,11 +207,18 @@ trait CommonService
 
 
     public function getAllowanceNotinLevel($ids=null){
+
         $basicSalaryInfo =  BasicSalaryInfo::select('basic_salary_info.*')
-            ->leftJoin('level_salary_info_map','level_salary_info_map.basic_salary_info_id','=','basic_salary_info.id')
-            ->leftJoin('employee_salaries','employee_salaries.basic_salary_info_id','=','basic_salary_info.id')
-            ->where('employee_salaries.basic_salary_info_id','=',null)
-            ->where('level_salary_info_map.level_id','=',null);
+            ->leftJoin('level_salary_info_map',function($q){
+                $q->on('level_salary_info_map.basic_salary_info_id','=','basic_salary_info.id')
+                ->where('level_salary_info_map.level_id','=',null);
+            })
+            
+            ->leftJoin('employee_salaries',function($q){
+                $q->on('employee_salaries.basic_salary_info_id','=','basic_salary_info.id')
+                    ->where('employee_salaries.basic_salary_info_id','=',null);
+            });
+            
             if($ids !=null){
                 $ids = explode(',',$ids);
                 $basicSalaryInfo->whereNotIn('basic_salary_info.id',$ids);
