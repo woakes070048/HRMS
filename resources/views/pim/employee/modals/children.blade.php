@@ -35,7 +35,7 @@
                             <div class="col-md-3">
                                 <div class="form-group" :class="{'has-error': errors.children_birth_date}">
                                     <label class="control-label">Children Birth Date  : <span class="text-danger">*</span></label>
-                                    <input type="text" name="children_birth_date" v-on:click="datePicker" class="datepicker form-control input-sm" readonly="readonly" v-model="singleChildren.children_birth_date">
+                                    <input type="text" name="children_birth_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly" v-model="singleChildren.children_birth_date">
                                     <span v-if="errors.children_birth_date" class="text-danger">@{{ errors.children_birth_date[0]}}</span>
                                 </div>
                             </div>

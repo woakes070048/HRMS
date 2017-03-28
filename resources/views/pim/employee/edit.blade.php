@@ -821,7 +821,7 @@
                                             <div class="form-group" :class="{'has-error': errors.nationality}">
                                                 <label class="control-label">Nationality :</label>
 
-                                                <input v-if="personals.details" type="text" name="nationality" :value="personals.details.emergency_contact_person" class="form-control input-sm" placeholder="Enter Nationality">
+                                                <input v-if="personals.details" type="text" name="nationality" :value="personals.details.nationality" class="form-control input-sm" placeholder="Enter Nationality">
                                                 <input v-else type="text" name="nationality" class="form-control input-sm" placeholder="Enter Nationality">
 
                                                 <span v-if="errors.nationality" class="text-danger" v-text="errors.nationality[0]">

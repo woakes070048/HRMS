@@ -24,10 +24,12 @@ class EmployeeSalaryRequest extends FormRequest
     public function rules()
     {
         if($this->request->get('bank_id')){
+            $bank_id = 'required';
             $bank_account_no = 'required|digits_between:13,26';
             $bank_account_name = 'required|alpha_spaces';
             $bank_branch_name = 'required|alpha_spaces';
         }else{
+            $bank_id = 'nullable';
             $bank_account_no = 'nullable';
             $bank_account_name = 'nullable';
             $bank_branch_name = 'nullable';
@@ -37,7 +39,7 @@ class EmployeeSalaryRequest extends FormRequest
             'basic_salary' => 'required|numeric',
             'salary_in_cache' => 'nullable|required|numeric',
             'effective_date' => 'required|date',
-            'bank_id' => 'nullable|required',
+            'bank_id' => $bank_id,
             'bank_account_no' => $bank_account_no,
             'bank_account_name' => $bank_account_name,
             'bank_branch_name' => $bank_branch_name,
