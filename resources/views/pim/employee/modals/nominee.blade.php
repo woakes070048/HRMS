@@ -21,7 +21,7 @@
 
                                 <div class="fileupload-new admin-form" data-provides="fileupload">
                                     <div class="fileupload-preview thumbnail mb5">
-                                         <img v-if="singleNominee.nominee_photo" :src="'/files/'+singleNominee.user_id+'/'+singleNominee.nominee_photo" alt="holder">
+                                         <img v-if="singleNominee.nominee_photo" :src="'/files/'+singleNominee.user_id+'/'+singleNominee.nominee_photo">
                                         <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
                                     </div>
                                     <span class="button btn btn-sm btn-dark btn-file btn-block ph5">

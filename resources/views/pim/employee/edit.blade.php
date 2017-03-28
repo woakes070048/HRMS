@@ -1673,11 +1673,11 @@
                                                  <img v-if="nominee.nominee_photo" :src="'/files/'+nominee.user_id+'/'+nominee.nominee_photo" alt="holder">
                                                 <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
                                             </div>
-                                            <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
+                                            <!-- <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
                                                 <span class="fileupload-exists"><span class="fa fa-user"></span> &nbsp; <strong>Change Photo</strong></span>
                                                 <span class="fileupload-new"><span class="fa fa-user"></span> &nbsp; <strong>Select Photo</strong></span>
                                                 <input type="file" name="image">
-                                            </span>
+                                            </span> -->
                                         </div>
                                     </div>
 
@@ -1709,21 +1709,21 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="control-label">Nominee Distribution : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_distribution" class="form-control input-sm" :value="nominee.nominee_distribution">
+                                                    <input type="text" name="nominee_distribution" class="form-control input-sm" :value="nominee.nominee_distribution" readonly="readonly">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="control-label">Nominee Rest Distribution : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="nominee.nominee_rest_distribution">
+                                                    <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="nominee.nominee_rest_distribution" readonly="readonly">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label class="control-label">Nominee Address : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_address" class="form-control input-sm" :value="nominee.nominee_address">
+                                                    <input type="text" name="nominee_address" class="form-control input-sm" :value="nominee.nominee_address" readonly="readonly">
                                                 </div>
                                             </div>
                                         </div>
