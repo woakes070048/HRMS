@@ -1565,11 +1565,17 @@
                                     <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.bank_id}">
                                             <label class="control-label">Bank Name : </label>
-                                            <select class="form-control input-sm" name="bank_id" :disabled="salaries.salary_account">
-                                                <option value="">---- Select Bank Name ----</option>
+                                            <select v-if="salaries.salary_account" class="form-control input-sm" name="bank_id">
+                                            <option :value="''">---- Select Bank Name ----</option>
+                                            <option v-for="(bank,index) in banks"
+                                                    :value="bank.id" :selected="salaries.salary_account.bank_id">@{{ bank.bank_name }}</option>
+                                            </select>
+                                            <select v-else class="form-control input-sm" name="bank_id">
+                                                <option :value="''">---- Select Bank Name ----</option>
                                                 <option v-for="(bank,index) in banks"
                                                         :value="bank.id">@{{ bank.bank_name }}</option>
                                             </select>
+
                                             <span v-if="errors.bank_id" class="help-block">@{{errors.bank_id[0]}}</span>
                                         </div>
                                     </div>
@@ -1577,7 +1583,10 @@
                                     <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.bank_account_no}">
                                             <label class="control-label">Account No : </label>
-                                            <input type="text" name="bank_account_no" class="form-control input-sm">
+                                            
+                                            <input v-if="salaries.salary_account" type="text" name="bank_account_no" class="form-control input-sm" :value="salaries.salary_account.bank_account_no">
+                                            <input v-else type="text" name="bank_account_no" class="form-control input-sm">
+                                            
                                             <span v-if="errors.bank_account_no" class="help-block">@{{errors.bank_account_no[0]}}</span>
                                         </div>
                                     </div>
@@ -1585,7 +1594,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.bank_account_name}">
                                             <label class="control-label">Account Name : </label>
-                                            <input type="text" name="bank_account_name" class="form-control input-sm">
+                                            <input v-if="salaries.salary_account" type="text" name="bank_account_name" class="form-control input-sm" :value="salaries.salary_account.bank_account_name">
+                                        <input v-else type="text" name="bank_account_name" class="form-control input-sm">
                                             <span v-if="errors.bank_account_name" class="help-block">@{{errors.bank_account_name[0]}}</span>
                                         </div>
                                     </div>
@@ -1593,7 +1603,8 @@
                                     <div class="col-md-2">
                                         <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
                                             <label class="control-label">Bank Branch : </label>
-                                            <input type="text" name="bank_branch_name" class="form-control input-sm">
+                                            <input v-if="salaries.salary_account" type="text" name="bank_branch_name" class="form-control input-sm" :value="salaries.salary_account.bank_branch_name">
+                                            <input v-else type="text" name="bank_branch_name" class="form-control input-sm">
                                             <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
                                         </div>
                                     </div>
@@ -1601,7 +1612,8 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.bank_branch_address}">
                                             <label class="control-label">Bank Branch Address: </label>
-                                            <textarea type="text" name="bank_branch_address" class="form-control input-sm"></textarea>
+                                            <textarea v-if="salaries.salary_account" type="text" name="bank_branch_address" class="form-control input-sm" v-text="salaries.salary_account.bank_branch_name"></textarea>
+                                            <textarea v-else type="text" name="bank_branch_address" class="form-control input-sm"></textarea>
                                             <span v-if="errors.bank_branch_address" class="help-block">@{{errors.bank_branch_address[0]}}</span>
                                         </div>
                                     </div>
@@ -1653,7 +1665,7 @@
                                 <div v-if="nominees.nominees !=''">
                                     <div v-for="(nominee,index) in nominees.nominees" :class="index%2==0?'even':'odd'">
                                     <div class="row">
-                                    <div class="col-md-2" :class="{'has-error': errors.image}">
+                                    <div class="col-md-2">
                                         <label class="control-label">Nominee Photo :</label>
 
                                         <div class="fileupload-new admin-form" data-provides="fileupload">
@@ -1672,21 +1684,21 @@
                                     <div class="col-md-10 mt40">
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div class="form-group" :class="{'has-error': errors.nominee_name}">
+                                                <div class="form-group">
                                                     <label class="control-label">Nominee Name : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_name" :value="nominee.nominee_name" class="form-control input-sm">
+                                                    <input type="text" name="nominee_name" :value="nominee.nominee_name" class="form-control input-sm" disabled="disabled">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group" :class="{'has-error': errors.nominee_relation}">
+                                                <div class="form-group">
                                                     <label class="control-label">Nominee Relation : <span class="text-danger">*</span></label>
-                                                    <input type="text" name="nominee_relation" class="form-control input-sm" :value="nominee.nominee_relation">
+                                                    <input type="text" name="nominee_relation" class="form-control input-sm" :value="nominee.nominee_relation" disabled="disabled">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
+                                                <div class="form-group">
                                                     <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
                                                     <input type="text" name="nominee_birth_date" class="form-control input-sm" readonly="readonly" :value="nominee.nominee_birth_date">
                                                 </div>
@@ -1695,21 +1707,21 @@
 
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div class="form-group" :class="{'has-error': errors.nominee_distribution}">
+                                                <div class="form-group">
                                                     <label class="control-label">Nominee Distribution : <span class="text-danger">*</span></label>
                                                     <input type="text" name="nominee_distribution" class="form-control input-sm" :value="nominee.nominee_distribution">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group" :class="{'has-error': errors.nominee_rest_distribution}">
+                                                <div class="form-group">
                                                     <label class="control-label">Nominee Rest Distribution : <span class="text-danger">*</span></label>
                                                     <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="nominee.nominee_rest_distribution">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
-                                                <div class="form-group" :class="{'has-error': errors.nominee_address}">
+                                                <div class="form-group">
                                                     <label class="control-label">Nominee Address : <span class="text-danger">*</span></label>
                                                     <input type="text" name="nominee_address" class="form-control input-sm" :value="nominee.nominee_address">
                                                 </div>
