@@ -767,10 +767,12 @@
 
                                                 <div class="radio-custom mb5">
                                                     <input v-if="personals.details" id="male" name="gender" type="radio" value="male" :checked="personals.details.gender == 'male'">
-                                                    <input v-else id="male" name="gender" type="radio">
+                                                    <input v-else id="male" value="male" name="gender" type="radio">
                                                     <label for="male">Male</label>
+                                                    
                                                     <input v-if="personals.details" id="female" name="gender" type="radio" value="female" :checked="personals.details.gender == 'female'">
                                                     <input v-else id="female" name="gender" type="radio" value="female">
+
                                                     <label for="female">Female</label>
                                                 </div>
 
