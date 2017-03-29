@@ -27,14 +27,18 @@
                             <div class="col-md-6">
                                 <div class="form-group" :class="{'has-error': errors.training_title}">
                                     <label class="control-label">Training Title  : <span class="text-danger">*</span></label>
+
                                     <input type="text" name="training_title" class="form-control input-sm" v-model="singleTraining.training_title">
+                                    
                                     <span v-if="errors.training_title" class="text-danger" v-text="errors.training_title[0]"></span>
                                 </div>
                             </div>
                              <div class="col-md-6">
                                 <div class="form-group" :class="{'has-error': errors.training_institute}">
                                     <label class="control-label">Training Institute : <span class="text-danger">*</span></label>
+                                    
                                     <input type="text" name="training_institute" class="form-control input-sm" v-model="singleTraining.training_institute">
+                                    
                                     <span v-if="errors.training_institute" class="text-danger" v-text="errors.training_institute[0]"></span>
                                 </div>
                             </div>
@@ -44,28 +48,36 @@
                             <div class="col-md-3">
                                 <div class="form-group" :class="{'has-error': errors.training_from_date}">
                                     <label class="control-label">From Date : <span class="text-danger">*</span></label>
-                                    <input type="text" name="training_from_date" class="datepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_from_date">
+                                    
+                                    <input type="text" name="training_from_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_from_date">
+                                    
                                     <span v-if="errors.training_from_date" class="text-danger" v-text="errors.training_from_date[0]"></span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group" :class="{'has-error': errors.training_to_date}">
                                     <label class="control-label">To Date : <span class="text-danger">*</span></label>
-                                    <input type="text" name="training_to_date" class="datepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_to_date">
+                                    
+                                    <input type="text" name="training_to_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_to_date">
+                                    
                                     <span v-if="errors.training_to_date" class="text-danger" v-text="errors.training_to_date[0]"></span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group" :class="{'has-error': errors.training_passed_date}">
                                     <label class="control-label">Passed Date : <span class="text-danger">*</span></label>
-                                    <input type="text" name="training_passed_date" class="datepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_passed_date">
+                                    
+                                    <input type="text" name="training_passed_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_passed_date">
+                                    
                                     <span v-if="errors.training_passed_date" class="text-danger" v-text="errors.training_passed_date[0]"></span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group" :class="{'has-error': errors.training_participation_date}">
                                     <label class="control-label">Participation Date : <span class="text-danger">*</span></label>
-                                    <input type="text" name="training_participation_date" class="datepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_participation_date">
+                                    
+                                    <input type="text" name="training_participation_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly" v-model="singleTraining.training_participation_date">
+                                    
                                     <span v-if="errors.training_participation_date" class="text-danger" v-text="errors.training_participation_date[0]"></span>
                                 </div>
                             </div>
@@ -75,7 +87,9 @@
                             <div class="col-md-12">
                                 <div class="form-group" :class="{'has-error': errors.training_remarks}">
                                     <label class="control-label">Training remarks : <span class="text-danger">*</span></label>
+                                    
                                     <textarea type="text" name="training_remarks" class="form-control input-sm" v-model="singleTraining.training_remarks"></textarea>
+                                    
                                     <span v-if="errors.training_remarks" class="text-danger" v-text="errors.training_remarks[0]"></span>
                                 </div>
                             </div>

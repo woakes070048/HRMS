@@ -6,6 +6,8 @@
 table.tc-med-2 tbody td:first-child{
   font-size:13px;
 }
+.odd{background: #f5f5f5;padding: 20px 15px 0px;margin: -20px -15px -5px;}
+.even{padding: 10px 15px 0px;margin: 0px -15px;}
 </style>
 @endsection
 
@@ -162,7 +164,7 @@ table.tc-med-2 tbody td:first-child{
               </tr>
                <tr>
                 <td class="text-left">Blood Group :</td>
-                <td class="text-right">{{$user->details->bloodGroup->blood_namea or ''}}</td>
+                <td class="text-right">{{$user->details->bloodGroup->blood_name or ''}}</td>
               </tr>
               <tr>
                 <td class="text-left">Gender :</td>
@@ -215,7 +217,7 @@ table.tc-med-2 tbody td:first-child{
             <a href="#tab5" data-toggle="tab">Training</a>
           </li>
           <li>
-            <a href="#tab6" data-toggle="tab">Referance</a>
+            <a href="#tab6" data-toggle="tab">Reference</a>
           </li>
           <li>
             <a href="#tab7" data-toggle="tab">Children</a>
@@ -232,20 +234,22 @@ table.tc-med-2 tbody td:first-child{
           <div id="tab1" class="tab-pane active">
             <div class="panel">
               <div class="panel-body pb5">
-
                 @forelse($user->educations as $education)
+                <div class="@if($loop->index %2 == 0) even @else odd @endif">
+                <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h6>
                   Education Level : {{$education->institute->educationLevel->education_level_name}} 
-                  @if($education->certificate)
-                  <a target="_blank" href="{{url('files/'.$education->user_id.'/'.$education->certificate)}}" class="pull-right">View Certificate</a>
-                  @else
-                  <span class="pull-right">No certificate file.</span>
-                  @endif
                 </h6>
 
                 <h5>Board/Institute : {{$education->institute->institute_name}}</h5>
 
-                <h4>Degree : {{$education->degree->degree_name}}</h4>
+                <h4>Degree : {{$education->degree->degree_name}}  
+                  @if($education->certificate)
+                    <a target="_blank" href="{{url('files/'.$education->user_id.'/'.$education->certificate)}}" class="pull-right">View Certificate</a>
+                    @else
+                    <span class="pull-right">No certificate file.</span>
+                  @endif
+                </h4>
                 <p class="text-muted">
                 @if($education->result_type == 'cgpa') 
                   Result (cgpa) : {{$education->cgpa}}
@@ -257,7 +261,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -273,6 +277,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->experiences as $experience)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h6>
                   Date/Duration : {{$experience->job_start_date}} - {{$experience->job_end_date}} ( {{$experience->job_duration}} )
                 </h6>
@@ -285,7 +291,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -301,7 +307,8 @@ table.tc-med-2 tbody td:first-child{
             <h4>Salary Information :</h4>
               <div class="panel-body pb5">
                 <h5><span class="text-muted">Employee Job Type : </span> {{$user->employeeType->type_name}}</h5>
-                <h4><span class="text-muted">Basic Salary Amount : </span> {{$user->basic_salary}}</h4>
+                <h4><span class="text-muted">Basic Salary Amount : </span> {{$user->basic_salary or '0.00'}}</h4>
+                <h4><span class="text-muted">Salary In Cache Amount : </span> {{$user->salary_in_cache or '0.00'}}</h4>
                 <h5><span class="text-muted">Salary Effective Date : </span>{{$user->effective_date_format}}</h5>
               </div>
             </div>
@@ -334,7 +341,7 @@ table.tc-med-2 tbody td:first-child{
                         @foreach($user->salaries as $sinfo)
                             <tr>
                               <td>{{$sl}}</td>
-                              <td>{{$sinfo->basicSalaryInfo->name}}</td>
+                              <td>{{$sinfo->basicSalaryInfo->salary_info_name}}</td>
                               <td>@if($sinfo->salary_amount_type == 'fixed') $ @endif {{$sinfo->salary_amount}} @if($sinfo->salary_amount_type == 'percent') % @endif</td>
                               <td>{{$sinfo->salary_amount_type}}</td>
                               <td>{{$sinfo->salary_effective_date}}</td>
@@ -354,20 +361,24 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->nominees as $nominees)
+              <div class="row @if($loop->index %2 == 0) even @else odd @endif">
               <div class="col-md-10">
                 <h4>Nominee Name : {{$nominees->nominee_name}}</h4>
                 <h5>Relation : {{$nominees->nominee_relation}}</h5>
                 <h6>Birth Date : {{$nominees->nominee_birth_date}}</h6>
                 <p class="text-muted">Nominee Distribution : {{$nominees->nominee_distribution}}</p>
                 <p class="text-muted">Nominee Rest Distribution : {{$nominees->nominee_rest_distribution}}</p>
+                @if(!$loop->last)
+                <hr class="short br-lighter">
+                @endif
               </div>
               <div class="col-md-2">
                 <img src="@if($nominees->nominee_photo){{url('files/'.$user->id.'/'.$nominees->nominee_photo)}}@else{{url('img/placeholder.png')}}@endif" class="img-responsive">
               </div>
+              </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
-
               </div>
             </div>
           </div>
@@ -379,17 +390,19 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->trainings as $training)
-                <h6>
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
+                <h5>
                   Start : {{$training->training_from_date}} - End : {{$training->training_to_date}} - Pass : {{$training->  training_passed_date}} - Participation : {{$training->training_participation_date}}
-                </h6>
-                <h5>Training Code : {{$training->training_code}}</h5>
+                </h5>
+                <!-- <h5>Training Code : {{$training->training_code}}</h5> -->
                 <h4>Title : {{$training->training_title}}</h4>
                 <h6>Institute : {{$training->training_institute}}</h6>
                 <p class="text-muted">Remarks : {{$training->training_remarks}}</p>
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -405,6 +418,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->references as $reference)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h4>Reference Name : {{$reference->reference_name}}</h4>
                 <h5>Department : {{$reference->reference_department}}</h5>
                 <h5>Organization : {{$reference->reference_organization}}</h5>
@@ -414,7 +429,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -430,6 +445,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->childrens as $children)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h4>Children Name: {{$children->children_name}}</h4>
                 <h5>Education Level : {{$children->children_education_level}}</h5>
                 <h6>Children Birth Date : {{$children->children_birth_date}}</h6>
@@ -438,7 +455,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -454,6 +471,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->languages as $language)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h5>Language Name : {{$language->language->language_name}}</h5>
                 <h6>speaking : {{$language->speaking}}</h6>
                 <h6>reading : {{$language->reading}}</h6>
@@ -461,7 +480,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse

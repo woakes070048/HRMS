@@ -15,6 +15,7 @@
         .select2-container .select2-selection--single{height:32px!important}
         .select2-container--default .select2-selection--single .select2-selection__rendered{line-height:30px!important}
         .select2-container--default .select2-selection--single .select2-selection__arrow{height:30px!important}
+        .fileupload-preview{max-width: 200px!important;}
     </style>
 @endsection
 
@@ -401,10 +402,10 @@
                                             <div class="form-group" :class="{'has-error': errors.unit_id}">
                                                 <label class="control-label">Employee Unit : <span
                                                             class="text-danger">*</span></label>
-                                                <select2 class="form-control input-sm" id="unit_id" name="unit_id">
+                                                <select class="form-control input-sm" id="unit_id" name="unit_id">
                                                     <option value="">...Select Unit...</option>
                                                     <option v-for="(unit,index) in units" :value="unit.id" v-text="unit.unit_name"></option>
-                                                </select2>
+                                                </select>
                                                 <span v-if="errors.unit_id" class="help-block" v-text="errors.unit_id[0]"></span>
                                             </div>
                                         </div>
@@ -1777,11 +1778,18 @@
                                 <div class="col-md-2">
                                     <div class="form-group" :class="{'has-error': errors.bank_id}">
                                         <label class="control-label">Bank Name : </label>
-                                        <select class="form-control input-sm" name="bank_id" :disabled="salaries.salary_account">
+                                        
+                                        <select v-if="salaries.salary_account" class="form-control input-sm" name="bank_id" disabled="disabled" >
+                                            <option :value="''">---- Select Bank Name ----</option>
+                                            <option v-for="(bank,index) in banks"
+                                                    :value="bank.id" :selected="salaries.salary_account.bank_id">@{{ bank.bank_name }}</option>
+                                        </select>
+                                        <select v-else class="form-control input-sm" name="bank_id">
                                             <option :value="''">---- Select Bank Name ----</option>
                                             <option v-for="(bank,index) in banks"
                                                     :value="bank.id">@{{ bank.bank_name }}</option>
                                         </select>
+
                                         <span v-if="errors.bank_id" class="help-block">@{{errors.bank_id[0]}}</span>
                                     </div>
                                 </div>
@@ -1789,7 +1797,10 @@
                                 <div class="col-md-2">
                                     <div class="form-group" :class="{'has-error': errors.bank_account_no}">
                                         <label class="control-label">Account No : </label>
-                                        <input type="text" name="bank_account_no" class="form-control input-sm" :disabled="salaries.salary_account">
+
+                                        <input v-if="salaries.salary_account" type="text" name="bank_account_no" class="form-control input-sm" :value="salaries.salary_account.bank_account_no" :disabled="salaries.salary_account">
+                                        <input v-else type="text" name="bank_account_no" class="form-control input-sm">
+
                                         <span v-if="errors.bank_account_no" class="help-block">@{{errors.bank_account_no[0]}}</span>
                                     </div>
                                 </div>
@@ -1797,7 +1808,10 @@
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.bank_account_name}">
                                         <label class="control-label">Account Name : </label>
-                                        <input type="text" name="bank_account_name" class="form-control input-sm" :disabled="salaries.salary_account">
+                                        
+                                        <input v-if="salaries.salary_account" type="text" name="bank_account_name" class="form-control input-sm" :value="salaries.salary_account.bank_account_name" :disabled="salaries.salary_account">
+                                        <input v-else type="text" name="bank_account_name" class="form-control input-sm">
+                                        
                                         <span v-if="errors.bank_account_name" class="help-block">@{{errors.bank_account_name[0]}}</span>
                                     </div>
                                 </div>
@@ -1805,14 +1819,20 @@
                                 <div class="col-md-2">
                                     <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
                                         <label class="control-label">Bank Branch : </label>
-                                        <input type="text" name="bank_branch_name" class="form-control input-sm" :disabled="salaries.salary_account">
+
+                                        <input v-if="salaries.salary_account" type="text" name="bank_branch_name" class="form-control input-sm" :value="salaries.salary_account.bank_branch_name" :disabled="salaries.salary_account">
+                                        <input v-else type="text" name="bank_branch_name" class="form-control input-sm">
+
                                         <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.bank_branch_name}">
                                         <label class="control-label">Bank Branch Address: </label>
-                                        <textarea type="text" name="bank_branch_address" class="form-control input-sm" :disabled="salaries.salary_account"></textarea>
+                                        
+                                        <textarea v-if="salaries.salary_account" type="text" name="bank_branch_address" class="form-control input-sm" :disabled="salaries.salary_account" v-text="salaries.salary_account.bank_branch_name"></textarea>
+                                        <textarea v-else type="text" name="bank_branch_address" class="form-control input-sm"></textarea>
+
                                         <span v-if="errors.bank_branch_name" class="help-block">@{{errors.bank_branch_name[0]}}</span>
                                     </div>
                                 </div>

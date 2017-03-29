@@ -95,6 +95,16 @@
 </div>
 @endif
 
+<!-- organogram -->
+<!-- <div class="panel">
+  <div class="panel-heading">
+    <span class="panel-title">Organogram</span>
+  </div>
+  <div class="panel-body panel-scroller scroller-dark scroller-sm scroller-overlay scroller-pn pn">
+
+  </div>
+</div> -->
+
 
 </section>
 <!-- End: Content -->

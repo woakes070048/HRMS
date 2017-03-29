@@ -21,7 +21,7 @@
 
                                 <div class="fileupload-new admin-form" data-provides="fileupload">
                                     <div class="fileupload-preview thumbnail mb5">
-                                         <img v-if="singleNominee.nominee_photo" :src="'/files/'+singleNominee.user_id+'/'+singleNominee.nominee_photo" alt="holder">
+                                         <img v-if="singleNominee.nominee_photo" :src="'/files/'+singleNominee.user_id+'/'+singleNominee.nominee_photo">
                                         <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
                                     </div>
                                     <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
@@ -54,7 +54,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
                                             <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="nominee_birth_date" class="form-control input-sm" readonly="readonly" :value="singleNominee.nominee_birth_date">
+                                            <input type="text" name="nominee_birth_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly" :value="singleNominee.nominee_birth_date">
                                             <span v-if="errors.nominee_birth_date" class="help-block" v-text="errors.nominee_birth_date[0]"></span>
                                         </div>
                                     </div>
@@ -127,7 +127,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group" :class="{'has-error': errors.nominee_birth_date}">
                                             <label class="control-label">Nominee Birth Date : <span class="text-danger">*</span></label>
-                                            <input type="text" name="nominee_birth_date" class="datepicker form-control input-sm" readonly="readonly">
+                                            <input type="text" name="nominee_birth_date" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" readonly="readonly">
                                             <span v-if="errors.nominee_birth_date" class="help-block" v-text="errors.nominee_birth_date[0]"></span>
                                         </div>
                                     </div>
