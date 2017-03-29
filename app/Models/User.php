@@ -33,8 +33,8 @@ class User extends Authenticatable
     ];
 
 
-    public function getEffectiveDateFormatAttribute($value){
-        return Carbon::parse($value)->format('M d Y');
+    public function getEffectiveDateFormatAttribute(){
+        return Carbon::parse($this->effective_date)->format('d M Y');
     }
 
 

@@ -16,6 +16,7 @@ class EmployeeDetail extends Model
          return static::where('user_id', $user_id)->first();
     }
 
+
     public function getFatherNameAttribute($value){
         return ucfirst($value);
     }
@@ -26,14 +27,15 @@ class EmployeeDetail extends Model
     }
 
 
-    public function getJoiningDateFormatAttribute($value){
-    	return \Carbon\Carbon::parse($value)->format('d M Y');
+    public function getJoiningDateFormatAttribute(){
+    	return \Carbon\Carbon::parse($this->joining_date)->format('d M Y');
     }
 
 
-    public function getBirthDateFormatAttribute($value){
-    	return \Carbon\Carbon::parse($value)->format('d M Y');
+    public function getBirthDateFormatAttribute(){
+    	return \Carbon\Carbon::parse($this->birth_date)->format('d M Y');
     }
+    
 
     public function bloodGroup(){
         return $this->belongsTo('App\Models\BloodGroup','blood_group_id','id');	
