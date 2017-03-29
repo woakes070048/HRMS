@@ -257,4 +257,48 @@ class LevelController extends Controller
 
     	return redirect('levels/index');
     }
+
+    public function testing(){
+
+        $data['title'] = "TEsting";
+        $data['info'] = "";
+        $data['salary_info'] = BasicSalaryInfo::all();
+        $data['parents'] = Level::where('status',1)->get();
+
+        return view('pim.level.testAdd', $data);
+    }
+
+
+    public function test(Request $request){
+
+        $infoId = $request->salryInfoId;
+        $percent = $request->salryInfoPercent;
+        $infoChk = $request->salaryInfoChk;
+        // $infoId = $request->salryInfoId;
+
+        var_dump($infoId);
+        echo "<br>========<br>";
+        var_dump($percent);
+        echo "<br>========<br>";
+        var_dump($infoChk);
+        
+
+        // $length = count($infoId);
+        
+        
+
+        // for($i=0; $i<$length; $i++){
+
+        //     if($percent[$i] > 0){
+        //         $data[] = [
+        //                     'level_id' => $save->id, //last insert level id
+        //                     'amount' => $percent[$i],
+        //                     'basic_salary_info_id' => $infoId[$i]
+        //                 ];
+        //     }
+        // }
+
+            
+    }
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-Route::get('testing', 'Auth\LoginController@testing');
+Route::get('testing', 'Pim\LevelController@testing');
 
 /***************** ...Setup Login Routes... ******************/
 Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
@@ -136,6 +136,9 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::get('/index','LevelController@index');
     Route::get('/add','LevelController@add');
     Route::post('/add','LevelController@create');
+
+    Route::post('/test','LevelController@test');
+    
     Route::get('/edit/{id}','LevelController@edit');
     Route::post('/edit','LevelController@update');
     Route::post('/edit/info','LevelController@update_info');
