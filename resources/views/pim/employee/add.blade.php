@@ -15,6 +15,7 @@
         .select2-container .select2-selection--single{height:32px!important}
         .select2-container--default .select2-selection--single .select2-selection__rendered{line-height:30px!important}
         .select2-container--default .select2-selection--single .select2-selection__arrow{height:30px!important}
+        .fileupload-preview{max-width: 200px!important;}
     </style>
 @endsection
 
