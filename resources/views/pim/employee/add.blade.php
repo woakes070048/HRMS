@@ -402,10 +402,10 @@
                                             <div class="form-group" :class="{'has-error': errors.unit_id}">
                                                 <label class="control-label">Employee Unit : <span
                                                             class="text-danger">*</span></label>
-                                                <select2 class="form-control input-sm" id="unit_id" name="unit_id">
+                                                <select class="form-control input-sm" id="unit_id" name="unit_id">
                                                     <option value="">...Select Unit...</option>
                                                     <option v-for="(unit,index) in units" :value="unit.id" v-text="unit.unit_name"></option>
-                                                </select2>
+                                                </select>
                                                 <span v-if="errors.unit_id" class="help-block" v-text="errors.unit_id[0]"></span>
                                             </div>
                                         </div>
