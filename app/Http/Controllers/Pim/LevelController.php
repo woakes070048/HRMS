@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Pim;
 
+use App\Http\Requests\LevelRequest;
 use App\Models\Level;
 use App\Models\BasicSalaryInfo;
 use App\Models\LevelSalaryInfoMap;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 use DB;
+use Validator;
 
 class LevelController extends Controller
 {
@@ -269,36 +271,39 @@ class LevelController extends Controller
     }
 
 
-    public function test(Request $request){
+    public function test(LevelRequest $request){                           
 
         $infoId = $request->salryInfoId;
         $percent = $request->salryInfoPercent;
         $infoChk = $request->salaryInfoChk;
         // $infoId = $request->salryInfoId;
 
-        var_dump($infoId);
-        echo "<br>========<br>";
-        var_dump($percent);
-        echo "<br>========<br>";
-        var_dump($infoChk);
-        
+        // var_dump($infoId);
+        // echo "<br>========<br>";
+        // var_dump($percent);
+        // echo "<br>========<br>";
+        // var_dump($infoChk);
+        // echo "<br>========<br>";
 
-        // $length = count($infoId);
-        
-        
+        // $length = count($percent);
 
-        // for($i=0; $i<$length; $i++){
+        dd($infoChk);
 
-        //     if($percent[$i] > 0){
-        //         $data[] = [
-        //                     'level_id' => $save->id, //last insert level id
-        //                     'amount' => $percent[$i],
-        //                     'basic_salary_info_id' => $infoId[$i]
-        //                 ];
+        // $sl = 0;
+        // foreach($infoChk as $chk){
+        
+        //     if($percent[$chk] > 0){
+        //         $result[$sl]['id'] = $chk;
+        //         $result[$sl]['amount'] = $percent[$chk];
+        //         $sl++;
+        //     }
+        //     else{
+        //         $data['title'] = 'danger';
+        //         $data['message'] = 'Selected Info amount can not be null or 0 !';
         //     }
         // }
 
-            
+        // return $data;  
     }
 
 }
