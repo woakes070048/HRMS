@@ -19,7 +19,7 @@ class CreateEmployeeDetailsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('blood_group_id')->unsigned()->default(0);
             $table->bigInteger('national_id');
-            $table->bigInteger('passport_no')->nullable();
+            $table->string('passport_no')->nullable();
             $table->bigInteger('tin_no')->nullable();
             $table->string('father_name',50);
             $table->string('mother_name',50);
