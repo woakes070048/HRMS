@@ -1436,7 +1436,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.basic_salary}">
                                             <label class="control-label">Basic Salary Amount: <span class="text-danger">*</span></label>
-                                            <input type="text" name="basic_salary" class="form-control input-sm" v-on:keyup="calculateTotalSalary" v-model="salaries.basic_salary">
+                                            <input type="text" name="basic_salary" class="form-control input-sm" :value="(salaries.basic_salary)?salaries.basic_salary:levelSalaryInfos.level_salary_amount">
                                             <span v-if="errors.basic_salary" class="help-block" v-text="errors.basic_salary[0]"></span>
                                         </div>
                                     </div>
@@ -1464,57 +1464,93 @@
                                     </div>
                                 </div>
 
-                                
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-striped table-hover" cellspacing="0" width="100%">
-                                        <thead>
-                                          <tr class="bg-dark">
-                                              <th>SL No:</th>
-                                              <th>Allowance Name</th>
-                                              <th>Allowance Type</th>
-                                              <th>Effective Date</th>
-                                              <th>Allowance Amount</th>
-                                              <th>Action</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(salary,index) in empSalaries">
-                                                <td>@{{index+1}}</td>
-                                                <td>
-                                                    <select class="form-control input-sm" :name="'salary_info['+index+'][id]'" v-model="salary.basic_salary_info_id" v-on:change="pushAllowance($event.target,index)">
-                                                        <option v-for="(allowance,index) in allowances" :index="index" :value="allowance.id" v-text="allowance.salary_info_name"></option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control input-sm" :name="'salary_info['+index+'][type]'" v-model="salary.salary_amount_type" v-on:change="calculateTotalSalary">
-                                                        <option value="percent">Parcent</option>
-                                                        <option value="fixed">Fixed</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="text" v-on:mouseover="myDatePicker" :name="'salary_info['+index+'][date]'" v-model="salary.salary_effective_date" class="mydatepicker form-control input-sm">
-                                                </td>
-                                                <td>
-                                                    <input type="text" :name="'salary_info['+index+'][amount]'" v-model="salary.salary_amount" v-on:keyup.delete="setDefaultZero(index)" v-on:keyup="calculateTotalSalary" class="form-control input-sm text-right">
-                                                </td>
-                                                <td><button v-on:click.prevent="deleteAllowance(index)"><span class="text-danger glyphicons glyphicons-bin"></span></button></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="4" class="text-right"><strong>Total Salary : </strong></td>
-                                                <td class="text-right" style="font-weight: bold" v-text="totalSalaryAmount"></td>
-                                                <td></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="row" v-if="salaries.salaries ==''">
+                                    <div class="col-md-3 " v-for="levelSalaryInfo in levelSalaryInfos.salary_info">
+                                        <div class="checkbox-custom mb5 pull-left">
+                                            <input :id="levelSalaryInfo.basic_salary_info.id" type="checkbox" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][id]'" :value="levelSalaryInfo.basic_salary_info.id">
+
+                                            <label :for="levelSalaryInfo.basic_salary_info.id" v-text="(levelSalaryInfo.basic_salary_info.salary_info_amount_status==0)?levelSalaryInfo.basic_salary_info.salary_info_name+' (%) ':levelSalaryInfo.basic_salary_info.salary_info_name+' ($) '"></label>
+
+                                        </div>
+
+                                        <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][type]'">
+                                            <option value="percent" :selected="levelSalaryInfo.basic_salary_info.salary_info_amount_status ==0">Percent</option>
+                                            <option value="fixed" :selected="levelSalaryInfo.basic_salary_info.salary_info_amount_status ==1">Fixed</option>
+                                        </select>
+
+                                        <input type="number" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][amount]'" :value="levelSalaryInfo.amount" class="col-md-2 form-control input-sm mb5">
+
+                                        <input type="text" :name="'salary_info['+levelSalaryInfo.basic_salary_info.id+'][effective_date]'" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm">
+                                    </div>
+
+                                        <!-- add other allowance -->
+                                    <div class="col-md-3 mb15" v-for="allowance in otherAllowance">
+                                        <div class="checkbox-custom mb5 pull-left">
+
+                                            <input :id="allowance.id" type="checkbox" :name="'salary_info['+allowance.id+'][id]'" :value="allowance.id" checked="checked">
+
+                                            <label :for="allowance.id" v-text="(allowance.salary_info_amount_status==0)?allowance.salary_info_name+' (%) ':allowance.salary_info_name+' ($) '"></label>
+                                        </div>
+
+                                        <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+allowance.id+'][type]'">
+                                            <option value="percent" :selected="allowance.salary_info_amount_status ==0">Percent</option>
+                                            <option value="fixed" :selected="allowance.salary_info_amount_status ==1">Fixed</option>
+                                        </select>
+
+                                        <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
+
+                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker">
+                                    </div>
+
+                                </div>
+
+                                <div class="row" v-else>
+                                    <div class="col-md-3 " v-for="salary in salaries.salaries">
+                                        <div class="checkbox-custom mb5 pull-left">
+                                            <input :id="salary.basic_salary_info_id" type="checkbox" :name="'salary_info['+salary.basic_salary_info_id+'][id]'" checked="checked" :value="salary.basic_salary_info_id">
+
+                                            <label :for="salary.basic_salary_info_id" v-text="(salary.salary_amount_type=='percent')?salary.basic_salary_info.salary_info_name+' (%) ':salary.basic_salary_info.salary_info_name+' ($) '"></label>
+                                        </div>
+
+                                        <input type="hidden" :name="'salary_info['+salary.basic_salary_info_id+'][salary_id]'" :value="salary.id">
+
+                                        <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+salary.basic_salary_info_id+'][type]'">
+                                            <option value="percent" :selected="salary.salary_amount_type =='percent'">Percent</option>
+                                            <option value="fixed" :selected="salary.salary_amount_type =='fixed'">Fixed</option>
+                                        </select>
+
+                                        <input type="number" :name="'salary_info['+salary.basic_salary_info_id+'][amount]'" :value="salary.salary_amount" class="col-md-2 form-control input-sm mb5">
+
+                                        <input type="text" :value="salary.salary_effective_date" :name="'salary_info['+salary.basic_salary_info_id+'][effective_date]'" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker">
+                                    </div>
+
+                                     <!-- add other allowance -->
+                                    <div class="col-md-3 mb15" v-for="allowance in otherAllowance">
+                                        <div class="checkbox-custom mb5 pull-left">
+
+                                            <input :id="allowance.id" type="checkbox" :name="'salary_info['+allowance.id+'][id]'" :value="allowance.id" checked="checked">
+
+                                            <label :for="allowance.id" v-text="(allowance.salary_info_amount_status==0)?allowance.salary_info_name+' (%) ':allowance.salary_info_name+' ($) '"></label>
+                                        </div>
+
+                                        <select class="col-md-2 form-control input-sm mb5" :name="'salary_info['+allowance.id+'][type]'">
+                                            <option value="percent" :selected="allowance.salary_info_amount_status ==0">Percent</option>
+                                            <option value="fixed" :selected="allowance.salary_info_amount_status ==1">Fixed</option>
+                                        </select>
+
+                                        <input type="number" :name="'salary_info['+allowance.id+'][amount]'" :value="allowance.salary_info_amount" class="col-md-2 form-control input-sm mb5">
+
+                                        <input type="text" :name="'salary_info['+allowance.id+'][effective_date]'" class="mydatepicker form-control input-sm" v-on:mouseover="myDatePicker">
                                     </div>
                                 </div>
+
 
 
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button v-on:click.prevent="addMoreAllowance" class="btn btn-sm btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add More Allowance
+                                            <button id="add_more_allownce_button" v-on:click.prevent="getAllowanceNotinLevel('#add_more_allownce_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                                    data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add More Allowance
                                             </button>
                                         </div>
                                     </div>
@@ -2567,7 +2603,7 @@
     @include('pim.employee.modals.experience')
 
     <!-- Add Allowance Form Popup -->
-    <!-- @include('pim.employee.modals.allowance') -->
+    @include('pim.employee.modals.allowance')
 
     <!-- Add Nominee Form Popup -->
     @include('pim.employee.modals.nominee')

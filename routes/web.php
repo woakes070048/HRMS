@@ -247,8 +247,9 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-degree-by-education-level/{id}','CommonController@getDegreeByEducationLevel');
     Route::get('get-banks','CommonController@getBanks');
     Route::get('get-level-salary-info/{id}','CommonController@getLevelSalaryInfoByUser');
-    Route::get('get-allowance-by-ids/{ids}','CommonController@getAllowanceByIds');
-    Route::get('get-allowance-notin-level/{ids?}','CommonController@getAllowanceNotinLevel');
+    Route::get('get-allowances','CommonController@getAllowances');
+    // Route::get('get-allowance-by-ids/{ids}','CommonController@getAllowanceByIds');
+    // Route::get('get-allowance-notin-level/{ids?}','CommonController@getAllowanceNotinLevel');
     Route::get('get-language','CommonController@getLanguage');
     Route::get('get-religions','CommonController@getReligions');
 

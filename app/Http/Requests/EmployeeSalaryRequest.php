@@ -39,6 +39,8 @@ class EmployeeSalaryRequest extends FormRequest
             'basic_salary' => 'required|numeric',
             'salary_in_cache' => 'nullable|required|numeric',
             'effective_date' => 'required|date',
+            // 'salary_info.*.id' => 'required',
+            // 'salary_info.*.type' => 'required',
             'bank_id' => $bank_id,
             'bank_account_no' => $bank_account_no,
             'bank_account_name' => $bank_account_name,

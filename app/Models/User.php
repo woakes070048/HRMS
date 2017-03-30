@@ -196,7 +196,8 @@ class User extends Authenticatable
     }
 
 
-    public function get_user_data_by_user_tab($user_id,$tab){
+    public function get_user_data_by_user_tab($user_id,$tab,$flag=null){
+
         if($tab == ''){
             $basic = User::with('supervisor','designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
             return response()->json($basic);
@@ -219,6 +220,49 @@ class User extends Authenticatable
 
         if($tab == 'salary'){
             $salaries = User::with('salaries.basicSalaryInfo','salaryAccount')->find($user_id);
+
+            $salaries->added = true;
+            if($flag == 'add'){
+                if(empty($salaries->basic_salary) || $salaries->basic_salary < 1){
+                    $salaries->added = false; 
+                    $levelSalaryInfo = User::with('designation.level.salaryInfo.basicSalaryInfo')->find($user_id);
+                    $salaries->basic_salary = $levelSalaryInfo->designation->level->level_salary_amount;
+                    $salariesData = $levelSalaryInfo->designation->level->salaryInfo;
+                }
+            }
+
+            $empSalary = [];
+            if(isset($salariesData)){
+                // dd($salariesData);
+                foreach($salariesData as $sinfo){
+                    $salary = new \stdClass;
+                    $salary_info_type= 'salary_info_type_'.$sinfo->basic_salary_info_id;
+
+                    $salary->basic_salary_info_id = $sinfo->basic_salary_info_id;
+                    $salary->salary_amount = $sinfo->amount;
+                    $salary->salary_amount_type = ($sinfo->basicSalaryInfo->salary_info_amount_status == 0)?'percent':'fixed';
+                    $salary->salary_info_type = $sinfo->basicSalaryInfo->salary_info_type;
+                    $salary->salary_effective_date = $sinfo->salary_effective_date;
+
+                    $empSalary[] = $salary;
+                }
+                // dd($empSalary);
+            }else{
+                foreach($salaries->salaries as $sinfo){
+                    $salary = new \stdClass;
+                    $salary_info_type= 'salary_info_type_'.$sinfo->basic_salary_info_id;
+
+                    $salary->basic_salary_info_id = $sinfo->basic_salary_info_id;
+                    $salary->salary_amount = $sinfo->salary_amount;
+                    $salary->salary_amount_type = $sinfo->salary_amount_type;
+                    $salary->salary_info_type = $sinfo->basicSalaryInfo->salary_info_type;
+                    $salary->salary_effective_date = $sinfo->salary_effective_date;
+
+                    $empSalary[] = $salary;
+                }
+            }
+
+            $salaries->mySalary = $empSalary;
             return response()->json($salaries);
         }
 

@@ -80,8 +80,11 @@ var employee = new Vue({
 
         basic_salary:null,
         salary_in_cache:null,
-        levelSalaryNotinLevels:[],
-        levelSalaryInfos: [],
+        totalSalaryAmount: 0.00,
+        allowances: [],
+        // levelSalaryNotinLevels:[],
+        // levelSalaryInfos: [],
+        empSalaries:[],
         salaries:[],
         banks: [],
         nominees: [],
@@ -217,13 +220,11 @@ var employee = new Vue({
             this.errors = [];
 
             if(this.tab == ''){
-                
                 this.getBranches();
                 this.getEmployeeType();
                 this.getDesignations();
                 this.getDivisions();
 				this.getBasic();
-                
             }
 
             if(this.tab == 'personal'){
@@ -241,8 +242,9 @@ var employee = new Vue({
                 this.getExperience();
             }
             if(this.tab == 'salary'){
+                this.getAllowances();
+                // this.getLevelSalaryInfo();
                 this.getSalary(); // employee salaries info
-                this.getLevelSalaryInfo();
                 this.getBanks();
             }
 
@@ -325,7 +327,9 @@ var employee = new Vue({
             var url = this.makeUrl();
             axios.get(url).then(response => {
                 this.salaries = response.data;
-        });
+                this.empSalaries = this.salaries.mySalary;
+                this.calculateTotalSalary();
+            });
         },
 
 
@@ -525,39 +529,121 @@ var employee = new Vue({
         },
 
 
-        getLevelSalaryInfo(){
-            axios.get('/get-level-salary-info/'+this.user_id).then(response => {
-                this.levelSalaryInfos = response.data.designation.level;
-            console.log(this.levelSalaryInfos);
-        });
+        // getLevelSalaryInfo(){
+        //     axios.get('/get-level-salary-info/'+this.user_id).then(response => {
+        //         this.levelSalaryInfos = response.data.designation.level;
+        //         console.log(this.levelSalaryInfos);
+        //     });
+        // },
+
+
+        getAllowances(){
+            axios.get('/get-allowances').then(response => {
+                this.allowances = response.data;
+            });
+        },
+
+        deleteAllowance(index){
+            this.empSalaries.splice(index,1);
+            this.calculateTotalSalary();
+        },
+
+        addMoreAllowance(){
+            this.empSalaries.push({
+                'basic_salary_info_id':0,
+                'salary_amount_type':'percent',
+                'salary_effective_date':null,
+                'salary_amount':0.00,
+                'salary_info_type':'allowance',
+            });
+        },
+
+        pushAllowance(index1,index2){
+
+            var allowIndex = index1.options[index1.selectedIndex].index;
+            this.empSalaries[index2].salary_info_type = this.allowances[allowIndex].salary_info_type;
+            this.empSalaries[index2].salary_amount_type = (this.allowances[allowIndex].salary_info_amount_status == '0')?'percent':'fixed';
+            
+            this.calculateTotalSalary();
         },
 
 
-        getAllowanceNotinLevel(modal_id){
-            axios.get('/get-allowance-notin-level/'+this.allow).then(response => {
-                this.levelSalaryNotinLevels = response.data;
-            	setTimeout(this.modal_open(modal_id),5);
-        	});
-        },
-
-
-        addMoreAllowance(id){
-            var formData = $('#'+id).serializeArray();
-            var data;
-            var allowance_ids = [];
-
-            for(data in formData){
-                this.allow.push(formData[data].value);
-                allowance_ids.push(formData[data].value);
+        setDefaultZero(index){
+            if((parseInt(this.empSalaries[index].salary_amount) <= 0) || (!this.empSalaries[index].salary_amount.length)){
+                this.empSalaries[index].salary_amount = 0;
             }
-
-            axios.get('/get-allowance-by-ids/'+allowance_ids).then(response => {
-            	for(var data in response.data){
-            		this.otherAllowance.push(response.data[data]);
-            	}
-            	jQuery(".mfp-close").trigger("click");
-        	});
         },
+
+
+        calculateTotalSalary(){
+
+            let basic_salary = parseInt(this.salaries.basic_salary);
+            if(basic_salary < 0 || isNaN(basic_salary)){
+                basic_salary = 0;
+            }
+            let sData;
+            let tempAllow=0;
+            let totalSalary = 0;
+            let tempAmount=0;
+
+            for(sData in this.empSalaries){
+                tempAmount = parseInt(this.empSalaries[sData].salary_amount);
+
+                if(this.empSalaries[sData].salary_info_type == 'allowance'){
+                    if(this.empSalaries[sData].salary_amount_type == 'percent'){
+                        tempAllow = this.calculatePercent(basic_salary,tempAmount);
+                        totalSalary = totalSalary + tempAllow;
+                    }else if(this.empSalaries[sData].salary_amount_type == 'fixed'){
+                        tempAllow = tempAmount;
+                        totalSalary = totalSalary + tempAllow;
+                    }
+                }else if(this.empSalaries[sData].salary_info_type == 'deduction'){
+                    if(this.empSalaries[sData].salary_amount_type == 'percent'){
+                        tempAllow = this.calculatePercent(basic_salary,tempAmount);
+                        totalSalary = totalSalary - tempAllow;
+                    }else if(this.empSalaries[sData].salary_amount_type == 'fixed'){
+                        tempAllow = tempAmount;
+                        totalSalary = totalSalary - tempAllow;
+                    }
+                }
+                // console.log(tempAllow);
+            }
+            this.totalSalaryAmount = basic_salary + totalSalary;
+            // console.log(this.empSalaries);
+            // console.log(totalSalary);
+        },
+
+
+        calculatePercent(salary,percent){
+            return (salary * percent) / 100;
+        },
+
+
+        // getAllowanceNotinLevel(modal_id){
+        //     axios.get('/get-allowance-notin-level/'+this.allow).then(response => {
+        //         this.levelSalaryNotinLevels = response.data;
+        //     	setTimeout(this.modal_open(modal_id),5);
+        // 	});
+        // },
+
+
+        // addMoreAllowance(id){
+        //     var formData = $('#'+id).serializeArray();
+        //     var data;
+        //     var allowance_ids = [];
+
+        //     for(data in formData){
+        //         this.allow.push(formData[data].value);
+        //         allowance_ids.push(formData[data].value);
+        //     }
+
+        //     axios.get('/get-allowance-by-ids/'+allowance_ids).then(response => {
+        //     	for(var data in response.data){
+        //     		this.otherAllowance.push(response.data[data]);
+        //     	}
+        //     	jQuery(".mfp-close").trigger("click");
+        // 	});
+        // },
 
         getLanguage(){
             axios.get('/get-language').then(response => {
@@ -803,7 +889,7 @@ var employee = new Vue({
                 var data = response.data;
                 this.errors = [];
                 this.salaries = data.data;
-                this.otherAllowance = [];
+                this.empSalaries = this.salaries.mySalary;
                 this.showMessage(data);
 
                 if(data.type){
@@ -822,7 +908,7 @@ var employee = new Vue({
                 }else if(error.response.status == 422){
                     this.errors = error.response.data;
                 }
-
+                console.log(this.errors);
             });
         },
 
