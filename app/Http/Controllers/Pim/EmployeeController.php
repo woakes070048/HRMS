@@ -115,7 +115,7 @@ class EmployeeController extends Controller
             $data['id'] = $user->id;
 
             if($request->ajax()){
-                return $this->user->get_user_data_by_user_tab($user->id, $request->tab);
+                return $this->user->get_user_data_by_user_tab($user->id, $request->tab, 'add');
             }
         }else{
             if($request->ajax()){
@@ -410,22 +410,28 @@ class EmployeeController extends Controller
             ]);
 
             if($request->has('salary_info')){
+
                 $salary_info = $request->salary_info;
                 $saveData = [];
+                // dd($salary_info);
                 foreach($salary_info as $sinfo){
-                    if(!empty($sinfo['id']) && !empty($sinfo['amount'])) {
-                        $saveData[] = [
-                            'user_id' => $request->user_id,
-                            'basic_salary_info_id' => $sinfo['id'],
-                            'salary_amount' => $sinfo['amount'],
-                            'salary_amount_type' => $sinfo['type'],
-                            'salary_effective_date' => ($sinfo['effective_date'])?:date('Y-m-d'),
-                            'created_by' => $this->auth->id,
-                            'created_at' => date('Y-m-d')
-                        ];
-                    }
+                    $saveData[] = [
+                        'user_id' => $request->userId,
+                        'basic_salary_info_id' => $sinfo['id'],
+                        'salary_amount' => ($sinfo['amount'])?$sinfo['amount']:'0',
+                        'salary_amount_type' => (isset($sinfo['type']))?$sinfo['type']:'percent',
+                        'salary_effective_date' => ($sinfo['date']) ?: date('Y-m-d'),
+                        'created_by' => $this->auth->id,
+                        'created_at' => date('Y-m-d')
+                    ];
                 }
+
+                EmployeeSalary::where('user_id',$request->userId)->delete();
                 EmployeeSalary::insert($saveData);
+            }else{
+                if(EmployeeSalary::where('user_id',$request->userId)->count() >= 0){
+                    EmployeeSalary::where('user_id',$request->userId)->delete();
+                }
             }
 
             if($request->has('bank_id') && $request->has('bank_account_no')){
@@ -435,7 +441,9 @@ class EmployeeController extends Controller
             DB::commit();
 
             if($request->ajax()){
-                $data['data'] = User::with('salaries.basicSalaryInfo','salaryAccount')->find($request->userId);
+                // $data['data'] = User::with('salaries.basicSalaryInfo','salaryAccount')->find($request->userId);
+                $salary = $this->user->get_user_data_by_user_tab($request->userId, 'salary','add');
+                $data['data'] = $salary->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
@@ -757,7 +765,8 @@ class EmployeeController extends Controller
             $data['id'] = $user->id;
 
             if($request->ajax()){
-                return $this->user->get_user_data_by_user_tab($user->id, $request->tab);
+                $tabData =  $this->user->get_user_data_by_user_tab($user->id, $request->tab);
+                return $tabData;
             }
         }else{
             return redirect()->back();
@@ -936,9 +945,9 @@ class EmployeeController extends Controller
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function editSalary(EmployeeSalaryRequest $request){
-
+        // dd($request->all());
         DB::beginTransaction();
-        try{
+        // try{
             $request->offsetSet('updated_by', $this->auth->id);
             $request->offsetSet('user_id', $request->userId);
 
@@ -948,44 +957,29 @@ class EmployeeController extends Controller
                 'effective_date' => $request->effective_date,
             ]);
 
+            
             if($request->has('salary_info')){
+
                 $salary_info = $request->salary_info;
-//                dd($salary_info);
                 $saveData = [];
+                // dd($salary_info);
                 foreach($salary_info as $sinfo){
-                    if(isset($sinfo['id'])) {
-                        if(isset($sinfo['salary_id'])) {
-
-                            $updateData = [
-                                'user_id' => $request->userId,
-                                'basic_salary_info_id' => $sinfo['id'],
-                                'salary_amount' => $sinfo['amount'],
-                                'salary_amount_type' => $sinfo['type'],
-                                'salary_effective_date' => ($sinfo['effective_date']) ?: date('Y-m-d'),
-                                'updated_by' => $this->auth->id,
-                            ];
-
-                            EmployeeSalary::where('id',$sinfo['salary_id'])->update($updateData);
-                        }else{
-                            $saveData[] = [
-                                'user_id' => $request->userId,
-                                'basic_salary_info_id' => $sinfo['id'],
-                                'salary_amount' => $sinfo['amount'],
-                                'salary_amount_type' => $sinfo['type'],
-                                'salary_effective_date' => ($sinfo['effective_date']) ?: date('Y-m-d'),
-                                'created_by' => $this->auth->id,
-                                'created_at' => date('Y-m-d')
-                            ];
-                        }
-                    }else{
-                        if(isset($sinfo['salary_id'])) {
-                            EmployeeSalary::where('id', $sinfo['salary_id'])->delete();
-                        }
-                    }
+                    $saveData[] = [
+                        'user_id' => $request->userId,
+                        'basic_salary_info_id' => $sinfo['id'],
+                        'salary_amount' => ($sinfo['amount'])?$sinfo['amount']:'0',
+                        'salary_amount_type' => (isset($sinfo['type']))?$sinfo['type']:'percent',
+                        'salary_effective_date' => ($sinfo['date']) ?: date('Y-m-d'),
+                        'created_by' => $this->auth->id,
+                        'created_at' => date('Y-m-d')
+                    ];
                 }
-                if(count($saveData)>0) {
-//                    dd($saveData);
-                    EmployeeSalary::insert($saveData);
+
+                EmployeeSalary::where('user_id',$request->userId)->delete();
+                EmployeeSalary::insert($saveData);
+            }else{
+                if(EmployeeSalary::where('user_id',$request->userId)->count() >= 0){
+                    EmployeeSalary::where('user_id',$request->userId)->delete();
                 }
             }
 
@@ -1000,7 +994,9 @@ class EmployeeController extends Controller
             DB::commit();
 
             if($request->ajax()){
-                $data['data'] = User::with('salaries.basicSalaryInfo','salaryAccount')->find($request->userId);
+                // $data['data'] = User::with('salaries.basicSalaryInfo','salaryAccount')->find($request->userId);
+                $salary = $this->user->get_user_data_by_user_tab($request->userId, 'salary','edit');
+                $data['data'] = $salary->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
@@ -1017,22 +1013,22 @@ class EmployeeController extends Controller
             }
             return redirect('/employee/edit/'.$request->userId.'/salary');
 
-        }catch(\Exception $e){
-            DB::rollback();
+        // }catch(\Exception $e){
+        //     DB::rollback();
 
-            if($request->ajax()){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
-                $data['message'] = 'Salary Not Saved.';
-                return response()->json($data,500);
-            }
+        //     if($request->ajax()){
+        //         $data['status'] = 'danger';
+        //         $data['statusType'] = 'NotOk';
+        //         $data['code'] = 500;
+        //         $data['type'] = null;
+        //         $data['title'] = 'Error!';
+        //         $data['message'] = 'Salary Not Saved.';
+        //         return response()->json($data,500);
+        //     }
 
-            $request->session()->flash('danger','Salary Not Update.');
-            return redirect()->back()->withInput();
-        }
+        //     $request->session()->flash('danger','Salary Not Update.');
+        //     return redirect()->back()->withInput();
+        // }
     }
 
 

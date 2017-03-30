@@ -201,6 +201,11 @@ trait CommonService
     }
 
 
+    public function getAllowances(){
+        return BasicSalaryInfo::all();
+    }
+
+
     public function getLevelSalaryInfoByUser($user_id){
         return User::with('designation.level.salaryInfo.basicSalaryInfo')->find($user_id);
     }

@@ -18,7 +18,7 @@ class CreateEmployeeSalariesTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('basic_salary_info_id')->unsigned();
-            $table->decimal('salary_amount',5,2);
+            $table->decimal('salary_amount',10,2);
             $table->enum('salary_amount_type',['percent','fixed']);
             $table->date('salary_effective_date');
             $table->integer('created_by')->default(0);
