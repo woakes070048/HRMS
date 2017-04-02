@@ -37,6 +37,13 @@ new Vue({
                 this.branches.push(response.data.data);
                 document.getElementById("modal-close-btn").click();
 
+                //empty text field after save data
+                this.branch_name = '',
+                this.branch_email = '',
+                this.branch_mobile = '',
+                this.branch_phone = '',
+                this.branch_location = '',              
+
                 new PNotify({
                     title: response.data.title+' Message',
                     text: response.data.message,
