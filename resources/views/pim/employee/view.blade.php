@@ -187,6 +187,10 @@ table.tc-med-2 tbody td:first-child{
                 <td class="text-right">{{$user->details->emergency_contact_person}}</td>
               </tr>
               <tr>
+                <td class="text-left">Emergency Contact Number :</td>
+                <td class="text-right">{{$user->details->emergency_contact_number}}</td>
+              </tr>
+              <tr>
                 <td class="text-left">Emergency Contact Address :</td>
                 <td class="text-right">{{$user->details->emergency_contact_address}}</td>
               </tr>

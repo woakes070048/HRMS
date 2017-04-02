@@ -11,7 +11,7 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-12">
-                    <form method="post" enctype="multipart/form-data" v-on:submit.prevent="addNewEducation">
+                    <form id="add_new_education_form" method="post" enctype="multipart/form-data" v-on:submit.prevent="addNewEducation">
                         <input type="hidden" name="user_id" v-model="user_id">
                         
                         <div v-if="singleEducation,singleEducation !=''">
@@ -131,7 +131,7 @@
                                     <div class="form-group">
                                         <label class="control-label">Certificate:</label>
                                         <div>
-                                            <a :href="'/files/'+singleEducation.user_id+'/'+singleEducation.certificate" target="_blank" class="text-success">
+                                            <a :href="'/files/'+config_id+'/'+singleEducation.user_id+'/'+singleEducation.certificate" target="_blank" class="text-success">
                                                 <i class="fa fa-2x fa-file-image-o"></i>
                                                 Click here to view certificate
                                             </a>
@@ -163,11 +163,11 @@
                                 <div class="col-md-4">
                                     <div class="form-group" :class="{'has-error': errors.institute_id}">
                                         <label class="control-label">Institute : <span class="text-danger">*</span></label>
-                                        <select class="form-control input-sm" name="institute_id">
+                                        <select2 class="form-control input-sm" name="institute_id">
                                             <option v-bind:value="''">---- Select Institute ----</option>
                                             <option v-bind:value="institute.id"
                                                     v-for="(institute, index) in institutes" v-text="institute.institute_name"></option>
-                                        </select>
+                                        </select2>
                                         <span v-if="errors.institute_id" class="text-danger" v-text="errors.institute_id[0]"></span>
                                     </div>
                                 </div>
@@ -175,10 +175,10 @@
                                 <div class="col-md-4">
                                     <div class="form-group" :class="{'has-error': errors.degree_id}">
                                         <label class="control-label">Degree : <span class="text-danger">*</span></label>
-                                        <select class="form-control input-sm" name="degree_id">
+                                        <select2 class="form-control input-sm" name="degree_id">
                                             <option v-bind:value="''">---- Select Degree ----</option>
                                             <option v-bind:value="degree.id" v-for="(degree, index) in degrees">@{{ degree.degree_name }}</option>
-                                        </select>
+                                        </select2>
                                         <span v-if="errors.degree_id"
                                               class="text-danger" v-text="errors.degree_id[0]"></span>
                                     </div>

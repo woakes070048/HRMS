@@ -37,6 +37,7 @@ var employee = new Vue({
         tempData:null,
         tab: current_tab,
         user_id:user_id,
+        config_id:config_id,
 
         present_division_id:null,
         present_district_id:null,
@@ -199,12 +200,12 @@ var employee = new Vue({
             });
         },
 
-        datePicker(){
-            $('.datepicker').datetimepicker({
-                format: 'YYYY-MM-DD',
-                pickTime: false
-            });
-        },
+        // datePicker(){
+        //     $('.datepicker').datetimepicker({
+        //         format: 'YYYY-MM-DD',
+        //         pickTime: false
+        //     });
+        // },
 
         myDatePicker(){
             $('.mydatepicker').datetimepicker({
@@ -244,7 +245,7 @@ var employee = new Vue({
             if(this.tab == 'salary'){
                 this.getAllowances();
                 // this.getLevelSalaryInfo();
-                this.getSalary(); // employee salaries info
+                this.getSalary();
                 this.getBanks();
             }
 
@@ -293,8 +294,8 @@ var employee = new Vue({
             var url = this.makeUrl();
             axios.get(url).then(response => {
                 this.basics = response.data;
-            console.log(this.basics);
-        });
+                // console.log(this.basics);
+            });
         },
 
 
@@ -303,7 +304,7 @@ var employee = new Vue({
             axios.get(url).then(response => {
                 this.personals = response.data;
             // console.log(this.personals);
-        });
+            });
         },
 
 
@@ -311,7 +312,7 @@ var employee = new Vue({
             var url = this.makeUrl();
             axios.get(url).then(response => {
                 this.educations = response.data;
-        });
+            });
         },
 
 
@@ -319,7 +320,7 @@ var employee = new Vue({
             var url = this.makeUrl();
             axios.get(url).then(response => {
                 this.experiences = response.data;
-        });
+            });
         },
 
 
@@ -336,9 +337,9 @@ var employee = new Vue({
         getNominees(){
             var url = this.makeUrl();
             axios.get(url).then(response => {
-            this.nominees = response.data;
-                console.log(this.nominees);
-        });
+                this.nominees = response.data;
+                    // console.log(this.nominees);
+            });
         },
 
 
@@ -373,7 +374,7 @@ var employee = new Vue({
             var url = this.makeUrl();
             axios.get(url).then(response => {
                 this.languages = response.data;
-            	console.log(this.languages);
+            	// console.log(this.languages);
         	});
         },
 
@@ -381,7 +382,7 @@ var employee = new Vue({
 		getBranches(){
             axios.get('/get-branches').then(response => {
                 this.branches = response.data;
-            	console.log(this.branches);
+            	// console.log(this.branches);
         	});
         },
 
@@ -389,7 +390,7 @@ var employee = new Vue({
         getEmployeeType(){
             axios.get('/get-employee-type').then(response => {
                 this.employeeTypes = response.data;
-            console.log(this.employeeTypes);
+                // console.log(this.employeeTypes);
         	});
         },
 
@@ -417,7 +418,7 @@ var employee = new Vue({
         getDesignations(){
             axios.get('/get-designations').then(response => {
                 this.designations = response.data;
-                console.log(this.designations);
+                // console.log(this.designations);
             });
         },
 
@@ -425,7 +426,7 @@ var employee = new Vue({
         getAllUnit(){
              axios.get('/get-units').then(response => {
                 this.allUnits = response.data;
-                console.log(this.allUnits);
+                // console.log(this.allUnits);
             });
         },
 
@@ -434,15 +435,19 @@ var employee = new Vue({
         	// var id = this.designation_id;
              axios.get('/get-unit-by-designation-id/'+id).then(response => {
                 this.units = response.data;
-                console.log(this.units);
+                // console.log(this.units);
             });
         },
 
 
         getSupervisorByDesignationId(id){
-             axios.get('/get-supervisor-by-designation-id/'+id).then(response => {
+            var uid='';
+            if(add_edit == 'edit'){
+                uid=parseInt(this.user_id);
+            }
+             axios.get('/get-supervisor-by-designation-id/'+id+'/'+uid).then(response => {
                 this.supervisors = response.data;
-                console.log(this.supervisors);
+                // console.log(this.supervisors);
             });
         },
 
@@ -455,46 +460,46 @@ var employee = new Vue({
         getDistrictByDivisionId(id,tempData){
             axios.get('/get-district-by-division/'+id)
                 .then((response)=>{
-                if(tempData == 'permanent'){
-                this.permanentDistricts = response.data;
-            }
-            if(tempData == 'present'){
-                this.districts = response.data;
-            }
-        });
+                    if(tempData == 'permanent'){
+                    this.permanentDistricts = response.data;
+                    }
+                    if(tempData == 'present'){
+                        this.districts = response.data;
+                    }
+            });
         },
 
 
         getPoliceStationByDistrictId(id,tempData){
             axios.get('/get-police-station-by-district/'+id)
                 .then((response) => {
-                if(tempData == 'permanent'){
-                this.permanentPoliceStations = response.data;
-            }
-            if(tempData == 'present'){
-                this.policeStations = response.data;
-            }
-        });
+                    if(tempData == 'permanent'){
+                    this.permanentPoliceStations = response.data;
+                }
+                if(tempData == 'present'){
+                    this.policeStations = response.data;
+                }
+            });
         },
 
 
         getBloodGroups(){
             axios.get('/get-blood-groups').then(
                 response => this.blood_group = response.data
-        );
+            );
         },
 
          getReligions(){
             axios.get('/get-religions').then(
                 response => this.religions = response.data
-        );
+            );
         },
 
 
         getEducationLevels(){
             axios.get('/get-education-levels').then(
                 response => this.education_levels = response.data
-        );
+            );
         },
 
 
@@ -510,22 +515,22 @@ var employee = new Vue({
         getInstituteByEducationLevelId(id){
             axios.get('/get-institute-by-education-level/'+id).then(
                 response => this.institutes = response.data
-        );
+            );
         },
 
 
         getDegreeByEducationLevelId(id){
             axios.get('/get-degree-by-education-level/'+id).then(
                 response => this.degrees = response.data
-        );
+            );
         },
 
 
         getBanks(){
             axios.get('/get-banks').then(response => {
                 this.banks = response.data;
-            console.log(this.banks);
-        });
+                // console.log(this.banks);
+            });
         },
 
 
@@ -649,7 +654,7 @@ var employee = new Vue({
             axios.get('/get-language').then(response => {
                 this.language = response.data;
             // console.log(this.language);
-        });
+            });
         },
 
 
@@ -672,7 +677,7 @@ var employee = new Vue({
             axios.post('/add-language',formData)
                 .then((response) => {
                 // console.log(response);
-                    var data = response.data;
+                var data = response.data;
                 this.errors = [];
                 this.language.push(response.data.data);
                 jQuery(".mfp-close").trigger("click");
@@ -698,23 +703,23 @@ var employee = new Vue({
             axios.post('/add-designation',formData)
                 .then((response) => {
                 console.log(response);
-            var data = response.data;
-            this.errors = [];
-            // this.designations.push(response.data.data);
-            this.designations = response.data.data;
-            jQuery(".mfp-close").trigger("click");
-            this.showMessage(data);
-        })
-        .catch(error => {
-                console.log(error);
-            if(error.response.status == 500 || error.response.data.status == 'danger'){
-                var error = error.response.data;
-                this.showMessage(error);
-            }else if(error.response.status == 422){
-                this.errors = error.response.data;
-            }
+                var data = response.data;
+                this.errors = [];
+                // this.designations.push(response.data.data);
+                this.designations = response.data.data;
+                jQuery(".mfp-close").trigger("click");
+                this.showMessage(data);
+            })
+            .catch(error => {
+                    console.log(error);
+                if(error.response.status == 500 || error.response.data.status == 'danger'){
+                    var error = error.response.data;
+                    this.showMessage(error);
+                }else if(error.response.status == 422){
+                    this.errors = error.response.data;
+                }
 
-        });
+            });
         },
 
 
@@ -1153,7 +1158,47 @@ var employee = new Vue({
             });
         },
 
+        add_modal_open(form_id) {
+            this.singleEducation = [];
+            this.singleExperience = [];
+            this.singleTraining = [];
+            this.singleReference = [];
+            this.singleChildren = [];
+            this.singleNominee = [];
+            this.singleLanguage = [];
+            this.errors = [];
+
+            document.getElementById("add_new_nominee_form").reset();
+            document.getElementById("add_new_children_form").reset();
+            document.getElementById("add_new_reference_form").reset();
+            document.getElementById("add_new_training_form").reset();
+            document.getElementById("add_new_experience_form").reset();
+            document.getElementById("add_new_education_form").reset();
+            document.getElementById("add_new_language_form").reset();
+            document.getElementById("add_language").reset();
+
+            setTimeout(function(){
+                $.magnificPopup.open({
+                    removalDelay: 300,
+                    items: {
+                        src: form_id
+                    },
+                    callbacks: {
+                        beforeOpen: function (e) {
+                            var Animation = "mfp-zoomIn";
+                            this.st.mainClass = Animation;
+                        }
+                    },
+                    midClick: true
+                });
+            },5);
+
+            
+        },
+
+
         modal_open(form_id) {
+            
             $.magnificPopup.open({
                 removalDelay: 300,
                 items: {

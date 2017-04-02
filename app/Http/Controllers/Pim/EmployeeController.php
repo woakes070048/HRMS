@@ -175,7 +175,7 @@ class EmployeeController extends Controller
 
             if($user){
                 if(isset($photo)){
-                    if(!$request->image->storeAs($user->id,$photo)){
+                    if(!$request->image->storeAs(Session('config_id').'/'.$user->id,$photo)){
                         $request->session()->flash('warning','Photo Not Upload.Update photo form edit.');
                     }
                 }
@@ -282,9 +282,9 @@ class EmployeeController extends Controller
             if($request->hasFile('certificate_file')){
                 $certificate = time().'.'.$request->certificate_file->extension();
                 $request->offsetSet('certificate',$certificate);
-                if($request->certificate_file->storeAs($request->userId, $certificate)){
+                if($request->certificate_file->storeAs(Session('config_id').'/'.$request->userId, $certificate)){
                     if($request->has('old_image')) {
-                        File::delete('files/'.$request->userId.'/'.$request->old_image);
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$request->old_image);
                     }
                 }
             }
@@ -294,7 +294,7 @@ class EmployeeController extends Controller
                 $request->offsetSet('updated_by', $this->auth->id);
                 if(!EmployeeEducation::find($request->id)->update($request->all())){
                     if(isset($certificate)) {
-                        File::delete('files/'.$request->userId.'/'.$certificate);
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$certificate);
                     }
                 }
             }else{
@@ -302,7 +302,7 @@ class EmployeeController extends Controller
                 $request->offsetSet('created_by', $this->auth->id);
                 if(!EmployeeEducation::create($request->all())){
                     if(isset($certificate)) {
-                        File::delete('files/'.$request->userId.'/'.$certificate);
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$certificate);
                     }
                 }
             }
@@ -489,9 +489,9 @@ class EmployeeController extends Controller
             if($request->hasFile('image')){
                 $image = time().'.'.$request->image->extension();
                 $request->offsetSet('nominee_photo',$image);
-                if($request->image->storeAs($request->userId, $image)){
+                if($request->image->storeAs(Session('config_id').'/'.$request->userId, $image)){
                     if($request->has('old_image')) {
-                        File::delete('files/'.$request->userId.'/'.$request->old_image);
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$request->old_image);
                     }
                 }
             }
@@ -501,7 +501,7 @@ class EmployeeController extends Controller
                  $request->offsetSet('updated_by', $this->auth->id);
                  if(!EmployeeNominee::find($request->id)->update($request->all())){
                      if(isset($image)) {
-                         File::delete('files/'.$request->userId.'/'.$image);
+                         File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$image);
                      }
                  }
              }else{
@@ -509,7 +509,7 @@ class EmployeeController extends Controller
                  $request->offsetSet('created_by', $this->auth->id);
                  if(!EmployeeNominee::create($request->all())){
                      if(isset($image)) {
-                         File::delete('files/'.$request->userId.'/'.$image);
+                         File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$image);
                      }
                  }
              }
@@ -828,9 +828,9 @@ class EmployeeController extends Controller
 
             if($request->hasFile('image')){
                 $photo = time().'.'.$request->image->extension();
-                if($request->image->storeAs($request->userId,$photo)){
+                if($request->image->storeAs(Session('config_id').'/'.$request->userId,$photo)){
                     if($request->has('old_image')) {
-                        File::delete('files/'.$request->userId.'/'.$request->old_image);
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$request->old_image);
                     }
                 }else{
                     $request->session()->flash('warning','Photo Not Upload.Update photo form edit.');
@@ -947,7 +947,7 @@ class EmployeeController extends Controller
     public function editSalary(EmployeeSalaryRequest $request){
         // dd($request->all());
         DB::beginTransaction();
-        // try{
+        try{
             $request->offsetSet('updated_by', $this->auth->id);
             $request->offsetSet('user_id', $request->userId);
 
@@ -1013,22 +1013,22 @@ class EmployeeController extends Controller
             }
             return redirect('/employee/edit/'.$request->userId.'/salary');
 
-        // }catch(\Exception $e){
-        //     DB::rollback();
+        }catch(\Exception $e){
+            DB::rollback();
 
-        //     if($request->ajax()){
-        //         $data['status'] = 'danger';
-        //         $data['statusType'] = 'NotOk';
-        //         $data['code'] = 500;
-        //         $data['type'] = null;
-        //         $data['title'] = 'Error!';
-        //         $data['message'] = 'Salary Not Saved.';
-        //         return response()->json($data,500);
-        //     }
+            if($request->ajax()){
+                $data['status'] = 'danger';
+                $data['statusType'] = 'NotOk';
+                $data['code'] = 500;
+                $data['type'] = null;
+                $data['title'] = 'Error!';
+                $data['message'] = 'Salary Not Saved.';
+                return response()->json($data,500);
+            }
 
-        //     $request->session()->flash('danger','Salary Not Update.');
-        //     return redirect()->back()->withInput();
-        // }
+            $request->session()->flash('danger','Salary Not Update.');
+            return redirect()->back()->withInput();
+        }
     }
 
 

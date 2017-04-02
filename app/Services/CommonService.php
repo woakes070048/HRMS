@@ -87,12 +87,14 @@ trait CommonService
     }
 
 
-    public function getSupervisorByDesignationId($id){
+    public function getSupervisorByDesignationId($id,$user_id=null){
         $designations = Designation::with('level.parentRecursive')->find($id);
         $data[] = $designations->level->id;
         $dataRecursive = $this->levelRecursive($designations->level->parentRecursive,$data);
         // $supervisor = Designation::with('user')->whereIn('level_id',$dataRecursive)->get();
+
         $supervisor = User::select('users.*',\DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
+        // if(!empty($user_id)){$supervisor->where('users.id','!=',$user_id);}
                         ->join('designations','designations.id','=','users.designation_id')
                         ->join('levels','levels.id','=','designations.level_id')
                         ->whereIn('designations.level_id',$dataRecursive)->get(); 
