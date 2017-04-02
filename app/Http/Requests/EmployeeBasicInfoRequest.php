@@ -47,7 +47,7 @@ class EmployeeBasicInfoRequest extends FormRequest
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
             'email' => $email,
-            'mobile_number' => 'required|max:17|min:10|regex:/\+*[0-9]+$/',
+            'mobile_number' => 'required|max:17|min:11|regex:/\+*[0-9]+$/',
             'password' => $password,
             'retype_password' => $retype_pass,
             'image' => 'nullable|mimes:jpeg,jpg,png,gif|max:4000',

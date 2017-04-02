@@ -55,7 +55,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group" :class="{'has-error': errors.job_duration}">
                                         <label class="control-label">Job Duration : <span class="text-danger">*</span></label>
-                                        <input type="text" name="job_duration" v-on:click="theDuration3" :value="singleExperience.job_duration" class="form-control input-sm" readonly="readonly">
+                                        <input type="text" name="job_duration" v-on:click="theDuration3" :value="singleExperience.job_duration" class="form-control input-sm">
                                         <span v-if="errors.job_duration" class="text-danger" v-text="errors.job_duration[0]"></span>
                                     </div>
                                 </div>
@@ -119,7 +119,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group" :class="{'has-error': errors.job_duration}">
                                         <label class="control-label">Job Duration : <span class="text-danger">*</span></label>
-                                        <input type="text" name="job_duration" v-on:click="theDuration2" v-model="job_duration" readonly="readonly" class="form-control input-sm">
+                                        <input type="text" name="job_duration" v-on:click="theDuration2" v-model="job_duration" class="form-control input-sm">
                                         <span v-if="errors.job_duration" class="text-danger" v-text="errors.job_duration[0]"></span>
                                     </div>
                                 </div>

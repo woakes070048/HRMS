@@ -240,7 +240,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-units','CommonController@getUnits');
     Route::get('get-designations','CommonController@getDesignations');
     Route::get('get-unit-by-designation-id/{id}','CommonController@getUnitByDesignationId');
-    Route::get('get-supervisor-by-designation-id/{id}','CommonController@getSupervisorByDesignationId');
+    Route::get('get-supervisor-by-designation-id/{id}/{user_id?}','CommonController@getSupervisorByDesignationId');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
     Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');

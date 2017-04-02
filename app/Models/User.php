@@ -69,7 +69,7 @@ class User extends Authenticatable
 
 
     public function getFullImageAttribute(){
-        return Storage::disk('public')->url($this->id.'/'.$this->photo);
+        return Storage::disk('public')->url(Session('config_id').'/'.$this->id.'/'.$this->photo);
     }
 
 

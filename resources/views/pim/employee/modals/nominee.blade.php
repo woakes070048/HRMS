@@ -11,7 +11,7 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-12">
-                    <form id="add_new_children_form" method="post" v-on:submit.prevent="addNomineeInfo">
+                    <form id="add_new_nominee_form" method="post" v-on:submit.prevent="addNomineeInfo">
                         <input type="hidden" name="user_id" v-model="user_id">
                         <input type="hidden" name="id" v-if="singleNominee !=''" v-model="singleNominee.id">
 
@@ -21,7 +21,7 @@
 
                                 <div class="fileupload-new admin-form" data-provides="fileupload">
                                     <div class="fileupload-preview thumbnail mb5">
-                                         <img v-if="singleNominee.nominee_photo" :src="'/files/'+singleNominee.user_id+'/'+singleNominee.nominee_photo">
+                                         <img v-if="singleNominee.nominee_photo" :src="'/files/'+config_id+'/'+singleNominee.user_id+'/'+singleNominee.nominee_photo">
                                         <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
                                     </div>
                                     <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
