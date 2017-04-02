@@ -55,11 +55,11 @@ class DesignationController extends Controller
 		$save->save();
 
     	DB::commit();    
-        $data = ['title'=>'Success', 'message'=>'Department successfully added!'];
+        $data = ['title'=>'Success', 'message'=>'Designation successfully added!'];
 
         } catch (\Exception $e) {
             DB::rollback();
-            $data = ['title'=>'Error', 'message'=>'Department not added!'];
+            $data = ['title'=>'Error', 'message'=>'Designation not added!'];
         }
 
     	return response()->json($data);
