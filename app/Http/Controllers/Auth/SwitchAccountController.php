@@ -17,6 +17,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\Controller;
 
@@ -81,7 +82,7 @@ class SwitchAccountController extends Controller
 
     	Artisan::call('db:connect',['database' => $database_name]);
 
-    	try{
+    	// try{
 	    	if($user = User::create([
 			    "employee_no" => $this->auth->employee_no,
 			    "employee_type_id" => $employee_type_id,
@@ -102,10 +103,14 @@ class SwitchAccountController extends Controller
 			    "photo" => $this->auth->photo,
 	    		]))
 	    	{
+                //copy photo
+                if(!Storage::disk('public')->exists(Session('config_id').'/'.$user->id.'/'.$this->auth->photo)){
+                    Storage::disk('public')->copy(Session('config_id').'/'.$this->auth->id.'/'.$this->auth->photo, $config_id.'/'.$user->id.'/'.$this->auth->photo);
+                }
 	    		$this->switchAccountLogin($database_name, $config_id,$user->id);
 	    	}
 
-	    }catch(\Exception $e){
+	    // }catch(\Exception $e){
 	    	// $code = $e->getCode();
 
 	    	// if($code == '23000'){
@@ -123,11 +128,11 @@ class SwitchAccountController extends Controller
 	    		// }
 	    	// }
 
-            Artisan::call('db:connect',['database' => Session('database')]);
-            Session::flash('danger','Account not switch.Try again.');
-            return redirect()->back();
-	    	// $this->switchAccountRegister($database_name,$config_id);
-	    }
+     //        Artisan::call('db:connect',['database' => Session('database')]);
+     //        Session::flash('danger','Account not switch.Try again.');
+     //        return redirect()->back();
+	    // 	// $this->switchAccountRegister($database_name,$config_id);
+	    // }
     }
 
 

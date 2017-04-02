@@ -15,7 +15,9 @@
         .select2-container .select2-selection--single{height:32px!important}
         .select2-container--default .select2-selection--single .select2-selection__rendered{line-height:30px!important}
         .select2-container--default .select2-selection--single .select2-selection__arrow{height:30px!important}
-        .fileupload-preview img{max-width: 200px!important;}
+
+        #add_new_education_form .select2-container{width:100%!important;height:32px!important}
+        /*.fileupload-preview img{max-width: 200px!important;}*/
     </style>
 @endsection
 
@@ -221,9 +223,9 @@
                                                 <div class="fileupload admin-form" :class="(basics.photo)?'fileupload-exists':'fileupload-new'" data-provides="fileupload">
                                                     <div class="fileupload-preview thumbnail mb15">
                                                        
-                                                    <img v-if="basics.photo" :src="'/files/'+basics.id+'/'+basics.photo" alt="holder">
+                                                    <img v-if="basics.photo" :src="'/files/'+config_id+'/'+basics.id+'/'+basics.photo" class="img-responsive" alt="holder">
                                                       
-                                                    <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
+                                                    <img v-else src="{{asset('img/placeholder.png')}}" class="img-responsive" alt="holder">
                                                        
                                                     </div>
                                                 </div>
@@ -521,7 +523,7 @@
                                             <label class="control-label">Employee Photo :</label>
                                             <div class="fileupload-new fileupload admin-form" data-provides="fileupload">
                                                 <div class="fileupload-preview thumbnail mb15">
-                                                    <img src="{{asset('img/placeholder.png')}}" alt="holder">
+                                                    <img src="{{asset('img/placeholder.png')}}" class="img-responsive" alt="holder">
                                                 </div>
                                                 <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
                                                     <span class="fileupload-exists"><span class="fa fa-user"></span> &nbsp; <strong>Change Photo</strong></span>
@@ -1280,7 +1282,7 @@
                                                 <div class="form-group">
                                                     <label class="control-label">Certificate:</label>
                                                     <div>
-                                                        <a v-if="education.certificate" :href="'/files/'+education.user_id+'/'+education.certificate" target="_blank" class="text-success">
+                                                        <a v-if="education.certificate" :href="'/files/'+config_id+'/'+education.user_id+'/'+education.certificate" target="_blank" class="text-success">
                                                             <i class="fa fa-2x fa-file-image-o"></i>
                                                             Click here to view certificate
                                                         </a>
@@ -1423,11 +1425,10 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_education" :disabled="educations.educations ==''"
-                                                    onclick="modal_open('#add_education','#add_new_education_modal')"
-                                                    class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                    data-effect="mfp-with-fade"><span
-                                                        class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
+                                            <button :disabled="educations.educations ==''"
+                                                    v-on:click.prevent="add_modal_open('#add_new_education_modal')"
+                                                    class="btn btn-sm btn-dark btn-gradient dark btn-block"><span
+                                                        class="glyphicons glyphicons-pen"></span> &nbsp; Add New
                                                 Education
                                             </button>
                                         </div>
@@ -1614,9 +1615,7 @@
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group mt25">
-                                            <button id="add_new_experience_button" :disabled="experiences.experiences ==''" v-on:click="job_duration=null"
-                                                onclick="modal_open('#add_new_experience_button','#add_new_experience_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                    data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
+                                            <button :disabled="experiences.experiences ==''" v-on:click.prevent="add_modal_open('#add_new_experience_modal'),job_duration=null" class="btn btn-sm btn-dark btn-gradient dark btn-block" ><span class="glyphicons glyphicons-pen"></span> &nbsp; Add New
                                                 Experience
                                             </button>
                                         </div>
@@ -1872,8 +1871,8 @@
                                     <label class="control-label">Nominee Photo :</label>
                                     <div class="fileupload-new admin-form" data-provides="fileupload">
                                         <div class="fileupload-preview thumbnail mb5">
-                                            <img v-if="nominee.nominee_photo" :src="'/files/'+nominee.user_id+'/'+nominee.nominee_photo" alt="holder">
-                                            <img v-else src="{{asset('img/placeholder.png')}}" alt="holder">
+                                            <img v-if="nominee.nominee_photo" class="img-responsive" :src="'/files/'+config_id+'/'+nominee.user_id+'/'+nominee.nominee_photo" alt="holder">
+                                            <img v-else class="img-responsive" src="{{asset('img/placeholder.png')}}" alt="holder">
                                         </div>
                                     </div>
                                 </div>
@@ -1936,7 +1935,7 @@
                                     <label class="control-label">Nominee Photo :</label>
                                     <div class="fileupload-new admin-form" data-provides="fileupload">
                                         <div class="fileupload-preview thumbnail mb5">
-                                            <img src="{{asset('img/placeholder.png')}}" alt="holder">
+                                            <img src="{{asset('img/placeholder.png')}}" class="img-responsive" alt="holder">
                                         </div>
                                        <span class="button btn btn-sm btn-dark btn-file btn-block ph5">
                                             <span class="fileupload-exists"><span class="fa fa-user"></span> &nbsp; <strong>Change Photo</strong></span>
@@ -2007,10 +2006,7 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_nominee_button" :disabled="nominees.nominees ==''" v-on:click="singleNominee=[],errors=[]"
-                                                onclick="modal_open('#add_new_nominee_button','#add_new_nominee_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New
-                                            Nominee
+                                        <button :disabled="nominees.nominees ==''" v-on:click.prevent="add_modal_open('#add_new_nominee_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block" ><span class="glyphicons glyphicons-pen"></span> &nbsp; Add New Nominee
                                         </button>
                                     </div>
                                 </div>
@@ -2184,9 +2180,9 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_training_button" :disabled="trainings.trainings ==''"
-                                            onclick="modal_open('#add_new_training_button','#add_new_training_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Training
+                                        <button :disabled="trainings.trainings ==''"
+                                            v-on:click.prevent="add_modal_open('#add_new_training_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                            ><span class="glyphicons glyphicons-pen"></span> &nbsp; Add New Training
                                         </button>
                                     </div>
                                 </div>
@@ -2338,9 +2334,9 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_reference_button" :disabled="references.references ==''"
-                                            onclick="modal_open('#add_new_reference_button','#add_new_reference_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Reference
+                                        <button :disabled="references.references ==''"
+                                            v-on:click.prevent="add_modal_open('#add_new_reference_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
+                                            ><span class="glyphicons glyphicons-pen"></span> &nbsp; Add New Reference
                                         </button>
                                     </div>
                                 </div>
@@ -2428,7 +2424,7 @@
                                     </div>
 
                                     <div class="col-md-8">
-                                        <div class="form-group" :class="{'has-error': errors.children_remarks}">
+                                        <div class="form-group">
                                             <label class="control-label">Children Remarks : <span class="text-danger">*</span></label>
                                             <textarea name="children_remarks" class="form-control input-sm" readonly="readonly">@{{children.children_remarks}}</textarea>
                                         </div>
@@ -2492,9 +2488,8 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_children_button" :disabled="childrens.childrens ==''"
-                                            onclick="modal_open('#add_new_children_button','#add_new_children_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Children
+                                        <button :disabled="childrens.childrens ==''"
+                                            v-on:click.prevent="add_modal_open('#add_new_children_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-pen"></span> &nbsp; Add New Children
                                         </button>
                                     </div>
                                 </div>
@@ -2545,7 +2540,7 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt20 mb25">
-                                        <button type="button" id="add_new_language_modal_button" onclick="modal_open('#add_new_language_modal_button','#add_new_language_button_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block" data-effect="mfp-newspaper"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add Language
+                                        <button type="button" v-on:click.prevent="add_modal_open('#add_new_language_button_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-pen"></span> &nbsp; Add Language
                                         </button>
                                     </div>
                                 </div>
@@ -2645,9 +2640,8 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group mt25">
-                                        <button id="add_new_language_button" :disabled="languages.languages ==''"
-                                            onclick="modal_open('#add_new_language_button','#add_new_language_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"
-                                                data-effect="mfp-with-fade"><span class="glyphicons glyphicons-briefcase"></span> &nbsp; Add New Language
+                                        <button :disabled="languages.languages ==''"
+                                            v-on:click.prevent="add_modal_open('#add_new_language_modal')" class="btn btn-sm btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-pen"></span> &nbsp; Add New Language
                                         </button>
                                     </div>
                                 </div>
@@ -2729,30 +2723,31 @@
         var add_edit = "add";
         var current_tab = "{{($tab)?$tab:''}}";
         var user_id = "{{(isset($id))?$id:''}}";
+        var config_id = "{{Session('config_id')}}";
 
         // Modal Start
-        function modal_open(id, form_id) {
-            $(document).on('click', id, function (e) {
-                e.preventDefault();
-                $(this).removeClass('active-animation');
-                $(this).addClass('active-animation item-checked');
+        // function modal_open(id, form_id) {
+        //     $(document).on('click', id, function (e) {
+        //         e.preventDefault();
+        //         $(this).removeClass('active-animation');
+        //         $(this).addClass('active-animation item-checked');
 
-                $.magnificPopup.open({
-                    removalDelay: 300,
-                    items: {
-                        src: form_id
-                    },
-                    callbacks: {
-                        beforeOpen: function (e) {
-                            var Animation = "mfp-zoomIn";
-                            this.st.mainClass = Animation;
-                        }
-                    },
-                    midClick: true
-                });
+        //         $.magnificPopup.open({
+        //             removalDelay: 300,
+        //             items: {
+        //                 src: form_id
+        //             },
+        //             callbacks: {
+        //                 beforeOpen: function (e) {
+        //                     var Animation = "mfp-zoomIn";
+        //                     this.st.mainClass = Animation;
+        //                 }
+        //             },
+        //             midClick: true
+        //         });
 
-            });
-        }
+        //     });
+        // }
         //Modal End
 
 

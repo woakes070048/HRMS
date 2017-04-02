@@ -25,7 +25,7 @@
       <tbody>
         @forelse($sisterConcern as $sinfo)
         <tr>
-          <td>1.</td>
+          <td>{{$loop->iteration}}.</td>
           <td>{{$sinfo->company_code}}</td>
           <td>{{$sinfo->company_name}}</td>
           <td>{{$sinfo->company_address}}</td>
@@ -71,7 +71,7 @@
       <tbody>
         @forelse($motherConcern as $minfo)
         <tr>
-          <td>1.</td>
+          <td>{{$loop->iteration}}.</td>
           <td>{{$minfo->company_code}}</td>
           <td>{{$minfo->company_name}}</td>
           <td>{{$minfo->company_address}}</td>
