@@ -69,7 +69,7 @@ class UnitController extends Controller
 
         }catch (\Exception $e) {
             
-           $data['title'] = 'danger';
+            $data['title'] = 'danger';
             $data['message'] = 'unit not added!';
         }
 
