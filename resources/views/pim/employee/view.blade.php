@@ -320,13 +320,14 @@ table.tc-med-2 tbody td:first-child{
             <div class="panel">
               <h4>Allowance Information :</h4>
               <div class="panel-body pb5">
-                 <table class="table table-striped table-hover" id="datatable2" cellspacing="0" width="100%">
+                 <table class="table table-striped table-hover" cellspacing="0" width="100%">
                         <thead>
                           <tr class="bg-dark">
                               <th>SL No:</th>
                               <th>Allowance Name</th>
-                              <th>Allowance Amount</th>
                               <th>Allowance Type</th>
+                              <th>Amount Type</th>
+                              <th>Amount</th>
                               <th>Effective Date</th>
                           </tr>
                         </thead>
@@ -335,23 +336,58 @@ table.tc-med-2 tbody td:first-child{
                           <tr class="bg-dark">
                               <th>SL No:</th>
                               <th>Allowance Name</th>
-                              <th>Allowance Amount</th>
                               <th>Allowance Type</th>
+                              <th>Amount Type</th>
+                              <th>Amount</th>
                               <th>Effective Date</th>
                           </tr>
                         </tfoot>
                         <tbody>
-                        <?php $sl=1; ?>
+                        <?php $total_salary = $user->basic_salary; $salary=0;?>
                         @foreach($user->salaries as $sinfo)
                             <tr>
-                              <td>{{$sl}}</td>
+                              <td>{{$loop->iteration}}</td>
                               <td>{{$sinfo->basicSalaryInfo->salary_info_name}}</td>
-                              <td>@if($sinfo->salary_amount_type == 'fixed') $ @endif {{$sinfo->salary_amount}} @if($sinfo->salary_amount_type == 'percent') % @endif</td>
+                              <td><span class="@if($sinfo->basicSalaryInfo->salary_info_type == 'allowance') text-success @else text-danger @endif">
+                              {{ucfirst($sinfo->basicSalaryInfo->salary_info_type)}}</span>
+                              </td>
                               <td>{{$sinfo->salary_amount_type}}</td>
+                              <!-- <td class="text-right">@if($sinfo->salary_amount_type == 'fixed') $ @endif {{$sinfo->salary_amount}} @if($sinfo->salary_amount_type == 'percent') % @endif</td> -->
+                              <td class="text-right">{{$sinfo->salary_amount}}</td>
                               <td>{{$sinfo->salary_effective_date}}</td>
                             </tr>
-                            <?php $sl++; ?>
+                            <?php
+                              if($sinfo->basicSalaryInfo->salary_info_type == 'allowance'){
+                                
+                                if($sinfo->salary_amount_type == 'fixed'){
+                                  $salary = $salary + $sinfo->salary_amount;
+                                }
+
+                                if($sinfo->salary_amount_type == 'percent'){
+                                  $temp = $user->basic_salary * $sinfo->salary_amount / 100;
+                                  $salary = $salary + $temp;
+                                }
+                              }
+
+                              if($sinfo->basicSalaryInfo->salary_info_type == 'deduction'){
+                                if($sinfo->salary_amount_type == 'fixed'){
+                                  $salary = $salary - $sinfo->salary_amount;
+                                }
+
+                                if($sinfo->salary_amount_type == 'percent'){
+                                  $temp = $user->basic_salary * $sinfo->salary_amount / 100;
+                                  $salary = $salary - $temp;
+                                }
+                              }
+                            ?>
                         @endforeach
+                        <tr>
+                          <td colspan="4" class="text-right"><strong>Gross Salary : </strong></td>
+                          <td class="text-right"><strong>
+                            {{$total_salary + $salary}}
+                          </strong></td>
+                          <td></td>
+                        </tr>
                         </tbody>
                     </table>
               </div>
