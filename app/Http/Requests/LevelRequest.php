@@ -24,6 +24,10 @@ class LevelRequest extends FormRequest
     public function rules()
     {
         return [
+            'name' => 'required',
+            'salary_amount' => 'required',
+            'chk_parent' => 'nullable',
+            'parent_id' => 'required_if:chk_parent,1',
             'salaryInfoChk.*.chk' => 'nullable',
             'salaryInfoChk.*.amount' => 'required_if:salaryInfoChk.*.chk,1',
         ];
@@ -32,6 +36,7 @@ class LevelRequest extends FormRequest
     public function messages()
     {
         return [
+            'parent_id.required_if'     => 'The parent field is required if level have parent.',
             'salaryInfoChk.*.amount.required_if'  => 'Selected salary info can not be null !!',
         ];
     }

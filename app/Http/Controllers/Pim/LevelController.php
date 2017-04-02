@@ -45,17 +45,7 @@ class LevelController extends Controller
         return view('pim.level.add', $data);
     }
 
-    public function create(Request $request){
-
-        $this->validate($request, [
-            'name' => 'required',
-            'salary_amount' => 'required',
-            'chk_parent' => 'nullable',
-            'parent_id' => 'required_if:chk_parent,1',
-        ],
-        [
-            'parent_id.required_if'     => 'The parent field is required if level have parent.',
-        ]);
+    public function create(LevelRequest $request){
 
         if($request->chk_parent == 1){
 
@@ -65,14 +55,13 @@ class LevelController extends Controller
             $parent_id = 0;
         }
 
-        $percent = $request->salryInfoPercent;
-        $infoId = $request->salryInfoId;
         $name = $request->name;
         $salary_amount = $request->salary_amount;
         $description = !empty($request->details)?$request->details:"No description...";
         $status = $request->status;
+        $infoChk = $request->salaryInfoChk;
 
-        $length = count($infoId);
+        echo "--name: $name -- amount: $salary_amount -- description: $description -- Status: $status";
     	
         DB::beginTransaction();
 
@@ -86,13 +75,15 @@ class LevelController extends Controller
     		$save->created_by = Auth::user()->id;
     		$save->save();
 
-            for($i=0; $i<$length; $i++){
-
-                if($percent[$i] > 0){
+            foreach($infoChk as $chk){
+        
+                if(array_key_exists('chk', $chk)){
+                    echo $chk['amount']." == ";
+                    echo $chk['name'];
                     $data[] = [
                                 'level_id' => $save->id, //last insert level id
-                                'amount' => $percent[$i],
-                                'basic_salary_info_id' => $infoId[$i]
+                                'amount' => $chk['amount'],
+                                'basic_salary_info_id' => $chk['id']
                             ];
                 }
             }
@@ -103,15 +94,16 @@ class LevelController extends Controller
 
             DB::commit();
             
-            $request->session()->flash('success','Level successfully added!');
+            $data['title'] = 'success';
+            $data['message'] = 'Data successfully added!';
 
         } catch (\Exception $e) {
             DB::rollback();
-            
-            $request->session()->flash('danger','Level not added!');
+            $data['title'] = 'danger';
+            $data['message'] = 'Data not added!';
         }
 
-    	return redirect('levels/index');
+    	return response()->json($data);
     }
 
     public function edit($id){
@@ -121,20 +113,20 @@ class LevelController extends Controller
         $data['salary_info'] = BasicSalaryInfo::all();
         $data['parents'] = Level::where('status',1)->get();
 
+        $data['level_salry_info_id'][] = "";
+        $data['level_salry_info_ary'][]['amount'] = "";
+
+        if($data['info']->salaryInfo){
+            foreach($data['info']->salaryInfo as $info){
+                $data['level_salry_info_id'][] = $info->basic_salary_info_id;
+                $data['level_salry_info_ary'][$info->basic_salary_info_id]['amount'] = $info->amount;
+            }
+        }
+
         return view('pim.level.add', $data);
     }
 
-    public function update(Request $request){
-
-    	$this->validate($request, [
-            'name' => 'required',
-            'salary_amount' => 'required',
-            'chk_parent' => 'nullable',
-            'parent_id' => 'required_if:chk_parent,1',
-        ],
-        [
-            'parent_id.required_if'     => 'The parent field is required if level have parent.',
-        ]);
+    public function update(LevelRequest $request){
 
         if($request->chk_parent == 1){
 
@@ -145,14 +137,11 @@ class LevelController extends Controller
         }
 
         $id = $request->id;
-        $percent = $request->salryInfoPercent;
-        $infoId = $request->salryInfoId;
         $name = $request->name;
         $salary_amount = $request->salary_amount;
         $description = !empty($request->details)?$request->details:"No description...";
         $status = $request->status;
-
-		$length = count($infoId);
+        $infoChk = $request->salaryInfoChk;
         
         DB::beginTransaction();
 
@@ -166,18 +155,20 @@ class LevelController extends Controller
             $save->updated_by = Auth::user()->id;
             $save->save();
 
-            for($i=0; $i<$length; $i++){
+            foreach($infoChk as $chk){
+        
+                if(array_key_exists('chk', $chk)){
+                    $data[] = [
+                                'level_id' => $save->id, //last insert level id
+                                'amount' => $chk['amount'],
+                                'basic_salary_info_id' => $chk['id']
+                            ];
+                }
+            }
 
-                if($percent[$i] > 0){
-                    LevelSalaryInfoMap::where('level_id', $id)
-                                    ->where('basic_salary_info_id', $infoId[$i])
-                                    ->update(['amount' => $percent[$i]]);
-                }
-                else{
-                    LevelSalaryInfoMap::where('level_id', $id)
-                                    ->where('basic_salary_info_id', $infoId[$i])
-                                    ->delete();
-                }
+            if(!empty($data)){
+                LevelSalaryInfoMap::where('level_id', $id)->delete();
+                LevelSalaryInfoMap::insert($data);
             }
 
             DB::commit();
@@ -190,7 +181,7 @@ class LevelController extends Controller
             $request->session()->flash('danger','Data not updated!');
         }
 
-    	return redirect('levels/index');
+    	return response()->json($data);
     }
 
     public function update_info(Request $request){
@@ -258,52 +249,6 @@ class LevelController extends Controller
         }
 
     	return redirect('levels/index');
-    }
-
-    public function testing(){
-
-        $data['title'] = "TEsting";
-        $data['info'] = "";
-        $data['salary_info'] = BasicSalaryInfo::all();
-        $data['parents'] = Level::where('status',1)->get();
-
-        return view('pim.level.testAdd', $data);
-    }
-
-
-    public function test(LevelRequest $request){                           
-
-        $infoId = $request->salryInfoId;
-        $percent = $request->salryInfoPercent;
-        $infoChk = $request->salaryInfoChk;
-        // $infoId = $request->salryInfoId;
-
-        // var_dump($infoId);
-        // echo "<br>========<br>";
-        // var_dump($percent);
-        // echo "<br>========<br>";
-        // var_dump($infoChk);
-        // echo "<br>========<br>";
-
-        // $length = count($percent);
-
-        dd($infoChk);
-
-        // $sl = 0;
-        // foreach($infoChk as $chk){
-        
-        //     if($percent[$chk] > 0){
-        //         $result[$sl]['id'] = $chk;
-        //         $result[$sl]['amount'] = $percent[$chk];
-        //         $sl++;
-        //     }
-        //     else{
-        //         $data['title'] = 'danger';
-        //         $data['message'] = 'Selected Info amount can not be null or 0 !';
-        //     }
-        // }
-
-        // return $data;  
     }
 
 }

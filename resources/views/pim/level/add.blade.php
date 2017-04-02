@@ -1,12 +1,12 @@
 @extends('layouts.hrms')
 @section('content')
 
-    <!-- Begin: Content -->
+<!-- Begin: Content -->
+<div id="mainDiv">
     <section id="content" class="animated fadeIn">
         <div class="row">
             <div class="col-md-12">
                 
-
                 @if(empty($info))
                     <div class="panel" >
                         <div class="panel-heading">
@@ -17,7 +17,10 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12">
-                                <form class="form-horizontal" role="form" method="POST" action="{{ url('levels/add') }} ">
+                                <div id="create-form-errors">
+                                </div>
+
+                                <form class="form-horizontal" @submit.prevent="saveData('addFormData')" id="addFormData">
 
                                     {{ csrf_field() }}
 
@@ -84,20 +87,27 @@
                                     <div class="form-group">
                                         <label for="name" class="col-md-2 control-label">Salary Info</label>
                                         <div class="col-md-10">
-
+                                            <?php $sl=0; ?>
                                             @foreach($salary_info as $sInfo)
                                                 <div class="col-md-4" style="margin-top: 3px;">
-                                                    <div class="col-md-8">
+                                                    <div class="col-md-7">
                                                         {{ $sInfo->salary_info_name}}
                                                         <span style="color:green;font-weight: bold;">
                                                             ({{$sInfo->salary_info_amount_status==0?"%":"$"}})
                                                         </span>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="{{$sInfo->salary_info_amount}}">
-                                                        <input type="hidden" name="salryInfoId[]" value="{{$sInfo->id}}">      
+                                                    <div class="col-md-2">
+                                                        <input type="checkbox" name="salaryInfoChk[{{$sl}}][chk]" value="1">
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salaryInfoChk[{{$sl}}][amount]" value="{{$sInfo->salary_info_amount}}">
+
+                                                        <input type="hidden" name="salaryInfoChk[{{$sl}}][id]" value="{{$sInfo->id}}"> 
+                                                        <input type="hidden" name="salaryInfoChk[{{$sl}}][name]" value="{{$sInfo->salary_info_name}}"> 
                                                     </div>
                                                 </div>
+
+                                                <?php $sl++; ?>
                                             @endforeach
                                         </div>
                                     </div>
@@ -226,7 +236,10 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-12">
-                                <form class="form-horizontal" role="form" method="POST" action="{{ url('levels/edit') }} ">
+                                <div id="edit-form-errors">
+                                </div>
+
+                                <form class="form-horizontal" @submit.prevent="updateData('updateFormData')" id="updateFormData">
 
                                     {{ csrf_field() }}
 
@@ -297,36 +310,38 @@
                                     @if($salary_info->count() > 0)
                                     <div class="form-group">
                                         <label for="name" class="col-md-2 control-label">
-                                            <button type="button" class="btn btn-xs btn-success"  data-toggle="modal" data-target=".salaryInfoAdd">
-                                                <i class="fa fa-plus-circle"></i>
-                                            </button>
-                                            Salary Info
+                                            
                                         </label>
                                         <div class="col-md-10">
-                                            <?php 
-                                                $selected_info_id = [];
-                                            ?>
-                                            @if($info->salaryInfo->count() > 0)
-                                                @foreach($info->salaryInfo as $value)
-                                                <div class="col-md-4" style="margin-top: 3px;">
-                                                    <div class="col-md-8">
-                                                        {{ $value->basicSalaryInfo->salary_info_name }}
-                                                        <span style="color:green;font-weight: bold;">
-                                                            ({{$value->basicSalaryInfo->salary_info_amount_status == 0?"%":"$"}})
-                                                        </span>
+                                                <?php $sl=0; ?>
+                                                @foreach($salary_info as $sInfo)
+                                                    <div class="col-md-4" style="margin-top: 3px;">
+                                                        <div class="col-md-7">
+                                                            {{ $sInfo->salary_info_name}}
+                                                            <span style="color:green;font-weight: bold;">
+                                                                ({{$sInfo->salary_info_amount_status==0?"%":"$"}})
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="checkbox" name="salaryInfoChk[{{$sl}}][chk]" @if(in_array($sInfo->id, $level_salry_info_id)) {{"checked"}} @endif value="1">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if(in_array($sInfo->id, $level_salry_info_id))
+                                                                <?php  
+                                                                $val_amount = $level_salry_info_ary[$sInfo->id]['amount'];
+                                                                ?>
+                                                            @else
+                                                                <?php $val_amount = $sInfo->salary_info_amount;?>
+                                                            @endif
+                                                            <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salaryInfoChk[{{$sl}}][amount]" value="{{$val_amount}}">
+
+                                                            <input type="hidden" name="salaryInfoChk[{{$sl}}][id]" value="{{$sInfo->id}}"> 
+                                                            <input type="hidden" name="salaryInfoChk[{{$sl}}][name]" value="{{$sInfo->salary_info_name}}"> 
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="{{$value->amount}}">
-                                                        <input type="hidden" name="salryInfoId[]" value="{{$value->basic_salary_info_id}}"> 
-                                                        <?php 
-                                                            $selected_info_id[] = $value->basic_salary_info_id;
-                                                        ?>
-                                                    </div>
-                                                </div>
+
+                                                    <?php $sl++; ?>
                                                 @endforeach
-                                            @else
-                                                This level don't have any Extra Salary Info
-                                            @endif
                                         </div>
                                     </div>
                                     @endif
@@ -374,81 +389,96 @@
                             </div>
                         </div>
                     </div>
-
-                    <!--***** add Salary Info modal start *****-->
-
-                    <?php 
-                        $db_id = [];
-
-                        if($salary_info->count() > 0){
-                            foreach($salary_info as $infoId){
-                                $db_id[] = $infoId->id;
-                            }
-                        }
-
-                        $info_id_diff = array_diff($db_id, $selected_info_id);
-                    ?>
-
-                    
-                    <div class="modal fade bs-example-modal-lg salaryInfoAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">Add New Basic Salary Info</h4>
-                              </div>
-                              <div class="modal-body">
-                                <form class="form-horizontal" role="form" method="POST" action="{{ url('levels/edit/info') }}">
-
-                                    {{ csrf_field() }}
-
-                                    <input type="hidden" name="id" value="{{$info->id}}">
-
-                                    @if($salary_info->count() > 0)
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            @foreach($salary_info as $value)
-                                                @if(in_array($value->id , $info_id_diff, false))
-                                                    <div class="col-md-6" style="margin-top: 3px;">
-                                                        <div class="col-md-8">
-                                                            {{ $value->salary_info_name }}
-                                                            <span style="color:green;font-weight: bold;">
-                                                                ({{$value->salary_info_amount_status == 0?"%":"$"}})
-                                                            </span>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <input id="salryInfoPercent" type="text" class="form-control input-sm" name="salryInfoPercent[]" value="" placeholder="{{$value->salary_info_amount}}">
-                                                            <input type="hidden" name="salryInfoId[]" value="{{$value->id}}">
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                    @endif
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Add Salary Info</button>
-                              </div>
-
-                              </form>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div>
-                    <!-- ******Salary Info modal end****** --> 
                 @endif
                 
             </div>
         </div>
     </section>
-    <!-- End: Content -->   
+</div>
+<!-- End: Content -->   
 @endsection
 
 
 @section('script')
 <script type="text/javascript">
     
+    new Vue({
+        el: "#mainDiv",
+        data:{
+            msg: 'testinggg',
+        },
+        methods: {
+            saveData: function(formId){
+
+                var formData = $('#'+formId).serialize();
+
+                axios.post('/levels/add', formData)
+                .then((response) => { 
+
+                    $('#create-form-errors').html('');
+
+                    swal({
+                        title: "Success",
+                        text: "Data added successfully!",
+                        type: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Done",
+                        closeOnConfirm: false
+                    },
+                    function(){
+                        window.location="{{url('/levels/index')}}";
+                    });
+                    
+                })
+                .catch( (error) => {
+                    var errors = error.response.data;
+
+                    var errorsHtml = '<div class="alert alert-danger"><ul>';
+                    $.each( errors , function( key, value ) {
+                        errorsHtml += '<li>' + value[0] + '</li>';
+                    });
+                    errorsHtml += '</ul></di>';
+                    $( '#create-form-errors' ).html( errorsHtml );
+                });
+            },
+            updateData: function(formId){
+
+                var formData = $('#'+formId).serialize();
+
+                axios.post('/levels/edit', formData)
+                .then((response) => { 
+
+                    $('#edit-form-errors').html('');
+
+                    swal({
+                        title: "Success",
+                        text: "Data updated successfully!",
+                        type: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Done",
+                        closeOnConfirm: false
+                    },
+                    function(){
+                        window.location="{{url('/levels/index')}}";
+                    });
+                    
+                })
+                .catch( (error) => {
+                    var errors = error.response.data;
+
+                    var errorsHtml = '<div class="alert alert-danger"><ul>';
+                    $.each( errors , function( key, value ) {
+                        errorsHtml += '<li>' + value[0] + '</li>';
+                    });
+                    errorsHtml += '</ul></di>';
+                    $( '#edit-form-errors' ).html( errorsHtml );
+                });
+            }
+        }
+    });
+
     $(document).ready(function() {
         
         if($('input.chk_parent').is(':checked')){  
