@@ -8,7 +8,6 @@
       .wizard .steps .glyphicon {
         display: none;
       }
-
       .error{
         color: red !important;
       }
@@ -47,7 +46,7 @@
                                 <i class="fa fa-user pr5"></i> Details</h4>
                             <section class="wizard-section">
                                 <div class="section">
-                                    <input id="name" type="text" class="form-control" name="company_name" value="{{ old('company_name') }}" placeholder="Company Name" required autofocus>
+                                    <input id="company_name" type="text" class="form-control" name="company_name" value="{{ old('company_name') }}" placeholder="Company Name" required autofocus>
                                 </div>
 
                                 <div class="section">
@@ -72,7 +71,7 @@
                                 </div>
 
                                 <div class="section">
-                                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Eamil Address" required="required">
+                                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Email Address" required="required">
                                 </div>
 
                                 <div class="section">
@@ -84,7 +83,7 @@
                                 </div>
 
                                 <div class="section">
-                                    <input id="password-confirm" type="password" class="form-control" placeholder="Confirm Password" name="password_confirmation" required="required">
+                                    <input id="password_confirmation" type="password" class="form-control" placeholder="Confirm Password" name="password_confirmation" required="required">
                                 </div>
 
                                 <div class="section">
@@ -195,9 +194,19 @@
         element.before(error);
       },
       rules: {
-        confirm: {
+        password_confirmation: {
           equalTo: "#password"
         }
+      },
+      messages:{
+        company_name: "Company name is required.",
+        package_name: "Package name is required.",
+        first_name: "First name is required.",
+        last_name: "Last name is required.",
+        email: "Email address is required.",
+        mobile_number: "Mobile number is required.",
+        password: "Password is required.",
+        company_address: "Company address is required.",
       }
     });
     form.children(".wizard").steps({
