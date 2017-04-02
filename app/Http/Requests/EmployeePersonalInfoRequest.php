@@ -44,13 +44,14 @@ class EmployeePersonalInfoRequest extends FormRequest
             'personal_email' => 'required|email',
             'official_email' => 'required|email',
             // 'phone_number' => 'required|digits_between:6,15',
-            'phone_number' => 'required|max:17|min:7|regex:/\+*[0-9]+$/',
+            'phone_number' => 'required|max:17|min:7|regex:/^(\+?)?[0-9]+$/',
             'birth_date' => 'nullable|date',
             'joining_date' => 'required|date',
             'gender' => 'required',
             'marital_status' => 'required',
             'religion_id' => 'required',
             'nationality' => 'nullable|alpha_spaces',
+            'emergency_contact_number' => 'nullable|max:17|min:7|regex:/^(\+?)?[0-9]+$/',
         ];
     }
 
