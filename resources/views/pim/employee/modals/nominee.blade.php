@@ -64,7 +64,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group" :class="{'has-error': errors.nominee_distribution}">
                                             <label class="control-label">Nominee Distribution : <span class="text-danger">*</span></label>
-                                            <input type="text" name="nominee_distribution" class="form-control input-sm" :value="singleNominee.nominee_distribution">
+                                            <input type="text" name="nominee_distribution" v-on:keyup="nomineeDistributionEdit($event.target.value)" class="form-control input-sm" v-model="singleNominee.nominee_distribution">
                                             <span v-if="errors.nominee_distribution" class="help-block" v-text="errors.nominee_distribution[0]"></span>
                                         </div>
                                     </div>
@@ -72,7 +72,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group" :class="{'has-error': errors.nominee_rest_distribution}">
                                             <label class="control-label">Nominee Rest Distribution : <span class="text-danger">*</span></label>
-                                            <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="singleNominee.nominee_rest_distribution">
+                                            <input type="text" name="nominee_rest_distribution" class="form-control input-sm" :value="singleNominee.nominee_rest_distribution" readonly="readonly">
                                             <span v-if="errors.nominee_rest_distribution" class="help-block" v-text="errors.nominee_rest_distribution[0]"></span>
                                         </div>
                                     </div>

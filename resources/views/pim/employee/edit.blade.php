@@ -1435,7 +1435,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
                                             <label class="control-label">Salary in Cache:</label>
-                                            <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache">
+                                            <input type="text" name="salary_in_cache" class="form-control input-sm" v-model="salaries.salary_in_cache">
                                             <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                         </div>
                                     </div>
@@ -1526,7 +1526,7 @@
                                             <select v-if="salaries.salary_account" class="form-control input-sm" name="bank_id">
                                             <option :value="''">---- Select Bank Name ----</option>
                                             <option v-for="(bank,index) in banks"
-                                                    :value="bank.id" :selected="salaries.salary_account.bank_id">@{{ bank.bank_name }}</option>
+                                                    :value="bank.id" :selected="salaries.salary_account.bank_id == bank.id">@{{ bank.bank_name }}</option>
                                             </select>
                                             <select v-else class="form-control input-sm" name="bank_id">
                                                 <option :value="''">---- Select Bank Name ----</option>
