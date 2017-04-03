@@ -1435,7 +1435,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
                                             <label class="control-label">Salary in Cache:</label>
-                                            <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache">
+                                            <input type="text" name="salary_in_cache" class="form-control input-sm" v-model="salaries.salary_in_cache">
                                             <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                         </div>
                                     </div>
