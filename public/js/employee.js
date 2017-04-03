@@ -929,6 +929,17 @@ var employee = new Vue({
             }
         },
 
+        nomineeDistributionEdit(value){
+            if(value <= 100){
+                this.singleNominee.nominee_rest_distribution = 100 - value;
+            }else{
+                alert("The value must less then 100.");
+                // this.errors.nominee_distribution = ["The value must less then 100."];
+                this.singleNominee.nominee_distribution = 100;
+                this.singleNominee.nominee_rest_distribution = 0.0;
+            }
+        },
+
 
         addNomineeInfo(e){
             $('#employee > .panel > .panel-body').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});

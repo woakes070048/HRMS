@@ -28,7 +28,7 @@ class EmployeeNomineeRequest extends FormRequest
             'nominee_name' => 'required',
             'nominee_relation' => 'required',
             'nominee_birth_date' => 'required|date',
-            'nominee_distribution' => 'required|numeric',
+            'nominee_distribution' => 'required|numeric|max:100',
             'nominee_address' => 'required',
             'image' => 'nullable|mimes:jpeg,jpg,png,pdf|max:4000',
         ];

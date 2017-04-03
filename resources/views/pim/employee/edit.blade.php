@@ -1526,7 +1526,7 @@
                                             <select v-if="salaries.salary_account" class="form-control input-sm" name="bank_id">
                                             <option :value="''">---- Select Bank Name ----</option>
                                             <option v-for="(bank,index) in banks"
-                                                    :value="bank.id" :selected="salaries.salary_account.bank_id">@{{ bank.bank_name }}</option>
+                                                    :value="bank.id" :selected="salaries.salary_account.bank_id == bank.id">@{{ bank.bank_name }}</option>
                                             </select>
                                             <select v-else class="form-control input-sm" name="bank_id">
                                                 <option :value="''">---- Select Bank Name ----</option>
