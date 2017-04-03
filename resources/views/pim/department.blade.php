@@ -33,11 +33,9 @@
                                     <button data-id="{{$department->id}}" type="button" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".depEdit">
                                         <i class="fa fa-edit"></i>
                                     </button>
-                                    <a onclick="return confirm('Want to delete?');" href="{{url("department/delete/$department->id")}}" title="">
-                                        <button type="button" class="btn btn-sm btn-danger">
-                                            <i class="fa fa-trash-o"></i>
-                                        </button>
-                                    </a>
+                                    <button onclick="wantToDelete({{$department->id}})" class="btn btn-sm btn-danger">
+                                        <i class="fa fa-trash-o"></i>
+                                    </button>
                                 </td>
                             </tr>
                             @endforeach
@@ -181,7 +179,43 @@
 
 @section('script')
 <script type="text/javascript">
-    
+
+function wantToDelete(id){
+
+    swal({
+        title: "Are you sure?",
+        text: "You will not be able to recover this data!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        closeOnConfirm: false
+    },
+    function(){
+        $.ajax({
+            url: "{{url('/department/delete')}}/"+id,
+            type: 'GET',
+        })
+        .done(function() {
+            swal({
+                title: "Deleted!",
+                text: "Your data has been deleted.",
+                type: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Done",
+                closeOnConfirm: false
+            },
+            function(){
+                location.href=location.href;
+            });
+        })
+        .fail(function(){
+            swal("Error", "Data not removed.", "error");
+        });
+    });
+}
+
 jQuery(document).ready(function() {
 
     // Init DataTables
