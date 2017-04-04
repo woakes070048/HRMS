@@ -1669,15 +1669,15 @@
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.basic_salary}">
                                         <label class="control-label">Basic Salary Amount: <span class="text-danger">*</span></label>
-                                        <input type="text" name="basic_salary" class="form-control input-sm" v-on:change="calculateTotalSalary" :value="salaries.basic_salary" :disabled="salaries.added">
+                                        <input type="text" name="basic_salary" class="form-control input-sm" v-on:keyup="calculateTotalSalary" v-model="salaries.basic_salary" :disabled="salaries.added">
                                         <span v-if="errors.basic_salary" class="help-block" v-text="errors.basic_salary[0]"></span>
                                     </div>
                                 </div>
 
                                 <div class="col-md-3">
                                     <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
-                                        <label class="control-label">Salary in Cache:</label>
-                                        <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache" v-model="salaries.salary_in_cache" :disabled="salaries.added">
+                                        <label class="control-label">Salary in Cash:</label>
+                                        <input type="text" name="salary_in_cache" class="form-control input-sm" v-model="salaries.salary_in_cache" v-on:keyup="calculateTotalSalary" :disabled="salaries.added">
                                         <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                     </div>
                                 </div>
@@ -1735,7 +1735,27 @@
                                             <tr>
                                                 <td colspan="4" class="text-right"><strong>Total Salary : </strong></td>
                                                 <td class="text-right" style="font-weight: bold" v-text="totalSalaryAmount"></td>
-                                                <td v-show="salaries.salaries ==''"></td>
+                                                <td></td>
+                                            </tr>
+                                            <!-- <tr>
+                                                <td colspan="4" class="text-right"><strong>Basic Salary : </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="salaries.basic_salary"></td>
+                                                <td></td>
+                                            </tr> -->
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Salary in Cash: </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="salaries.salary_in_cache"></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Gross Salary: </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="grossSalaryAmount"></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Gross Salary in words: </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="grossSalaryAmountInWords"></td>
+                                                <td></td>
                                             </tr>
                                         </tbody>
                                     </table>
