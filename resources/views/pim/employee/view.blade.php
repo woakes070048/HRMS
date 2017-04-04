@@ -561,7 +561,7 @@ table.tc-med-2 tbody td:first-child{
   var gross_salary = "{{$gross_salary}}";
 
   function convertNumberToWords(amount) {
-    alert(amount);
+  
             var words = new Array();
             words[0] = '';
             words[1] = 'One';
