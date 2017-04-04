@@ -1434,8 +1434,8 @@
 
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
-                                            <label class="control-label">Salary in Cache:</label>
-                                            <input type="text" name="salary_in_cache" class="form-control input-sm" v-model="salaries.salary_in_cache">
+                                            <label class="control-label">Salary in Cash:</label>
+                                            <input type="text" name="salary_in_cache" class="form-control input-sm" v-model="salaries.salary_in_cache" v-on:keyup="calculateTotalSalary">
                                             <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                         </div>
                                     </div>
@@ -1495,6 +1495,20 @@
                                                 <td colspan="4" class="text-right"><strong>Total Salary : </strong></td>
                                                 <td class="text-right" style="font-weight: bold" v-text="totalSalaryAmount"></td>
                                                 <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Salary in Cash: </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="salaries.salary_in_cache"></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Gross Salary: </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="grossSalaryAmount"></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Gross Salary in words: </strong></td>
+                                                <td colspan="2" class="text-right" style="font-weight: bold" v-text="grossSalaryAmountInWords"></td>
                                             </tr>
                                         </tbody>
                                     </table>
