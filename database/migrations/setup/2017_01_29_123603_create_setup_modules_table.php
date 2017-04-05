@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModulesTable extends Migration
+class CreateSetupModulesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -16,8 +16,8 @@ class CreateModulesTable extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->increments('id');
             $table->string('module_name',150);
-            $table->text('module_details');
-            $table->tinyInteger('module_status');
+            $table->text('module_details')->nullable();
+            $table->tinyInteger('module_status')->default('1')->comment="1=active,0=inactive";
             $table->timestamps();
         });
     }

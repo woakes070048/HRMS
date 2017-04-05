@@ -35,22 +35,6 @@ class CreateTableDependOnRelationTable extends Migration
             $table->foreign('config_id')->references('id')->on('configs')->onDelete('restrict');
         });
 
-        Schema::create('packages', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('package_name',150);
-            $table->text('package_details');
-            $table->double('package_price',9,2);
-            $table->integer('package_duration');
-            $table->tinyInteger('package_type');
-            $table->tinyInteger('package_sister_concern_limit');
-            $table->tinyInteger('package_level_limit');
-            $table->smallInteger('package_user_limit');
-            $table->tinyInteger('package_status');
-            $table->integer('package_created_by')->default(0);
-            $table->timestamps();
-            // $table->foreign('package_created_by')->references('id')->on('users')->onDelete('restrict');
-        });
-
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
@@ -66,16 +50,14 @@ class CreateTableDependOnRelationTable extends Migration
             $table->foreign('config_id')->references('id')->on('configs')->onDelete('restrict');
         });
 
-        
-
         Schema::create('module_package_maps', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('module_id')->unsigned()->nullable();
             $table->integer('package_id')->unsigned()->nullable();
             $table->timestamps();
 
-            $table->foreign('module_id')->references('id')->on('modules')->onDelete('restrict');
-            $table->foreign('package_id')->references('id')->on('packages')->onDelete('restrict');
+            $table->foreign('module_id')->references('id')->on('modules')->onDelete('cascade');
+            $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
         });
     }
 

@@ -15,17 +15,8 @@ Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
 	Route::post('password/email', 'ForgotPasswordController@sendResetLinkEmail');
 });
 
-
-/*************** ...Setup Registration Routes... *****************/
-Route::group(['prefix'=>'signup','namespace'=>'Setup\Auth'], function(){
-//	Route::get('/', 'RegisterController@showRegistrationForm');
-//	Route::post('/', 'RegisterController@register');
-});
-
-
 /***************** ...Setup Dashboard Routes... ******************/
 Route::group(['prefix'=>'setup','namespace'=>'Setup'], function(){
-
     Route::get('/','DashboardController@index');
     Route::get('/home','DashboardController@index');
     Route::get('/details/{id}','UserDetailsController@index');
@@ -33,7 +24,6 @@ Route::group(['prefix'=>'setup','namespace'=>'Setup'], function(){
 
 /*************** ... Setup Admin Sister Concern Routes... **************/
 Route::group(['prefix'=>'setup/concern','namespace'=>'Setup'], function(){
-	
 	Route::get('/add','SisterConcernController@add');
 	Route::post('/create','SisterConcernController@create');
 });
@@ -43,6 +33,15 @@ Route::group(['prefix'=>'config','namespace'=>'Setup'], function(){
 	Route::get('/', 'ConfigController@index');
 	Route::post('/', 'ConfigController@config');
 	Route::post('/get_package_info', 'ConfigController@get_package_info');
+});
+
+/******************** ...HRMS Employee Units Routes... **************/
+Route::group(['prefix' => 'modules', 'namespace' => 'Setup'],function (){
+    Route::get('/index','ModuleController@index');
+    // Route::get('/getUnits','ModuleController@getUnits');
+    Route::post('/add','ModuleController@create');
+    // Route::post('/edit','ModuleController@update');
+    // Route::get('/delete/{id}/{indexId}','ModuleController@delete');
 });
 
 
