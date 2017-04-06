@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 49);
+/******/ 	return __webpack_require__(__webpack_require__.s = 50);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -10296,48 +10296,74 @@ return jQuery;
 
 /***/ }),
 
-/***/ 38:
+/***/ 39:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function($) {new Vue({
+
     el: "#mainDiv",
     data: {
-        msg: "tesign",
-        module_name: '',
-        module_details: '',
-        module_status: 1,
-        modules: [],
+        menus: [],
+        activeModules: [],
+        activeMenus: [],
+        menu_name: '',
+        module_id: '',
+        menu_parent_id: '',
+        chk_parent: 0,
+        menu_url: '',
+        menu_section_name: '',
+        menu_status: 1,
         hdn_id: '',
-        edit_module_name: '',
-        edit_module_details: '',
-        edit_module_status: ''
+        edit_menu_name: '',
+        edit_module_id: '',
+        edit_menu_parent_id: '',
+        edit_menu_url: '',
+        edit_menu_section_name: '',
+        edit_menu_status: 1,
+        menuIndex: null
     },
     mounted: function mounted() {
-        this.getModuleAllData();
+        var _this = this;
+
+        this.getAllData();
+        axios.get('/menus/get-Module').then(function (response) {
+            return _this.activeModules = response.data;
+        });
+        axios.get('/menus/getActiveMenus').then(function (response) {
+            return _this.activeMenus = response.data;
+        });
     },
 
     methods: {
-        getModuleAllData: function getModuleAllData() {
-            var _this = this;
+        getAllData: function getAllData() {
+            var _this2 = this;
 
-            axios.get('/modules/getModule').then(function (response) {
-                return _this.modules = response.data;
+            axios.get('/menus/getMenus').then(function (response) {
+                return _this2.menus = response.data;
             });
         },
         saveData: function saveData(formId) {
-            var _this2 = this;
+            var _this3 = this;
 
             var formData = $('#' + formId).serialize();
 
-            axios.post('/modules/add', formData).then(function (response) {
+            axios.post('/menus/add', formData).then(function (response) {
+
+                _this3.getAllData();; //call method
+                axios.get('/menus/getActiveMenus').then(function (response) {
+                    return _this3.activeMenus = response.data;
+                });
+
                 $('#create-form-errors').html('');
                 document.getElementById("modal-close-btn").click();
-                swal(response.data.title, 'Message: ' + response.data.message);
 
-                _this2.module_name = '', _this2.module_details = '', _this2.module_status = 1,
-                //load all data
-                _this2.getModuleAllData();
+                swal(response.data.title, 'Message: ' + response.data.message, response.data.title);
+
+                _this3.menu_name = '', _this3.module_id = '', _this3.menu_parent_id = '', _this3.chk_parent = '', _this3.menu_url = '', _this3.menu_section_name = '', _this3.menu_status = '';
+
+                document.getElementById("chk_parent").checked = false;
             }).catch(function (error) {
+
                 if (error.response.status != 200) {
                     //error 422
 
@@ -10353,37 +10379,33 @@ return jQuery;
             });
         },
         editData: function editData(id, index) {
-            this.indexId = index;
-            this.hdn_id = id;
-            this.edit_module_name = this.modules[index].module_name;
-            this.edit_module_details = this.modules[index].module_details;
-            this.edit_module_status = this.modules[index].module_status;
-        },
 
+            this.menuIndex = index;
+            this.hdn_id = id;
+            this.edit_menu_name = this.menus[index].menu_name;
+            this.edit_menu_parent_id = this.menus[index].menu_parent_id;
+            this.edit_module_id = this.menus[index].module_id;
+            this.edit_menu_url = this.menus[index].menu_url;
+            this.edit_menu_section_name = this.menus[index].menu_section_name;
+            this.edit_menu_status = this.menus[index].menu_status;
+            this.chk_parent = this.menus[index].menu_parent_id > 0 ? 1 : 0;
+        },
         updateData: function updateData(updateFormId) {
-            var _this3 = this;
+            var _this4 = this;
 
             var formData = $('#' + updateFormId).serialize();
 
-            axios.post('/modules/edit', formData).then(function (response) {
+            axios.post('/menus/edit', formData).then(function (response) {
 
                 $('#edit-form-errors').html('');
                 document.getElementById("modal-edit-close-btn").click();
 
-                _this3.modules[_this3.indexId].module_name = _this3.edit_module_name;
-                _this3.modules[_this3.indexId].module_details = _this3.edit_module_details;
-                _this3.modules[_this3.indexId].module_status = _this3.edit_module_status;
+                _this4.getAllData();; //call method
+                axios.get('/menus/getActiveMenus').then(function (response) {
+                    return _this4.activeMenus = response.data;
+                });
 
-                swal(response.data.title, 'Message: ' + response.data.message);
-                // new PNotify({
-                //     title: response.data.title+' Message',
-                //     text: response.data.message,
-                //     shadow: true,
-                //     addclass: 'stack_top_right',
-                //     type: response.data.title,
-                //     width: '290px',
-                //     delay: 1500
-                // });
+                swal(response.data.title, 'Message: ' + response.data.message, response.data.title);
             }).catch(function (error) {
                 var errors = error.response.data;
 
@@ -10397,7 +10419,7 @@ return jQuery;
         },
         deleteData: function deleteData(id, index) {
 
-            var delModule = this.modules;
+            var delMenus = this.menus;
 
             swal({
                 title: "Are you sure?",
@@ -10409,22 +10431,10 @@ return jQuery;
                 closeOnConfirm: false
             }, function () {
 
-                swal("Deleted!", "Your data has been deleted.", "success");
+                swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                axios.get("/menus/delete/" + id + "/" + index, {}).then(function (response) {
 
-                axios.get("/modules/delete/" + id + "/" + index, {}).then(function (response) {
-
-                    // new PNotify({
-                    //     title: response.data.title+' Message',
-                    //     text: response.data.message,
-                    //     shadow: true,
-                    //     addclass: 'stack_top_right',
-                    //     type: response.data.title,
-                    //     width: '290px',
-                    //     delay: 1500
-                    // });
-
-                    delModule.splice(response.data.indexId, 1);
-                    swal(response.data.title, response.data.message, response.data.title);
+                    delMenus.splice(response.data.indexId, 1);
                 }).catch(function (error) {
 
                     swal('Error:', 'Delete function not working', 'error');
@@ -10437,10 +10447,10 @@ return jQuery;
 
 /***/ }),
 
-/***/ 49:
+/***/ 50:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(38);
+module.exports = __webpack_require__(39);
 
 
 /***/ })

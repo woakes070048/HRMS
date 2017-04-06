@@ -35,23 +35,42 @@ Route::group(['prefix'=>'config','namespace'=>'Setup'], function(){
 	Route::post('/get_package_info', 'ConfigController@get_package_info');
 });
 
-/******************** ...HRMS Employee Units Routes... **************/
+/******************** ...Setup Modules Routes... **************/
 Route::group(['prefix' => 'modules', 'namespace' => 'Setup'],function (){
     Route::get('/index','ModuleController@index');
-    // Route::get('/getUnits','ModuleController@getUnits');
+    Route::get('/getModule','ModuleController@getModule');
     Route::post('/add','ModuleController@create');
-    // Route::post('/edit','ModuleController@update');
-    // Route::get('/delete/{id}/{indexId}','ModuleController@delete');
+    Route::post('/edit','ModuleController@update');
+    Route::get('/delete/{id}/{indexId}','ModuleController@delete');
+});
+
+/******************** ...Setup menus Routes... **************/
+Route::group(['prefix' => 'menus', 'namespace' => 'Setup'],function (){
+    Route::get('/index','MenuController@index');
+    Route::get('/getMenus','MenuController@getMenus');
+    Route::get('/getActiveMenus','MenuController@getActiveMenus');
+    Route::get('/get-Module','MenuController@getModule');
+    Route::post('/add','MenuController@create');
+    Route::post('/edit','MenuController@update');
+    Route::get('/delete/{id}/{indexId}','MenuController@delete');
+});
+
+/******************** ...Setup Packages Routes... **************/
+Route::group(['prefix' => '/packages', 'namespace' => 'Setup'],function (){
+    Route::get('/index','PackageController@index');
+    // Route::get('/add','PackageController@add');
+    // Route::post('/add','PackageController@create');
+    // Route::get('/edit/{id}','PackageController@edit');
+    // Route::post('/edit','PackageController@update');
+    // Route::post('/edit/info','PackageController@update_info');
+    // Route::get('/delete/{id}','PackageController@delete');
 });
 
 
 /******************************* ..End Setup System Route.. **********************************/
 
 
-
-
 /******************************* ..Start HRMS Routes.. ***************************************/
-
 
 /************ ...HRMS Login Route... ****************/
 Route::group(['prefix' => '/','namespace'=>'Auth'], function(){
@@ -135,9 +154,6 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::get('/index','LevelController@index');
     Route::get('/add','LevelController@add');
     Route::post('/add','LevelController@create');
-
-    Route::post('/test','LevelController@test');
-    
     Route::get('/edit/{id}','LevelController@edit');
     Route::post('/edit','LevelController@update');
     Route::post('/edit/info','LevelController@update_info');

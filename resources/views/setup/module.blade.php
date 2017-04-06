@@ -19,10 +19,24 @@
                                     <th>Name</th>
                                     <th>Details</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                <tr v-for="(info,index) in modules">
+                                    <td v-text="index+1"></td>
+                                    <td v-text="info.module_name"></td>
+                                    <td v-text="info.module_details"></td>
+                                    <td v-text="info.module_status==1?'Active':'Inactive'"></td>
+                                    <td>
+                                        <button type="button" @click="editData(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".dataEdit">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        <button type="button" @click="deleteData(info.id, index)" class="btn btn-sm btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -31,7 +45,7 @@
         </div>
     </div>
 
-    <!-- dataAdd modal start -->
+    <!-- Add modal start -->
     <div class="modal fade bs-example-modal-lg dataAdd" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDataAdd">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -89,7 +103,69 @@
             </div>
         </div>
     </div>
-    <!-- unitAdd modal end --> 
+    <!-- Add modal end --> 
+    <!-- Edit modal start -->
+    <div class="modal fade bs-example-modal-lg dataEdit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="modalDataEdit">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Edit Module</h4>
+                </div>
+                
+                <form class="form-horizontal" @submit.prevent="updateData('updateFormData')" id="updateFormData">
+                    <div class="modal-body">
+
+                        <div id="edit-form-errors">
+                        </div>
+
+                        {{ csrf_field() }}
+                        <input type="hidden" name="hdn_id" v-model="hdn_id">
+
+                        <div class="form-group">
+                            <label for="edit_module_name" class="col-md-3 control-label">Module Name <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input name="edit_module_name" class="form-control input-sm" v-model="edit_module_name"  type="text" placeholder="Module Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_module_details" class="col-md-3 control-label">Details</label>
+                            <div class="col-md-9">
+                                <textarea name="edit_module_details" class="form-control input-sm" v-model="edit_module_details" placeholder="Write details"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-md-3 control-label"></label>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-success mb5">
+                                            <input type="radio" name="edit_module_status" id="edit_active" v-model="edit_module_status" value="1">
+                                            <label for="edit_active">Active</label>
+                                        </div>    
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-danger mb5">
+                                            <input type="radio" name="edit_module_status" id="edit_inactive" v-model="edit_module_status" value="0">
+                                            <label for="edit_inactive">Inactive</label>
+                                        </div>    
+                                    </div>
+                                </div>     
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default modal-close-btn" id="modal-edit-close-btn" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Info</button>
+                    </div>
+                </form>
+              
+            </div>
+        </div>
+    </div>
+    <!-- Edit modal end --> 
 </div>
 @endsection
 

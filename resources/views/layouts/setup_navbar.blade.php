@@ -37,6 +37,8 @@
               </a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="{{url('modules/index')}}">Modules</a></li>
+                <li><a href="{{url('menus/index')}}">Menus</a></li>
+                <li><a href="{{url('packages/index')}}">Packages</a></li>
               </ul>
             </li>
         @endif

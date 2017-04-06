@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Setup;
 
 use Auth;
+use App\Models\Setup\Module;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -18,6 +19,11 @@ class ModuleController extends Controller
     	return view('setup.module', $data);
     }
 
+    public function getModule(){
+
+        return Module::orderBy('id', 'DESC')->get();
+    }
+
     public function create(Request $request){
 
         $this->validate($request, [
@@ -25,19 +31,12 @@ class ModuleController extends Controller
             'module_status' => 'required',
         ]);
 
-        // echo $request->module_name;
-        // echo $request->module_details;
-        // echo $request->module_status;
-
         try{
-            // $data['data'] = Branch::create([
-            //     'branch_name' => $request->branch_name,
-            //     'branch_email' => $request->branch_email,
-            //     'branch_mobile' => $request->branch_mobile,
-            //     'branch_phone' => $request->branch_phone,
-            //     'branch_location' => $request->branch_location,
-            //     'branch_status' => $request->branch_status,
-            // ]);
+            $data['data'] = Module::create([
+                'module_name'    => $request->module_name,
+                'module_details' => $request->module_details,
+                'module_status'  => $request->module_status,
+            ]);
         
             $data['title'] = 'success';
             $data['message'] = 'data successfully added!';
@@ -46,6 +45,51 @@ class ModuleController extends Controller
             
            	$data['title'] = 'danger';
             $data['message'] = 'data not added!';
+        }
+
+        return response()->json($data);
+    }
+
+    public function update(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required',
+            'edit_module_name' => 'required',
+            'edit_module_status' => 'required',
+        ]);
+
+        try{
+            $data['data'] = Module::where('id',$request->hdn_id)->update([
+                'module_name'    => $request->edit_module_name,
+                'module_details' => $request->edit_module_details,
+                'module_status'  => $request->edit_module_status,
+            ]);
+        
+            $data['title'] = 'success';
+            $data['message'] = 'Module successfully updated!';
+
+        }catch (\Exception $e) {
+            $data['title'] = 'danger';
+            $data['message'] = 'Module not updated!';
+        }
+
+        return response()->json($data);
+    }
+
+    public function delete($id, $indexId){
+        
+        $data['indexId'] = $indexId;
+
+        try{
+            $data['data'] = Module::find($id)->delete();
+        
+            $data['title'] = 'success';
+            $data['message'] = 'data successfully removed!';
+
+        }catch(\Exception $e){
+            
+            $data['title'] = 'error';
+            $data['message'] = 'data not removed!';
         }
 
         return response()->json($data);
