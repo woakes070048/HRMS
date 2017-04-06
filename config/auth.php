@@ -41,14 +41,19 @@ return [
             'provider' => 'hrms',
         ],
 
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'hrms',
+        ],
+        
         'setup' => [
             'driver' => 'session',
             'provider' => 'setup',
         ],
 
-        'api' => [
+        'setup-api' => [
             'driver' => 'token',
-            'provider' => 'hrms',
+            'provider' => 'setup',
         ],
     ],
 

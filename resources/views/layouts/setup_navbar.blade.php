@@ -8,7 +8,7 @@
     </div>
     <ul class="nav navbar-nav navbar-left">
         {{-- <li class="dropdown menu-merge hidden-xs">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Setup
             <span class="caret caret-tp"></span>
           </a>
           <ul class="dropdown-menu" role="menu">
@@ -28,8 +28,18 @@
         @if(Auth::user()->user_type == 1)
             <li class="hidden-xs">
                 <a href="{{url('/config')}}" class="text-primary" data-toggle="tooltip" data-placement="top" title="Dashboard">
-                    Config
+                    Add Company
                 </a>
+            </li>
+            <li class="dropdown menu-merge hidden-xs">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Setup
+                <span class="caret caret-tp"></span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{{url('modules/index')}}">Modules</a></li>
+                <li><a href="{{url('menus/index')}}">Menus</a></li>
+                <li><a href="{{url('packages/index')}}">Packages</a></li>
+              </ul>
             </li>
         @endif
         
