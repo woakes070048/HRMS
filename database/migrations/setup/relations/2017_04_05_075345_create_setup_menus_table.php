@@ -17,9 +17,9 @@ class CreateSetupMenusTable extends Migration
             $table->increments('id');
             $table->integer('menu_parent_id')->default(0);
             $table->integer('module_id')->unsigned();
-            $table->string('menu_name')->length(50);
+            $table->string('menu_name')->length(50)->nullable();
             $table->string('menu_url')->length(50);
-            $table->string('menu_section_name')->length(50);
+            $table->string('menu_section_name')->length(50)->nullable();
             $table->boolean('menu_status')->default(1)->comment='1=active, 0=inactive';
             $table->timestamps();
         });

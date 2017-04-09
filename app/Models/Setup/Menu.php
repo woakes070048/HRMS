@@ -18,4 +18,9 @@ class Menu extends Model
 	public function parent(){
 		return $this->belongsTo('App\Models\Setup\Menu', 'menu_parent_id');
 	}
+
+	// one parent section menu hv many menus
+	public function child_menu(){
+		return $this->hasMany('App\Models\Setup\Menu', 'menu_parent_id', 'id');
+	}
 }
