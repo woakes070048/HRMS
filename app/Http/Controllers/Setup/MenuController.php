@@ -22,7 +22,7 @@ class MenuController extends Controller
 
     public function getMenus(){
         
-        return Menu::with('module', 'parent')->orderBy('id','DESC')->get();
+        return Menu::with('module', 'parent')->orderBy('menu_parent_id','module_id')->get();
     }
 
     public function getModule(){
@@ -40,15 +40,19 @@ class MenuController extends Controller
         $this->validate($request, [
             'menu_name' => 'required',
             'module_id' => 'required',
+            // 'menu_section_name' => 'required',
             'menu_url' => 'required',
-            'menu_section_name' => 'required',
             'menu_status' => 'required',
             'chk_parent' => 'nullable',
             'menu_parent_id' => 'required_if:chk_parent,1',
+            // 'menu_name' => 'required_if:chk_parent,1',
+            'menu_section_name' => 'required_unless:chk_parent,1',
         ],
         [
             'module_id.required' => 'The select module field is required.',
             'menu_parent_id.required_if'     => 'The menu parent field is required.',
+            // 'menu_name.required_if' => 'Menu name filed is required.',
+            'menu_section_name.required_unless' => 'Section name filed is required.',
         ]);
 
         if($request->chk_parent == 1){
@@ -63,9 +67,9 @@ class MenuController extends Controller
             $data['data'] = Menu::create([
                 'menu_parent_id' => $menu_parent_id,
                 'module_id' => $request->module_id,
-                'menu_name' => $request->menu_name,
+                'menu_name' => empty($request->menu_name)?'-':$request->menu_name,
                 'menu_url' => $request->menu_url,
-                'menu_section_name' => $request->menu_section_name,
+                'menu_section_name' => empty($request->menu_section_name)?'-':$request->menu_section_name,
                 'menu_status' => $request->menu_status,
             ]);
         

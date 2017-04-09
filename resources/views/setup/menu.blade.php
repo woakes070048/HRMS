@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+
 <div id="mainDiv">
     
     <div class="container">
@@ -115,7 +116,7 @@
                         <div class="col-md-9">
                             <select class="form-control input-sm" name="menu_parent_id" v-model="menu_parent_id">
                                 <option value="">Select Menu's Parent</option>
-                                <option v-for="info in activeMenus" v-bind:value="info.id"> @{{info.menu_name}} </option>
+                                <option v-for="info in activeMenus" v-bind:value="info.id" v-show="info.menu_parent_id == 0"> @{{info.menu_name}} </option>
                             </select>
                         </div>
                     </div>
@@ -128,7 +129,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="menu_section_name" class="col-md-3 control-label">Section Name <span class="text-danger">*</span></label>
+                        <label for="menu_section_name" class="col-md-3 control-label">Section Name <span class="text-danger" v-show="chk_parent == 0">*</span></label>
                         <div class="col-md-9">
                             <input name="menu_section_name" class="form-control input-sm" v-model="menu_section_name" type="text" placeholder="Menu section name">
                         </div>
