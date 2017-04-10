@@ -59,11 +59,10 @@ Route::group(['prefix' => 'menus', 'namespace' => 'Setup'],function (){
 Route::group(['prefix' => '/packages', 'namespace' => 'Setup'],function (){
     Route::get('/index','PackageController@index');
     Route::get('/add','PackageController@add');
-    // Route::post('/add','PackageController@create');
-    // Route::get('/edit/{id}','PackageController@edit');
-    // Route::post('/edit','PackageController@update');
-    // Route::post('/edit/info','PackageController@update_info');
-    // Route::get('/delete/{id}','PackageController@delete');
+    Route::post('/add','PackageController@create');
+    Route::get('/edit/{id}','PackageController@edit');
+    Route::post('/edit','PackageController@update');
+    Route::get('/delete/{id}','PackageController@delete');
 });
 
 

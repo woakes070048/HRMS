@@ -70,6 +70,7 @@ class MenuController extends Controller
                 'menu_name' => empty($request->menu_name)?'-':$request->menu_name,
                 'menu_url' => $request->menu_url,
                 'menu_section_name' => empty($request->menu_section_name)?'-':$request->menu_section_name,
+                'menu_icon_class' => $request->menu_icon_class,
                 'menu_status' => $request->menu_status,
             ]);
         
@@ -112,7 +113,7 @@ class MenuController extends Controller
         }
 
 
-        try{
+        // try{
 
             $data['data'] = Menu::where('id',$request->hdn_id)->update([
                 'menu_parent_id' => $edit_menu_parent_id,
@@ -120,17 +121,18 @@ class MenuController extends Controller
                 'menu_name' => $request->edit_menu_name,
                 'menu_url' => $request->edit_menu_url,
                 'menu_section_name' => $request->edit_menu_section_name,
+                'menu_icon_class' => $request->edit_menu_icon_class,
                 'menu_status' => $request->edit_menu_status,
             ]);
         
             $data['title'] = 'success';
             $data['message'] = 'Data successfully updated!';
 
-        }catch (\Exception $e) {
+        // }catch (\Exception $e) {
             
-            $data['title'] = 'error';
-            $data['message'] = 'Data not added!';
-        }
+        //     $data['title'] = 'error';
+        //     $data['message'] = 'Data not added!';
+        // }
 
         return response()->json($data);
     }

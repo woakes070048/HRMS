@@ -32,7 +32,7 @@ class ConfigController extends Controller
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
+    */
     public function index(){
     	
         Artisan::call('db:connect');
