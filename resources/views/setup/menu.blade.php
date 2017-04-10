@@ -34,7 +34,12 @@
                                 <tbody>
                                     <tr v-for="(info,index) in menus">
                                         <td v-text="index+1"></td>
-                                        <td v-text="info.menu_name"></td>
+                                        <td>
+                                            <span class="text-success">
+                                                <i :class="info.menu_icon_class" aria-hidden="true"></i>     
+                                            </span>
+                                            @{{info.menu_name}}
+                                        </td>
                                         <td>
                                             <span v-if="info.parent" v-text="info.parent.menu_name"></span>
                                             <span v-else>...</span>
@@ -132,6 +137,13 @@
                         <label for="menu_section_name" class="col-md-3 control-label">Section Name <span class="text-danger" v-show="chk_parent == 0">*</span></label>
                         <div class="col-md-9">
                             <input name="menu_section_name" class="form-control input-sm" v-model="menu_section_name" type="text" placeholder="Menu section name">
+                        </div>
+                    </div>
+
+                    <div class="form-group" v-show="chk_parent == 0">
+                        <label for="menu_icon_class" class="col-md-3 control-label">Font Awesome</label>
+                        <div class="col-md-9">
+                            <input name="menu_icon_class" class="form-control input-sm" v-model="menu_icon_class" type="text" placeholder="Only class name. Ex: fa fa-user-o">
                         </div>
                     </div>
 
@@ -236,6 +248,13 @@
                         <label for="edit_menu_section_name" class="col-md-3 control-label">Section Name <span class="text-danger">*</span></label>
                         <div class="col-md-9">
                             <input name="edit_menu_section_name" class="form-control input-sm" v-model="edit_menu_section_name" type="text" placeholder="Menu section name">
+                        </div>
+                    </div>
+
+                    <div class="form-group" v-show="chk_parent == 0">
+                        <label for="edit_menu_icon_class" class="col-md-3 control-label">Font Awesome</label>
+                        <div class="col-md-9">
+                            <input name="edit_menu_icon_class" class="form-control input-sm" v-model="edit_menu_icon_class" type="text" placeholder="Only class name. Ex: fa fa-user-o">
                         </div>
                     </div>
 

@@ -11,6 +11,7 @@ new Vue({
 		chk_parent: 0,
 		menu_url: '',
 		menu_section_name: '',
+        menu_icon_class: '',
 		menu_status: 1,
 		hdn_id: '',
 		edit_menu_name: '',
@@ -18,6 +19,7 @@ new Vue({
 		edit_menu_parent_id: '',
 		edit_menu_url: '',
 		edit_menu_section_name: '',
+        edit_menu_icon_class: '',
 		edit_menu_status: 1,
 		menuIndex: null,
 	},
@@ -78,7 +80,8 @@ new Vue({
 	        this.edit_menu_parent_id = this.menus[index].menu_parent_id;
 	        this.edit_module_id = this.menus[index].module_id;
 	        this.edit_menu_url = this.menus[index].menu_url;
-	        this.edit_menu_section_name = this.menus[index].menu_section_name;
+            this.edit_menu_section_name = this.menus[index].menu_section_name;
+	        this.edit_menu_icon_class = this.menus[index].menu_icon_class;
 	        this.edit_menu_status= this.menus[index].menu_status;
 	        this.chk_parent = this.menus[index].menu_parent_id > 0 ? 1 : 0;
         },
