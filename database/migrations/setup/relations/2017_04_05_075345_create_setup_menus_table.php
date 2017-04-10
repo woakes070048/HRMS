@@ -20,6 +20,7 @@ class CreateSetupMenusTable extends Migration
             $table->string('menu_name')->length(50)->nullable();
             $table->string('menu_url')->length(50);
             $table->string('menu_section_name')->length(50)->nullable();
+            $table->string('menu_icon_class')->length(50)->nullable();
             $table->boolean('menu_status')->default(1)->comment='1=active, 0=inactive';
             $table->timestamps();
         });

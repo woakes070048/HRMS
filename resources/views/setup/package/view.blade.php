@@ -12,24 +12,66 @@
                         </a>
                     </div>
                     <div class="panel-body">
-                        {{-- @if($levels->count() > 0) --}}
+                        @if($packages->count() > 0)
                         <table class="table table-hover" id="datatable">
                         <thead>
                             <tr class="success">
                                 <th>sl</th>
                                 <th>Name</th>
-                                <th>Parent</th>
-                                <th>Salary</th>
-                                <th>Salary Info</th>
-                                <th>Description</th>
+                                <th>Modules</th>
+                                <th>Price</th>
+                                <th>Duration(Months)</th>
+                                <th>Type</th>
+                                <th>Level Limit</th>
+                                <th>User Limit</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach($packages as $info)
+                                <tr>
+                                    <td></td>
+                                    <td>{{$info->package_name}}</td>
+                                    <td>
+                                        {{-- {{print_r($info->modules)}} --}}
+                                        @if($info->modules)
+                                            <ul>
+                                            @foreach($info->modules as $modInfo)
+                                                <li>{{$modInfo->singleModule->module_name}}</li>
+                                            @endforeach
+                                            </ul>
+                                        @endif
+                                    </td>
+                                    <td>{{$info->package_price}} (TK)</td>
+                                    <td>{{$info->package_duration}}</td>
+                                    <td>
+                                        @if($info->package_type==1)
+                                            <span class="text-danger">Free</span>
+                                        @else
+                                            Paid
+                                        @endif
+                                    </td>
+                                    <td>{{$info->package_level_limit}}</td>
+                                    <td>{{$info->package_user_limit}}</td>
+                                    <td>{{$info->package_status==1?"Active":"Inactive"}}</td>
+                                    <td>
+                                        <a href="{{url("packages/edit/$info->id")}}" title="">
+                                            <button type="button" class="btn btn-sm btn-primary">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                        </a>
+                                        <button onclick="wantToDelete({{$info->id}})" class="btn btn-sm btn-danger">
+                                            <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                         </table>
-                        {{-- @else
+                        @else
                             {{"No level available..."}}
-                        @endif --}}
+                        @endif
                     </div>
                 </div>
             </div>
@@ -40,7 +82,7 @@
 @endsection
 
 @section('script')
-{{-- <script type="text/javascript">
+<script type="text/javascript">
 
 function wantToDelete(id){
 
@@ -55,7 +97,7 @@ function wantToDelete(id){
     },
     function(){
         $.ajax({
-            url: "{{url('/levels/delete')}}/"+id,
+            url: "{{url('/packages/delete')}}/"+id,
             type: 'GET',
         })
         .done(function() {
@@ -108,5 +150,5 @@ jQuery(document).ready(function() {
   });
 
 
-</script> --}}
+</script>
 @endsection
