@@ -15,9 +15,4 @@ class ModulePackageMap extends Model
     {
         return $this->belongsTo('App\Models\Setup\Module', 'module_id', 'id');
     }
-
-    // public function singleModule(){
-
-    // 	return $this->hasOne('App\Models\Setup\Module', 'id', 'module_id');
-    // }
 }

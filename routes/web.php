@@ -20,6 +20,7 @@ Route::group(['prefix'=>'setup','namespace'=>'Setup'], function(){
     Route::get('/','DashboardController@index');
     Route::get('/home','DashboardController@index');
     Route::get('/details/{id}','UserDetailsController@index');
+    Route::post('/addHrmsModule','UserDetailsController@addHrmsModule');
 });
 
 /*************** ... Setup Admin Sister Concern Routes... **************/
