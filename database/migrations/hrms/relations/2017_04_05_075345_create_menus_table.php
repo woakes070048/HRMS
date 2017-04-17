@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSetupMenusTable extends Migration
+class CreateMenusTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateSetupMenusTable extends Migration
     public function up()
     {
         Schema::create('menus', function (Blueprint $table) {
-            $table->increments('id');
+            $table->integer('id')->unsigned();
             $table->integer('menu_parent_id')->default(0);
             $table->integer('module_id')->unsigned();
             $table->string('menu_name')->length(50)->nullable();
@@ -24,10 +24,6 @@ class CreateSetupMenusTable extends Migration
             $table->boolean('menu_status')->default(1)->comment='1=active, 0=inactive';
             $table->timestamps();
         });
-
-        // Schema::table('menus', function($table) {
-        //     $table->foreign('module_id')->references('id')->on('modules')->onDelete('cascade');
-        // });
     }
 
     /**

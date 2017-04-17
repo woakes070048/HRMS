@@ -158,6 +158,8 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::post('/edit','LevelController@update');
     Route::post('/edit/info','LevelController@update_info');
     Route::get('/delete/{id}','LevelController@delete');
+    Route::get('/permission/{id}','LevelController@permission');
+    Route::post('/updatePermission','LevelController@updatePermission');
 });
 
 

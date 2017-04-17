@@ -86,6 +86,7 @@ class ConfigController extends Controller
                         ];
             foreach($info->singleModule->menus as $menuInfo){
                 $menus[] = [
+                            'id' => $menuInfo->id,
                             'menu_parent_id' => $menuInfo->menu_parent_id,
                             'module_id' => $menuInfo->module_id,
                             'menu_name' => $menuInfo->menu_name,

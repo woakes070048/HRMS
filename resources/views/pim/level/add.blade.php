@@ -3,7 +3,7 @@
 
 <!-- Begin: Content -->
 <div id="mainDiv">
-    <section id="content" class="animated fadeIn">
+    <section id="content" class="">
         <div class="row">
             <div class="col-md-12">
                 
@@ -114,72 +114,34 @@
 
                                     <div class="form-group">
                                         <label for="name" class="col-md-2 control-label">Permission</label>
-
                                         <div class="col-md-10">
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    1. Manage Depertment:
+                                            @foreach($modules_permission as $info)
+                                                <div class="row">
+                                                    <label for="name">
+                                                        {{ $info->module_name }}
+                                                    </label>
                                                 </div>
-                                                <div class="col-md-9">
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Add
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> View
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Delete
-                                                    </div>
+                                                <div class="row">
+                                                    @foreach($info->menus as $mInfo)
+                                                        @if($mInfo->menu_parent_id == 0)
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                {{$mInfo->menu_name}}
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                            @foreach($mInfo->child_menu as $cInfo)
+                                                                <div class="col-md-2">
+                                                                    <input type="checkbox" name="level_menus[]" value="{{$cInfo->id}}"> 
+                                                                    {{$cInfo->menu_name}}
+                                                                </div>
+                                                            @endforeach
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                    @endforeach      
                                                 </div>
-                                            </div>   
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    2. Manage Level:
-                                                </div>
-                                                <div class="col-md-9">
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Add
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> View
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Delete
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    3. Manage Designation:
-                                                </div>
-                                                <div class="col-md-9">
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Add
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> View
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Delete
-                                                    </div>
-                                                </div>
-                                            </div>  
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    4. Manage Employee:
-                                                </div>
-                                                <div class="col-md-9">
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Add
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> View
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <input type="checkbox" name=""> Delete
-                                                    </div>
-                                                </div>
-                                            </div> 
+                                            @endforeach
+                                                          
                                         </div>
                                     </div>
 
