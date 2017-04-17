@@ -6,6 +6,9 @@ use App\Http\Requests\LevelRequest;
 use App\Models\Level;
 use App\Models\BasicSalaryInfo;
 use App\Models\LevelSalaryInfoMap;
+use App\Models\Module;
+use App\Models\Menu;
+use App\Models\LevelPermission;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -29,10 +32,61 @@ class LevelController extends Controller
     public function index(){
 
     	$data['title'] = "Employee Levels-HRMS";
-    	$data['levels'] = Level::with('salaryInfo','parent')
-                        ->orderBy('id','DESC')->get();
+    	$data['levels'] = Level::with('salaryInfo','parent')->orderBy('id','DESC')->get();
+        $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
+        $data['sidevar_hide'] = 1;
 
+        // foreach($data['levels'] as $info){
+        //     foreach($info->levelPermission as $pInfo){
+        //         echo $pInfo->eachMenu->id."==";
+        //         echo $pInfo->eachMenu->menu_name."==";
+        //         echo $pInfo->eachMenu->menu_parent_id."==";
+        //         echo $pInfo->eachMenu->parent->menu_name."==";
+        //         echo $pInfo->eachMenu->parent->module->module_name."<br/>";
+        //     }
+        // }
         return view('pim.level.levels', $data);
+    }
+
+    public function permission($id){
+
+        $data['levels'] = LevelPermission::where('level_id', $id)->get();
+
+        return $data['levels'];
+    }
+
+    public function updatePermission(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required'
+        ]);
+        
+        DB::beginTransaction();
+
+        try {
+            LevelPermission::where('level_id', $request->hdn_id)->delete();
+            //delete previous all the insert new
+
+            foreach($request->level_menus as $info){
+                $level_permission[] = [
+                            'level_id' => $request->hdn_id,
+                            'menu_id' => $info
+                        ];
+            }
+            
+            if(!empty($level_permission)){
+                LevelPermission::insert($level_permission);
+            }
+
+            DB::commit();
+            $request->session()->flash('success','Data successfully added!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            $request->session()->flash('danger','Data not added!');
+        }
+
+        return redirect('levels/index');
     }
 
     public function add(){
@@ -40,7 +94,8 @@ class LevelController extends Controller
     	$data['title'] = "Employee Levels Add-HRMS";
     	$data['info'] = "";
         $data['salary_info'] = BasicSalaryInfo::all();
-        $data['parents'] = Level::where('status',1)->get();
+        $data['parents'] = Level::where('status', 1)->get();
+        $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
 
         return view('pim.level.add', $data);
     }
@@ -60,8 +115,7 @@ class LevelController extends Controller
         $description = !empty($request->details)?$request->details:"No description...";
         $status = $request->status;
         $infoChk = $request->salaryInfoChk;
-
-        echo "--name: $name -- amount: $salary_amount -- description: $description -- Status: $status";
+        $level_menus = $request->level_menus;
     	
         DB::beginTransaction();
 
@@ -76,10 +130,7 @@ class LevelController extends Controller
     		$save->save();
 
             foreach($infoChk as $chk){
-        
                 if(array_key_exists('chk', $chk)){
-                    echo $chk['amount']." == ";
-                    echo $chk['name'];
                     $data[] = [
                                 'level_id' => $save->id, //last insert level id
                                 'amount' => $chk['amount'],
@@ -92,6 +143,19 @@ class LevelController extends Controller
                 LevelSalaryInfoMap::insert($data);
             }
 
+            if(!empty($level_menus)){
+                foreach($level_menus as $info){
+                    $level_permission[] = [
+                                'level_id' => $save->id,
+                                'menu_id' => $info
+                            ];
+                }
+
+                if(!empty($level_permission)){
+                    LevelPermission::insert($level_permission);
+                }
+            }
+
             DB::commit();
             
             $data['title'] = 'success';
@@ -99,7 +163,7 @@ class LevelController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-            $data['title'] = 'danger';
+            $data['title'] = 'error';
             $data['message'] = 'Data not added!';
         }
 
@@ -227,28 +291,30 @@ class LevelController extends Controller
         DB::beginTransaction();
 
         try {
-
             $del = Level::find($id);
             $del->salaryInfo()->delete();
             $del->delete();
 
             DB::commit();
             
-            $request->session()->flash('success','Level removed !');
+            $data['title'] = 'success';
+            $data['message'] = 'Level removed!';
 
         } catch (\Exception $e) {
             DB::rollback();
 
-            if($e->errorInfo[1] == 1451){
+            $data['title'] = 'error';
 
-                $request->session()->flash('danger','Cannot delete or update a parent row!');
+            if($e->errorInfo[1] == 1451){
+                $data['message'] = 'Cannot delete or update a parent row!';
             }
             else{
-                $request->session()->flash('danger','Level not removed !');
+                $data['message'] = 'Level not removed!';
             }
         }
 
-    	return redirect('levels/index');
+        return $data;
+    	// return redirect('levels/index');
     }
 
 }
