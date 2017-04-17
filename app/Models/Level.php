@@ -20,8 +20,11 @@ class Level extends Model
         return $this->parent()->with('parentRecursive');
     }
 
-
     public function designation(){
     	return $this->hasMany('App\Models\Designation');
+    }
+
+    public function levelPermission(){
+        return $this->hasMany('App\Models\LevelPermission', 'level_id', 'id');
     }
 }

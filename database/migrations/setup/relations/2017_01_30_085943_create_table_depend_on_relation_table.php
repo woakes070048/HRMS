@@ -22,7 +22,7 @@ class CreateTableDependOnRelationTable extends Migration
             $table->tinyInteger('config_status')->default('1')->comment="1=company active,0=company inactive";
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::create('user_emails', function (Blueprint $table) {
@@ -32,7 +32,7 @@ class CreateTableDependOnRelationTable extends Migration
             $table->string('email',75)->unique();
             $table->timestamps();
 
-            $table->foreign('config_id')->references('id')->on('configs')->onDelete('restrict');
+            $table->foreign('config_id')->references('id')->on('configs')->onDelete('cascade');
         });
 
         Schema::create('payments', function (Blueprint $table) {
@@ -45,9 +45,9 @@ class CreateTableDependOnRelationTable extends Migration
             $table->tinyInteger('payment_status')->default('1')->comment="1=active,0=inactive";
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('package_id')->references('id')->on('packages')->onDelete('restrict');
-            $table->foreign('config_id')->references('id')->on('configs')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
+            $table->foreign('config_id')->references('id')->on('configs')->onDelete('cascade');
         });
 
         Schema::create('module_package_maps', function (Blueprint $table) {

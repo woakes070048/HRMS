@@ -20,6 +20,7 @@ Route::group(['prefix'=>'setup','namespace'=>'Setup'], function(){
     Route::get('/','DashboardController@index');
     Route::get('/home','DashboardController@index');
     Route::get('/details/{id}','UserDetailsController@index');
+    Route::post('/addHrmsModule','UserDetailsController@addHrmsModule');
 });
 
 /*************** ... Setup Admin Sister Concern Routes... **************/
@@ -157,6 +158,8 @@ Route::group(['prefix' => '/levels', 'namespace' => 'Pim'],function (){
     Route::post('/edit','LevelController@update');
     Route::post('/edit/info','LevelController@update_info');
     Route::get('/delete/{id}','LevelController@delete');
+    Route::get('/permission/{id}','LevelController@permission');
+    Route::post('/updatePermission','LevelController@updatePermission');
 });
 
 
