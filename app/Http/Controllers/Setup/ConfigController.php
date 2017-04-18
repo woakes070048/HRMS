@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Setting;
 use App\Models\Menu;
 use App\Models\Module;
+use App\Models\LevelPermission;
+use App\Models\UserPermission;
 use App\Models\Setup\UserEmails;
 use App\Models\Setup\Config;
 use App\Models\Setup\Package;
@@ -81,6 +83,7 @@ class ConfigController extends Controller
             $modules[] = [
                             'id' => $info->singleModule->id,
                             'module_name' => $info->singleModule->module_name,
+                            'module_icon_class' => $info->singleModule->module_icon_class,
                             'module_details' => $info->singleModule->module_details,
                             'module_status' => $info->singleModule->module_status,
                         ];
@@ -94,6 +97,16 @@ class ConfigController extends Controller
                             'menu_section_name' => $menuInfo->menu_section_name,
                             'menu_icon_class' => $menuInfo->menu_icon_class,
                             'menu_status' => $menuInfo->menu_status,
+                        ];
+
+                $level_permission[] = [
+                            'level_id' => 1,
+                            'menu_id'  => $menuInfo->id,
+                        ];
+
+                $user_permission[] = [
+                            'user_id' => 1,
+                            'menu_id'  => $menuInfo->id,
                         ];
             }
         }
@@ -167,6 +180,8 @@ class ConfigController extends Controller
             if(!empty($modules)){
                 Module::insert($modules);
                 Menu::insert($menus);
+                LevelPermission::insert($level_permission);
+                UserPermission::insert($user_permission);
             }
 
 	    	$request->session()->flash('success','Application successfully setup!');

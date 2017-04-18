@@ -36,15 +36,6 @@ class LevelController extends Controller
         $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
         $data['sidevar_hide'] = 1;
 
-        // foreach($data['levels'] as $info){
-        //     foreach($info->levelPermission as $pInfo){
-        //         echo $pInfo->eachMenu->id."==";
-        //         echo $pInfo->eachMenu->menu_name."==";
-        //         echo $pInfo->eachMenu->menu_parent_id."==";
-        //         echo $pInfo->eachMenu->parent->menu_name."==";
-        //         echo $pInfo->eachMenu->parent->module->module_name."<br/>";
-        //     }
-        // }
         return view('pim.level.levels', $data);
     }
 
@@ -64,26 +55,46 @@ class LevelController extends Controller
         DB::beginTransaction();
 
         try {
-            LevelPermission::where('level_id', $request->hdn_id)->delete();
-            //delete previous all the insert new
 
-            foreach($request->level_menus as $info){
-                $level_permission[] = [
-                            'level_id' => $request->hdn_id,
-                            'menu_id' => $info
-                        ];
+            foreach($request->level_menus as $key=>$value){
+                if($value == 0){
+                    $uncheckedAray[] = $key;
+                }
+                else{
+                    $checkedAray[] = $key;    
+                }
             }
-            
-            if(!empty($level_permission)){
+
+            if(!empty($uncheckedAray)){
+                LevelPermission::where('level_id', $request->hdn_id)
+                        ->whereIn('menu_id', $uncheckedAray)->delete();
+            }
+
+            if(!empty($checkedAray)){
+                $exist_menu_obj = LevelPermission::select('menu_id')->where('level_id', $request->hdn_id)
+                        ->whereIn('menu_id', $checkedAray)->get()->toArray();
+            }
+
+            $exist_menu_ary = array_column($exist_menu_obj, 'menu_id');
+            $aryDiff = array_diff($checkedAray,$exist_menu_ary);
+
+            if(!empty($aryDiff)){
+                foreach($aryDiff as $info){
+                    $level_permission[] = [
+                                'level_id' => $request->hdn_id,
+                                'menu_id' => $info
+                            ];
+                }
+
                 LevelPermission::insert($level_permission);
             }
 
             DB::commit();
-            $request->session()->flash('success','Data successfully added!');
+            $request->session()->flash('success','Data successfully updatsed!');
 
         } catch (\Exception $e) {
             DB::rollback();
-            $request->session()->flash('danger','Data not added!');
+            $request->session()->flash('danger','Data not updated!');
         }
 
         return redirect('levels/index');

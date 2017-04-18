@@ -93,9 +93,13 @@ class PackageController extends Controller
     	$data['modules'] = Module::where('module_status',1)->get();
     	$chkData = ModulePackageMap::select('module_id')->where('package_id', $id)->get();
 
-    	foreach($chkData as $dd){
-    		$dataAry[] = $dd->module_id;
-    	}
+        $dataAry = [];
+
+        if($chkData){
+            foreach($chkData as $dd){
+                $dataAry[] = $dd->module_id;
+            }
+        }
 
 		$data['chked_modules'] = $dataAry;
 

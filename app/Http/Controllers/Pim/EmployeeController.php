@@ -17,6 +17,10 @@ use App\Models\EmployeeReference;
 use App\Models\EmployeeChildren;
 use App\Models\EmployeeLanguage;
 use App\Models\EmployeeSalaryAccount;
+use App\Models\Designation;
+use App\Models\LevelPermission;
+use App\Models\UserPermission;
+use App\Models\Module;
 
 use App\Services\CommonService;
 use App\Jobs\UserEmailUpdate;
@@ -74,10 +78,70 @@ class EmployeeController extends Controller
     public function index(){
         $data['title'] = 'Employee List';
         $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
+        $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
         $data['sidevar_hide'] = 1;
         return view('pim.employee.index')->with($data);
     }
 
+    public function permission($id){
+
+        $data['users_per'] = UserPermission::where('user_id', $id)->get();
+
+        return $data['users_per'];
+    }
+
+    public function updatePermission(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required'
+        ]);
+        
+        DB::beginTransaction();
+
+        try {
+            foreach($request->user_menus as $key=>$value){
+                if($value == 0){
+                    $uncheckedAray[] = $key;
+                }
+                else{
+                    $checkedAray[] = $key;    
+                }
+            }
+
+            if(!empty($uncheckedAray)){
+                UserPermission::where('user_id', $request->hdn_id)
+                        ->whereIn('menu_id', $uncheckedAray)->delete();
+            }
+
+            if(!empty($checkedAray)){
+                $exist_menu_obj = UserPermission::select('menu_id')->where('user_id', $request->hdn_id)
+                        ->whereIn('menu_id', $checkedAray)->get()->toArray();
+            }
+
+            $exist_menu_ary = array_column($exist_menu_obj, 'menu_id');
+            $aryDiff = array_diff($checkedAray,$exist_menu_ary);
+
+            if(!empty($aryDiff)){
+                foreach($aryDiff as $info){
+                    $user_permission[] = [
+                                'user_id' => $request->hdn_id,
+                                'menu_id' => $info
+                            ];
+                }
+
+                UserPermission::insert($user_permission);
+            }
+
+            DB::commit();
+            $request->session()->flash('success','Data successfully updatsed!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            $request->session()->flash('danger','Data not updated!');
+        }
+
+        return redirect('employee/index');
+    }
 
     /**
      * @get Show Employee Profile
@@ -134,6 +198,7 @@ class EmployeeController extends Controller
      * @param EmployeeBasicInfoRequest $request
      * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
+
     public function addEmployee(EmployeeBasicInfoRequest $request){
 
         $request->offsetSet('password', bcrypt($request->password));
@@ -172,6 +237,23 @@ class EmployeeController extends Controller
             }
 
             $user = User::create($request->all());
+
+            //insert menus into user_permisson when user created
+            $desig_info = Designation::find($request->designation_id);
+            $level_id = $desig_info->level_id;
+            $level_permission = LevelPermission::where('level_id', $level_id)->get();
+
+            foreach($level_permission as $info){
+                $user_permission[] = [
+                    'user_id' => $user->id,
+                    'menu_id' => $info->menu_id,
+                ];
+            }
+
+            if(!empty($user_permission)){
+                UserPermission::insert($user_permission);
+            }
+            //end insert menu user_permission
 
             if($user){
                 if(isset($photo)){
