@@ -35,5 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(HrmsReligionsCreateSeeder::class);
 
         // $this->call(HrmsUserCreateSeeder::class);
+        $this->call(SetupModuleSeeder::class);
+        $this->call(SetupMenuSeeder::class);
     }
 }

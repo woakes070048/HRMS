@@ -9,6 +9,8 @@ use App\Models\LevelSalaryInfoMap;
 use App\Models\Module;
 use App\Models\Menu;
 use App\Models\LevelPermission;
+use App\Models\UserPermission;
+use App\Models\Designation;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -49,13 +51,15 @@ class LevelController extends Controller
     public function updatePermission(Request $request){
 
         $this->validate($request, [
-            'hdn_id' => 'required'
+            'hdn_id' => 'required',
+            'status' => 'required'
         ]);
-        
+
+        $status = $request->status;
+
         DB::beginTransaction();
 
         try {
-
             foreach($request->level_menus as $key=>$value){
                 if($value == 0){
                     $uncheckedAray[] = $key;
@@ -87,6 +91,60 @@ class LevelController extends Controller
                 }
 
                 LevelPermission::insert($level_permission);
+            }
+
+            //if change existing user info STATUS = 1
+            if($status ==1){
+                $userIdAry = [];
+                $levelUsers = Designation::with('user')->where('level_id', $request->hdn_id)->get();
+
+                foreach($levelUsers as $info){
+                    foreach($info->user as $user){
+                        $userIdAry[] = $user->id;
+                    }
+                }
+
+                if(!empty($uncheckedAray)){
+                    UserPermission::whereIn('user_id', $userIdAry)
+                            ->whereIn('menu_id', $uncheckedAray)->delete();
+                }
+
+                if(!empty($checkedAray)){
+
+                    $userWithPermission = UserPermission::whereIn('user_id', $userIdAry)->get();
+
+                    //check if this level have user in user permission table
+                    if(count($userWithPermission) > 0){
+                        foreach($userIdAry as $idInfo){
+                            foreach($userWithPermission as $info){
+                                if($info->user_id == $idInfo){
+                                    $ary[$idInfo][] = $info->menu_id;
+                                }
+                            }
+
+                            // print_r($ary[$idInfo]);
+                            // echo "<br>==DIFF==<br>";
+                            $diffMenuId = array_diff($aryDiff,$ary[$idInfo]);
+
+                            print_r($diffMenuId);
+                            // echo "<br>====<br>";
+                            if(!empty($diffMenuId)){
+                                foreach($diffMenuId as $diff){
+                                    $userMenu[] = [
+                                                'user_id' => $idInfo,
+                                                'menu_id' => $diff,
+                                            ];
+                                }
+
+                                //insert data into db
+                                UserPermission::insert($userMenu);
+                                // print_r($userMenu);
+                                // echo "<br>===<br>";
+                                $userMenu = [];
+                            }
+                        }  
+                    }
+                }              
             }
 
             DB::commit();
