@@ -25,7 +25,12 @@
                             <tbody>
                                 <tr v-for="(info,index) in modules">
                                     <td v-text="index+1"></td>
-                                    <td v-text="info.module_name"></td>
+                                    <td>
+                                        <span class="text-success">
+                                            <i :class="info.module_icon_class" aria-hidden="true"></i>   
+                                        </span>
+                                        @{{info.module_name}}
+                                    </td>
                                     <td v-text="info.module_details"></td>
                                     <td v-text="info.module_status==1?'Active':'Inactive'"></td>
                                     <td>
@@ -65,6 +70,13 @@
                             <label for="module_name" class="col-md-3 control-label">Module Name <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <input name="module_name" class="form-control input-sm" v-model="module_name"  type="text" placeholder="Module Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="module_icon_class" class="col-md-3 control-label">Font Awesome <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input name="module_icon_class" class="form-control input-sm" v-model="module_icon_class" type="text" placeholder="Only class name. Ex: fa fa-user-o">
                             </div>
                         </div>
 
@@ -126,6 +138,13 @@
                             <label for="edit_module_name" class="col-md-3 control-label">Module Name <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <input name="edit_module_name" class="form-control input-sm" v-model="edit_module_name"  type="text" placeholder="Module Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_module_icon_class" class="col-md-3 control-label">Font Awesome <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input name="edit_module_icon_class" class="form-control input-sm" v-model="edit_module_icon_class" type="text" placeholder="Only class name. Ex: fa fa-user-o">
                             </div>
                         </div>
 

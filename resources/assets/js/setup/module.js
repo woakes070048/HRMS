@@ -3,11 +3,13 @@ new Vue({
     data:{
         msg: "tesign",
         module_name: '',
+        module_icon_class: '',
         module_details: '',
         module_status: 1,
         modules: [],
         hdn_id: '',
         edit_module_name: '',
+        edit_module_icon_class: '',
         edit_module_details: '',
         edit_module_status: '',
     },
@@ -28,6 +30,7 @@ new Vue({
                 swal(response.data.title, 'Message: '+response.data.message);
 
                 this.module_name= '',
+                this.module_icon_class= '',
                 this.module_details= '',
                 this.module_status= 1,
                 //load all data
@@ -51,6 +54,7 @@ new Vue({
             this.indexId = index;
             this.hdn_id = id;
             this.edit_module_name   = this.modules[index].module_name;
+            this.edit_module_icon_class   = this.modules[index].module_icon_class;
             this.edit_module_details = this.modules[index].module_details;
             this.edit_module_status = this.modules[index].module_status;
         },

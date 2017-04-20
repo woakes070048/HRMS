@@ -146,6 +146,8 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
     Route::post('/edit/{userId}/language/','EmployeeController@addEditLanguage');
     Route::delete('/delete/{id}/language/','EmployeeController@deleteEmployeeData');
 
+    Route::get('/permission/{id}','EmployeeController@permission');
+    Route::post('/updatePermission','EmployeeController@updatePermission');
 });
 
 

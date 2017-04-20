@@ -10304,11 +10304,13 @@ return jQuery;
     data: {
         msg: "tesign",
         module_name: '',
+        module_icon_class: '',
         module_details: '',
         module_status: 1,
         modules: [],
         hdn_id: '',
         edit_module_name: '',
+        edit_module_icon_class: '',
         edit_module_details: '',
         edit_module_status: ''
     },
@@ -10334,7 +10336,7 @@ return jQuery;
                 document.getElementById("modal-close-btn").click();
                 swal(response.data.title, 'Message: ' + response.data.message);
 
-                _this2.module_name = '', _this2.module_details = '', _this2.module_status = 1,
+                _this2.module_name = '', _this2.module_icon_class = '', _this2.module_details = '', _this2.module_status = 1,
                 //load all data
                 _this2.getModuleAllData();
             }).catch(function (error) {
@@ -10356,6 +10358,7 @@ return jQuery;
             this.indexId = index;
             this.hdn_id = id;
             this.edit_module_name = this.modules[index].module_name;
+            this.edit_module_icon_class = this.modules[index].module_icon_class;
             this.edit_module_details = this.modules[index].module_details;
             this.edit_module_status = this.modules[index].module_status;
         },
