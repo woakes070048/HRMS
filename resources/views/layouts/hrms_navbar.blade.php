@@ -400,6 +400,7 @@
         <li class="menu-divider">
             <i class="fa fa-circle text-success"></i>
         </li>
+        
         <li class="dropdown menu-merge">
             <a href="#" class="dropdown-toggle fw600 p15" data-toggle="dropdown">
                 @if(empty($auth->photo))

@@ -9,6 +9,8 @@ use App\Models\LevelSalaryInfoMap;
 use App\Models\Module;
 use App\Models\Menu;
 use App\Models\LevelPermission;
+use App\Models\UserPermission;
+use App\Models\Designation;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -36,15 +38,6 @@ class LevelController extends Controller
         $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
         $data['sidevar_hide'] = 1;
 
-        // foreach($data['levels'] as $info){
-        //     foreach($info->levelPermission as $pInfo){
-        //         echo $pInfo->eachMenu->id."==";
-        //         echo $pInfo->eachMenu->menu_name."==";
-        //         echo $pInfo->eachMenu->menu_parent_id."==";
-        //         echo $pInfo->eachMenu->parent->menu_name."==";
-        //         echo $pInfo->eachMenu->parent->module->module_name."<br/>";
-        //     }
-        // }
         return view('pim.level.levels', $data);
     }
 
@@ -58,32 +51,108 @@ class LevelController extends Controller
     public function updatePermission(Request $request){
 
         $this->validate($request, [
-            'hdn_id' => 'required'
+            'hdn_id' => 'required',
+            'status' => 'required'
         ]);
-        
+
+        $status = $request->status;
+
         DB::beginTransaction();
 
         try {
-            LevelPermission::where('level_id', $request->hdn_id)->delete();
-            //delete previous all the insert new
-
-            foreach($request->level_menus as $info){
-                $level_permission[] = [
-                            'level_id' => $request->hdn_id,
-                            'menu_id' => $info
-                        ];
+            foreach($request->level_menus as $key=>$value){
+                if($value == 0){
+                    $uncheckedAray[] = $key;
+                }
+                else{
+                    $checkedAray[] = $key;    
+                }
             }
-            
-            if(!empty($level_permission)){
+
+            if(!empty($uncheckedAray)){
+                LevelPermission::where('level_id', $request->hdn_id)
+                        ->whereIn('menu_id', $uncheckedAray)->delete();
+            }
+
+            if(!empty($checkedAray)){
+                $exist_menu_obj = LevelPermission::select('menu_id')->where('level_id', $request->hdn_id)
+                        ->whereIn('menu_id', $checkedAray)->get()->toArray();
+            }
+
+            $exist_menu_ary = array_column($exist_menu_obj, 'menu_id');
+            $aryDiff = array_diff($checkedAray,$exist_menu_ary);
+
+            if(!empty($aryDiff)){
+                foreach($aryDiff as $info){
+                    $level_permission[] = [
+                                'level_id' => $request->hdn_id,
+                                'menu_id' => $info
+                            ];
+                }
+
                 LevelPermission::insert($level_permission);
             }
 
+            //if change existing user info STATUS = 1
+            if($status ==1){
+                $userIdAry = [];
+                $levelUsers = Designation::with('user')->where('level_id', $request->hdn_id)->get();
+
+                foreach($levelUsers as $info){
+                    foreach($info->user as $user){
+                        $userIdAry[] = $user->id;
+                    }
+                }
+
+                if(!empty($uncheckedAray)){
+                    UserPermission::whereIn('user_id', $userIdAry)
+                            ->whereIn('menu_id', $uncheckedAray)->delete();
+                }
+
+                if(!empty($checkedAray)){
+
+                    $userWithPermission = UserPermission::whereIn('user_id', $userIdAry)->get();
+
+                    //check if this level have user in user permission table
+                    if(count($userWithPermission) > 0){
+                        foreach($userIdAry as $idInfo){
+                            foreach($userWithPermission as $info){
+                                if($info->user_id == $idInfo){
+                                    $ary[$idInfo][] = $info->menu_id;
+                                }
+                            }
+
+                            // print_r($ary[$idInfo]);
+                            // echo "<br>==DIFF==<br>";
+                            $diffMenuId = array_diff($aryDiff,$ary[$idInfo]);
+
+                            print_r($diffMenuId);
+                            // echo "<br>====<br>";
+                            if(!empty($diffMenuId)){
+                                foreach($diffMenuId as $diff){
+                                    $userMenu[] = [
+                                                'user_id' => $idInfo,
+                                                'menu_id' => $diff,
+                                            ];
+                                }
+
+                                //insert data into db
+                                UserPermission::insert($userMenu);
+                                // print_r($userMenu);
+                                // echo "<br>===<br>";
+                                $userMenu = [];
+                            }
+                        }  
+                    }
+                }              
+            }
+
             DB::commit();
-            $request->session()->flash('success','Data successfully added!');
+            $request->session()->flash('success','Data successfully updatsed!');
 
         } catch (\Exception $e) {
             DB::rollback();
-            $request->session()->flash('danger','Data not added!');
+            $request->session()->flash('danger','Data not updated!');
         }
 
         return redirect('levels/index');

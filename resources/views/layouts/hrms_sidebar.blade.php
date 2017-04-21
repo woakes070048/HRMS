@@ -51,83 +51,47 @@
                   <span class="sidebar-title">Dashboard</span>
                 </a>
             </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $employee)) menu-open @endif" href="#">
-                    <span class="glyphicons glyphicons-group" aria-hidden="true"></span>
-                    <span class="sidebar-title">Employee Management</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'department') active @endif">
-                        <a href="{{url('department/index')}}">
-                            <span class="fa fa-level-up"></span> Departments
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'unit') active @endif">
-                        <a href="{{url('unit/index')}}">
-                            <span class="fa fa-level-up"></span> Unit
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'levels') active @endif">
-                        <a href="{{url('levels/index')}}">
-                            <span class="fa fa-level-up"></span> Levels
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'designation') active @endif">
-                        <a href="{{url('designation/index')}}">
-                            <span class="fa fa-level-up"></span> Designation
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'branch') active @endif">
-                        <a href="{{url('branch/index')}}">
-                            <span class="fa fa-level-up"></span> Branch
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'bank') active @endif">
-                        <a href="{{url('bank/index')}}">
-                            <span class="fa fa-level-up"></span> Bank
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'promotion') active @endif">
-                        <a href="{{url('promotion/index')}}">
-                            <span class="fa fa-level-up"></span> Transfer / Promotion
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'employee') active @endif">
-                        <a href="{{url('employee/index')}}"><span class="fa fa-users" aria-hidden="true"></span> Manage Employee</a>
-                    </li>
+            
+            <?php 
+                $moduleShare = session('moduleShare');
+            ?>
+            @foreach($moduleShare as $info)
+                <li>
+                    <?php 
+                        //strtolower
+                        $segmentUrl = \Request::segment(1);
+                        $module_tag = 0;
+                        $menuShare = session('menuShare');
+                    ?>    
+                    @foreach($menuShare as $val)
+                        <?php 
+                            $strAry = explode("/", $val->menu_url);
+                        ?>
+                        @if($strAry[0] == $segmentUrl)
+                            <?php 
+                                $module_tag = $val->module_id;
+                            ?>
+                        @endif
+                    @endforeach
                     
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $PayRoll)) menu-open @endif" href="#">
-                    <span class="fa fa-money" aria-hidden="true"></span>
-                    <span class="sidebar-title">PayRoll Management</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'salaryInfo') active @endif">
-                        <a href="{{url('salaryInfo/index')}}">
-                            <span class="glyphicon glyphicon-usd"></span> Salary Info
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $settings)) menu-open @endif" href="#">
-                    <span class="glyphicons glyphicons-adjust_alt" aria-hidden="true"></span>
-                    <span class="sidebar-title">Application Settings</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'settings') active @endif">
-                        <a href="{{url('settings/index')}}">
-                            <span class="glyphicons glyphicons-settings"></span> 
-                            Basic Settings
-                        </a>
-                    </li>
-                </ul>
-            </li>
+                    <a class="accordion-toggle @if($info->id == $module_tag) menu-open @endif" href="#">
+                        <span class="{{$info->module_icon_class}}" aria-hidden="true"></span>
+                        <span class="sidebar-title">{{$info->module_name}}</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="nav sub-nav">
+                        @foreach($info->menus as $mInfo)
+                            @if($mInfo->menu_parent_id == 0)
+                            <li class="@if(\Request::segment(1) == 'department') active @endif">
+                                <a href="{{url("$mInfo->menu_url")}}">
+                                    <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_name}}
+                                </a>
+                            </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </li>
+            @endforeach  
         </ul>
         <!-- End: Sidebar Menu -->
 
@@ -138,8 +102,6 @@
             </a>
         </div>
         <!-- End: Sidebar Collapse Button -->
-
     </div>
     <!-- End: Sidebar Left Content -->
-
 </aside>

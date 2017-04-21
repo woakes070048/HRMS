@@ -98,6 +98,31 @@
                         <input type="hidden" value="" name="hdn_id" class="hdn_id">
                         <div class="form-group">
                             <div class="col-md-11 col-md-offset-1">
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <span style="color:#bd0100;">
+                                            <b>*Effect existing users of this level:</b>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="radio-custom radio-success mb5">
+                                                    <input type="radio" id="active" name="status" value="1">
+                                                    <label for="active">Yes</label>
+                                                </div>    
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="radio-custom radio-danger mb5">
+                                                    <input type="radio" id="inactive" name="status" checked="" value="0">
+                                                    <label for="inactive">No</label>
+                                                </div>    
+                                            </div>
+                                        </div>     
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-11 col-md-offset-1">
                                 @foreach($modules_permission as $info)
                                     <div class="row">
                                         <label for="name">
@@ -114,7 +139,8 @@
                                                 <div class="col-md-10">
                                                 @foreach($mInfo->child_menu as $cInfo)
                                                     <div class="col-md-2">
-                                                        <input type="checkbox" name="level_menus[]" value="{{$cInfo->id}}"> 
+                                                        <input type="hidden" name="level_menus[{{$cInfo->id}}]" value="0">
+                                                        <input type="checkbox" name="level_menus[{{$cInfo->id}}]" value="{{$cInfo->id}}"> 
                                                         {{$cInfo->menu_name}}
                                                     </div>
                                                 @endforeach

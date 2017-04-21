@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\CommonService;
+use App\Services\PermissionService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Artisan;
 
 class DashboardController extends Controller
 {
-    use CommonService;
+    use CommonService, PermissionService;
 
 	protected $auth;
 
@@ -35,16 +36,12 @@ class DashboardController extends Controller
                 'sisterConcern' => $data['sisterConcern']->toArray(),
                 'motherConcern' => $data['motherConcern']->toArray()
                 ]);
-            // dd($data['sisterConcern']->toArray());
-            // dd($data['motherConcern']->toArray());
 
         }else{
             $data['sisterConcern'] = [];
             $data['motherConcern'] = [];
         }
+
     	return view('dashboard')->with($data);
     }
-
-
-
 }

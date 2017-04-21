@@ -1,7 +1,7 @@
 @extends('layouts.hrms')
 @section('content')
 
-<section class="animated fadeIn p10" id="employee_list">
+<section class="p10" id="employee_list">
 <div class="panel">
     <div class="panel-heading">
         <div class="panel-title">
@@ -20,9 +20,8 @@
                 <th>Employee Name</th>
                 <th>Email Address</th>
                 <th>Designation</th>
-                <!-- <th>Level</th> -->
+                <th>Permissions</th>
                 <th>Department</th>
-                <!-- <th>Unit</th> -->
                 <th>Image</th>
                 <th>Created By</th>
                 <th>Updated By</th>
@@ -38,9 +37,8 @@
                 <th>Employee Name</th>
                 <th>Email Address</th>
                 <th>Designation</th>
-                <!-- <th>Level</th> -->
+                <th>Permission</th>
                 <th>Department</th>
-                <!-- <th>Unit</th> -->
                 <th>Image</th>
                 <th>Created By</th>
                 <th>Updated By</th>
@@ -58,7 +56,9 @@
                    <td>{{$user->fullname}}</td>
                    <td>{{$user->email}}</td>
                    <td>{{$user->designation->designation_name}}</td>
-                  
+                   <td>
+                     <button type="button" class="btn btn-xs btn-success" onclick="showData({{$user->id}})" data-toggle="modal" data-target=".showData">Permissions</button>
+                   </td> 
                    <td>{{$user->designation->department->department_name}}</td>
               
                    <td>
@@ -84,14 +84,8 @@
                            </a>
                        </div>
                        <div class="btn-group pt5">
-                           <a class="btn btn-sm {{($user->status == 0)?'text-primary':'text-danger'}}" v-on:click="changeStatus($event,<?php echo $user->id?>)">{{($user->status == 0)?'Active':'Inactive'}}</a>
+                           <a class="btn btn-sm {{($user->status == 0)?'text-primary':'text-danger'}}" v-on:click="changeStatus($event,<?php echo $user->id;?>)">{{($user->status == 0)?'Active':'Inactive'}}</a>
                        </div>
-                       
-                       <!-- <div class="btn-group">
-                           <a href="{{url('/employee/delete/'.$user->id)}}" class="btn btn-sm btn-danger">
-                               <i class="glyphicons glyphicons-bin"></i>
-                           </a>
-                       </div> -->
                    </td>
                 </tr>
                 <?php $sl++;?>
@@ -102,9 +96,40 @@
 </div>
 </section>
 
+@include('pim.employee.modals.permission')
+
 @section('script')
 
 <script type="text/javascript">
+
+//js code for permission start
+function showData(id){
+  
+  $('.hdn_id').val('');
+  $('input:checkbox').removeAttr('checked');
+  //first it clean previous data....
+  $('.hdn_id').val(id);
+
+  $.ajax({
+      url: "{{url('/employee/permission')}}/"+id,
+      type: 'GET',
+  })
+  .done(function(data){
+   
+      if(data.length > 0){
+          jQuery.each(data, function(index, item) {
+              $('input[value='+item.menu_id+']').prop("checked", true);
+          });
+      }else{
+          $('input:checkbox').removeAttr('checked');
+      }
+  })
+  .fail(function(){
+      swal("Error", "Data not removed.", "error");
+  });
+}
+//js code permission finished
+
 
   new Vue({
     el: '#employee_list',

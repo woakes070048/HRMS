@@ -28,12 +28,14 @@ class ModuleController extends Controller
 
         $this->validate($request, [
             'module_name' => 'required',
+            'module_icon_class' => 'required',
             'module_status' => 'required',
         ]);
 
         try{
             $data['data'] = Module::create([
                 'module_name'    => $request->module_name,
+                'module_icon_class'    => $request->module_icon_class,
                 'module_details' => $request->module_details,
                 'module_status'  => $request->module_status,
             ]);
@@ -55,12 +57,14 @@ class ModuleController extends Controller
         $this->validate($request, [
             'hdn_id' => 'required',
             'edit_module_name' => 'required',
+            'edit_module_icon_class' => 'required',
             'edit_module_status' => 'required',
         ]);
 
         try{
             $data['data'] = Module::where('id',$request->hdn_id)->update([
                 'module_name'    => $request->edit_module_name,
+                'module_icon_class'    => $request->edit_module_icon_class,
                 'module_details' => $request->edit_module_details,
                 'module_status'  => $request->edit_module_status,
             ]);
