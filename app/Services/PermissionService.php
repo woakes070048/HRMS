@@ -21,6 +21,21 @@ trait PermissionService{
 
     public function userPermission($userId){
 
-    	//$userModule = 
+    	$userModule = UserPermission::with('eachMenu')->where('user_id', $userId)->get();
+
+    	$moduleAry = [];
+    	$menuAry = [];
+
+        foreach($userModule as $info){
+            if(!in_array($info->eachMenu->module_id, $moduleAry))
+            {
+                $moduleAry[] = $info->eachMenu->module_id;
+            }
+
+            $menuAry[] = $info->eachMenu->menu_url;
+        }
+
+        session(['userModuleShare' => $moduleAry]);
+        session(['userMenuShare' => $menuAry]);
     }
 }
