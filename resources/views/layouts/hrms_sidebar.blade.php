@@ -54,11 +54,15 @@
             
             <?php 
                 $moduleShare = session('moduleShare');
+                $userModuleShare = session('userModuleShare');
+                $userMenuShare = session('userMenuShare');
+                // dd($userMenuShare);
             ?>
             @foreach($moduleShare as $info)
+                @if(in_array($info->id, $userModuleShare))
                 <li>
                     <?php 
-                        //strtolower
+                        //this calculation to open Module menu
                         $segmentUrl = \Request::segment(1);
                         $module_tag = 0;
                         $menuShare = session('menuShare');
@@ -81,16 +85,19 @@
                     </a>
                     <ul class="nav sub-nav">
                         @foreach($info->menus as $mInfo)
-                            @if($mInfo->menu_parent_id == 0)
-                            <li class="@if(\Request::segment(1) == 'department') active @endif">
-                                <a href="{{url("$mInfo->menu_url")}}">
-                                    <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_name}}
-                                </a>
-                            </li>
+                            @if(in_array($mInfo->menu_url, $userMenuShare))
+                                @if($mInfo->menu_parent_id == 0)
+                                <li class="@if(\Request::segment(1) == 'department') active @endif">
+                                    <a href="{{url("$mInfo->menu_url")}}">
+                                        <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_section_name}}
+                                    </a>
+                                </li>
+                                @endif
                             @endif
                         @endforeach
                     </ul>
                 </li>
+                @endif
             @endforeach  
         </ul>
         <!-- End: Sidebar Menu -->
