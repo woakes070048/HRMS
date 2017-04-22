@@ -27,9 +27,14 @@
                                         @if($mInfo->menu_parent_id == 0)
                                         <div class="row">
                                             <div class="col-md-2">
-                                                {{$mInfo->menu_name}}
+                                                {{$mInfo->menu_section_name}}
                                             </div>
                                             <div class="col-md-10">
+                                                <div class="col-md-2">
+                                                    <input type="hidden" name="user_menus[{{$mInfo->id}}]" value="0">
+                                                    <input type="checkbox" name="user_menus[{{$mInfo->id}}]" value="{{$mInfo->id}}"> 
+                                                    {{$mInfo->menu_name}}
+                                                </div>
                                             @foreach($mInfo->child_menu as $cInfo)
                                                 <div class="col-md-2">
                                                     <input type="hidden" name="user_menus[{{$cInfo->id}}]" value="0">
