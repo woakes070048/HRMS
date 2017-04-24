@@ -1,6 +1,8 @@
 <?php
 
-Route::get('testing', 'Auth\LoginController@testing');
+// Route::get('testing', function(){
+//     dd(DB::table('users')->get());
+// });
 
 /***************** ...Setup Login Routes... ******************/
 Route::group(['prefix'=>'setup','namespace'=>'Setup\Auth'], function(){
@@ -52,7 +54,6 @@ Route::group(['prefix'=>'config','namespace'=>'Setup'], function(){
 
 
 /******************************* ..Start HRMS Routes.. ***************************************/
-
 
 /************ ...HRMS Login Route... ****************/
 Route::group(['prefix' => '/','namespace'=>'Auth'], function(){
@@ -226,6 +227,26 @@ Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
 });
 
 
+/******************** .......HRMS Time & Attendance Routes........ **************/
+Route::group(['prefix' => 'workshift', 'namespace' => 'Attendance'],function (){
+    Route::get('/index','WorkShiftController@index');
+    Route::post('/add','WorkShiftController@create');
+    Route::get('/edit/{id}','WorkShiftController@edit');
+    Route::post('/edit','WorkShiftController@update');
+    Route::delete('/delete/{id}','WorkShiftController@delete');
+});
+
+Route::group(['prefix' => 'shiftassign', 'namespace' => 'Attendance'],function (){
+    Route::get('/index/{work_shift_id?}','WorkShiftAssignController@index');
+    Route::post('/assign','WorkShiftAssignController@assignWorkShift');
+});
+
+Route::group(['prefix' => 'attendance', 'namespace' => 'Attendance'],function (){
+    Route::get('/index','AttendanceController@index');
+    Route::post('/index','AttendanceController@attendanceTimesheet');
+    Route::post('/add','AttendanceController@addAttendance');
+});
+
 
 /******************** ...HRMS Common Function Routes... **************/
 Route::group(['prefix' => '/'], function(){
@@ -255,6 +276,8 @@ Route::group(['prefix' => '/'], function(){
 
     Route::post('add-designation','CommonController@addDesignation');
     Route::post('add-language','CommonController@addLanguage');
+
+    Route::get('get-workshifts/{id?}/{status?}','CommonController@getWorkShift');
 
 });
 

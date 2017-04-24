@@ -103,7 +103,7 @@ class ConfigController extends Controller
                     'payment_duration' => $package_duration,
                 ]);
 
-			if(!DB::statement('CREATE DATABASE IF NOT EXISTS '.$database_name)){
+			if(!DB::statement('CREATE DATABASE IF NOT EXISTS '.$database_name.' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')){
                 Artisan::call('db:connect');
                 DB::rollback();
                 $request->session()->flash('danger','Application setup not success!');

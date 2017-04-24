@@ -293,4 +293,19 @@ class User extends Authenticatable
     }
 
 
+    public function workShifts(){
+        return $this->hasMany('App\Models\WorkShiftEmployeeMap');
+    }
+
+
+    public function attendanceTimesheet(){
+        return $this->hasMany('App\Models\AttendanceTimesheet');
+    }
+
+
+    public function attendanceTimesheetArchive(){
+        return $this->hasMany('App\Models\AttendanceTimesheetArchive');
+    }
+
+
 }

@@ -10,7 +10,7 @@
 
     <link rel="shortcut icon" href="{{asset('img/logo.png')}}">
     <!-- Font CSS (Via CDN) -->
-    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
+    <!-- <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'> -->
 
     <!-- Glyphicons Pro CSS(font) -->
     <link rel="stylesheet" type="text/css" href="{{asset('fonts/glyphicons-pro/glyphicons-pro.css')}}">
@@ -127,8 +127,14 @@
 
 <!-- BEGIN: PAGE SCRIPTS -->
 <script src="{{asset('js/hrms.js')}}"></script>
+
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
+
+<!-- Time/Date Plugin Dependencies -->
+<script src="{{asset('vendor/plugins/globalize/globalize.min.js')}}"></script>
+<script src="{{asset('vendor/plugins/moment/moment.min.js')}}"></script>
+
 <script src="{{asset('js/jquery-overlay.min.js')}}"></script>
 
 <!-- PNotify -->
@@ -143,16 +149,11 @@
 <!-- Select2 Plugin Plugin -->
 <script src="{{asset('vendor/plugins/select2/select2.min.js')}}"></script>
 
-<!-- Time/Date Plugin Dependencies -->
-<script src="{{asset('vendor/plugins/globalize/globalize.min.js')}}"></script>
-<script src="{{asset('vendor/plugins/moment/moment.min.js')}}"></script>
-
 <!-- DateRange Plugin -->
-<!-- <script src="{{asset('vendor/plugins/daterange/daterangepicker.js')}}"></script> -->
+<script src="{{asset('vendor/plugins/daterange/daterangepicker.js')}}"></script>
 
 <!-- DateTime Plugin -->
 <script src="{{asset('vendor/plugins/datepicker/js/bootstrap-datetimepicker.js')}}"></script>
-
 
 <script src="{{asset('js/utility/utility.js')}}"></script>
 <script src="{{asset('js/demo/demo.js')}}"></script>

@@ -169,7 +169,7 @@
 <!-- Page Plugins -->
 <script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
 
-<<script type="text/javascript" src="{{asset('js/bank.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/bank.js')}}"></script>
 
 @endsection
 

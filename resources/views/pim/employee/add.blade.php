@@ -21,7 +21,7 @@
     </style>
 @endsection
 
-<section class="animated fadeIn p10" id="employee">
+<section class="p10" id="employee">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title hidden-xs"><span class="glyphicons glyphicons-user_add"></span> Add New Employee</span>
