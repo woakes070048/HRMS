@@ -62,6 +62,7 @@
                         @endif
                     @endforeach
                     
+
                     <a class="accordion-toggle @if($info->id == $module_tag) menu-open @endif" href="#">
                         <span class="{{$info->module_icon_class}}" aria-hidden="true"></span>
                         <span class="sidebar-title">{{$info->module_name}}</span>
@@ -86,6 +87,69 @@
                 </li>
                 @endif
             @endforeach  
+
+
+                </ul>
+            </li>
+            <li>
+                <a class="accordion-toggle @if(in_array(\Request::segment(1), $attendance)) menu-open @endif" href="#">
+                    <span class="icon-stopwatch" aria-hidden="true"></span>
+                    <span class="sidebar-title">Time & Attendance</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li class="@if(\Request::segment(1) == 'workshift') active @endif">
+                        <a href="{{url('workshift/index')}}">
+                            <span class="fa fa-level-up"></span> Work Shift
+                        </a>
+                    </li>
+                    <li class="@if(\Request::segment(1) == 'shiftassign') active @endif">
+                        <a href="{{url('shiftassign/index')}}">
+                            <span class="fa fa-level-up"></span> Work Shift Assign
+                        </a>
+                    </li>
+                    <li class="@if(\Request::segment(1) == 'attendance') active @endif">
+                        <a href="{{url('attendance/index')}}">
+                            <span class="fa fa-level-up"></span> Attendance
+                        </a>
+                    </li>
+                    <li class="@if(\Request::segment(1) == 'attendance') active @endif">
+                        <a href="{{url('attendance/index')}}">
+                            <span class="fa fa-level-up"></span> My Attendance
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="accordion-toggle @if(in_array(\Request::segment(1), $PayRoll)) menu-open @endif" href="#">
+                    <span class="fa fa-money" aria-hidden="true"></span>
+                    <span class="sidebar-title">PayRoll Management</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li class="@if(\Request::segment(1) == 'salaryInfo') active @endif">
+                        <a href="{{url('salaryInfo/index')}}">
+                            <span class="glyphicon glyphicon-usd"></span> Salary Info
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="accordion-toggle @if(in_array(\Request::segment(1), $settings)) menu-open @endif" href="#">
+                    <span class="glyphicons glyphicons-adjust_alt" aria-hidden="true"></span>
+                    <span class="sidebar-title">Application Settings</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li class="@if(\Request::segment(1) == 'settings') active @endif">
+                        <a href="{{url('settings/index')}}">
+                            <span class="glyphicons glyphicons-settings"></span> 
+                            Basic Settings
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
         </ul>
         <!-- End: Sidebar Menu -->
 

@@ -24,3 +24,4 @@ class Menu extends Model
 		return $this->hasMany('App\Models\Menu', 'menu_parent_id', 'id');
 	}
 }
+

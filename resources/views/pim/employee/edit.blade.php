@@ -23,7 +23,7 @@
 
 @endsection
 
-<section class="animated fadeIn p10" id="employee">
+<section class="p10" id="employee">
     <div class="panel">
         <div class="panel-heading">
             <span class="panel-title hidden-xs"><span class="glyphicons glyphicons-user_add"></span> Edit Employee</span>
@@ -1434,8 +1434,8 @@
 
                                     <div class="col-md-3">
                                         <div class="form-group" :class="{'has-error': errors.salary_in_cache}">
-                                            <label class="control-label">Salary in Cache:</label>
-                                            <input type="text" name="salary_in_cache" class="form-control input-sm" :value="salaries.salary_in_cache">
+                                            <label class="control-label">Salary in Cash:</label>
+                                            <input type="text" name="salary_in_cache" class="form-control input-sm" v-model="salaries.salary_in_cache" v-on:keyup="calculateTotalSalary">
                                             <span v-if="errors.salary_in_cache" class="help-block" v-text="errors.salary_in_cache[0]"></span>
                                         </div>
                                     </div>
@@ -1496,6 +1496,20 @@
                                                 <td class="text-right" style="font-weight: bold" v-text="totalSalaryAmount"></td>
                                                 <td></td>
                                             </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Salary in Cash: </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="salaries.salary_in_cache"></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Gross Salary: </strong></td>
+                                                <td class="text-right" style="font-weight: bold" v-text="grossSalaryAmount"></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4" class="text-right"><strong>Gross Salary in words: </strong></td>
+                                                <td colspan="2" class="text-right" style="font-weight: bold" v-text="grossSalaryAmountInWords"></td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                     </div>
@@ -1526,7 +1540,7 @@
                                             <select v-if="salaries.salary_account" class="form-control input-sm" name="bank_id">
                                             <option :value="''">---- Select Bank Name ----</option>
                                             <option v-for="(bank,index) in banks"
-                                                    :value="bank.id" :selected="salaries.salary_account.bank_id">@{{ bank.bank_name }}</option>
+                                                    :value="bank.id" :selected="salaries.salary_account.bank_id == bank.id">@{{ bank.bank_name }}</option>
                                             </select>
                                             <select v-else class="form-control input-sm" name="bank_id">
                                                 <option :value="''">---- Select Bank Name ----</option>
