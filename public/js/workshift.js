@@ -1,34 +1,17 @@
- $(document).on('ready',function(){
+$(document).on('ready',function(){
 
-  new Vue({
-    el: '#bank_list',
+var work = new Vue({
+    el: '#work_shift',
     data:{
-      banks:[],
-      bank:[],
+      // index:null,
+      workshifts:[],
+      workshift:[],
       errors:[]
     },
 
     mounted(){
-      this.getBanks();
+      this.getWorkShift();
     },
-
-    // watch:{
-    //   banks:function(){
-    //     setTimeout(function() {
-    //         this.dataTableCall();
-    //     }, 1000);
-    //   }
-
-    // },
-
-    // destroyed(){
-    //   this.dataTableCall();
-    // },
-
-    // beforeDestroy(){
-    //   this.dataTableCall();
-    // },
-
 
     methods:{
 
@@ -40,6 +23,7 @@
           "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
         }); 
       },
+
 
       showMessage(data){
         new PNotify({
@@ -55,7 +39,26 @@
       },
 
 
+      loadinShow(id){
+        $(id).LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
+      },
+
+
+      loadinHide(id){
+        $(id).LoadingOverlay("hide",{color:"rgba(0, 0, 0, 0)"});
+      },
+
+
+      myTimePicker(){
+          $('.myTimePicker').datetimepicker({
+              pickDate: false,
+          });
+      },
+
+
       modal_open(form_id) {
+        this.errors = [];
+
         $.magnificPopup.open({
             removalDelay: 300,
             items: {
@@ -72,34 +75,33 @@
       },
 
 
-      getBanks(){
-        $('#datatableCall').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
+      getWorkShift(){
+        this.loadinShow('#datatableCall');
 
-        axios.get('/bank/index').then((response) => {
-          this.banks = response.data;
-        
+        axios.get('/workshift/index').then((response) => {
+          this.workshifts = response.data;
+          this.loadinHide('#datatableCall');
         }).catch((error)=>{
           alert('please reload page.');
         });
-
-        $('#datatableCall').LoadingOverlay("hide");
+        this.loadinHide('#datatableCall');
       },
 
 
-      addBank(e){
+      addWorkShift(e){
         var formData = new FormData(e.target);
-        var form_id = e.target.id;
-        // alert(form_id);
-        $('#'+form_id).LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
+        // var form_id = e.target.id;
+        this.loadinShow('#workshift_modal');
 
-        axios.post('/bank/add',formData).then((response) => {
-          this.banks.push(response.data.data);
+        axios.post('/workshift/add',formData).then((response) => {
+          // this.workshifts.push(response.data.data);
+          this.getWorkShift();
           jQuery(".mfp-close").trigger("click");
           this.showMessage(response.data);
-          $('#'+form_id).LoadingOverlay("hide",{color:"rgba(0, 0, 0, 0)"});
+          this.loadinHide('#workshift_modal');
 
         }).catch((error)=>{
-          $('#'+form_id).LoadingOverlay("hide",{color:"rgba(0, 0, 0, 0)"});
+          this.loadinHide('#workshift_modal');
 
           if(error.response.status == 500 || error.response.data.status == 'danger'){
               var error = error.response.data;
@@ -111,16 +113,17 @@
       },
 
 
-      editBank(id,model_id){
-        $('#bank').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
+      editWorkShift(id,model_id){
+        this.loadinShow(model_id);
+        // this.index = index;
 
-        axios.get('/bank/edit/'+id).then((response) => {
-          $('#bank').LoadingOverlay("hide",{color:"rgba(0, 0, 0, 0)"});
-          this.bank = response.data.data;
+        axios.get('/workshift/edit/'+id).then((response) => {
+          this.loadinHide(model_id);
+          this.workshift = response.data.data;
           this.modal_open(model_id);
 
         }).catch((error)=>{
-          $('#bank').LoadingOverlay("hide",{color:"rgba(0, 0, 0, 0)"});
+          this.loadinHide(model_id);
           if(error.response.status == 500 || error.response.data.status == 'danger'){
               var error = error.response.data;
               this.showMessage(error);
@@ -131,19 +134,20 @@
       },
 
 
-      updateBank(e){
+      updateWorkShift(e){
         var formData = new FormData(e.target);
-        var form_id = e.target.id;
+        // var form_id = e.target.id;
+        this.loadinShow('#workshift_modal');
 
-        $('#bank').LoadingOverlay("show",{color:"rgba(0, 0, 0, 0)"});
-
-        axios.post('/bank/edit',formData).then((response) => {
-          this.getBanks();
+        axios.post('/workshift/edit',formData).then((response) => {
+          // this.$set(this.workshifts,this.index,this.workshift);
+          this.getWorkShift();
           jQuery(".mfp-close").trigger("click");
           this.showMessage(response.data);
-          $('#bank').LoadingOverlay("hide",{color:"rgba(0, 0, 0, 0)"});
+          this.loadinHide('#workshift_modal');
+
         }).catch((error)=>{
-          $('#bank').LoadingOverlay("hide",{color:"rgba(0, 0, 0, 0)"});
+          this.loadinHide('#workshift_modal');
           if(error.response.status == 500 || error.response.data.status == 'danger'){
               var error = error.response.data;
               this.showMessage(error);
@@ -154,13 +158,7 @@
       },
 
 
-      deleteBank(id,index_id){
-
-       // var ck = confirm("Are you sure delete this?");
-       //  if(ck == false){
-       //      return false;
-       //  }
-
+      deleteWorkShift(id,index_id){
        var vueThis = this;
 
        swal({
@@ -172,25 +170,23 @@
           confirmButtonText: "Yes, delete it!",
           closeOnConfirm: false
         },
-        function(){
-            $('body').LoadingOverlay("show");    
-            axios.delete('/bank/delete/'+id).then((response) => {
-              vueThis.banks.splice(index_id,1);
-              $.LoadingOverlay("hide");
-              // vueThis.showMessage(error.response.data);
-              swal("Deleted!", "Your data file has been deleted.", "success");
+        function(){ 
+            axios.delete('/workshift/delete/'+id).then((response) => {
+              vueThis.workshifts.splice(index_id,1);
+              swal("Deleted!", response.data.message, "success");
 
             }).catch((error)=>{
-              $.LoadingOverlay("hide");
-              // vueThis.showMessage(error.response.data);
-              swal("Cancelled", "Your data not deleted.", "error");
+
+              swal("Cancelled", error.response.data.message, "error");
+              
             });
         });
 
       },
 
+
       changeStatus(e,id){
-        $.LoadingOverlay("show");
+        this.loadinShow('#datatableCall');
         var status = e.target.getAttribute('status');
         var status2;
 
@@ -200,7 +196,7 @@
           status2 = 1;
         }
         
-        axios.post('/bank/edit',{'id':id,'status':status2}).then((response) => {
+        axios.post('/workshift/edit',{'id':id,'work_shift_status':status2}).then((response) => {
           e.target.setAttribute('status',status2);
 
           if(status == 0){
@@ -212,14 +208,14 @@
             e.target.classList.add("text-primary");
             e.target.text = "Active";
           }
-          $('body').LoadingOverlay("hide");
+          this.loadinHide('#datatableCall');
           this.showMessage(response.data);
         }).catch((error) => {
 
           if(error.response.status == 500 || error.response.data.status == 'danger'){
                 this.showMessage(error.response.data);
             }
-          $('body').LoadingOverlay("hide");
+          this.loadinHide('#datatableCall');
         });
       },
 
@@ -230,4 +226,5 @@
   });
 
 
-});
+
+  });

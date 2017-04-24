@@ -21,6 +21,8 @@ use App\Models\Degree;
 use App\Models\Language;
 use App\Models\Religion;
 
+use App\Models\WorkShift;
+
 use App\Models\Setting;
 
 use Auth;
@@ -262,5 +264,18 @@ trait CommonService
         return Config::find($config_id)->mother()->get();
     }
 
+
+    public function getWorkShift($id=null,$status=null){
+
+        if((!empty($id) && $id!='null') && $status !=null){
+            return WorkShift::where('id',$id)->where('work_shift_status',$status)->get();
+        }else if(!empty($id) && $id!='null'){
+            return WorkShift::find($id);
+        }else if($status){
+            return WorkShift::where('work_shift_status',$status)->get();
+        }else{
+            return WorkShift::all();
+        }
+    }
 
 }
