@@ -14,9 +14,15 @@
     <div class="panel-heading">
         <div class="panel-title">
             <span class="glyphicon glyphicon-tasks"></span>Bank Information
+
+            <?php 
+              $chkUrl = \Request::segment(1);
+            ?>
+            @if(in_array($chkUrl."/add", session('userMenuShare')))
             <span class="pull-right">
               <a v-on:click="modal_open('#bank_modal'),errors=[],bank=[]" class="btn btn-sm btn-dark btn-gradient dark"><span class="glyphicons glyphicon-pencil"></span> &nbsp; Add Bank</a>
             </span>
+            @endif
         </div>
     </div>
     <div class="panel-body pn">
@@ -56,15 +62,19 @@
                    <td>@{{bank.created_at}}</td>
                    <td>@{{bank.updated_at}}</td>
                    <td>
+                      @if(in_array($chkUrl."/edit", session('userMenuShare')))
                        <div class="btn-group">
                            <a v-on:click="editBank(bank.id,'#bank_modal'),bank=[],errors =[]" class="btn btn-sm btn-primary"><i class="glyphicons glyphicons-pencil"></i>
                            </a>
                        </div>
+                      @endif
+                      @if(in_array($chkUrl."/delete", session('userMenuShare')))
                        <div class="btn-group">
                            <a v-on:click="deleteBank(bank.id,index)" class="btn btn-sm btn-danger">
                                <i class="glyphicons glyphicons-bin"></i>
                            </a>
                        </div>
+                      @endif
                    </td>
                 </tr>
             </tbody>

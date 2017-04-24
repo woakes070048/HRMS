@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Designation extends Model
 {
-    protected $fillable = ['department_id','level_id','designation_name','designation_description','created_by','updated_by','created_at'];
+    protected $fillable = ['department_id','level_id','designation_name','designation_description', 'designation_effective_date', 'status','created_by','updated_by','created_at'];
 
 
     public function department(){

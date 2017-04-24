@@ -44,6 +44,11 @@ class DashboardController extends Controller
             $data['motherConcern'] = [];
         }
 
-    	return view('dashboard')->with($data);
+        return view('dashboard')->with($data);
+    }
+
+    public function notFound(){
+
+        return view('errors.503');
     }
 }

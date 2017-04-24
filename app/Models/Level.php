@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Level extends Model
 {
-    protected $fillable = ['level_name','description'];
+    protected $fillable = ['level_name','description','level_effective_date'];
 
     public function salaryInfo(){
     	return $this->hasMany('App\Models\LevelSalaryInfoMap', 'level_id', 'id');

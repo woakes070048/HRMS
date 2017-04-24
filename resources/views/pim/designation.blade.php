@@ -9,8 +9,13 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Designations</span>
-
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".designationAdd" style="margin-top: 12px;">Add Designation</button>
+                        
+                        <?php 
+                          $chkUrl = \Request::segment(1);
+                        ?>
+                        @if(in_array($chkUrl."/add", session('userMenuShare')))
+                            <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".designationAdd" style="margin-top: 12px;">Add Designation</button>
+                        @endif
                     </div>
                     <div class="panel-body">
                         @if($designations->count() > 0)
@@ -22,6 +27,7 @@
                                 <th>Department</th>
                                 <th>Level</th>
                                 <th>Description</th>
+                                <th>Effective Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -35,15 +41,19 @@
                                 <td>{{ $designation->department->department_name }}</td>
                                 <td>{{ $designation->level->level_name }}</td>
                                 <td>{{ $designation->designation_description }}</td>
+                                <td>{{ $designation->designation_effective_date }}</td>
                                 <td>{{$designation->status==1?"Active":"Inactive"}}</td>
                                 <td>
-                                    <button data-id="{{$designation->id}}" type="button" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".designationEdit">
+                                    @if(in_array($chkUrl."/edit", session('userMenuShare')))
+                                        <button data-id="{{$designation->id}}" type="button" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".designationEdit">
                                         <i class="fa fa-edit"></i>
-                                    </button>
-
-                                    <button onclick="wantToDelete({{$designation->id}})" class="btn btn-sm btn-danger">
+                                        </button>
+                                    @endif
+                                    @if(in_array($chkUrl."/delete", session('userMenuShare')))
+                                        <button onclick="wantToDelete({{$designation->id}})" class="btn btn-sm btn-danger">
                                         <i class="fa fa-trash-o"></i>
-                                    </button>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -77,7 +87,7 @@
                     {{ csrf_field() }}
 
                     <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                        <label for="name" class="col-md-3 control-label">Name</label>
+                        <label for="name" class="col-md-3 control-label">Name <span class="text-danger">*</span></label>
 
                         <div class="col-md-9">
                             <input id="name" type="text" class="form-control input-sm" name="name" value="{{ old('name') }}" autofocus>
@@ -90,7 +100,7 @@
                         </div>
                     </div>
                     <div class="form-group{{ $errors->has('department') ? ' has-error' : '' }}">
-                        <label for="department" class="col-md-3 control-label">Department</label>
+                        <label for="department" class="col-md-3 control-label">Department <span class="text-danger">*</span></label>
 
                         <div class="col-md-9">
                             <select id="department" name="department" class="form-control department input-sm">
@@ -108,7 +118,7 @@
                         </div>
                     </div>
                     <div class="form-group{{ $errors->has('level') ? ' has-error' : '' }}">
-                        <label for="level" class="col-md-3 control-label">Level</label>
+                        <label for="level" class="col-md-3 control-label">Level <span class="text-danger">*</span></label>
 
                         <div class="col-md-9">
                             <select id="level" name="level" class="form-control level input-sm">
@@ -137,6 +147,13 @@
                                     <strong>{{ $errors->first('details') }}</strong>
                                 </span>
                             @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="effective_date" class="col-md-3 control-label">Effective Date</label>
+                        <div class="col-md-9">
+                            <input type="text" name="effective_date" class="gui-input datepicker form-control input-sm" placeholder="">
                         </div>
                     </div>
 
@@ -250,6 +267,13 @@
                                     <strong>{{ $errors->first('details') }}</strong>
                                 </span>
                             @endif
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="effective_date" class="col-md-3 control-label">Effective Date</label>
+                        <div class="col-md-9">
+                            <input type="text" name="effective_date" class="gui-input datepicker form-control input-sm edit_effective_date" placeholder="">
                         </div>
                     </div>
 
@@ -459,6 +483,7 @@ $('.edit-btn').click(function(event) {
         $('.edit-department').val(data['department_id']);
         $('.edit-level').val(data['level_id']);
         $('.edit-details').val(data['designation_description']);
+        $('.edit_effective_date').val(data['designation_effective_date']);
         $(".edit-status[value=" + data['status'] + "]").prop('checked', true);
     })
     .fail(function() {

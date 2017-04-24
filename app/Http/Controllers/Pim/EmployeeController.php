@@ -60,6 +60,7 @@ class EmployeeController extends Controller
     public function __construct(Auth $auth,User $user)
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['viewEmployeeProfile', 'statusChange', 'permission', 'updatePermission']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Units extends Model
 {
-	protected $fillable = ['unit_name','unit_parent_id','unit_departments_id','unit_details','unit_status'];
+	protected $fillable = ['unit_name','unit_parent_id','unit_departments_id','unit_details', 'unit_effective_date','unit_status'];
 
 	public function department(){
 		return $this->hasOne('App\Models\Department', 'id', 'unit_departments_id');
