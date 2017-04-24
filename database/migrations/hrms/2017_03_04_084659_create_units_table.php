@@ -17,6 +17,7 @@ class CreateUnitsTable extends Migration
             $table->integer('unit_parent_id')->default(0)->unsigned();
             $table->integer('unit_departments_id')->unsigned();
             $table->text('unit_details')->nullable();
+            $table->date('unit_effective_date')->nullable();
             $table->boolean('unit_status')->default(1)->comment='1=active, 0=inactive';
             $table->timestamps();
         });

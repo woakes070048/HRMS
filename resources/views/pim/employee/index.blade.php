@@ -7,7 +7,12 @@
         <div class="panel-title">
             <span class="glyphicon glyphicon-tasks"></span>Employee Information
             <span class="pull-right">
+            <?php 
+              $chkUrl = \Request::segment(1);
+            ?>
+            @if(in_array($chkUrl."/add", session('userMenuShare')))
               <a href="{{url('employee/add')}}" class="btn btn-sm btn-dark btn-gradient dark"><span class="glyphicons glyphicons-user_add"></span> &nbsp; Add Employee</a>
+            @endif
             </span>
         </div>
     </div>
@@ -57,7 +62,9 @@
                    <td>{{$user->email}}</td>
                    <td>{{$user->designation->designation_name}}</td>
                    <td>
-                     <button type="button" class="btn btn-xs btn-success" onclick="showData({{$user->id}})" data-toggle="modal" data-target=".showData">Permissions</button>
+                      @if($user->created_by > 0)
+                       <button type="button" class="btn btn-xs btn-success" onclick="showData({{$user->id}})" data-toggle="modal" data-target=".showData">Permissions</button>
+                      @endif
                    </td> 
                    <td>{{$user->designation->department->department_name}}</td>
               
@@ -84,7 +91,9 @@
                            </a>
                        </div>
                        <div class="btn-group pt5">
+                          @if(in_array($chkUrl."/delete", session('userMenuShare')))
                            <a class="btn btn-sm {{($user->status == 0)?'text-primary':'text-danger'}}" v-on:click="changeStatus($event,<?php echo $user->id;?>)">{{($user->status == 0)?'Active':'Inactive'}}</a>
+                          @endif
                        </div>
                    </td>
                 </tr>

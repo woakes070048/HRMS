@@ -4,7 +4,7 @@
     <div class="sidebar-left-content nano-content">
 
         <!-- Sidebar Widget - Author -->
-          <div class="sidebar-widget author-widget">
+        <div class="sidebar-widget author-widget">
             <div class="media">
               <a class="media-left" href="{{url('employee/view/'.$auth->employee_no)}}">
                 @if(empty($auth->photo))
@@ -25,22 +25,7 @@
                 </div>
               </div>
             </div>
-          </div>
-
-          <?php 
-            $employee = [
-                'department',
-                'unit',
-                'levels',
-                'designation',
-                'branch',
-                'bank',
-                'promotion',
-                'employee',
-            ];
-            $PayRoll = ['salaryInfo'];
-            $settings = ['settings'];
-          ?>
+        </div>
 
         <!-- Start: Sidebar Menu -->
         <ul class="nav sidebar-menu">
@@ -56,7 +41,6 @@
                 $moduleShare = session('moduleShare');
                 $userModuleShare = session('userModuleShare');
                 $userMenuShare = session('userMenuShare');
-                // dd($userMenuShare);
             ?>
             @foreach($moduleShare as $info)
                 @if(in_array($info->id, $userModuleShare))
@@ -87,7 +71,10 @@
                         @foreach($info->menus as $mInfo)
                             @if(in_array($mInfo->menu_url, $userMenuShare))
                                 @if($mInfo->menu_parent_id == 0)
-                                <li class="@if(\Request::segment(1) == 'department') active @endif">
+                                <?php 
+                                    $strMneuAry = explode("/", $mInfo->menu_url);
+                                ?>
+                                <li class="@if(\Request::segment(1) == $strMneuAry[0]) active @endif">
                                     <a href="{{url("$mInfo->menu_url")}}">
                                         <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_section_name}}
                                     </a>

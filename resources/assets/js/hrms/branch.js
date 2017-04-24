@@ -12,12 +12,16 @@ new Vue({
 		branch_mobile: '',
 		branch_phone: '',
 		branch_location: '',
+        branch_effective_date: '',
+        branch_description: '',
 		branch_status: '1',
         edit_branch_name: '',
         edit_branch_email: '',
         edit_branch_mobile: '',
         edit_branch_phone: '',
         edit_branch_location: '',
+        edit_branch_description: '',
+        edit_branch_effective_date: '',
         edit_branch_status: '',
         indexId: '',
         hdn_id: null,
@@ -78,6 +82,8 @@ new Vue({
             this.edit_branch_mobile = this.branches[index].branch_mobile;
             this.edit_branch_phone = this.branches[index].branch_phone;
             this.edit_branch_location = this.branches[index].branch_location;
+            this.edit_branch_effective_date = this.branches[index].branch_effective_date;
+            this.edit_branch_description = this.branches[index].branch_description;
             this.edit_branch_status = this.branches[index].branch_status;
         },
         updateData: function(updateFormId){
@@ -95,6 +101,8 @@ new Vue({
                 this.branches[this.indexId].branch_mobile = this.edit_branch_mobile;
                 this.branches[this.indexId].branch_phone = this.edit_branch_phone;
                 this.branches[this.indexId].branch_location = this.edit_branch_location;
+                this.branches[this.indexId].branch_effective_date = this.edit_branch_effective_date;
+                this.branches[this.indexId].branch_description = this.edit_branch_description;
                 this.branches[this.indexId].branch_status = this.edit_branch_status;
 
                 new PNotify({

@@ -10,6 +10,7 @@ new Vue({
         unit_name: '',
         unit_parent_id: '',
         unit_department_id: '',
+        unit_effective_date: '',
         unit_status: 1,
         unit_details: '',
         hdn_id: '',
@@ -18,6 +19,7 @@ new Vue({
         edit_unit_department_id: '',
         edit_unit_status: 1,
         edit_unit_details: '',
+        edit_unit_effective_date: '',
         departments: [],
         units: [],
         activeUnits: [],
@@ -80,7 +82,8 @@ new Vue({
 	        this.edit_unit_parent_id = this.units[index].unit_parent_id;
 	        this.edit_unit_department_id = this.units[index].unit_departments_id;
 	        this.edit_unit_status= this.units[index].unit_status;
-	        this.edit_unit_details = this.units[index].unit_details;
+            this.edit_unit_details = this.units[index].unit_details;
+	        this.edit_unit_effective_date = this.units[index].unit_effective_date;
 	        this.chk_parent = this.units[index].unit_parent_id > 0 ? 1 : 0;
         },
         updateUnit: function(updateFormId){

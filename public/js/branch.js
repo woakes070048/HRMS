@@ -10534,12 +10534,16 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
         branch_mobile: '',
         branch_phone: '',
         branch_location: '',
+        branch_effective_date: '',
+        branch_description: '',
         branch_status: '1',
         edit_branch_name: '',
         edit_branch_email: '',
         edit_branch_mobile: '',
         edit_branch_phone: '',
         edit_branch_location: '',
+        edit_branch_description: '',
+        edit_branch_effective_date: '',
         edit_branch_status: '',
         indexId: '',
         hdn_id: null
@@ -10599,6 +10603,8 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
             this.edit_branch_mobile = this.branches[index].branch_mobile;
             this.edit_branch_phone = this.branches[index].branch_phone;
             this.edit_branch_location = this.branches[index].branch_location;
+            this.edit_branch_effective_date = this.branches[index].branch_effective_date;
+            this.edit_branch_description = this.branches[index].branch_description;
             this.edit_branch_status = this.branches[index].branch_status;
         },
 
@@ -10617,6 +10623,8 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 _this3.branches[_this3.indexId].branch_mobile = _this3.edit_branch_mobile;
                 _this3.branches[_this3.indexId].branch_phone = _this3.edit_branch_phone;
                 _this3.branches[_this3.indexId].branch_location = _this3.edit_branch_location;
+                _this3.branches[_this3.indexId].branch_effective_date = _this3.edit_branch_effective_date;
+                _this3.branches[_this3.indexId].branch_description = _this3.edit_branch_description;
                 _this3.branches[_this3.indexId].branch_status = _this3.edit_branch_status;
 
                 new PNotify({

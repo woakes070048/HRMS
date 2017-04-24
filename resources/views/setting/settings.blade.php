@@ -36,9 +36,14 @@
                                         <td>{{ $setting->field_name_format }}</td>
                                         <td>{{ $setting->field_value }}</td>
                                         <td>
+                                        <?php 
+                                          $chkUrl = \Request::segment(1);
+                                        ?>
+                                        @if(in_array($chkUrl."/edit", session('userMenuShare')))
                                             <button type="button" @click="editSettings(<?php echo $setting->id;?>,<?php echo $index;?>)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".modalEdit">
                                                 <i class="fa fa-edit"></i>
                                             </button>
+                                        @endif
                                         </td>
                                     </tr>
                                     <?php $index++;?>

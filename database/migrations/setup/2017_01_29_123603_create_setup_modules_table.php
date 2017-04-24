@@ -18,6 +18,7 @@ class CreateSetupModulesTable extends Migration
             $table->string('module_name',150);
             $table->string('module_icon_class',50);
             $table->text('module_details')->nullable();
+            $table->integer('module_sort')->nullable();
             $table->tinyInteger('module_status')->default('1')->comment="1=active,0=inactive";
             $table->timestamps();
         });

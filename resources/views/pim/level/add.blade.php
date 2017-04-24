@@ -126,9 +126,13 @@
                                                         @if($mInfo->menu_parent_id == 0)
                                                         <div class="row">
                                                             <div class="col-md-3">
-                                                                {{$mInfo->menu_name}}
+                                                                {{$mInfo->menu_section_name}}
                                                             </div>
                                                             <div class="col-md-9">
+                                                                <div class="col-md-2">
+                                                                    <input type="checkbox" name="level_menus[]" value="{{$mInfo->id}}"> 
+                                                                    {{$mInfo->menu_name}}
+                                                                </div>
                                                             @foreach($mInfo->child_menu as $cInfo)
                                                                 <div class="col-md-2">
                                                                     <input type="checkbox" name="level_menus[]" value="{{$cInfo->id}}"> 
@@ -156,6 +160,13 @@
                                                     <strong>{{ $errors->first('details') }}</strong>
                                                 </span>
                                             @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="level_effective_date" class="col-md-2 control-label">Effective Date</label>
+                                        <div class="col-md-6">
+                                            <input type="text" name="level_effective_date" class="gui-input datepicker form-control input-sm" placeholder="Select Effective Date">
                                         </div>
                                     </div>
 
@@ -319,6 +330,13 @@
                                                     <strong>{{ $errors->first('details') }}</strong>
                                                 </span>
                                             @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="level_effective_date" class="col-md-2 control-label">Effective Date</label>
+                                        <div class="col-md-6">
+                                            <input type="text" name="level_effective_date" class="gui-input datepicker form-control input-sm" value="{{ $info->level_effective_date }}" placeholder="Select Effective Date">
                                         </div>
                                     </div>
 

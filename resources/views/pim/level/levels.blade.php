@@ -7,9 +7,14 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Levels</span>
+                        <?php 
+                          $chkUrl = \Request::segment(1);
+                        ?>
+                        @if(in_array($chkUrl."/add", session('userMenuShare')))
                         <a href="{{url('levels/add')}}">
                             <button type="button" class="btn btn-xs btn-success pull-right" style="margin-top: 12px;">Add Level</button>
                         </a>
+                        @endif
                     </div>
                     <div class="panel-body">
                         @if($levels->count() > 0)
@@ -23,6 +28,7 @@
                                 <th>Salary Info</th>
                                 <th>Permissions</th>
                                 <th>Description</th>
+                                <th>Effective Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -55,16 +61,21 @@
                                     <button type="button" class="btn btn-xs btn-success" onclick="showData({{$level->id}})" data-toggle="modal" data-target=".showData">Permissions</button>
                                 </td>
                                 <td>{{ $level->description }}</td>
+                                <td>{{ $level->level_effective_date }}</td>
                                 <td>{{$level->status==1?"Active":"Inactive"}}</td>
                                 <td class="text-center">
-                                    <a href="{{url("levels/edit/$level->id")}}" title="">
-                                        <button type="button" class="btn btn-sm btn-primary">
-                                            <i class="fa fa-edit"></i>
+                                    @if(in_array($chkUrl."/edit", session('userMenuShare')))
+                                        <a href="{{url("levels/edit/$level->id")}}" title="">
+                                            <button type="button" class="btn btn-sm btn-primary">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                        </a>
+                                    @endif
+                                    @if(in_array($chkUrl."/delete", session('userMenuShare')))
+                                        <button onclick="wantToDelete({{$level->id}})" class="btn btn-sm btn-danger">
+                                            <i class="fa fa-trash-o"></i>
                                         </button>
-                                    </a>
-                                    <button onclick="wantToDelete({{$level->id}})" class="btn btn-sm btn-danger">
-                                        <i class="fa fa-trash-o"></i>
-                                    </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -107,15 +118,15 @@
                                     <div class="col-md-6">
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <div class="radio-custom radio-success mb5">
-                                                    <input type="radio" id="active" name="status" value="1">
-                                                    <label for="active">Yes</label>
+                                                <div class="radio-custom radio-danger mb5">
+                                                    <input type="radio" id="inactive" name="status" checked="checked" value="0">
+                                                    <label for="inactive">No</label>
                                                 </div>    
                                             </div>
                                             <div class="col-md-3">
-                                                <div class="radio-custom radio-danger mb5">
-                                                    <input type="radio" id="inactive" name="status" checked="" value="0">
-                                                    <label for="inactive">No</label>
+                                                <div class="radio-custom radio-success mb5">
+                                                    <input type="radio" id="active" name="status" value="1">
+                                                    <label for="active">Yes</label>
                                                 </div>    
                                             </div>
                                         </div>     
@@ -134,9 +145,14 @@
                                             @if($mInfo->menu_parent_id == 0)
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    {{$mInfo->menu_name}}
+                                                    {{$mInfo->menu_section_name}}
                                                 </div>
                                                 <div class="col-md-10">
+                                                    <div class="col-md-2">
+                                                        <input type="hidden" name="level_menus[{{$mInfo->id}}]" value="0">
+                                                        <input type="checkbox" name="level_menus[{{$mInfo->id}}]" value="{{$mInfo->id}}"> 
+                                                        {{$mInfo->menu_name}}
+                                                    </div>
                                                 @foreach($mInfo->child_menu as $cInfo)
                                                     <div class="col-md-2">
                                                         <input type="hidden" name="level_menus[{{$cInfo->id}}]" value="0">
@@ -156,7 +172,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Permission</button>
+                        @if(in_array($chkUrl."/edit", session('userMenuShare')))
+                            <button type="submit" class="btn btn-primary">Update Permission</button>
+                        @endif
                     </div>
                 </div>
             </form>

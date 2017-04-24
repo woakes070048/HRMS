@@ -23,6 +23,7 @@ class LevelController extends Controller
 	public function __construct()
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['permission','updatePermission']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -122,12 +123,9 @@ class LevelController extends Controller
                                 }
                             }
 
-                            // print_r($ary[$idInfo]);
-                            // echo "<br>==DIFF==<br>";
                             $diffMenuId = array_diff($aryDiff,$ary[$idInfo]);
 
                             print_r($diffMenuId);
-                            // echo "<br>====<br>";
                             if(!empty($diffMenuId)){
                                 foreach($diffMenuId as $diff){
                                     $userMenu[] = [
@@ -138,8 +136,6 @@ class LevelController extends Controller
 
                                 //insert data into db
                                 UserPermission::insert($userMenu);
-                                // print_r($userMenu);
-                                // echo "<br>===<br>";
                                 $userMenu = [];
                             }
                         }  
@@ -170,7 +166,7 @@ class LevelController extends Controller
     }
 
     public function create(LevelRequest $request){
-
+        
         if($request->chk_parent == 1){
 
             $parent_id = $request->parent_id;
@@ -185,6 +181,7 @@ class LevelController extends Controller
         $status = $request->status;
         $infoChk = $request->salaryInfoChk;
         $level_menus = $request->level_menus;
+        $level_effective_date = $request->level_effective_date;
     	
         DB::beginTransaction();
 
@@ -194,6 +191,7 @@ class LevelController extends Controller
     		$save->parent_id = $parent_id;
             $save->level_salary_amount =  $salary_amount;
     		$save->description = $description;
+            $save->level_effective_date = $level_effective_date;
     		$save->status = $status;
     		$save->created_by = Auth::user()->id;
     		$save->save();
@@ -273,6 +271,7 @@ class LevelController extends Controller
         $name = $request->name;
         $salary_amount = $request->salary_amount;
         $description = !empty($request->details)?$request->details:"No description...";
+        $level_effective_date = $request->level_effective_date;
         $status = $request->status;
         $infoChk = $request->salaryInfoChk;
         
@@ -284,6 +283,7 @@ class LevelController extends Controller
             $save->parent_id = $parent_id;
             $save->level_salary_amount =  $salary_amount;
             $save->description = $description;
+            $save->level_effective_date = $level_effective_date;
             $save->status = $status;
             $save->updated_by = Auth::user()->id;
             $save->save();
@@ -362,6 +362,7 @@ class LevelController extends Controller
         try {
             $del = Level::find($id);
             $del->salaryInfo()->delete();
+            $del->levelPermission()->delete();
             $del->delete();
 
             DB::commit();
@@ -383,7 +384,6 @@ class LevelController extends Controller
         }
 
         return $data;
-    	// return redirect('levels/index');
     }
 
 }
