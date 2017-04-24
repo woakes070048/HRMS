@@ -13,7 +13,12 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Units</span>
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".unitAdd" style="margin-top: 12px;">Add New Unit</button>
+                        <?php 
+                          $chkUrl = \Request::segment(1);
+                        ?>
+                        @if(in_array($chkUrl."/add", session('userMenuShare')))
+                            <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".unitAdd" style="margin-top: 12px;">Add New Unit</button>
+                        @endif
                     </div>
                     <div class="panel-body">
                         <div id="showData">
@@ -25,6 +30,7 @@
                                         <th>Parent Name</th>
                                         <th>Department</th>
                                         <th>Details</th>
+                                        <th>Effective Date</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -39,14 +45,19 @@
                                         </td>
                                         <td>@{{ info.department.department_name }}</td>
                                         <td>@{{ info.unit_details }}</td>
+                                        <td>@{{ info.unit_effective_date }}</td>
                                         <td>@{{ info.unit_status==1?"Active":"Inactive" }}</td>
                                         <td>
+                                        @if(in_array($chkUrl."/edit", session('userMenuShare')))
                                             <button type="button" @click="editUnit(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".unitEdit">
                                                 <i class="fa fa-edit"></i>
                                             </button>
+                                        @endif
+                                        @if(in_array($chkUrl."/delete", session('userMenuShare')))
                                             <button type="button" @click="deleteUnit(info.id, index)" class="btn btn-sm btn-danger">
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
+                                        @endif
                                         </td>
                                     </tr>
                                 </tbody>
@@ -76,7 +87,7 @@
                     {{ csrf_field() }}
 
                     <div class="form-group">
-                        <label for="name" class="col-md-3 control-label">Unit Name</label>
+                        <label for="name" class="col-md-3 control-label">Unit Name <span class="text-danger">*</span></label>
                         <div class="col-md-9">
                             <input name="unit_name" class="form-control input-sm" v-model="unit_name" v-validate:unit_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_name') }" data-vv-as="unit name" type="text" placeholder="Unit name">
                             <div v-show="errors.has('unit_name')" class="help text-danger">
@@ -87,7 +98,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="unit_department_id" class="col-md-3 control-label">Department Name</label>
+                        <label for="unit_department_id" class="col-md-3 control-label">Department Name <span class="text-danger">*</span></label>
                         <div class="col-md-9">
                             <select class="form-control input-sm" name="unit_department_id" v-model="unit_department_id" v-validate:unit_department_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_department_id') }" data-vv-as="unit department">
                                 <option value="">Select Department</option>
@@ -114,7 +125,7 @@
                     </div>
 
                     <div class="form-group" v-show="chk_parent == 1">
-                        <label for="amount" class="col-md-3 control-label">Parent Name</label>
+                        <label for="amount" class="col-md-3 control-label">Parent Name <span class="text-danger">*</span></label>
                         <div class="col-md-9">
                             <select class="form-control input-sm" name="unit_parent_id" v-model="unit_parent_id" v-validate:unit_parent_id.initial="'required'" :class="{'input': true, 'is-danger': errors.has('unit_parent_id') }" data-vv-as="unit parent">
                                 <option value="">Select Unit's Parent</option>
@@ -131,6 +142,13 @@
                         <label for="unit_details" class="col-md-3 control-label">Unit Details</label>
                         <div class="col-md-9">
                             <textarea name="unit_details" class="form-control input-sm" v-model="unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unit_effective_date" class="col-md-3 control-label">Effective Date </label>
+                        <div class="col-md-9">
+                            <input type="text" name="unit_effective_date" class="gui-input datepicker form-control input-sm edit_effective_date" placeholder="Select Effective Date">
                         </div>
                     </div>
 
@@ -240,6 +258,13 @@
                         <label for="edit_unit_details" class="col-md-3 control-label">Unit Details</label>
                         <div class="col-md-9">
                             <textarea name="edit_unit_details" class="form-control input-sm" v-model="edit_unit_details" data-vv-as="details" placeholder="Unit details"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_unit_effective_date" class="col-md-3 control-label">Effective Date </label>
+                        <div class="col-md-9">
+                            <input type="text" name="edit_unit_effective_date" class="gui-input datepicker form-control input-sm" v-model="edit_unit_effective_date" placeholder="Select Effective Date">
                         </div>
                     </div>
 

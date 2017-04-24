@@ -27,6 +27,8 @@ class DashboardController extends Controller
 
 
     public function index(){
+        // dd(Session('permission'));
+
         if(Session('config_id')){
             $data['sisterConcern'] = $this->getSisterConcern(Session('config_id'));
             $data['motherConcern'] = $this->getMotherConcern(Session('config_id'));
@@ -42,6 +44,11 @@ class DashboardController extends Controller
             $data['motherConcern'] = [];
         }
 
-    	return view('dashboard')->with($data);
+        return view('dashboard')->with($data);
+    }
+
+    public function notFound(){
+
+        return view('errors.503');
     }
 }

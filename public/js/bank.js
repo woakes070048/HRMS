@@ -178,12 +178,12 @@
               vueThis.banks.splice(index_id,1);
               $.LoadingOverlay("hide");
               // vueThis.showMessage(error.response.data);
-              swal("Deleted!", "Your imaginary file has been deleted.", "success");
+              swal("Deleted!", "Your data file has been deleted.", "success");
 
             }).catch((error)=>{
               $.LoadingOverlay("hide");
               // vueThis.showMessage(error.response.data);
-              swal("Cancelled", "Your imaginary file is safe :)", "error");
+              swal("Cancelled", "Your data not deleted.", "error");
             });
         });
 

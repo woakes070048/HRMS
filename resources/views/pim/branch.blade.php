@@ -13,7 +13,13 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Company Branches</span>
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".dataAdd" style="margin-top: 12px;">Add New Branch</button>
+
+                        <?php 
+                          $chkUrl = \Request::segment(1);
+                        ?>
+                        @if(in_array($chkUrl."/add", session('userMenuShare')))
+                            <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".dataAdd" style="margin-top: 12px;">Add New Branch</button>
+                        @endif
                     </div>
                     <div class="panel-body">
                         <div id="showData">
@@ -25,6 +31,8 @@
                                         <th>Email</th>
                                         <th>Contact</th>
                                         <th>Location</th>
+                                        <th>Note</th>
+                                        <th>Effective Date</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -36,14 +44,20 @@
                                         <td>@{{ info.branch_email }}</td>
                                         <td>@{{ info.branch_mobile }} , @{{info.branch_phone}}</td>
                                         <td>@{{ info.branch_location }}</td>
+                                        <td>@{{ info.branch_description }}</td>
+                                        <td>@{{ info.branch_effective_date }}</td>
                                         <td>@{{ info.branch_status==1?"Active":"Inactive" }}</td>
                                         <td>
-                                            <button type="button" @click="editData(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".dataEdit">
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                            <button type="button" @click="deleteData(info.id, index)" class="btn btn-sm btn-danger">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button>
+                                            @if(in_array($chkUrl."/edit", session('userMenuShare')))
+                                                <button type="button" @click="editData(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".dataEdit">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                            @endif
+                                            @if(in_array($chkUrl."/delete", session('userMenuShare')))
+                                                <button type="button" @click="deleteData(info.id, index)" class="btn btn-sm btn-danger">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 </tbody>
@@ -73,7 +87,7 @@
                         {{ csrf_field() }}
 
                         <div class="form-group">
-                            <label for="branch_name" class="col-md-3 control-label">Branch Name</label>
+                            <label for="branch_name" class="col-md-3 control-label">Branch Name <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <input name="branch_name" class="form-control input-sm" v-model="branch_name" v-validate:branch_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_name') }" data-vv-as="branch name" type="text" placeholder="Branch Name">
                                 <div v-show="errors.has('branch_name')" class="help text-danger">
@@ -91,7 +105,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="branch_mobile" class="col-md-3 control-label">Mobile</label>
+                            <label for="branch_mobile" class="col-md-3 control-label">Mobile <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <input name="branch_mobile" class="form-control input-sm" v-model="branch_mobile" v-validate:branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile Number">
                                 <div v-show="errors.has('branch_mobile')" class="help text-danger">
@@ -109,13 +123,27 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="branch_location" class="col-md-3 control-label">Location</label>
+                            <label for="branch_location" class="col-md-3 control-label">Location <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <textarea name="branch_location" class="form-control input-sm" v-model="branch_location" data-vv-as="branch location" placeholder="Branch Location"></textarea>
                                 <div v-show="errors.has('branch_location')" class="help text-danger">
                                     <i v-show="errors.has('branch_location')" class="fa fa-warning"></i> 
                                     @{{ errors.first('branch_location') }}
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="branch_effective_date" class="col-md-3 control-label">Effective Date</label>
+                            <div class="col-md-9">
+                                <input type="text" name="branch_effective_date" class="gui-input datepicker form-control input-sm" placeholder="Select Effective Date">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-md-3 control-label">Note</label>
+                            <div class="col-md-9">
+                                <textarea name="branch_description" class="form-control input-sm" placeholder="Write note"></textarea>
                             </div>
                         </div>
 
@@ -211,6 +239,20 @@
                                     <i v-show="errors.has('edit_branch_location')" class="fa fa-warning"></i> 
                                     @{{ errors.first('edit_branch_location') }}
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit_branch_effective_date" class="col-md-3 control-label">Effective Date</label>
+                            <div class="col-md-9">
+                                <input type="text" name="edit_branch_effective_date" class="gui-input datepicker form-control input-sm" v-model="edit_branch_effective_date" placeholder="Select Effective Date">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-md-3 control-label">Note</label>
+                            <div class="col-md-9">
+                                <textarea name="edit_branch_description" v-model="edit_branch_description" class="form-control input-sm" placeholder="Write note"></textarea>
                             </div>
                         </div>
 

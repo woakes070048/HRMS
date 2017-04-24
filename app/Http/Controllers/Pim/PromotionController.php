@@ -18,6 +18,7 @@ class PromotionController extends Controller
     public function __construct()
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['getPromotionsData','getSingelUser']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();

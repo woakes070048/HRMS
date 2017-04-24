@@ -13,6 +13,7 @@ class BranchController extends Controller
 	public function __construct()
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['getBranch']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -48,6 +49,8 @@ class BranchController extends Controller
                 'branch_mobile' => $request->branch_mobile,
                 'branch_phone' => $request->branch_phone,
                 'branch_location' => $request->branch_location,
+                'branch_description' => $request->branch_description,
+                'branch_effective_date' => $request->branch_effective_date,
                 'branch_status' => $request->branch_status,
             ]);
         
@@ -80,6 +83,8 @@ class BranchController extends Controller
                 'branch_mobile' => $request->edit_branch_mobile,
                 'branch_phone' => $request->edit_branch_phone,
                 'branch_location' => $request->edit_branch_location,
+                'branch_description' => $request->edit_branch_description,
+                'branch_effective_date' => $request->edit_branch_effective_date,
                 'branch_status' => $request->edit_branch_status,
             ]);
         
