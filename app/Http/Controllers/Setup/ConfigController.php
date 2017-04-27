@@ -156,7 +156,8 @@ class ConfigController extends Controller
             }
 			
 	    	Artisan::call("db:connect", ['database'=> $database_name]);
-	    	Artisan::call("migrate:hrms");
+	    	
+            Artisan::call("migrate:hrms");
 	    	Artisan::call("db:seed");
 
 	    	User::create([
