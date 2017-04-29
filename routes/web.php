@@ -266,6 +266,14 @@ Route::group(['prefix' => 'attendance', 'namespace' => 'Attendance'],function ()
     Route::post('/add','AttendanceController@addAttendance');
 });
 
+/******************* ........HRMS Leave Management System........... ************/
+Route::group(['prefix' => '/weekend', 'namespace' => 'Leave'],function (){
+    Route::get('/index','WeekendController@index');
+    // Route::post('/add','WeekendController@create');
+    // Route::get('/edit/{id}','WeekendController@edit');
+    // Route::post('/edit','WeekendController@update');
+    // Route::get('/delete/{id}','WeekendController@delete');
+});
 
 /******************** ...HRMS Common Function Routes... **************/
 Route::group(['prefix' => '/'], function(){

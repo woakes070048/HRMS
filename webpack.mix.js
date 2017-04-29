@@ -10,7 +10,7 @@ mix.js('resources/assets/js/hrms/hrms.js', 'public/js')
 	.js('resources/assets/js/hrms/settings.js', 'public/js')
     .js('resources/assets/js/hrms/unit.js', 'public/js')
     .js('resources/assets/js/setup/module.js', 'public/js')
-    .js('resources/assets/js/setup/setupMenu.js', 'public/js');
+    .js('resources/assets/js/setup/setupMenu.js', 'public/js')
     // .js('resources/assets/js/hrms/workshift.js', 'public/js')
     .js('resources/assets/js/hrms/branch.js', 'public/js');
 

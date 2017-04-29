@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModulesTable extends Migration
+class CreateWeekendsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateModulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('weekends', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('module_name',200);
-            $table->boolean('module_status')->default(1);
-            $table->text('module_details')->nullable();
-            $table->timestamps();
+            $table->string('weekend', 80);
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->boolean('status')->default(1)->comment='0=inactive, 1=active';
         });
     }
 
@@ -29,6 +29,6 @@ class CreateModulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('weekends');
     }
 }
