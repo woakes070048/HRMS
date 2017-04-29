@@ -17,10 +17,10 @@ class CreateAttendanceTimesheetArchivesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('user_id')->unsigned();
             $table->date('date');
-            $table->tinyInteger('observation')->default('0')->comment='0=absent,1=present,2=leave,3=holiday,4=weekend';
-            $table->time('in_time');
-            $table->time('out_time');
-            $table->decimal('total_work_hour',4,2);
+            $table->tinyInteger('observation')->default('0')->comment='0=absent, 1=present, 2=leave, 3=holiday, 4=weekend, 5=late';
+            $table->time('in_time')->nullable();
+            $table->time('out_time')->nullable();
+            $table->decimal('total_work_hour',4,2)->nullable();
             $table->string('leave_type')->nullable();
             $table->timestamps();
             

@@ -44,6 +44,7 @@ class WorkShiftAssignController extends Controller
 	    		if(!empty($id) && $id !=null){
 	    			$q->where('work_shift_id',$id);
 	    		}
+                $q->where('status',1);
     		}])->get();
 
     	$empWorkShifts = [];	
@@ -122,8 +123,9 @@ class WorkShiftAssignController extends Controller
 	    	$work_shift = $request->work_shift;
 	    	$saveData = [];
 
-	    	if($request->has('deleted'))
-	    		WorkShiftEmployeeMap::whereIn('id',$request->deleted)->delete();
+            if($request->has('deleted')){
+                WorkShiftEmployeeMap::whereIn('id',$request->deleted)->update(['status' => 0]);
+            }
 
 	    	if(is_array($work_shift)){
 		    	foreach($work_shift as $wsinfo){

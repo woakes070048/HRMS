@@ -244,7 +244,11 @@ Route::group(['prefix' => 'shiftassign', 'namespace' => 'Attendance'],function (
 Route::group(['prefix' => 'attendance', 'namespace' => 'Attendance'],function (){
     Route::get('/index','AttendanceController@index');
     Route::post('/index','AttendanceController@attendanceTimesheet');
+    Route::get('/view/{employee_no}','AttendanceController@viewAttendance');
+    
     Route::post('/add','AttendanceController@addAttendance');
+    Route::post('/manual','AttendanceController@manualAttendance');
+
 });
 
 

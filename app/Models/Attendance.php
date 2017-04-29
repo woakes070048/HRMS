@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Attendance extends Model
 {
 
-	protected $fillable = ['user_id','in_time','out_time','total_work_hour','date'];
+	protected $fillable = ['user_id','date','in_time','out_time','total_work_hour','created_at'];
     
 
     public function setInTimeAttribute($value){

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class WorkShiftEmployeeMap extends Model
 {
 
-	protected $fillable = ['user_id','work_shift_id','work_days','start_date','end_date','created_by','updated_by'];
+	protected $fillable = ['user_id','work_shift_id','work_days','start_date','end_date','status','created_by','updated_by'];
 
 	public function getStartDateFormatAttribute(){
 		if(!empty($this->start_date) && $this->start_date !=null){

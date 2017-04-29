@@ -2,10 +2,6 @@
 @section('content')
 
 @section('style')
-    <!-- Admin Forms CSS -->
-    <link rel="stylesheet" type="text/css" href="{{asset('admin-tools/admin-forms/css/admin-forms.css')}}">
-    <!-- Vendor CSS -->
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
 
     <style type="text/css">
       .name_show{
@@ -33,6 +29,7 @@
         <div class="panel-heading">
             <span class="panel-title"><i class="glyphicons glyphicons-history"></i></span>
             <strong>Employee Attendance</strong>
+            <span class="pull-right"><button class="btn btn-dark btn-sm" v-on:click.prevent="modal_open('#manual_attendance_modal')">Upload Attendance</button></span>
         </div>
 
         <div class="panel-body">
@@ -52,7 +49,7 @@
               <div class="col-md-3">
                 <div class="form-group" :class="{'has-error':errors.from_date}">
                   <label class="control-label">From Date :</label>
-                  <input type="text" name="from_date" v-on:focusout="toDate" id="formDate" class="form-control input-sm" placeholder="Form Date.." readonly="readonly">
+                  <input type="text" name="from_date" v-on:focusout="toDate" id="fromDate" class="form-control input-sm" placeholder="Form Date.." readonly="readonly">
                 </div>
               </div>
 
@@ -88,38 +85,91 @@
         <div class="panel-body pn" id="showAttendance">
           <table class="table table-bordered" v-if="attendances !=''">
             <thead class="bg-dark">
-              <tr class="text-center">
-                <th style="min-width:120px; max-width: 150px!important">Employee Name</th>
-                <th v-for="day in days" v-text="day"></th>
+              <tr class="text-center" style="font-size: 11px!important">
+                <th style="vertical-align: middle; min-width:120px; max-width: 150px!important; color: #fff;">Employee Name</th>
+                <th style="color: #fff;" v-for="day in days" v-text="day"></th>
               </tr>
             </thead>
 
-            <tbody style="background: #fff!important">
+            <tbody style="background: #fff!important; font-size: 11px!important">
               <tr v-for="(user,uIndex) in attendances" class="text-center">
-                <td v-text="user.first_name+' '+user.last_name+' ('+user.employee_no+')'" class="bg-dark" style="min-width:120px; max-width: 150px!important"></td>
+
+                <td class="bg-dark" style="min-width:120px; max-width: 150px!important;">
+                  <a style="color: #fff;" target="_blank" :href="'view/'+user.employee_no+'?from_date='+from_date+'&to_date='+to_date" v-text="user.first_name+' '+user.last_name+' ('+user.employee_no+')'"></a>
+                </td>
 
                 <td v-for="(attendance,aIndex) in user.attendanceTimesheets" class="text-center show_name">
 
                   <div style="position: relative!important;"></div>
-                  <div class="name_show" v-text="user.first_name+' '+user.last_name+' ('+user.employee_no+')'"></div>
-
-                  <div v-if="attendance.observation == 1">
-                    <i class="glyphicons glyphicons-share text-success"></i>
-                    <span v-text="attendance.in_time"></span>
-
-                    <hr class="pn" style="margin: 2px!important">
-
-                    <i class="glyphicons glyphicons-unshare text-info"></i>
-                    <span v-text="attendance.out_time"></span>
+                  <div class="name_show">
+                    <a style="color: #fff;" target="_blank" :href="'view/'+user.employee_no+'?from_date='+from_date+'&to_date='+to_date" v-text="user.first_name+' '+user.last_name+' ('+user.employee_no+')'"></a>
                   </div>
 
+                  <!-- attendance -->
+                  <div v-if="attendance.observation == 1">
+                    <div v-if="attendance.in_time">
+                      <i class="glyphicons glyphicons-unshare text-success"></i>
+                      <span v-text="attendance.in_time"></span>
+                    </div>
+                    <div v-if="attendance.out_time">
+                      <hr class="pn" style="margin: 2px!important">
+                      <i class="glyphicons glyphicons-share text-info"></i>
+                      <span v-text="attendance.out_time"></span>
+                    </div>
+                  </div>
+
+                  <!-- leave -->
                   <div v-else-if="attendance.observation == 2">
-                    <i class="imoon imoon-lanyrd text-warning"></i>
+                    <i class="imoon imoon-lanyrd fa-lg text-warning"></i>
                     <div v-text="attendance.leave_type"></div>
                   </div>
 
+                  <!-- holiday -->
                   <div v-else-if="attendance.observation == 3">
-                      <i class="fa-h-square text-danger"></i>
+                    <i class="fa fa-h-square fa-2x text-danger"></i>
+
+                    <div v-if="attendance.in_time !=''">
+                      <hr class="pn" style="margin: 2px!important">
+                      <i class="glyphicons glyphicons-unshare text-success"></i>
+                      <span v-text="attendance.in_time"></span>
+                    </div>
+
+                    <div v-if="attendance.out_time !=''">
+                      <hr class="pn" style="margin: 2px!important">
+                      <i class="glyphicons glyphicons-share text-info"></i>
+                      <span v-text="attendance.out_time"></span>
+                    </div>
+                  </div>
+
+                  <!-- weekend -->
+                  <div v-else-if="attendance.observation == 4">
+                    <i class="fa-2x text-danger text-strong">W</i>
+
+                    <div v-if="attendance.in_time !=''">
+                      <hr class="pn" style="margin: 2px!important">
+                      <i class="glyphicons glyphicons-unshare text-success"></i>
+                      <span v-text="attendance.in_time"></span>
+                    </div>
+
+                    <div v-if="attendance.out_time !=''">
+                      <hr class="pn" style="margin: 2px!important">
+                      <i class="glyphicons glyphicons-share text-info"></i>
+                      <span v-text="attendance.out_time"></span>
+                    </div>
+                  </div>
+
+                  <!-- late -->
+                  <div v-if="attendance.observation == 5">
+                    <div v-if="attendance.in_time !=''" class="text-danger">
+                      <i class="glyphicons glyphicons-unshare"></i>
+                      <span v-text="attendance.in_time"></span>
+                    </div>
+
+                    <div v-if="attendance.out_time !=''">
+                      <hr class="pn" style="margin: 2px!important">
+                      <i class="glyphicons glyphicons-share text-info"></i>
+                      <span v-text="attendance.out_time"></span>
+                    </div>
                   </div>
 
                   <div v-else-if="attendance.observation == 0">@{{attendance.timesheet_observation}}
@@ -192,18 +242,64 @@
             </div>
         </div>
     </div>
-</div>
+  </div>
+
+
+  <div id="manual_attendance_modal" style="max-width:450px" class="popup-basic mfp-with-anim mfp-hide">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title">
+                <i class="fa fa-rocket"></i>Manual Attendance
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                  <form class="admin-form" method="post" action="{{url('/attendance/manual')}}" enctype="multipart/form-data">
+                    {{csrf_field()}}
+                    <div class="row">
+                      <div class="col-md-12">
+                          <div class="form-group" :class="{'has-error':errors.date}">
+                            <label class="control-label pb5">Upload CSV file: <span class="text-danger">*</span></label>
+
+                            <label class="field prepend-icon append-button file">
+                              <span class="button btn-primary">Choose CSV File</span>
+                              <input type="file" required="required" class="gui-file" name="csv_file" id="file1" onChange="document.getElementById('uploader1').value = this.value;">
+                              <input type="text" class="gui-input" id="uploader1" placeholder="Please Select A File">
+                              <label class="field-icon">
+                                <i class="fa fa-upload"></i>
+                              </label>
+                            </label>
+                            <span class="input-footer">
+                              <strong>File format must be : </strong> employee no, date (Y-m-d), in time, out time
+                            </span>
+                              <span v-if="errors.date" class="text-danger" v-text="errors.date[0]"></span>
+                          </div>
+                      </div>
+                    </div>
+
+                    <hr class="short alt">
+
+                    <div class="section row mbn">
+                        <div class="col-sm-6 pull-right">
+                            <p class="text-left">
+                                <button type="submit" name="upload_attendance" class="btn btn-dark btn-gradient btn-sm"><i class="fa fa-upload"></i> &nbsp; Upload Attendance
+                                </button>
+                            </p>
+                        </div>
+                    </div>
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
 
 
 </section>
 
 
-
-
 @section('script')
-
-<!-- Page Plugins -->
-<script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
 
 <script type="text/javascript" src="{{asset('js/attendance.js')}}"></script>
 

@@ -123,7 +123,7 @@
                         </a>
                     </li>
                     <li class="@if(\Request::segment(1) == 'attendance') active @endif">
-                        <a href="{{url('attendance/index')}}">
+                        <a href="{{url('attendance/view/'.$auth->employee_no)}}">
                             <span class="fa fa-level-up"></span> My Attendance
                         </a>
                     </li>
