@@ -13,7 +13,12 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">All Salary Info</span>
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".salaryInfoAdd" style="margin-top: 12px;">Add New Info</button>
+                        <?php 
+                          $chkUrl = \Request::segment(1);
+                        ?>
+                        @if(in_array($chkUrl."/add", session('userMenuShare')))
+                            <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".salaryInfoAdd" style="margin-top: 12px;">Add New Info</button>
+                        @endif
                     </div>
                     <div class="panel-body">
                         <div id="showData">
@@ -40,12 +45,16 @@
                                         </td>
                                         <td> @{{ info.salary_info_type }} </td>
                                         <td>
-                                            <button type="button" @click="editSalaryInfo(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".salaryInfoEdit">
+                                            @if(in_array($chkUrl."/edit", session('userMenuShare')))
+                                                <button type="button" @click="editSalaryInfo(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".salaryInfoEdit">
                                                 <i class="fa fa-edit"></i>
-                                            </button>
-                                            <button type="button" @click="deleteSalaryInfo(info.id, index)" class="btn btn-sm btn-danger">
+                                                </button>
+                                            @endif
+                                            @if(in_array($chkUrl."/delete", session('userMenuShare')))
+                                                <button type="button" @click="deleteSalaryInfo(info.id, index)" class="btn btn-sm btn-danger">
                                                 <i class="fa fa-trash-o"></i>
-                                            </button>
+                                                </button>
+                                            @endif
                                         </td>
                                     </tr>
                                 </tbody>

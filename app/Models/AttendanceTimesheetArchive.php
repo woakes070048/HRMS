@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttendanceTimesheetArchive extends Model
 {
-    protected $fillable = ['user_id','date','observation','in_time','out_time','total_work_hour','leave_type','created_at'];
+    protected $fillable = ['user_id','date','observation','in_time','out_time','total_work_hour','late_count_time','late_hour','leave_type','created_at'];
 
 
     public function setInTimeAttribute($value){

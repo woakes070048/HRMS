@@ -107,7 +107,7 @@
 
                   <!-- attendance -->
                   <div v-if="attendance.observation == 1">
-                    <div v-if="attendance.in_time">
+                    <div v-if="attendance.in_time" :class="{'text-danger':attendance.late_hour}">
                       <i class="glyphicons glyphicons-unshare text-success"></i>
                       <span v-text="attendance.in_time"></span>
                     </div>
@@ -127,27 +127,19 @@
                   <!-- holiday -->
                   <div v-else-if="attendance.observation == 3">
                     <i class="fa fa-h-square fa-2x text-danger"></i>
-
-                    <div v-if="attendance.in_time !=''">
-                      <hr class="pn" style="margin: 2px!important">
-                      <i class="glyphicons glyphicons-unshare text-success"></i>
-                      <span v-text="attendance.in_time"></span>
-                    </div>
-
-                    <div v-if="attendance.out_time !=''">
-                      <hr class="pn" style="margin: 2px!important">
-                      <i class="glyphicons glyphicons-share text-info"></i>
-                      <span v-text="attendance.out_time"></span>
-                    </div>
                   </div>
 
                   <!-- weekend -->
                   <div v-else-if="attendance.observation == 4">
                     <i class="fa-2x text-danger text-strong">W</i>
+                  </div>
 
-                    <div v-if="attendance.in_time !=''">
-                      <hr class="pn" style="margin: 2px!important">
-                      <i class="glyphicons glyphicons-unshare text-success"></i>
+                  <!-- present holiday -->
+                  <div v-if="attendance.observation == 5">
+                    <i class="fa fa-h-square fa-2x text-danger"></i>
+
+                    <div v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
+                      <i class="glyphicons glyphicons-unshare"></i>
                       <span v-text="attendance.in_time"></span>
                     </div>
 
@@ -158,9 +150,11 @@
                     </div>
                   </div>
 
-                  <!-- late -->
-                  <div v-if="attendance.observation == 5">
-                    <div v-if="attendance.in_time !=''" class="text-danger">
+                  <!-- present weekend -->
+                  <div v-if="attendance.observation == 6">
+                    <i class="fa-2x text-danger text-strong">W</i>
+                    
+                    <div v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
                       <i class="glyphicons glyphicons-unshare"></i>
                       <span v-text="attendance.in_time"></span>
                     </div>

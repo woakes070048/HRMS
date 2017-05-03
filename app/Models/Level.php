@@ -6,20 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Level extends Model
 {
-    protected $fillable = ['level_name','description'];
+    protected $fillable = ['level_name','description','level_effective_date'];
 
     public function salaryInfo(){
     	return $this->hasMany('App\Models\LevelSalaryInfoMap', 'level_id', 'id');
     }
-
-
-    // public function parent(){
-    // 	return $this->belongsTo('App\Models\Level')->with('sibling');
-    // }
-
-    // public function sibling(){
-    //     return $this->hasMany('App\Models\Level','parent_id','parent_id');
-    // }
 
     public function parent(){
         return $this->belongsTo('App\Models\Level');
@@ -29,8 +20,11 @@ class Level extends Model
         return $this->parent()->with('parentRecursive');
     }
 
-
     public function designation(){
     	return $this->hasMany('App\Models\Designation');
+    }
+
+    public function levelPermission(){
+        return $this->hasMany('App\Models\LevelPermission', 'level_id', 'id');
     }
 }

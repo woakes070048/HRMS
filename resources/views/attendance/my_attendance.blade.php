@@ -84,7 +84,7 @@
                       <!-- attendance -->
                       <div v-if="attendance.observation == 1">
 
-                        <span v-if="attendance.in_time">
+                        <span v-if="attendance.in_time" :class="{'text-danger':attendance.late_hour}">
                           <i class="glyphicons glyphicons-unshare text-success"></i>
                           <span v-text="attendance.in_time"></span>
                         </span>
@@ -108,32 +108,19 @@
                       <!-- holiday -->
                       <div v-else-if="attendance.observation == 3">
                         <i class="fa fa-h-square fa-2x text-danger"></i>
-
-                        <span v-if="attendance.in_time !=''">
-                          <hr class="pn" style="margin: 2px!important">
-                          <i class="glyphicons glyphicons-unshare text-success"></i>
-                          <span v-text="attendance.in_time"></span>
-                        </span>
-
-                        <span v-if="attendance.out_time !=''">
-                          <i class="glyphicons glyphicons-share text-info"></i>
-                          <span v-text="attendance.out_time"></span>
-                        </span>
-
-                        <div v-if="attendance.total_work_hour !=''">
-                          <hr class="pn" style="margin: 2px!important">
-                          <i class="glyphicons glyphicons-history text-primary"></i>
-                          <span v-text="attendance.total_work_hour"></span>
-                        </div>
                       </div>
 
                       <!-- weekend -->
                       <div v-else-if="attendance.observation == 4">
                         <i class="fa-2x text-danger text-strong">W</i>
+                      </div>
 
-                        <span v-if="attendance.in_time !=''">
-                          <hr class="pn" style="margin: 2px!important">
-                          <i class="glyphicons glyphicons-unshare text-success"></i>
+                      <!-- present holiday -->
+                      <div v-if="attendance.observation == 5">
+                        <i class="fa fa-h-square fa-2x text-danger"></i>
+
+                        <span v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
+                          <i class="glyphicons glyphicons-unshare"></i>
                           <span v-text="attendance.in_time"></span>
                         </span>
 
@@ -149,9 +136,11 @@
                         </div>
                       </div>
 
-                      <!-- late -->
-                      <div v-if="attendance.observation == 5">
-                        <span v-if="attendance.in_time !=''" class="text-danger">
+                      <!-- present weekend -->
+                      <div v-if="attendance.observation == 6">
+                        <i class="fa-2x text-danger text-strong">W</i>
+
+                        <span v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
                           <i class="glyphicons glyphicons-unshare"></i>
                           <span v-text="attendance.in_time"></span>
                         </span>
@@ -186,32 +175,32 @@
                 </thead>
                 <tbody>
                   <tr class="text-center">
-                    <td>Present</td>
+                    <td class="text-success">Present</td>
                     <td v-text="report.present"></td>
                   </tr>
                   <tr class="text-center">
-                    <td>Absent</td>
+                    <td class="text-danger">Absent</td>
                     <td v-text="report.absent"></td>
                   </tr>
                   <tr class="text-center">
-                    <td>Leave</td>
+                    <td class="text-info">Leave</td>
                     <td v-text="report.leave"></td>
                   </tr>
                   <tr class="text-center">
-                    <td>Late</td>
+                    <td class="text-warning">Late</td>
                     <td v-text="report.late"></td>
                   </tr>
                   <tr class="text-center">
-                    <td>Holiday</td>
+                    <td class="text-danger">Holiday</td>
                     <td v-text="report.holiday"></td>
                   </tr>
                   <tr class="text-center">
-                    <td>Weekend</td>
+                    <td class="text-danger">Weekend</td>
                     <td v-text="report.weekend"></td>
                   </tr>
                   <tr class="text-center">
                     <td><strong>Total Days</strong></td>
-                    <td v-text="report.total"></td>
+                    <td style="font-weight: bold" v-text="report.total"></td>
                   </tr>
                 </tbody>
               </table>

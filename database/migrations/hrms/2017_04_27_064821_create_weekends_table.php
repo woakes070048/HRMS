@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLevelPermissionsTable extends Migration
+class CreateWeekendsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateLevelPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('level_permissions', function (Blueprint $table) {
+        Schema::create('weekends', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('level_id')->unsigned();
-            $table->integer('menu_id')->unsigned();
-            $table->timestamps();
+            $table->string('weekend', 80);
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->boolean('status')->default(1)->comment='0=inactive, 1=active';
         });
     }
 
@@ -28,6 +29,6 @@ class CreateLevelPermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('level_permissions');
+        Schema::dropIfExists('weekends');
     }
 }

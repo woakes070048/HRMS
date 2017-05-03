@@ -10,7 +10,7 @@
 
     <link rel="shortcut icon" href="{{asset('img/logo.png')}}">
     <!-- Font CSS (Via CDN) -->
-    <!-- <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'> -->
+    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
 
     <!-- Glyphicons Pro CSS(font) -->
     <link rel="stylesheet" type="text/css" href="{{asset('fonts/glyphicons-pro/glyphicons-pro.css')}}">

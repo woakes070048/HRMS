@@ -38,6 +38,7 @@ class AttendanceTimesheetCommand extends Command
      */
     public function handle()
     {
+        
         dispatch(new AttendanceTimesheetJob());
     }
 }

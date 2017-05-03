@@ -33,4 +33,13 @@ class WorkShiftEmployeeMap extends Model
     }
 
 
+    public function get_work_shift_by_user_id_and_date($user_id, $date)
+    {
+        return $this->where('user_id',$user_id)->where('work_shift_employee_maps.status',1)
+				->where('start_date','<=',$date)->where('end_date','>=',$date)
+				->join('work_shifts','work_shifts.id','=','work_shift_employee_maps.work_shift_id')
+            	->first();
+    }
+
+
 }

@@ -4,7 +4,7 @@
     <div class="sidebar-left-content nano-content">
 
         <!-- Sidebar Widget - Author -->
-          <div class="sidebar-widget author-widget">
+        <div class="sidebar-widget author-widget">
             <div class="media">
               <a class="media-left" href="{{url('employee/view/'.$auth->employee_no)}}">
                 @if(empty($auth->photo))
@@ -25,139 +25,68 @@
                 </div>
               </div>
             </div>
-          </div>
-
-          <?php 
-            $employee = [
-                'department',
-                'unit',
-                'levels',
-                'designation',
-                'branch',
-                'bank',
-                'promotion',
-                'employee',
-            ];
-            $attendance = ['workshift','shiftassign','attendance'];
-            $PayRoll = ['salaryInfo'];
-            $settings = ['settings'];
-          ?>
+        </div>
 
         <!-- Start: Sidebar Menu -->
         <ul class="nav sidebar-menu">
-        <li class="sidebar-label pt20"></li>
+            <li class="sidebar-label pt20"></li>
             <li>
                 <a href="{{url('/')}}">
                   <span class="glyphicon glyphicon-home"></span>
                   <span class="sidebar-title">Dashboard</span>
                 </a>
             </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $employee)) menu-open @endif" href="#">
-                    <span class="glyphicons glyphicons-group" aria-hidden="true"></span>
-                    <span class="sidebar-title">Employee Management</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'department') active @endif">
-                        <a href="{{url('department/index')}}">
-                            <span class="fa fa-level-up"></span> Departments
+            
+            <?php 
+                $moduleShare = session('moduleShare');
+                $userModuleShare = session('userModuleShare');
+                $userMenuShare = session('userMenuShare');
+            ?>
+                @foreach($moduleShare as $info)
+                    @if(in_array($info->id, $userModuleShare))
+                    <li>
+                        <?php 
+                            //this calculation to open Module menu
+                            $segmentUrl = \Request::segment(1);
+                            $module_tag = 0;
+                            $menuShare = session('menuShare');
+                        ?>    
+                        @foreach($menuShare as $val)
+                            <?php 
+                                $strAry = explode("/", $val->menu_url);
+                            ?>
+                            @if($strAry[0] == $segmentUrl)
+                                <?php 
+                                    $module_tag = $val->module_id;
+                                ?>
+                            @endif
+                        @endforeach
+                        
+
+                        <a class="accordion-toggle @if($info->id == $module_tag) menu-open @endif" href="#">
+                            <span class="{{$info->module_icon_class}}" aria-hidden="true"></span>
+                            <span class="sidebar-title">{{$info->module_name}}</span>
+                            <span class="caret"></span>
                         </a>
+                        <ul class="nav sub-nav">
+                            @foreach($info->menus as $mInfo)
+                                @if(in_array($mInfo->menu_url, $userMenuShare))
+                                    @if($mInfo->menu_parent_id == 0)
+                                    <?php 
+                                        $strMneuAry = explode("/", $mInfo->menu_url);
+                                    ?>
+                                    <li class="@if(\Request::segment(1) == $strMneuAry[0]) active @endif">
+                                        <a href="{{url("$mInfo->menu_url")}}">
+                                            <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_section_name}}
+                                        </a>
+                                    </li>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </ul>
                     </li>
-                    <li class="@if(\Request::segment(1) == 'unit') active @endif">
-                        <a href="{{url('unit/index')}}">
-                            <span class="fa fa-level-up"></span> Unit
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'levels') active @endif">
-                        <a href="{{url('levels/index')}}">
-                            <span class="fa fa-level-up"></span> Levels
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'designation') active @endif">
-                        <a href="{{url('designation/index')}}">
-                            <span class="fa fa-level-up"></span> Designation
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'branch') active @endif">
-                        <a href="{{url('branch/index')}}">
-                            <span class="fa fa-level-up"></span> Branch
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'bank') active @endif">
-                        <a href="{{url('bank/index')}}">
-                            <span class="fa fa-level-up"></span> Bank
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'promotion') active @endif">
-                        <a href="{{url('promotion/index')}}">
-                            <span class="fa fa-level-up"></span> Transfer / Promotion
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'employee') active @endif">
-                        <a href="{{url('employee/index')}}"><span class="fa fa-users" aria-hidden="true"></span> Manage Employee</a>
-                    </li>
-                    
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $attendance)) menu-open @endif" href="#">
-                    <span class="icon-stopwatch" aria-hidden="true"></span>
-                    <span class="sidebar-title">Time & Attendance</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'workshift') active @endif">
-                        <a href="{{url('workshift/index')}}">
-                            <span class="fa fa-level-up"></span> Work Shift
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'shiftassign') active @endif">
-                        <a href="{{url('shiftassign/index')}}">
-                            <span class="fa fa-level-up"></span> Work Shift Assign
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'attendance') active @endif">
-                        <a href="{{url('attendance/index')}}">
-                            <span class="fa fa-level-up"></span> Attendance
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'attendance') active @endif">
-                        <a href="{{url('attendance/view/'.$auth->employee_no)}}">
-                            <span class="fa fa-level-up"></span> My Attendance
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $PayRoll)) menu-open @endif" href="#">
-                    <span class="fa fa-money" aria-hidden="true"></span>
-                    <span class="sidebar-title">PayRoll Management</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'salaryInfo') active @endif">
-                        <a href="{{url('salaryInfo/index')}}">
-                            <span class="glyphicon glyphicon-usd"></span> Salary Info
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $settings)) menu-open @endif" href="#">
-                    <span class="glyphicons glyphicons-adjust_alt" aria-hidden="true"></span>
-                    <span class="sidebar-title">Application Settings</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'settings') active @endif">
-                        <a href="{{url('settings/index')}}">
-                            <span class="glyphicons glyphicons-settings"></span> 
-                            Basic Settings
-                        </a>
-                    </li>
-                </ul>
-            </li>
+                    @endif
+                @endforeach  
         </ul>
         <!-- End: Sidebar Menu -->
 
@@ -168,8 +97,6 @@
             </a>
         </div>
         <!-- End: Sidebar Collapse Button -->
-
     </div>
     <!-- End: Sidebar Left Content -->
-
 </aside>

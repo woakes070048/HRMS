@@ -14,10 +14,11 @@ class CreateModulesTable extends Migration
     public function up()
     {
         Schema::create('modules', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('module_name',200);
-            $table->boolean('module_status')->default(1);
+            $table->integer('id')->unsigned();
+            $table->string('module_name',150);
+            $table->string('module_icon_class',50);
             $table->text('module_details')->nullable();
+            $table->tinyInteger('module_status')->default('1')->comment="1=active,0=inactive";
             $table->timestamps();
         });
     }

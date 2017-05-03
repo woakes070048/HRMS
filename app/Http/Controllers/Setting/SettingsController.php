@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class SettingsController extends Controller
 {
-
     use CommonService;
 
     public function __construct()
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['getSettings']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();

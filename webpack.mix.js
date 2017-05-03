@@ -5,13 +5,12 @@ mix.js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css');
 
 
-mix.js('resources/assets/js/hrms/salaryInfo.js', 'public/js')
-    .js('resources/assets/js/hrms/hrms.js', 'public/js')
+mix.js('resources/assets/js/hrms/hrms.js', 'public/js')
+    .js('resources/assets/js/hrms/salaryInfo.js', 'public/js')
 	.js('resources/assets/js/hrms/settings.js', 'public/js')
     .js('resources/assets/js/hrms/unit.js', 'public/js')
-	// .js('resources/assets/js/hrms/promotion.js', 'public/js')
-    // .js('resources/assets/js/hrms/employee.js', 'public/js')
-    // .js('resources/assets/js/hrms/bank.js', 'public/js')
+    .js('resources/assets/js/setup/module.js', 'public/js')
+    .js('resources/assets/js/setup/setupMenu.js', 'public/js')
     // .js('resources/assets/js/hrms/workshift.js', 'public/js')
     .js('resources/assets/js/hrms/branch.js', 'public/js');
 

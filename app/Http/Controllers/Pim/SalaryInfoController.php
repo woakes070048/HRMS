@@ -14,6 +14,7 @@ class SalaryInfoController extends Controller
 	public function __construct()
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['getAllInfo']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();

@@ -32,6 +32,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        // \Artisan::call("db:connect", ['database' => '1489485338_afc_health']);
+        // $schedule->command('attendance:timesheet')->cron('* * * * * *');
+        // $schedule->command('attendance:archive')->everyMinute();
     }
 
     /**

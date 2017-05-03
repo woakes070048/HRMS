@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Attendance;
 use App\Models\AttendanceTimesheet;
 use App\Models\AttendanceTimesheetArchive;
+use App\Models\WorkShiftEmployeeMap;
 
 use App\Jobs\AttendanceTimesheetJob;
 use App\Jobs\ArchiveAttendanceTimesheetJob;
@@ -45,6 +46,7 @@ class AttendanceController extends Controller
     public function index(){
         dispatch(new AttendanceTimesheetJob());
         dispatch(new ArchiveAttendanceTimesheetJob());
+
     	$data['sidevar_hide'] = true;
     	return view('attendance.attendance')->with($data);
     }
@@ -83,6 +85,18 @@ class AttendanceController extends Controller
             'out_time' => 'required',
         ]);
 
+        $workShiftMap = new WorkShiftEmployeeMap;
+        $emp_work_shift = $workShiftMap->get_work_shift_by_user_id_and_date($request->user_id,$request->date);
+        if($emp_work_shift){
+            $late_count_time =  $emp_work_shift->late_count_time;
+            $late_hour = date('H.i',strtotime($emp_work_shift->shift_start_time) - strtotime($request->in_time));
+        }else{
+            $late_count_time = 0;
+            $late_hour = 0;
+        }
+
+        $request->offsetSet('late_count_time',$late_count_time);
+        $request->offsetSet('late_hour',$late_hour);
         $total_work_hour = date('H.i',strtotime($request->out_time) - strtotime($request->in_time));
         $request->offsetSet('total_work_hour',$total_work_hour);
 
@@ -151,8 +165,9 @@ class AttendanceController extends Controller
 
     protected function attendanceObservation($date){
 
-        $last_row = $this->attendanceTimesheet->orderBy('date','asc')->first();
-        $last_date = date('Y-m-d',strtotime($last_row->date));
+        //$last_row = $this->attendanceTimesheet->orderBy('date','asc')->first();
+        //$last_date = date('Y-m-d',strtotime($last_row->date));
+        $last_date = Carbon::now()->subMonths(\Config::get('hrms.attendance_archive_month'))->format('Y-m-d');
 
         if($date >= $last_date){
             return 'present';
@@ -279,6 +294,8 @@ class AttendanceController extends Controller
                     $attend['in_time'] = '';
                     $attend['out_time'] = '';
                     $attend['total_work_hour'] = '';
+                    $attend['late_count_time'] = '';
+                    $attend['late_hour'] = '';
                     $attend['leave_type'] = '';
                     $attend['created_at'] = $date;
     				$timeSheet[] = $attend;
@@ -342,6 +359,8 @@ class AttendanceController extends Controller
                         'in_time' => date('h:i',strtotime($content[2])),
                         'out_time' => date('h:i',strtotime($content[3])),
                         'total_work_hour' => date('H.i', strtotime($content[3]) - strtotime($content[2])),
+                        'late_count_time' => '',
+                        'late_hour' => '',
                         'created_at' => date('Y-m-d')
                     ];
                 }
@@ -377,16 +396,16 @@ class AttendanceController extends Controller
                 $leave++;
             }elseif($info['observation'] == '3'){
                 $holiday++;
-                if($info['in_time'] && $info['in_time'] !=null){
-                    $present++;
-                }
             }elseif($info['observation'] == '4'){
                 $weekend++;
-                if($info['in_time'] && $info['in_time'] !=null){
-                    $present++;
-                }
             }elseif($info['observation'] == '5'){
                 $present++;
+                $holiday++;
+            }elseif($info['observation'] == '6'){
+                $present++;
+                $weekend++;
+            }
+            if($info['late_hour']){
                 $late++;
             }
         }

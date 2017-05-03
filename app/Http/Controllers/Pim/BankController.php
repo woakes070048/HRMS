@@ -10,7 +10,8 @@ use App\Http\Controllers\Controller;
 class BankController extends Controller
 {
     public function __construct(){
-    	$this->middleware('auth:hrms');
+        $this->middleware('auth:hrms');
+    	$this->middleware('CheckPermissions');
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();

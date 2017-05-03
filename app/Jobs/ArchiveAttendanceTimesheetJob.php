@@ -26,7 +26,7 @@ class ArchiveAttendanceTimesheetJob implements ShouldQueue
      */
     public function __construct()
     {
-       $this->archiveMonth = 6;
+       $this->archiveMonth = \Config::get('hrms.attendance_archive_month');
     }
 
     /**
@@ -54,6 +54,8 @@ class ArchiveAttendanceTimesheetJob implements ShouldQueue
                     "in_time"   => date('H:i',strtotime($info->in_time)),
                     "out_time"  => date('H:i',strtotime($info->out_time)),
                     "total_work_hour" => $info->total_work_hour,
+                    'late_count_time' => $info->late_count_time,
+                    'late_hour'  => $info->late_hour,
                     "leave_type" => $info->leave_type,
                     "created_at" => $info->created_at,
                     "updated_at" => $info->updated_at,
