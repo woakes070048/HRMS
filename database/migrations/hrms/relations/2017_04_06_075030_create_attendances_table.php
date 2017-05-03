@@ -16,10 +16,12 @@ class CreateAttendancesTable extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id')->unsigned();
-            $table->time('in_time');
-            $table->time('out_time');
-            $table->decimal('total_work_hour',4,2);
             $table->date('date');
+            $table->time('in_time')->nullable();
+            $table->time('out_time')->nullable();
+            $table->decimal('total_work_hour',4,2)->nullable();
+            $table->time('late_count_time')->nullable();
+            $table->decimal('late_hour',4,2)->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');

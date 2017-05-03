@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class AttendanceTimesheetArchive extends Model
 {
-    protected $fillable = ['user_id','date','observation','in_time','out_time','total_work_hour','leave_type'];
+    protected $fillable = ['user_id','date','observation','in_time','out_time','total_work_hour','late_count_time','late_hour','leave_type','created_at'];
 
 
     public function setInTimeAttribute($value){
@@ -20,12 +21,24 @@ class AttendanceTimesheetArchive extends Model
     
 
     public function getInTimeAttribute($value){
-    	return date('h:i A',strtotime($value));
+    	return ($value)?date('h:i A',strtotime($value)):'';
     }
 
 
     public function getOutTimeAttribute($value){
-    	return date('h:i A',strtotime($value));
+    	return ($value)?date('h:i A',strtotime($value)):'';
+    }
+
+    public function getTotalWorkHourAttribute($value){
+        if(!empty($value) && $value !=Null){
+            $dt = Carbon::parse($value);
+            $time = '';
+            $time .= ($dt->hour)?$dt->hour.' hour':'0 hour';
+            $time .= ($dt->minute)?', '.$dt->minute.' minute':', 0 minute';
+            return $time;
+        }else{
+            return '';
+        }
     }
     
 }

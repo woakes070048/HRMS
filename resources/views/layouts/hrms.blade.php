@@ -131,6 +131,9 @@
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
 
+<!-- Page Plugins -->
+<script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
+
 <!-- Time/Date Plugin Dependencies -->
 <script src="{{asset('vendor/plugins/globalize/globalize.min.js')}}"></script>
 <script src="{{asset('vendor/plugins/moment/moment.min.js')}}"></script>
@@ -156,7 +159,6 @@
 <script src="{{asset('vendor/plugins/datepicker/js/bootstrap-datetimepicker.js')}}"></script>
 
 <script src="{{asset('js/utility/utility.js')}}"></script>
-<script src="{{asset('js/demo/demo.js')}}"></script>
 <script src="{{asset('js/main.js')}}"></script>
 
 <script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
@@ -167,10 +169,8 @@
 
     jQuery(document).ready(function() {
         "use strict";
-        // Init Theme Core
         Core.init();
-        // Init Demo JS
-        Demo.init();
+
 
         $('#datatable1').dataTable({
             "paging":   true,

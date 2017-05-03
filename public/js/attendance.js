@@ -1,5 +1,5 @@
 $(document).on('ready',function(){ 
-	$('#formDate').datetimepicker({
+	$('#fromDate').datetimepicker({
       	format: 'YYYY-MM-DD',
       	maxDate:new Date(),
         pickTime: false
@@ -11,6 +11,8 @@ new Vue({
 	el: '#attendanceID',
 
 	data:{
+    from_date:null,
+    to_date:null,
 		uIndex:null,
 		aIndex:null,
 		hideShowId: '#showAttendance',
@@ -81,7 +83,7 @@ new Vue({
 
 
       toDate(){
-      	var date = $('#formDate').val();
+      	var date = $('#fromDate').val();
       	$('#toDate').datetimepicker({
 	      	format: 'YYYY-MM-DD',
 	      	maxDate: new Date(),
@@ -120,6 +122,8 @@ new Vue({
       getAttendance(e){
       	this.showAttendance = true;
       	var formData = new FormData(e.target);
+        this.from_date = $('#fromDate').val();
+        this.to_date = $('#toDate').val();
       	this.errors = [];
       	
       	this.loadinShow(this.hideShowId);

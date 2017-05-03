@@ -36,8 +36,6 @@
                   <span class="sidebar-title">Dashboard</span>
                 </a>
             </li>
-
-
             
             <?php 
                 $moduleShare = session('moduleShare');
@@ -89,27 +87,6 @@
                     </li>
                     @endif
                 @endforeach  
-
-
-                <li>
-                    <a class="accordion-toggle" href="#">
-                        <span class="fa fa-calendar" aria-hidden="true"></span>
-                        <span class="sidebar-title">Leave Management</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="nav sub-nav">
-                        <li class="">
-                            <a href="{{url('workshift/index')}}">
-                                <span class="fa fa-level-up"></span> Holidays
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="{{url('weekend/index')}}">
-                                <span class="fa fa-level-up"></span> Weekends
-                            </a>
-                        </li>
-                    </ul>
-                </li>
         </ul>
         <!-- End: Sidebar Menu -->
 

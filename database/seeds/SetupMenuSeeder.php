@@ -51,7 +51,18 @@ class SetupMenuSeeder extends Seeder
             ['menu_parent_id'=>'9', 'module_id'=>'3',	'menu_name'=>'Delete', 'menu_url'=>'salaryInfo/delete', 'menu_section_name'=>'Salary Info', 'menu_icon_class'=>'glyphicon glyphicon-usd', 'menu_status'=>'1'],
             ['menu_parent_id'=>'10', 'module_id'=>'4',   'menu_name'=>'Add', 'menu_url'=>'settings/add', 'menu_section_name'=>'Basic Settings', 'menu_icon_class'=>'glyphicons glyphicons-settings', 'menu_status'=>'1'],
             ['menu_parent_id'=>'10', 'module_id'=>'4',   'menu_name'=>'Edit', 'menu_url'=>'settings/edit', 'menu_section_name'=>'Basic Settings', 'menu_icon_class'=>'glyphicons glyphicons-settings', 'menu_status'=>'1'],
-            ['menu_parent_id'=>'10', 'module_id'=>'4',	'menu_name'=>'Delete', 'menu_url'=>'settings/delete', 'menu_section_name'=>'Basic Settings', 'menu_icon_class'=>'glyphicons glyphicons-settings', 'menu_status'=>'1']
+            ['menu_parent_id'=>'10', 'module_id'=>'4',  'menu_name'=>'Delete', 'menu_url'=>'settings/delete', 'menu_section_name'=>'Basic Settings', 'menu_icon_class'=>'glyphicons glyphicons-settings', 'menu_status'=>'1'],
+
+            ['menu_parent_id'=>'0', 'module_id'=>'5',  'menu_name'=>'index', 'menu_url'=>'workshift/index', 'menu_section_name'=>'Work Shift', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+            ['menu_parent_id'=>'11', 'module_id'=>'5',  'menu_name'=>'add', 'menu_url'=>'workshift/add', 'menu_section_name'=>'Work Shift', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+            ['menu_parent_id'=>'11', 'module_id'=>'5',  'menu_name'=>'edit', 'menu_url'=>'workshift/edit', 'menu_section_name'=>'Work Shift', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+            ['menu_parent_id'=>'11', 'module_id'=>'5',  'menu_name'=>'delete', 'menu_url'=>'workshift/delete', 'menu_section_name'=>'Work Shift', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+
+            ['menu_parent_id'=>'0', 'module_id'=>'5',  'menu_name'=>'index', 'menu_url'=>'shiftassign/index', 'menu_section_name'=>'Work Shift Assign', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+            ['menu_parent_id'=>'12', 'module_id'=>'5',  'menu_name'=>'assign', 'menu_url'=>'shiftassign/assign', 'menu_section_name'=>'Work Shift Assign', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+
+            ['menu_parent_id'=>'0', 'module_id'=>'5',  'menu_name'=>'index', 'menu_url'=>'attendance/index', 'menu_section_name'=>'Attendance', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+            ['menu_parent_id'=>'13', 'module_id'=>'5',  'menu_name'=>'view', 'menu_url'=>'attendance/view', 'menu_section_name'=>'My Attendance', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
         ]);
     }
 }

@@ -298,6 +298,11 @@ class User extends Authenticatable
     }
 
 
+    public function attendance(){
+        return $this->hasMany('App\Models\Attendance');
+    }
+
+
     public function attendanceTimesheet(){
         return $this->hasMany('App\Models\AttendanceTimesheet');
     }
@@ -306,6 +311,11 @@ class User extends Authenticatable
     public function attendanceTimesheetArchive(){
         return $this->hasMany('App\Models\AttendanceTimesheetArchive');
     }
+
+
+    public function leaves(){
+        return $this->hasMany('App\Models\Leave');
+    } 
 
 
 }
