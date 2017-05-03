@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 51);
+/******/ 	return __webpack_require__(__webpack_require__.s = 47);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -10296,50 +10296,84 @@ return jQuery;
 
 /***/ }),
 
-/***/ 39:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function($) {new Vue({
-    el: "#mainDiv",
+/* WEBPACK VAR INJECTION */(function($, jQuery) {new Vue({
+    el: '#mainDiv',
     data: {
-        msg: "tesign",
-        module_name: '',
-        module_icon_class: '',
-        module_details: '',
-        module_status: 1,
-        modules: [],
+        msg: 'test type',
+        leaveTypes: [],
+        empTypes: [],
+        //for edit
         hdn_id: '',
-        edit_module_name: '',
-        edit_module_icon_class: '',
-        edit_module_details: '',
-        edit_module_status: ''
+        type_name: '',
+        duration: '',
+        emp_type: [],
+        type_details: '',
+        carry_to_next_year: '',
+        include_holiday: '',
+        from_year: '',
+        to_year: '',
+        leave_type_status: ''
     },
     mounted: function mounted() {
-        this.getModuleAllData();
+        var _this = this;
+
+        axios.get('/leave/type/getAllData').then(function (response) {
+            return _this.leaveTypes = response.data;
+        });
+        axios.get('/get-employee-type').then(function (response) {
+            return _this.empTypes = response.data;
+        });
     },
 
     methods: {
-        getModuleAllData: function getModuleAllData() {
-            var _this = this;
+        uncheckAll: function uncheckAll() {
+            //first unchecked all check box
+            $('input[type=checkbox]').prop("checked", false);
+        },
+        returnEffectedEmpType: function returnEffectedEmpType(ary) {
 
-            axios.get('/modules/getModule').then(function (response) {
-                return _this.modules = response.data;
+            var temp = new Array();
+            var tempInt = new Array();
+            var result = '';
+
+            temp = ary.split(",");
+
+            temp.forEach(function (element) {
+
+                tempInt.push(parseInt(element));
             });
+
+            this.empTypes.forEach(function (element) {
+
+                if (tempInt.includes(element.id)) {
+
+                    result += element.type_name + ', ';
+                }
+            });
+
+            return result;
         },
         saveData: function saveData(formId) {
-            var _this2 = this;
-
             var formData = $('#' + formId).serialize();
 
-            axios.post('/modules/add', formData).then(function (response) {
-                $('#create-form-errors').html('');
-                document.getElementById("modal-close-btn").click();
-                swal(response.data.title, 'Message: ' + response.data.message);
+            axios.post('/leave/type/add', formData).then(function (response) {
 
-                _this2.module_name = '', _this2.module_icon_class = '', _this2.module_details = '', _this2.module_status = 1,
-                //load all data
-                _this2.getModuleAllData();
+                swal({
+                    title: response.data.title + "!",
+                    text: response.data.message,
+                    type: response.data.title,
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Done",
+                    closeOnConfirm: false
+                }, function () {
+                    location.href = location.href;
+                });
             }).catch(function (error) {
+
                 if (error.response.status != 200) {
                     //error 422
 
@@ -10355,38 +10389,56 @@ return jQuery;
             });
         },
         editData: function editData(id, index) {
-            this.indexId = index;
-            this.hdn_id = id;
-            this.edit_module_name = this.modules[index].module_name;
-            this.edit_module_icon_class = this.modules[index].module_icon_class;
-            this.edit_module_details = this.modules[index].module_details;
-            this.edit_module_status = this.modules[index].module_status;
+            var _this2 = this;
+
+            axios.get("/leave/type/edit/" + id, {}).then(function (response) {
+
+                _this2.hdn_id = response.data.hdn_id;
+                _this2.type_name = response.data.leave_type_name;
+                _this2.duration = response.data.leave_type_number_of_days;
+                // response.data.leave_type_effective_for;
+                var effectiveAry = response.data.leave_type_effective_for.split(',');
+
+                //first unchecked all check box
+                $('input[type=checkbox]').prop("checked", false);
+
+                if (effectiveAry.length > 0) {
+                    jQuery.each(effectiveAry, function (index, item) {
+                        $('input[value=' + item + ']').prop("checked", true);
+                    });
+                } else {
+                    $('input:checkbox').removeAttr('checked');
+                }
+
+                _this2.type_details = response.data.leave_type_details;
+                _this2.carry_to_next_year = response.data.leave_type_is_remain;
+                _this2.include_holiday = response.data.leave_type_include_holiday;
+                _this2.from_year = response.data.leave_type_active_from_year;
+                _this2.to_year = response.data.leave_type_active_to_year;
+                _this2.leave_type_status = response.data.leave_type_status;
+            }).catch(function (error) {
+
+                swal('Error:', 'Edit function not working', 'error');
+            });
         },
 
         updateData: function updateData(updateFormId) {
-            var _this3 = this;
 
             var formData = $('#' + updateFormId).serialize();
 
-            axios.post('/modules/edit', formData).then(function (response) {
+            axios.post('/leave/type/edit', formData).then(function (response) {
 
-                $('#edit-form-errors').html('');
-                document.getElementById("modal-edit-close-btn").click();
-
-                _this3.modules[_this3.indexId].module_name = _this3.edit_module_name;
-                _this3.modules[_this3.indexId].module_details = _this3.edit_module_details;
-                _this3.modules[_this3.indexId].module_status = _this3.edit_module_status;
-
-                swal(response.data.title, 'Message: ' + response.data.message);
-                // new PNotify({
-                //     title: response.data.title+' Message',
-                //     text: response.data.message,
-                //     shadow: true,
-                //     addclass: 'stack_top_right',
-                //     type: response.data.title,
-                //     width: '290px',
-                //     delay: 1500
-                // });
+                swal({
+                    title: response.data.title + "!",
+                    text: response.data.message,
+                    type: response.data.title,
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Done",
+                    closeOnConfirm: false
+                }, function () {
+                    location.href = location.href;
+                });
             }).catch(function (error) {
                 var errors = error.response.data;
 
@@ -10397,53 +10449,17 @@ return jQuery;
                 errorsHtml += '</ul></di>';
                 $('#edit-form-errors').html(errorsHtml);
             });
-        },
-        deleteData: function deleteData(id, index) {
-
-            var delModule = this.modules;
-
-            swal({
-                title: "Are you sure?",
-                text: "You will not be able to recover this information!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete it!",
-                closeOnConfirm: false
-            }, function () {
-
-                swal("Deleted!", "Your data has been deleted.", "success");
-
-                axios.get("/modules/delete/" + id + "/" + index, {}).then(function (response) {
-
-                    // new PNotify({
-                    //     title: response.data.title+' Message',
-                    //     text: response.data.message,
-                    //     shadow: true,
-                    //     addclass: 'stack_top_right',
-                    //     type: response.data.title,
-                    //     width: '290px',
-                    //     delay: 1500
-                    // });
-
-                    delModule.splice(response.data.indexId, 1);
-                    swal(response.data.title, response.data.message, response.data.title);
-                }).catch(function (error) {
-
-                    swal('Error:', 'Delete function not working', 'error');
-                });
-            });
         }
     }
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(1)))
 
 /***/ }),
 
-/***/ 51:
+/***/ 47:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(39);
+module.exports = __webpack_require__(35);
 
 
 /***/ })

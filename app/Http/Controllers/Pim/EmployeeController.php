@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\Pim;
-
 
 use App\Models\Setup\UserEmails;
 
@@ -21,6 +19,8 @@ use App\Models\Designation;
 use App\Models\LevelPermission;
 use App\Models\UserPermission;
 use App\Models\Module;
+use App\Models\LeaveType;
+use App\Models\UserLeaveTypeMap;
 
 use App\Services\CommonService;
 use App\Jobs\UserEmailUpdate;
@@ -47,11 +47,9 @@ use App\Http\Controllers\Controller;
 
 class EmployeeController extends Controller
 {
-
     use CommonService;
 
     protected $auth;
-
 
     /**
      * EmployeeController constructor.
@@ -256,6 +254,45 @@ class EmployeeController extends Controller
             }
             //end insert menu user_permission
 
+
+            //insert leave info depend on emp type start
+            $emp_type = $request->employee_type_id; 
+            $commonTypeId = [];
+
+            $leaveTypes = LeaveType::where('leave_type_status', 1)->get();
+
+            foreach($leaveTypes as $val){
+                
+                $leaveTypeAry = explode(',', $val->leave_type_effective_for);
+
+                if(in_array($emp_type, $leaveTypeAry)){
+                    $commonTypeId['type_id'][] = $val->id;
+                    $commonTypeId['days'][] = $val->leave_type_number_of_days>0?$val->leave_type_number_of_days:0;
+                    $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
+                    $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
+                }
+            }
+
+            $length = count($commonTypeId['type_id']);
+
+            if(!empty($length)){
+                for($i=0 ; $i < $length; $i++){
+                    $user_leave_type[] = [
+                        'user_id' => $user->id,
+                        'leave_type_id' => $commonTypeId['type_id'][$i],
+                        'number_of_days' => $commonTypeId['days'][$i],
+                        'active_from_year' => $commonTypeId['from_year'][$i],
+                        'active_to_year' => $commonTypeId['to_year'][$i],
+                        'status' => 1,
+                    ];
+                }
+            }
+
+            if(!empty($user_leave_type)){
+                UserLeaveTypeMap::insert($user_leave_type);
+            }
+            //leave end
+
             if($user){
                 if(isset($photo)){
                     if(!$request->image->storeAs(Session('config_id').'/'.$user->id,$photo)){
@@ -306,7 +343,6 @@ class EmployeeController extends Controller
             return redirect()->back()->withInput();
         }
     }
-
 
     /**
      * @post Add Employee Personal Info

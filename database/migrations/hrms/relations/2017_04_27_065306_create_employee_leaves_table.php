@@ -30,6 +30,7 @@ class CreateEmployeeLeavesTable extends Migration
             $table->integer('employee_leave_approved_by')->nullable();
             $table->text('employee_leave_approval_remarks')->nullable();
             $table->boolean('employee_leave_status')->default(1)->comment='1=active 0=inactive';
+            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->foreign('leave_type_id')->references('id')->on('leave_types')->onDelete('restrict');

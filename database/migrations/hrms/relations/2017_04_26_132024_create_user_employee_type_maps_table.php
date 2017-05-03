@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserUsertypeMapsTable extends Migration
+class CreateUserEmployeeTypeMapsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateUserUsertypeMapsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_usertype_maps', function (Blueprint $table) {
+        Schema::create('user_employee_type_maps', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('employee_type_id')->unsigned();
@@ -37,8 +37,8 @@ class CreateUserUsertypeMapsTable extends Migration
     public function down()
     {
         Schema::table('user_usertype_maps',function(Blueprint $table){
-            $table->dropForeign('user_usertype_maps_user_id_foreign');
-            $table->dropForeign('user_usertype_maps_employee_type_id_foreign');
+            $table->dropForeign('user_employee_type_maps_user_id_foreign');
+            $table->dropForeign('user_employee_type_maps_employee_type_id_foreign');
         });
         
         Schema::dropIfExists('user_usertype_maps');

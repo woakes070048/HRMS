@@ -21,6 +21,7 @@ class CreateUserLeaveTypeMapsTable extends Migration
             $table->integer('active_from_year');
             $table->integer('active_to_year');
             $table->boolean('status')->default(1)->comment='1=active 0=inactive';
+            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->foreign('leave_type_id')->references('id')->on('leave_types')->onDelete('restrict');

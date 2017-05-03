@@ -37,8 +37,6 @@
                 </a>
             </li>
 
-
-            
             <?php 
                 $moduleShare = session('moduleShare');
                 $userModuleShare = session('userModuleShare');
@@ -99,13 +97,23 @@
                     </a>
                     <ul class="nav sub-nav">
                         <li class="">
-                            <a href="{{url('workshift/index')}}">
+                            <a href="{{url('holiday/index')}}">
                                 <span class="fa fa-level-up"></span> Holidays
                             </a>
                         </li>
                         <li class="">
                             <a href="{{url('weekend/index')}}">
                                 <span class="fa fa-level-up"></span> Weekends
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('leave/type/index')}}">
+                                <span class="fa fa-level-up"></span> Leave Type
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('leave/index')}}">
+                                <span class="fa fa-level-up"></span> Leaves
                             </a>
                         </li>
                     </ul>
