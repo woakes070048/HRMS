@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Leave;
 use Auth;
 use DB;
 use App\Models\LeaveType;
+use App\Models\UserLeaveTypeMap;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -28,8 +29,10 @@ class LeaveController extends Controller
     	return view('leave.leave', $data);
     }
 
-    public function getTypes(){
-
+    public function userLeaveTypes($id){
     
+        $data['userHaveLeavs'] = UserLeaveTypeMap::with('leaveType')->where('user_id', $id)->where('status', 1)->get();
+
+        return $data;
     }
 }

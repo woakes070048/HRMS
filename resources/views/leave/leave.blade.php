@@ -3,9 +3,7 @@
 @section('style')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     <style type="text/css" media="screen">
-        .select2-selection__rendered {
-            min-width: 350px;
-        }
+        
     </style>
 @endsection
 
@@ -62,7 +60,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Add Holiday Info</h4>
+                    <h4 class="modal-title">Leave Info</h4>
                 </div>
                 <form class="form-horizontal" @submit.prevent="saveData('addFormData')" id="addFormData">
                     <div class="modal-body">
@@ -88,20 +86,42 @@
                                     <option disabled value="0">Select Employee Name For Leave</option>
                                     <option v-for="(info,index) in users" 
                                         :value="info.id" 
-                                        v-text="info.first_name"
+                                        v-text="info.first_name+' '+info.last_name+' - '+info.designation.designation_name"
                                     ></option>
                                 </select2>
                             </div>
                         </div>
 
                         <div class="form-group">
+                            <label for="holiday_name" class="col-md-3 control-label">History</label>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <b>Leave Amount</b>
+                                        <ul>
+                                            <li v-for="info in userHaveLeavs" v-text="info.leave_type.leave_type_name +' : '+ info.number_of_days"></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <b>Leave Alreay Taken</b>
+                                        <ul>
+                                            <li>Sick Leave: 4</li>
+                                            <li>Earn Leave: 2</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="holiday_name" class="col-md-3 control-label">Leave Type</label>
                             <div class="col-md-9">
-                                {{-- <input name="holiday_name" class="" type="text" placeholder="Holiday name"> --}}
                                 <select class="form-control input-sm" name="" id="">
                                     <option value="">Select Type</option>
-                                    <option value="">Casual Leave</option>
-                                    <option value="">Sick Leave</option>
+                                    <option v-for="(info,index) in userLeaveType" 
+                                        :value="info.leave_type_id" 
+                                        v-text="info.leave_type.leave_type_name"
+                                    ></option>
                                 </select>
                             </div>
                         </div>
@@ -162,7 +182,7 @@
                                     <option disabled value="0">Select Responsible Employee</option>
                                     <option v-for="(info,index) in options" 
                                         :value="info.id" 
-                                        v-text="info.first_name"
+                                        v-text="info.first_name+' '+info.last_name+' - '+info.designation.designation_name"
                                     ></option>
                                 </select2>
                             </div>
@@ -259,101 +279,6 @@
 
 @section('script')
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script> --}}
 <script src="{{asset('/js/leave.js')}}"></script>
-
-    {{-- <script type="text/javascript">
-
-        Vue.component('select2', {
-            props: ['options', 'value'],
-            template: '<select><slot></slot></select>',
-            mounted: function () {
-                var vm = this
-                $(this.$el)
-                  .val(this.value)
-                  .select2({ data: this.options })
-                  .on('change', function () {
-                    vm.$emit('input', this.value)
-                  })
-            },
-            watch: {
-                value: function (value) {
-                  // update value
-                  $(this.$el).val(value)
-                },
-                options: function (options) {
-                  // update options
-                  $(this.$el).select2({ data: options })
-                }
-            },
-            destroyed: function () {
-                $(this.$el).off().select2('destroy')
-            }
-        })
-
-        var vm = new Vue({
-          el: '#mainDiv',
-          data: {
-            emp_name: 0,
-            responsible_emp: 0,
-            options: [             
-                {
-                "id": 1,
-                "employee_no": "AFC-101000-0000",
-                "employee_type_id": 1,
-                "branch_id": 1,
-                "designation_id": 1,
-                "unit_id": 1,
-                "supervisor_id": 0,
-                "basic_salary": null,
-                "salary_in_cache": null,
-                "effective_date": null,
-                "first_name": "Test 02",
-                "middle_name": "",
-                "last_name": "Sdfsd",
-                "nick_name": "",
-                "email": "iddl@gmail.comsdfs",
-                "status": 1,
-                "mobile_number": "01923777777",
-                "photo": null,
-                "created_by": 0,
-                "updated_by": 0,
-                "created_at": "29 Apr 2017",
-                "updated_at": "29 Apr 2017"
-                },
-                {
-                "id": 2,
-                "employee_no": "AFC-101000-0000",
-                "employee_type_id": 1,
-                "branch_id": 1,
-                "designation_id": 1,
-                "unit_id": 1,
-                "supervisor_id": 0,
-                "basic_salary": null,
-                "salary_in_cache": null,
-                "effective_date": null,
-                "first_name": "Test 01",
-                "middle_name": "",
-                "last_name": "Sdfsd",
-                "nick_name": "",
-                "email": "iddl@gmail.comsdfs",
-                "status": 1,
-                "mobile_number": "01923777777",
-                "photo": null,
-                "created_by": 0,
-                "updated_by": 0,
-                "created_at": "29 Apr 2017",
-                "updated_at": "29 Apr 2017"
-                }
-            ],
-            options2: [
-              { id: 1, text: 'Hello Hello  Hello Hello Hello Hello Hello Hello' },
-              { id: 2, text: 'World' },
-              { id: 3, text: 'aaa' },
-              { id: 4, text: 'abbb' },
-              { id: 5, text: 'abccc' }
-            ]
-          }
-        })
-    </script> --}}
 @endsection

@@ -118,10 +118,9 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\EmployeeType');
     }
 
-     public function branch(){
-         return $this->belongsTo('App\Models\Branch');
-     }
-
+    public function branch(){
+        return $this->belongsTo('App\Models\Branch');
+    }
 
     public function designation(){
         return $this->belongsTo('App\Models\Designation');

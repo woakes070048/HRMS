@@ -36,9 +36,19 @@ new Vue({
     options: [],
     users: [],
     leaveType: [],
+    userLeaveType: [],
+    userHaveLeavs: [],
   },
   mounted(){
     axios.get('/get-employee').then(response => this.users = response.data);
     axios.get('/get-employee').then(response => this.options = response.data);
+  },
+  watch:{
+    emp_name: function(id){
+      axios.get('/leave/get-user-leave-types/'+id).then(response => {
+        this.userLeaveType = response.data.userHaveLeavs;
+        this.userHaveLeavs = response.data.userHaveLeavs;
+      });
+    }
   }
 })

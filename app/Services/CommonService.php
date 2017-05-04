@@ -46,7 +46,7 @@ trait CommonService
     }
 
     public function getEmployee(){
-        return User::where('status',1)->get();
+        return User::with('designation')->where('status',1)->get();
     }
 
     public function getBranches(){
