@@ -267,7 +267,7 @@ class EmployeeController extends Controller
 
                 if(in_array($emp_type, $leaveTypeAry)){
                     $commonTypeId['type_id'][] = $val->id;
-                    $commonTypeId['days'][] = $val->leave_type_number_of_days>0?$val->leave_type_number_of_days:0;
+                    $commonTypeId['days'][] = $val->leave_type_number_of_days;
                     $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
                     $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
                 }

@@ -17,7 +17,7 @@
                     <div class="panel-heading">
                         <span class="panel-title"></span>
                         
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".dataAdd" style="margin-top: 12px;">Add New Leave</button>
+                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".dataAdd" style="margin-top: 12px;">Leave Application</button>
                     
                     </div>
                     <div class="panel-body">
@@ -83,7 +83,7 @@
                                 line-height: 1.5;
                                 border-radius: 2px;"
                                 >
-                                    <option disabled value="0">Select Employee Name For Leave</option>
+                                    <option value="">Select Employee Name For Leave</option>
                                     <option v-for="(info,index) in users" 
                                         :value="info.id" 
                                         v-text="info.first_name+' '+info.last_name+' - '+info.designation.designation_name"
@@ -99,14 +99,14 @@
                                     <div class="col-md-6">
                                         <b>Leave Amount</b>
                                         <ul>
-                                            <li v-for="info in userHaveLeavs" v-text="info.leave_type.leave_type_name +' : '+ info.number_of_days"></li>
+                                            <li v-for="info in userHaveLeavs" v-text="info.leave_type.leave_type_name +' : '+ (info.number_of_days == null ? 'Undefined':info.number_of_days)"></li>
                                         </ul>
                                     </div>
                                     <div class="col-md-6">
                                         <b>Leave Alreay Taken</b>
                                         <ul>
-                                            <li>Sick Leave: 4</li>
-                                            <li>Earn Leave: 2</li>
+                                            <li v-for="info in userTakenLeave" v-text="info.name +' : '+ info.days">
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -119,8 +119,9 @@
                                 <select class="form-control input-sm" name="" id="">
                                     <option value="">Select Type</option>
                                     <option v-for="(info,index) in userLeaveType" 
-                                        :value="info.leave_type_id" 
-                                        v-text="info.leave_type.leave_type_name"
+                                        :value="info.id" 
+                                        v-text="info.name"
+                                        v-if="info.days == null || info.days > 0"
                                     ></option>
                                 </select>
                             </div>
@@ -129,13 +130,13 @@
                         <div class="form-group">
                             <label for="from_date" class="col-md-3 control-label">Select Date</label>
                             <div class="col-md-3">
-                                <input type="text" id="from_date" name="from_date"  class="gui-input datepicker form-control input-sm jqueryDate" placeholder="From">
+                                <input type="text" id="from_date" name="from_date" v-model="from_date" class="gui-input datepicker form-control input-sm jqueryDate" placeholder="From">
                             </div>
                             <div class="col-md-3">
-                                <input type="text" id="to_date" name="to_date" class="gui-input datepicker form-control input-sm jqueryDate" placeholder="To">
+                                <input type="text" id="to_date" name="to_date" v-model="to_date" class="gui-input datepicker form-control input-sm jqueryDate" placeholder="To">
                             </div>
-                            <label for="" class="col-md-2 control-label">Total:</label>
-                            <label for="" class="col-md-1 control-label result">00</label>
+                            <label for="" class="col-md-2 control-label"><div @click="date_diff_cal" style="margin-top: -10px;" class="btn btn-xs btn-success">Cal. date diff.</div></label>
+                            <label for="" class="col-md-1 control-label result" v-text="date_diff"></label>
                         </div>
 
                         <div class="form-group">
@@ -179,7 +180,7 @@
                                 line-height: 1.5;
                                 border-radius: 2px;"
                                 >
-                                    <option disabled value="0">Select Responsible Employee</option>
+                                    <option value="">Select Responsible Employee</option>
                                     <option v-for="(info,index) in options" 
                                         :value="info.id" 
                                         v-text="info.first_name+' '+info.last_name+' - '+info.designation.designation_name"

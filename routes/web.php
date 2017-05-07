@@ -299,7 +299,7 @@ Route::group(['prefix' => '/leave/type', 'namespace' => 'Leave'],function (){
 Route::group(['prefix' => '/leave', 'namespace' => 'Leave'],function (){
     Route::get('/index','LeaveController@index');
     Route::get('/get-types','LeaveController@getTypes');
-    Route::get('/get-user-leave-types/{id}','LeaveController@userLeaveTypes');
+    Route::get('/user-taken-leave/{id}','LeaveController@userTakenLeave');
     // Route::get('/getAllData','LeaveController@getAllData');
     // Route::post('/add','LeaveController@create');
     // Route::get('/edit/{id}','LeaveController@edit');

@@ -38,7 +38,7 @@
                                     <tr v-for="(info,index) in leaveTypes">
                                         <td v-text="index+1"></td>
                                         <td v-text="info.leave_type_name"></td>
-                                        <td v-text="info.leave_type_number_of_days > 0?info.leave_type_number_of_days:0"></td>
+                                        <td v-text="info.leave_type_number_of_days == null?'Undefined':info.leave_type_number_of_days"></td>
                                         <td v-text="returnEffectedEmpType(info.leave_type_effective_for)"></td>
                                         <td v-text="info.leave_type_is_remain == 1?'Yes':'No'"></td>
                                         <td v-text="info.leave_type_include_holiday == 1?'Yes':'No'"></td>
