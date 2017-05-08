@@ -106,6 +106,93 @@ class LeaveController extends Controller
         $data['taken_leave_ary'] = $taken_leave_ary;
         $data['user_leave_type'] = $leave_type_ary;
 
+        session()->put('global_leave_type_ary', $leave_type_ary);
+
         return $data;
+    }
+
+    public function create(Request $request){
+
+        // $this->validate($request, [
+        //     'emp_name' => 'required',
+        //     'emp_leave_type' => 'required',
+        //     'from_date' => 'required',
+        //     'to_date' => 'required',
+        //     'leave_reason' => 'required',
+        //     'leave_contact_address' => 'required',
+        //     'leave_half_or_full' => 'required',
+        // ],[
+        //     'emp_name.required' => 'Employee name is required.',
+        //     'emp_leave_type.required' => 'Leave type is required.',
+        //     'from_date.required' => 'Select date(from date) is required.',
+        //     'to_date.required' => 'Select date(to date) is required.',
+        //     'leave_contact_address.required' => 'Contract address is required.',
+        //     'leave_half_or_full.required' => 'Leave status required.',
+        // ]);
+
+        $emp_name = $request->emp_name;
+        $emp_leave_type = $request->emp_leave_type;
+        $from_date = $request->from_date;
+        $to_date = $request->to_date;
+        $leave_reason = $request->leave_reason;
+        $leave_contact_address = $request->leave_contact_address;
+        $leave_contact_number = $request->leave_contact_number;
+        $passport_no = $request->passport_no;
+        $responsible_emp = $request->responsible_emp;
+        $leave_half_or_full = $request->leave_half_or_full;
+
+        $leave_type_ary = session()->get('global_leave_type_ary');
+
+        $date1Timestamp = strtotime($from_date);
+        $date2Timestamp = strtotime($to_date);
+        $difference = $date2Timestamp - $date1Timestamp;
+        $diff_days = floor($difference / (60*60*24) )+1;
+
+        if($date2Timestamp >= $date1Timestamp){
+            foreach($leave_type_ary as $info){
+                if($emp_leave_type == $info['id']){
+                    $chk = $info['days'] - $diff_days;
+
+                    if($chk >= 0){
+                        
+                        echo "okk";
+                        // try{
+                        //     EmployeeLeave::create([
+                        //         'user_id' => $request->holiday_name,
+                        //         'leave_type_id' => $request->from_date, 
+                        //         'employee_leave_from' => $request->to_date, 
+                        //         'employee_leave_to' => $request->holiday_description,
+                        //         'employee_leave_user_remarks' => $request->holiday_status,
+                        //         'employee_leave_half_or_full' => $request->holiday_status,
+                        //         'employee_leave_contact_address' => $request->holiday_status,
+                        //         'employee_leave_contact_number' => $request->holiday_status,
+                        //         'employee_leave_passport_no' => $request->holiday_status,
+                        //         'employee_leave_responsible_person' => $request->holiday_status,
+                        //         // 'employee_leave_attachment' => $request->holiday_status,
+                        //         // 'employee_leave_recommend_to' => $request->holiday_status,
+                        //         'employee_leave_status' => $request->holiday_status,
+                        //     ]);
+                        
+                        //     $data['title'] = 'success';
+                        //     $data['message'] = 'data successfully added!';
+
+                        // }catch (\Exception $e) {
+                            
+                        //    $data['title'] = 'error';
+                        //    $data['message'] = 'data not added!';
+                        // }
+                    }
+                    else{
+                        echo "* You can only apply for ".$info['days']." days or below ".$info['days']." days leave.";
+                    }
+                }
+            }
+        }
+        else{
+            echo "Invalid";
+        }
+
+        $request->session()->forget('global_leave_type_ary');
+        return response()->json($data);
     }
 }

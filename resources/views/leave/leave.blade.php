@@ -71,7 +71,7 @@
                         {{ csrf_field() }}
 
                         <div class="form-group">
-                            <label for="emp_name" class="col-md-3 control-label">Employee Name</label>
+                            <label for="emp_name" class="col-md-3 control-label">Employee Name <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <select2 name="emp_name" v-model="emp_name" style="
                                 width: 100%;color: #555555;
@@ -92,7 +92,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" v-show="emp_name>0">
                             <label for="holiday_name" class="col-md-3 control-label">History</label>
                             <div class="col-md-9">
                                 <div class="row">
@@ -114,9 +114,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="holiday_name" class="col-md-3 control-label">Leave Type</label>
+                            <label for="emp_leave_type" class="col-md-3 control-label">Leave Type <span class="text-danger">*</span></label>
                             <div class="col-md-9">
-                                <select class="form-control input-sm" name="" id="">
+                                <select class="form-control input-sm" name="emp_leave_type" id="emp_leave_type" v-model="emp_leave_type">
                                     <option value="">Select Type</option>
                                     <option v-for="(info,index) in userLeaveType" 
                                         :value="info.id" 
@@ -124,46 +124,51 @@
                                         v-if="info.days == null || info.days > 0"
                                     ></option>
                                 </select>
+                                <input type="hidden" name="userLeaveType" v-model="userLeaveType">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="from_date" class="col-md-3 control-label">Select Date</label>
+                            <label for="from_date" class="col-md-3 control-label">Select Date <span class="text-danger">*</span></label>
                             <div class="col-md-3">
-                                <input type="text" id="from_date" name="from_date" v-model="from_date" class="gui-input datepicker form-control input-sm jqueryDate" placeholder="From">
+                                <input type="text" id="from_date" name="from_date" v-model="from_date" class="gui-input datepicker form-control input-sm" placeholder="From">
                             </div>
                             <div class="col-md-3">
-                                <input type="text" id="to_date" name="to_date" v-model="to_date" class="gui-input datepicker form-control input-sm jqueryDate" placeholder="To">
+                                <input type="text" id="to_date" name="to_date" v-model="to_date" class="gui-input datepicker form-control input-sm" placeholder="To">
                             </div>
                             <label for="" class="col-md-2 control-label"><div @click="date_diff_cal" style="margin-top: -10px;" class="btn btn-xs btn-success">Cal. date diff.</div></label>
-                            <label for="" class="col-md-1 control-label result" v-text="date_diff"></label>
+                            <label for="" class="col-md-1 control-label result" id="show_date_diff"></label>
+                            <input type="hidden" v-model="date_diff" name="date_diff">
+                            <label for="" style="color:#e95947;" class="col-md-9 control-label" id="show_date_diff_msg">
+                                
+                            </label>
                         </div>
 
                         <div class="form-group">
-                            <label for="" class="col-md-3 control-label">Reason</label>
+                            <label for="" class="col-md-3 control-label">Reason <span class="text-danger">*</span></label>
                             <div class="col-md-9">
-                                <textarea name="holiday_description" class="form-control input-sm" placeholder="Write note"></textarea>
+                                <textarea name="leave_reason" v-model="leave_reason" class="form-control input-sm" placeholder="Application reason"></textarea>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="" class="col-md-3 control-label">Contact Address</label>
+                            <label for="" class="col-md-3 control-label">Contact Address <span class="text-danger">*</span></label>
                             <div class="col-md-9">
-                                <textarea name="holiday_description" class="form-control input-sm" placeholder="Write note"></textarea>
+                                <textarea name="leave_contact_address" v-model="leave_contact_address" class="form-control input-sm" placeholder="Leave time contact address."></textarea>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="holiday_name" class="col-md-3 control-label">Contact Number</label>
+                            <label for="" class="col-md-3 control-label">Contact Number</label>
                             <div class="col-md-9">
-                                <input name="holiday_name" class="form-control input-sm" type="text" placeholder="Holiday name">
+                                <input name="leave_contact_number" v-model="leave_contact_number" class="form-control input-sm" type="text" placeholder="Leave contract number.">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="passport_no" class="col-md-3 control-label">Passport Number</label>
                             <div class="col-md-9">
-                                <input name="passport_no" v-model="passport_no" class="form-control input-sm" type="text" placeholder="Holiday name">
+                                <input name="passport_no" v-model="passport_no" class="form-control input-sm" type="text" placeholder="Passport number">
                             </div>
                         </div>
 
@@ -186,6 +191,26 @@
                                         v-text="info.first_name+' '+info.last_name+' - '+info.designation.designation_name"
                                     ></option>
                                 </select2>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="col-md-3 control-label"></label>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-success mb5">
+                                            <input type="radio" name="leave_half_or_full" id="active" v-model="leave_half_or_full" value="1">
+                                            <label for="active">Full day</label>
+                                        </div>    
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="radio-custom radio-primary mb5">
+                                            <input type="radio" name="leave_half_or_full" id="inactive" v-model="leave_half_or_full" value="2">
+                                            <label for="inactive">Half day</label>
+                                        </div>    
+                                    </div>
+                                </div>     
                             </div>
                         </div>
                     </div>

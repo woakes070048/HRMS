@@ -30,12 +30,17 @@ Vue.component('select2', {
 new Vue({
   el: '#mainDiv',
   data: {
-    emp_name: 0,
+    emp_name: '',
+    emp_leave_type: '',
     from_date: '',
     to_date: '',
     date_diff: 0,
-    responsible_emp: 0,
-    passport_no: '00',
+    leave_reason: '',
+    leave_contact_address: '',
+    leave_contact_number: '',
+    responsible_emp: '',
+    passport_no: '',
+    leave_half_or_full: 1,
     options: [],
     users: [],
     leaveType: [],
@@ -53,21 +58,98 @@ new Vue({
   watch:{
     emp_name: function(id){
 
-      axios.get('/leave/user-taken-leave/'+id).then(response => {
-        this.userLeaveType = response.data.user_leave_type;
-        this.userHaveLeavs = response.data.userHaveLeavs;
-        this.userTakenLeaveId = response.data.taken_leave_type_id;
-        this.userTakenLeaveName = response.data.taken_leave_type_name;
-        this.userTakenLeaveDays = response.data.taken_leave_type_days;
-        this.userTakenLeave = response.data.taken_leave_ary;
+      if(id > 0){
+        axios.get('/leave/user-taken-leave/'+id).then(response => {
+          this.userLeaveType = response.data.user_leave_type;
+          this.userHaveLeavs = response.data.userHaveLeavs;
+          this.userTakenLeaveId = response.data.taken_leave_type_id;
+          this.userTakenLeaveName = response.data.taken_leave_type_name;
+          this.userTakenLeaveDays = response.data.taken_leave_type_days;
+          this.userTakenLeave = response.data.taken_leave_ary;
 
-        console.log(this.userTakenLeave);
-      });
+          console.log(this.userTakenLeave);
+        });
+      }
+      else{
+        this.userLeaveType = [];
+        this.userHaveLeavs = [];
+        this.userTakenLeave = [];
+      }
     }
   },
   methods:{
     date_diff_cal: function(){
-      alert('te');
-    }
+      var emp_leave_type_js = this.emp_leave_type;
+      
+      if(this.emp_leave_type > 0){
+        this.from_date = $('#from_date').val();
+        this.to_date = $('#to_date').val();
+        var date1 = new Date($('#from_date').val());
+        var date2 = new Date($('#to_date').val());
+        var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+        this.date_diff = Math.ceil((timeDiff / (1000 * 3600 * 24))+1);
+        var date_diff_js = this.date_diff;
+
+        if(Date.parse($('#to_date').val()) < Date.parse($('#from_date').val()))
+        {
+          $('#show_date_diff').html('Invalid');
+          this.date_diff = "";
+        }
+        else{
+          $('#show_date_diff').html(this.date_diff);
+
+            $.each( this.userLeaveType, function( key, value ) {
+                if(emp_leave_type_js == value.id){
+                  var chk_day = value.days - date_diff_js;
+                
+                  if(chk_day < 0 && value.days != null){
+                    $('#show_date_diff_msg').html("* You can only apply for "+value.days+" days or below "+value.days+" days leave.");
+                  }
+                  else{
+                    $('#show_date_diff_msg').html("");
+                  }
+                }
+            });
+        }
+      }
+      else{
+        swal("Try again!", "Please select leave type first ...", "error");
+      } 
+    },
+    saveData(formId){
+
+        var formData = $('#'+formId).serialize();
+
+        axios.post('/leave/add', formData)
+        .then((response) => { 
+
+            // swal({
+            //     title: response.data.title+"!",
+            //     text: response.data.message,
+            //     type: response.data.title,
+            //     showCancelButton: false,
+            //     confirmButtonColor: "#DD6B55",
+            //     confirmButtonText: "Done",
+            //     closeOnConfirm: false
+            // },
+            // function(){
+            //     location.href=location.href;
+            // });
+        })
+        .catch((error) => {
+            
+            if(error.response.status != 200){ //error 422
+            
+                var errors = error.response.data;
+
+                var errorsHtml = '<div class="alert alert-danger"><ul>';
+                $.each( errors , function( key, value ) {
+                    errorsHtml += '<li>' + value[0] + '</li>';
+                });
+                errorsHtml += '</ul></di>';
+                $( '#create-form-errors' ).html( errorsHtml );
+            }
+        });
+    },
   }
 })
