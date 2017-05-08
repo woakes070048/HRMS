@@ -12,7 +12,8 @@
             <img class="media-object mw150" width="165px" src="{{asset('img/placeholder.png')}}" alt="{{$auth->fullname}}">
             @endif
           </a>
-        </div>                      
+        </div>    
+
         <div class="media-body va-m">
           <h2 class="media-heading">{{$user->fullname}}
             <small> - Profile (@if($user->status ==1) active @else inactive @endif account )</small>
@@ -24,6 +25,10 @@
           <h4 class="media-heading">Parmanent Address
             <small> - {{$user->address->permanent_postoffice or ''}}, {{$user->address->permanentPoliceStation->police_station_name or ''}}, {{$user->address->permanentDistrict->district_name or ''}}, {{$user->address->permanentDivision->division_name or ''}}.</small>
           </h4>
+        </div>
+
+        <div class="media-right pr30 pl50 pull-right">
+          <a href="{{url('/employee/view/'.$user->employee_no)}}" class="btn btn-dark btn-sm">View Profile</a>
         </div>
       </div>
   </div>
@@ -85,7 +90,7 @@
                       <div v-if="attendance.observation == 1">
 
                         <span v-if="attendance.in_time" :class="{'text-danger':attendance.late_hour}">
-                          <i class="glyphicons glyphicons-unshare text-success"></i>
+                          <i class="glyphicons glyphicons-unshare" :class="(attendance.late_hour)?'text-danger':'text-success'"></i>
                           <span v-text="attendance.in_time"></span>
                         </span>
 
@@ -118,9 +123,10 @@
                       <!-- present holiday -->
                       <div v-if="attendance.observation == 5">
                         <i class="fa fa-h-square fa-2x text-danger"></i>
+                        <hr class="pn" style="margin: 1px!important">
 
                         <span v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
-                          <i class="glyphicons glyphicons-unshare"></i>
+                          <i class="glyphicons glyphicons-unshare" :class="(attendance.late_hour)?'text-danger':'text-success'"></i>
                           <span v-text="attendance.in_time"></span>
                         </span>
 
@@ -139,9 +145,10 @@
                       <!-- present weekend -->
                       <div v-if="attendance.observation == 6">
                         <i class="fa-2x text-danger text-strong">W</i>
+                        <hr class="pn" style="margin: 1px!important">
 
                         <span v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
-                          <i class="glyphicons glyphicons-unshare"></i>
+                          <i class="glyphicons glyphicons-unshare" :class="(attendance.late_hour)?'text-danger':'text-success'"></i>
                           <span v-text="attendance.in_time"></span>
                         </span>
 

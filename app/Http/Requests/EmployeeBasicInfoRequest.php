@@ -33,13 +33,15 @@ class EmployeeBasicInfoRequest extends FormRequest
         }else{
              $employee_no ='required|regex:/[0-9a-zA-Z][\-{1}][0-9]+$/|unique:users';
              $email = 'required|email|unique:users';
-             $password = 'required|min:6|max:16';
-             $retype_pass = 'required|same:password';
+             $password = 'nullable|min:6|max:16';
+             $retype_pass = 'nullable|same:password';
         }
 
         return [
             'employee_no' => $employee_no,
             'employee_type_id' => 'required|numeric',
+            'from_date' => 'required_if:employee_type_id,2,4',
+            'to_date' => 'required_if:employee_type_id,2,4',
             'branch_id' => 'required|numeric',
             'designation_id' => 'required|numeric',
             'unit_id' => 'required|numeric',
@@ -54,13 +56,13 @@ class EmployeeBasicInfoRequest extends FormRequest
             'present_division_id' => 'required',
             'present_district_id' => 'required',
             'present_policestation_id' => 'required',
-            'present_postoffice' => 'required',
-            'present_address' => 'required',
+            // 'present_postoffice' => 'required',
+            // 'present_address' => 'required',
             'permanent_division_id' => 'required',
             'permanent_district_id' => 'required',
             'permanent_policestation_id' => 'required',
-            'permanent_postoffice' => 'required',
-            'permanent_address' => 'required',
+            // 'permanent_postoffice' => 'required',
+            // 'permanent_address' => 'required',
         ];
     }
 
@@ -89,7 +91,14 @@ class EmployeeBasicInfoRequest extends FormRequest
         return [
             'designation_id.numeric' => 'The :attribute field is required.',
             'supervisor_id.numeric' => 'The :attribute field is required.',
-            'image.max' => 'The file size must be less then 4 MB.'
+            'image.max' => 'The file size must be less then 4 MB.',
+            'from_date.required_if' => 'The :attribute field is required.',
+            'to_date.required_if' => 'The :attribute field is required.',
+
         ];
     }
+
+
+
+    
 }
