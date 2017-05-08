@@ -44,6 +44,15 @@ class AttendanceTimesheet extends Model
     }
 
 
+    public function getTotalWorkHourFormatAttribute($value){
+        if(!empty($value) && $value !=Null){
+            return $value;
+        }else{
+            return Null;
+        }
+    }
+
+
     public function get_attendance_timesheet($from_date, $to_date, $department_id=0, $timesheet_observation, $employee_no=0){
 
     	if($timesheet_observation == 'present'){

@@ -40,5 +40,13 @@ class AttendanceTimesheetArchive extends Model
             return '';
         }
     }
+
+    public function getTotalWorkHourFormatAttribute($value){
+        if(!empty($value) && $value !=Null){
+            return $value;
+        }else{
+            return Null;
+        }
+    }
     
 }

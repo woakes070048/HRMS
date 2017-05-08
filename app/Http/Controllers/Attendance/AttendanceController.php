@@ -14,6 +14,7 @@ use App\Jobs\ArchiveAttendanceTimesheetJob;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class AttendanceController extends Controller
@@ -57,7 +58,7 @@ class AttendanceController extends Controller
         if($request->employee_no){
             $data['employee_no'] = $request->employee_no;
         }else{
-            $data['employee_no'] = '';
+            $data['employee_no'] = $this->auth->employee_no;
         }
 
         if($request->has('from_date')){
@@ -197,7 +198,7 @@ class AttendanceController extends Controller
         }
 
 		$dateData = $this->generateDays($from_date, $to_date);
-    	$attendances = ['days' => $dateData['dates'], 'dayList'=> $dateData['date_list'], 'attendance' => $attendance];
+    	$attendances = ['days' => $dateData['dates'], 'dayList' => $dateData['date_list'], 'attendance' => $attendance];
     	$attendanceTimesheet = $this->generateAttendanceTimesheet($attendances, $timesheet_observation);
 
         if($request->has('employee_no')){
@@ -233,11 +234,21 @@ class AttendanceController extends Controller
 
     	$toDate = Carbon::parse($to_date);
     	$day =  $toDate->diffInDays(Carbon::parse($from_date));
+        $weekend = DB::table('weekends')->where('status',1)->first();
+        $weekends = [];
+        if($weekend){
+            $weekends = explode(',', str_replace(' ','',$weekend->weekend));
+        }
 
     	$dates = [];
     	$dateList = [];
     	for($i=0; $i<=$day; $i++){
-    		$dates[] = Carbon::parse($from_date)->format('M d Y');
+            $day_name = Carbon::parse($from_date)->format('l');
+            if(in_array($day_name, $weekends)){
+                $dates[] = '<span style="color:red">'.Carbon::parse($from_date)->format('M d Y')."</span>";
+            }else{
+        		$dates[] = Carbon::parse($from_date)->format('M d Y');
+            }
     		$dateList[] = Carbon::parse($from_date)->format('Y-m-d');
     		$from_date = Carbon::parse($from_date)->addDay(1);
     	}
@@ -265,6 +276,7 @@ class AttendanceController extends Controller
     			$ck = 0;
 
     			if(count($attendanceTimesheet)>0){
+
 	    			foreach($attendanceTimesheet as $key => $attendance){
 		    			if($attendance['date'] == $date){
 		    				$ck = 1;
@@ -359,8 +371,8 @@ class AttendanceController extends Controller
                         'in_time' => date('h:i',strtotime($content[2])),
                         'out_time' => date('h:i',strtotime($content[3])),
                         'total_work_hour' => date('H.i', strtotime($content[3]) - strtotime($content[2])),
-                        'late_count_time' => '',
-                        'late_hour' => '',
+                        'late_count_time' => Null,
+                        'late_hour' => Null,
                         'created_at' => date('Y-m-d')
                     ];
                 }

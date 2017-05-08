@@ -87,7 +87,7 @@
             <thead class="bg-dark">
               <tr class="text-center" style="font-size: 11px!important">
                 <th style="vertical-align: middle; min-width:120px; max-width: 150px!important; color: #fff;">Employee Name</th>
-                <th style="color: #fff;" v-for="day in days" v-text="day"></th>
+                <th style="color: #fff;" v-for="day in days" v-html="day"></th>
               </tr>
             </thead>
 
@@ -108,7 +108,7 @@
                   <!-- attendance -->
                   <div v-if="attendance.observation == 1">
                     <div v-if="attendance.in_time" :class="{'text-danger':attendance.late_hour}">
-                      <i class="glyphicons glyphicons-unshare text-success"></i>
+                      <i class="glyphicons glyphicons-unshare" :class="(attendance.late_hour)?'text-danger':'text-success'"></i>
                       <span v-text="attendance.in_time"></span>
                     </div>
                     <div v-if="attendance.out_time">
@@ -139,7 +139,7 @@
                     <i class="fa fa-h-square fa-2x text-danger"></i>
 
                     <div v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
-                      <i class="glyphicons glyphicons-unshare"></i>
+                      <i class="glyphicons glyphicons-unshare" :class="(attendance.late_hour)?'text-danger':'text-success'"></i>
                       <span v-text="attendance.in_time"></span>
                     </div>
 
@@ -155,7 +155,7 @@
                     <i class="fa-2x text-danger text-strong">W</i>
                     
                     <div v-if="attendance.in_time !=''" :class="{'text-danger':attendance.late_hour}">
-                      <i class="glyphicons glyphicons-unshare"></i>
+                      <i class="glyphicons glyphicons-unshare" :class="(attendance.late_hour)?'text-danger':'text-success'"></i>
                       <span v-text="attendance.in_time"></span>
                     </div>
 

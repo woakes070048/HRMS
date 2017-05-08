@@ -39,6 +39,8 @@ var employee = new Vue({
         user_id:user_id,
         config_id:config_id,
 
+        type_map:false,
+        type_name: null,
         present_division_id:null,
         present_district_id:null,
         permanent_division_id:null,
@@ -202,18 +204,23 @@ var employee = new Vue({
             });
         },
 
-        // datePicker(){
-        //     $('.datepicker').datetimepicker({
-        //         format: 'YYYY-MM-DD',
-        //         pickTime: false
-        //     });
-        // },
 
         myDatePicker(){
             $('.mydatepicker').datetimepicker({
                 format: 'YYYY-MM-DD',
                 pickTime: false
             });
+        },
+
+
+        TypeDependancey(e){
+            var type_id = e.target.value;
+            this.type_name = this.employeeTypes[type_id-1].type_name;
+            if(type_id == 2 || type_id == 4){
+                this.type_map = true;
+            }else{
+                this.type_map = false;
+            }
         },
 
         getTabData(){

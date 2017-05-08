@@ -118,14 +118,21 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\EmployeeType');
     }
 
-     public function branch(){
-         return $this->belongsTo('App\Models\Branch');
-     }
+
+    public function employeeTypeMap(){
+        return $this->hasOne('App\Models\UserEmployeeTypeMap')->orderBy('id','desc');
+    }
+
+
+    public function branch(){
+        return $this->belongsTo('App\Models\Branch');
+    }
 
 
     public function designation(){
         return $this->belongsTo('App\Models\Designation');
     }
+
 
     public function supervisor(){
         return $this->belongsTo('App\Models\User');
@@ -135,6 +142,7 @@ class User extends Authenticatable
     public function address(){
         return $this->hasOne('App\Models\EmployeeAddress');
     }
+
 
     public function unit(){
         return $this->belongsTo('App\Models\Units');
@@ -190,6 +198,8 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\EmployeeLanguage');
     }
 
+    /************* end relations ************/
+
 
     public function get_profile_info($employee_no){
         return User::with('supervisor','designation.department','designation.level','branch','unit','details.bloodGroup','details.religion','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
@@ -199,7 +209,7 @@ class User extends Authenticatable
     public function get_user_data_by_user_tab($user_id,$tab,$flag=null){
 
         if($tab == ''){
-            $basic = User::with('supervisor','designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
+            $basic = User::with('employeeType','employeeTypeMap','supervisor','designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
             return response()->json($basic);
         }
 

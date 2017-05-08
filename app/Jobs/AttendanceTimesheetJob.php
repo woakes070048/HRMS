@@ -18,6 +18,9 @@ class AttendanceTimesheetJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $tries = 5;
+
+    public $timeout = 120;
 
     protected $calculateMonth;
 
@@ -38,27 +41,67 @@ class AttendanceTimesheetJob implements ShouldQueue
      */
     public function handle()
     {
-        $to_date = Carbon::now()->format('Y-m-d');
-        $end_date = $to_date;
+        $today_date = Carbon::now()->format('Y-m-d');
+        $end_date = $today_date;
         $start_date = Carbon::now()->subMonths($this->calculateMonth)->format('Y-m-d');
-        $attendance  = $this->attendance($start_date, $end_date);
 
-        $attendance = collect($attendance);
-        $today_leaves = $attendance->where('observation',2)->where('date', $to_date)->all();
-        $prev_leaves = $attendance->where('observation',2)->where('date','!=', $to_date)->all();
-        $today_attendance = $attendance->where('date', $to_date)->all();
-        $userIds = collect($today_attendance)->pluck('user_id')->toArray();
-        AttendanceTimesheet::where('date',$to_date)->whereIn('user_id',$userIds)->delete();
-        // dd($today_leaves);
-        // dd($all_leaves);
+        // $attendance  = $this->attendance($start_date, $end_date);
+
+        // $attendance = collect($attendance);
+        // $today_leaves = $attendance->where('observation',2)->where('date', $today_date)->all();
+        // $prev_leaves = $attendance->where('observation',2)->where('date','!=', $today_date)->all();
+        // $today_attendance = $attendance->where('date', $today_date)->all();
+        // $userIds = collect($today_attendance)->pluck('user_id')->toArray();
+
+        $attendances  = $this->attendance($start_date, $end_date);
+        // dd($attendances);
+
+        $today_attendance = [];
+        $prev_attendance = [];
+        $today_leaves = [];
+        $prev_leaves = [];
+        $userIds = [];
+
+        foreach($attendances as $attendance){
+            if($attendance['date'] == $today_date){
+                if($attendance['observation'] == 2){
+                    $today_leaves[] = $attendance;
+                }else{
+                    $today_attendance[] = $attendance;
+                    $userIds[] = $attendance['user_id'];
+                }
+            }else{
+                if($attendance['observation'] == 2){
+                    $prev_leaves[] = $attendance;
+                }else{
+                    $prev_attendance[] = $attendance;
+                }
+            }
+        }
+
+        $AttendanceTimesheet = AttendanceTimesheet::whereBetween('date',[$start_date, $end_date])->pluck('date')->toArray();
+        $prev_attendance = collect($prev_attendance);
+        // dd($prev_attendance);
+        $prev_attendance_data = $prev_attendance->whereNotIn('date', $AttendanceTimesheet)->all();
+        // dd($prev_attendance_data);
+        // dd($userIds);
+
+        if(count($userIds) > 0)
+            AttendanceTimesheet::where('date',$today_date)->whereIn('user_id',$userIds)->delete();
+
+        if(count($prev_attendance_data) > 0)
+            AttendanceTimesheet::insert($prev_attendance_data);
+
         if(count($today_attendance) > 0)
             AttendanceTimesheet::insert($today_attendance);
+
         if(count($today_leaves) > 0)
             AttendanceTimesheet::insert($today_leaves);
         
         foreach ($prev_leaves as $info) {
             AttendanceTimesheet::where('user_id',$info['user_id'])->where('date',$info['date'])->update($info);
         }
+
     }
 
 
@@ -79,7 +122,6 @@ class AttendanceTimesheetJob implements ShouldQueue
                     $qu->whereBetween('end_date',[$start_date, $end_date]);
                 })->where('status',1);
             }])->get();
-        // dd($users);
 
         $get_holidays = DB::table('holidays')->where('holiday_status',1)->get();
         $holidays = $this->generateHoliday($get_holidays);
@@ -92,7 +134,7 @@ class AttendanceTimesheetJob implements ShouldQueue
             $attendance_list = $user->attendance;
             $leaves = $this->generateLeaves($user->leaves);
             $weekends = $this->generateWeekend($user->workShifts);
-            // dd($attendance_list);
+            // dd($attendance_array);
             // print_r($weekends);
 
             foreach($days as $key => $day){
