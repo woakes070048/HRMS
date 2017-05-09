@@ -3,7 +3,9 @@
 @section('style')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     <style type="text/css" media="screen">
-        
+        .sm-height {
+            padding: 4px;
+        }
     </style>
 @endsection
 
@@ -62,7 +64,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">Leave Info</h4>
                 </div>
-                <form class="form-horizontal" @submit.prevent="saveData('addFormData')" id="addFormData">
+                <form class="form-horizontal" @submit.prevent="saveData" id="addFormData" method="post" enctype="multipart/form-data">
                     <div class="modal-body">
 
                         <div id="create-form-errors">
@@ -110,6 +112,36 @@
                                         </ul>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12 control-label">
+                                    <div align="center" ><h5>Leave History</h5></div>
+                                </div>
+                            </div>
+                            <div class="col-md-10 col-md-offset-1">
+                                <table class="table">
+                                    <tr class="success">
+                                        <th>Sl</th>
+                                        <th>Name</th>
+                                        <th>Amount</th>
+                                        <th>Taken</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Casual</td>
+                                        <td>14</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Sick</td>
+                                        <td>10</td>
+                                        <td>3</td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
 
@@ -213,12 +245,28 @@
                                 </div>     
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label for="passport_no" class="col-md-3 control-label">Files</label>
+                            <div class="col-md-9">
+                                <input type="file" name="file[]" id="file" multiple="multiple"></input>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Process</button>
                     </div>
                 </form>
+
+                {{-- <form action="{{url('leave/add')}}" method="post" enctype="multipart/form-data">
+                    
+                    {{ csrf_field() }}
+
+                    <input type="file" name="avatar">
+
+                    <input type="submit" class="btn">
+                </form> --}}
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Leave;
 use Auth;
 use DB;
 use App\Models\LeaveType;
+use App\Models\User;
 use App\Models\UserLeaveTypeMap;
 use App\Models\EmployeeLeave;
 use Illuminate\Http\Request;
@@ -113,22 +114,22 @@ class LeaveController extends Controller
 
     public function create(Request $request){
 
-        // $this->validate($request, [
-        //     'emp_name' => 'required',
-        //     'emp_leave_type' => 'required',
-        //     'from_date' => 'required',
-        //     'to_date' => 'required',
-        //     'leave_reason' => 'required',
-        //     'leave_contact_address' => 'required',
-        //     'leave_half_or_full' => 'required',
-        // ],[
-        //     'emp_name.required' => 'Employee name is required.',
-        //     'emp_leave_type.required' => 'Leave type is required.',
-        //     'from_date.required' => 'Select date(from date) is required.',
-        //     'to_date.required' => 'Select date(to date) is required.',
-        //     'leave_contact_address.required' => 'Contract address is required.',
-        //     'leave_half_or_full.required' => 'Leave status required.',
-        // ]);
+        $this->validate($request, [
+            'emp_name' => 'required',
+            'emp_leave_type' => 'required',
+            'from_date' => 'required',
+            'to_date' => 'required',
+            'leave_reason' => 'required',
+            'leave_contact_address' => 'required',
+            'leave_half_or_full' => 'required',
+        ],[
+            'emp_name.required' => 'Employee name is required.',
+            'emp_leave_type.required' => 'Leave type is required.',
+            'from_date.required' => 'Select date(from date) is required.',
+            'to_date.required' => 'Select date(to date) is required.',
+            'leave_contact_address.required' => 'Contract address is required.',
+            'leave_half_or_full.required' => 'Leave status required.',
+        ]);
 
         $emp_name = $request->emp_name;
         $emp_leave_type = $request->emp_leave_type;
@@ -155,44 +156,59 @@ class LeaveController extends Controller
 
                     if($chk >= 0){
                         
-                        echo "okk";
-                        // try{
-                        //     EmployeeLeave::create([
-                        //         'user_id' => $request->holiday_name,
-                        //         'leave_type_id' => $request->from_date, 
-                        //         'employee_leave_from' => $request->to_date, 
-                        //         'employee_leave_to' => $request->holiday_description,
-                        //         'employee_leave_user_remarks' => $request->holiday_status,
-                        //         'employee_leave_half_or_full' => $request->holiday_status,
-                        //         'employee_leave_contact_address' => $request->holiday_status,
-                        //         'employee_leave_contact_number' => $request->holiday_status,
-                        //         'employee_leave_passport_no' => $request->holiday_status,
-                        //         'employee_leave_responsible_person' => $request->holiday_status,
-                        //         // 'employee_leave_attachment' => $request->holiday_status,
-                        //         // 'employee_leave_recommend_to' => $request->holiday_status,
-                        //         'employee_leave_status' => $request->holiday_status,
-                        //     ]);
-                        
-                        //     $data['title'] = 'success';
-                        //     $data['message'] = 'data successfully added!';
+                        $supervisor_id = User::find($emp_name)->supervisor_id;
 
-                        // }catch (\Exception $e) {
+                        $file_name = '';
+                        if(request()->hasFile('file')){
+            
+                            $file = request()->file('file');
+                            $exten = $file->extension();
+                            $temp_name = date("Ymd_His");
+                            $folder = $emp_name;
+                            $file_name = $temp_name.".".$exten;
+
+                            request()->file('file')->storeAs($folder, $file_name);
+                        }
+                        
+                        try{
+                            EmployeeLeave::create([
+                                'user_id' => $emp_name,
+                                'leave_type_id' => $emp_leave_type, 
+                                'employee_leave_from' => $from_date, 
+                                'employee_leave_to' => $to_date,
+                                'employee_leave_user_remarks' => $leave_reason,
+                                'employee_leave_half_or_full' => $leave_half_or_full,
+                                'employee_leave_contact_address' => $leave_contact_address,
+                                'employee_leave_contact_number' => $leave_contact_number,
+                                'employee_leave_passport_no' => $passport_no,
+                                'employee_leave_responsible_person' => $responsible_emp,
+                                'employee_leave_attachment' => $file_name,
+                                'employee_leave_recommend_to' => $supervisor_id,
+                                'employee_leave_status' => 1,
+                            ]);
+                        
+                            $data['title'] = 'success';
+                            $data['message'] = 'data successfully added!';
+
+                        }catch (\Exception $e) {
                             
-                        //    $data['title'] = 'error';
-                        //    $data['message'] = 'data not added!';
-                        // }
+                           $data['title'] = 'error';
+                           $data['message'] = 'data not added!';
+                        }
                     }
                     else{
-                        echo "* You can only apply for ".$info['days']." days or below ".$info['days']." days leave.";
+                        $data['title'] = 'error';
+                        $data['message'] = "* You can only apply for ".$info['days']." days or below ".$info['days']." days leave.";
                     }
                 }
             }
         }
         else{
-            echo "Invalid";
+            $data['title'] = 'error';
+            $data['message'] = "* Invalid date entry.";
         }
 
-        $request->session()->forget('global_leave_type_ary');
-        return response()->json($data);
+        // $request->session()->forget('global_leave_type_ary');
+        return $data;
     }
 }

@@ -116,25 +116,46 @@ new Vue({
         swal("Try again!", "Please select leave type first ...", "error");
       } 
     },
-    saveData(formId){
+    saveData(e){
 
-        var formData = $('#'+formId).serialize();
+        var formData = new FormData(e.target);
 
-        axios.post('/leave/add', formData)
+        formData.append('file', document.getElementById('file').files[0]);
+
+        axios.post('/leave/add', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+        })
         .then((response) => { 
+            $( '#create-form-errors' ).html('');
 
-            // swal({
-            //     title: response.data.title+"!",
-            //     text: response.data.message,
-            //     type: response.data.title,
-            //     showCancelButton: false,
-            //     confirmButtonColor: "#DD6B55",
-            //     confirmButtonText: "Done",
-            //     closeOnConfirm: false
-            // },
-            // function(){
-            //     location.href=location.href;
-            // });
+            if(response.data.title == 'error'){
+              swal({
+                title: response.data.title+"!",
+                text: response.data.message,
+                type: response.data.title,
+                showCancelButton: false,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Done",
+                closeOnConfirm: true
+              });
+            }
+            else{
+              swal({
+                  title: response.data.title+"!",
+                  text: response.data.message,
+                  type: response.data.title,
+                  showCancelButton: false,
+                  confirmButtonColor: "#DD6B55",
+                  confirmButtonText: "Done",
+                  closeOnConfirm: false
+              },
+              function(){
+                  location.href=location.href;
+              });
+            }
+              
         })
         .catch((error) => {
             
