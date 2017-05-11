@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Leave;
 use Auth;
 use DB;
 use App\Models\LeaveType;
+use App\Models\Weekend;
 use App\Models\User;
 use App\Models\UserLeaveTypeMap;
 use App\Models\EmployeeLeave;
@@ -27,15 +28,59 @@ class LeaveController extends Controller
 
     public function index(){
 
-    	$data['title'] = "HRMS|Leave";
-    	return view('leave.leave', $data);
+    	// $data['title'] = "HRMS|Leave";
+     //    $data['all_leave_types'] = LeaveType::where('leave_type_status', 1)->get();
+    	// return view('leave.leave', $data);
+
+
+        // $mydate = '2016-01-01';
+        // echo date('l', strtotime('2016-01-01'))."<br/>";
+        // echo date('l', strtotime('2016-01-02'))."<br/>";
+        // echo date('l', strtotime('2016-01-03'))."<br/>";
+        // echo date('l', strtotime('2016-01-04'))."<br/>";
+        // echo date('l', strtotime('2016-01-05'))."<br/>";
+        // echo date('l', strtotime('2016-01-06'))."<br/>";
+        // echo date('l', strtotime('2016-01-07'))."<br/>";
+
+        $all_weekends = Weekend::orderBY('id', 'DESC')->first();
+
+        $weekends_ary = explode(',', $all_weekends->weekend); 
+        $weekends_ary = array_map('trim', $weekends_ary); // triming
+
+        
+
+        $date1 = '28/05/2017';
+        $date2 = '2/07/2017';
+
+        function returnDates($fromdate, $todate) {
+            $fromdate = \DateTime::createFromFormat('d/m/Y', $fromdate);
+            $todate = \DateTime::createFromFormat('d/m/Y', $todate);
+            return new \DatePeriod(
+                $fromdate,
+                new \DateInterval('P1D'),
+                $todate->modify('+1 day')
+            );
+        }
+
+        $datePeriod = returnDates($date1, $date2);
+        foreach($datePeriod as $date) {
+            $dattt = date('l', strtotime($date->format('d-m-Y')));
+            echo $date->format('d-m-Y')."--".$dattt;
+
+            if(in_array($dattt, $weekends_ary)){
+                echo "---- Weekend ---";
+            }
+
+            echo "<br>";
+        }
+
     }
 
     public function userTakenLeave($id){
 
         $data_map = UserLeaveTypeMap::with('leaveType')->where('user_id', $id)->where('status', 1)->get();
 
-        $leave_amount_ary = [];
+        $leave_amount_ary = [];   //leave total amount
 
         $sl = 0;
         foreach($data_map as $mapInfo){
@@ -51,6 +96,7 @@ class LeaveController extends Controller
         $leave_type_days_ary = [];
         $taken_leave_ary = [];
 
+        //calculate which type leave taken how many days...
         foreach($data_val as $info){
             $date1 = $info->employee_leave_from;
             $date2 = $info->employee_leave_to;
@@ -79,6 +125,25 @@ class LeaveController extends Controller
             }
         }
 
+        //combined leave amount and taken leave to show leave history
+        $leave_amount_taken_combination = [];
+        $sl = 0;
+        foreach($leave_amount_ary as $info){
+            $leave_amount_taken_combination[$sl]['id'] = $info['id'];
+            $leave_amount_taken_combination[$sl]['name'] = $info['name'];
+            $leave_amount_taken_combination[$sl]['amount_days'] = $info['days'];
+            
+            if(in_array($info['id'], $leave_type_id_ary)){
+                $locId = array_search($info['id'], $leave_type_id_ary);
+                $leave_amount_taken_combination[$sl]['taken_days'] = $taken_leave_ary[$locId]['days'];
+            }
+            else{
+                $leave_amount_taken_combination[$sl]['taken_days'] = 0;
+            }
+
+            $sl++;
+        }
+
         //calculate remain leave to show leave type
         $leave_type_ary = [];
         $aryIndex = 0;
@@ -104,8 +169,9 @@ class LeaveController extends Controller
         $data['taken_leave_type_id'] = $leave_type_id_ary;
         $data['taken_leave_type_name'] = $leave_type_name_ary;
         $data['taken_leave_type_days'] = $leave_type_days_ary;
-        $data['taken_leave_ary'] = $taken_leave_ary;
-        $data['user_leave_type'] = $leave_type_ary;
+        $data['taken_leave_ary'] = $taken_leave_ary; //leave taken
+        $data['user_leave_type'] = $leave_type_ary; //leave remain
+        $data['show_history'] = $leave_amount_taken_combination;
 
         session()->put('global_leave_type_ary', $leave_type_ary);
 

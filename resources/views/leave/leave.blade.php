@@ -94,7 +94,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group" v-show="emp_name>0">
+                        {{-- <div class="form-group" v-show="emp_name>0">
                             <label for="holiday_name" class="col-md-3 control-label">History</label>
                             <div class="col-md-9">
                                 <div class="row">
@@ -113,12 +113,12 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
-                        <div class="form-group">
+                        <div class="form-group" style="padding-top: 0px;" v-show="emp_name>0">
                             <div class="row">
                                 <div class="col-md-12 control-label">
-                                    <div align="center" ><h5>Leave History</h5></div>
+                                    <div align="center"><h5 style="padding-top: 0px;margin-top: 0px;">Leave History</h5></div>
                                 </div>
                             </div>
                             <div class="col-md-10 col-md-offset-1">
@@ -126,25 +126,19 @@
                                     <tr class="success">
                                         <th>Sl</th>
                                         <th>Name</th>
-                                        <th>Amount</th>
-                                        <th>Taken</th>
+                                        <th>Amount(Days)</th>
+                                        <th>Taken(Days)</th>
                                     </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Casual</td>
-                                        <td>14</td>
-                                        <td>0</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Sick</td>
-                                        <td>10</td>
-                                        <td>3</td>
+                                    <tr v-for="(info, index) in show_history">
+                                        <td v-text="index+1"></td>
+                                        <td v-text="info.name"></td>
+                                        <td v-text="info.amount_days == null ? 'Undefined':info.amount_days"></td>
+                                        <td v-text="info.taken_days"></td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
-
+                        {{-- v-if="info.days == null || info.days > 0" --}}
                         <div class="form-group">
                             <label for="emp_leave_type" class="col-md-3 control-label">Leave Type <span class="text-danger">*</span></label>
                             <div class="col-md-9">
@@ -153,7 +147,7 @@
                                     <option v-for="(info,index) in userLeaveType" 
                                         :value="info.id" 
                                         v-text="info.name"
-                                        v-if="info.days == null || info.days > 0"
+                                        :disabled="info.days == 0"
                                     ></option>
                                 </select>
                                 <input type="hidden" name="userLeaveType" v-model="userLeaveType">

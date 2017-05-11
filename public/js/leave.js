@@ -50,6 +50,7 @@ new Vue({
     userTakenLeaveId: [],
     userTakenLeaveName: [],
     userTakenLeaveDays: [],
+    show_history: [],
   },
   mounted(){
     axios.get('/get-employee').then(response => this.users = response.data);
@@ -66,8 +67,9 @@ new Vue({
           this.userTakenLeaveName = response.data.taken_leave_type_name;
           this.userTakenLeaveDays = response.data.taken_leave_type_days;
           this.userTakenLeave = response.data.taken_leave_ary;
+          this.show_history = response.data.show_history;
 
-          console.log(this.userTakenLeave);
+          console.log(this.show_history);
         });
       }
       else{
