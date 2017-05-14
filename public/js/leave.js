@@ -51,6 +51,8 @@ new Vue({
     userTakenLeaveName: [],
     userTakenLeaveDays: [],
     show_history: [],
+    holidays: '',
+    weekends: '',
   },
   mounted(){
     axios.get('/get-employee').then(response => this.users = response.data);
@@ -58,6 +60,11 @@ new Vue({
   },
   watch:{
     emp_name: function(id){
+
+      this.userLeaveType = [];
+      this.userHaveLeavs = [];
+      this.userTakenLeave = [];
+      $('#show_date_diff').html('');
 
       if(id > 0){
         axios.get('/leave/user-taken-leave/'+id).then(response => {
@@ -72,14 +79,29 @@ new Vue({
           console.log(this.show_history);
         });
       }
-      else{
-        this.userLeaveType = [];
-        this.userHaveLeavs = [];
-        this.userTakenLeave = [];
-      }
     }
   },
   methods:{
+    formatDate: function(date){
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      return date.getFullYear() + "-" + (date.getMonth()+1) + "-" +date.getDate();
+    },
+    returnOnlyYear: function(date){
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      return date.getFullYear();
+    },
     date_diff_cal: function(){
       var emp_leave_type_js = this.emp_leave_type;
       
@@ -90,32 +112,71 @@ new Vue({
         var date2 = new Date($('#to_date').val());
         var timeDiff = Math.abs(date2.getTime() - date1.getTime());
         this.date_diff = Math.ceil((timeDiff / (1000 * 3600 * 24))+1);
-        var date_diff_js = this.date_diff;
+        var include_holiday_weekend = 0;
 
-        if(Date.parse($('#to_date').val()) < Date.parse($('#from_date').val()))
-        {
-          $('#show_date_diff').html('Invalid');
-          this.date_diff = "";
+        console.log("dateDIFF: "+ this.date_diff);
+
+        $.each( this.userHaveLeavs, function( key, value ) {
+            if(emp_leave_type_js == value.leave_type_id){
+              if(value.leave_type.leave_type_include_holiday == 1){
+                include_holiday_weekend = 1;
+              }
+              else{
+                include_holiday_weekend = 0;
+              }
+            }
+        });
+
+        var dateUrl1 = this.formatDate(date1);
+        var dateUrl2 = this.formatDate(date2);
+        var year1 = this.returnOnlyYear(date1);
+        var year2 = this.returnOnlyYear(date2);
+
+        if(year1 == year2){
+          axios.get('/leave/getWeekendHolidays/'+dateUrl1+'/'+dateUrl2).then(response => {
+
+            console.log("Hli : "+response.data.holidays);
+            console.log("week : "+response.data.weekend);
+            this.holidays = response.data.holidays;
+            this.weekends = response.data.weekend;
+          });
+
+          if(include_holiday_weekend == 0){
+            this.date_diff = this.date_diff - (this.holidays + this.weekends);
+          }
+
+          var date_diff_js = this.date_diff;
+          console.log("ss:"+this.date_diff);
+          $('#show_date_diff').html(this.date_diff); //extra for test
+
+          if(Date.parse($('#to_date').val()) < Date.parse($('#from_date').val()))
+          {
+            $('#show_date_diff').html('Invalid');
+            this.date_diff = "";
+          }
+          else{
+            // $('#show_date_diff').html(this.date_diff);
+
+              $.each( this.userLeaveType, function( key, value ) {
+                  if(emp_leave_type_js == value.id){
+                    var chk_day = value.days - date_diff_js;
+                  
+                    if(chk_day < 0 && value.days != null){
+                      $('#show_date_diff_msg').html("* You can only apply for "+value.days+" days or below "+value.days+" days leave.");
+                    }
+                    else{
+                      $('#show_date_diff_msg').html("");
+                    }
+                  }
+              });
+          }
         }
         else{
-          $('#show_date_diff').html(this.date_diff);
-
-            $.each( this.userLeaveType, function( key, value ) {
-                if(emp_leave_type_js == value.id){
-                  var chk_day = value.days - date_diff_js;
-                
-                  if(chk_day < 0 && value.days != null){
-                    $('#show_date_diff_msg').html("* You can only apply for "+value.days+" days or below "+value.days+" days leave.");
-                  }
-                  else{
-                    $('#show_date_diff_msg').html("");
-                  }
-                }
-            });
+          swal("Invalid Date!", "From date and to date must have same year...", "error");
         }
       }
       else{
-        swal("Try again!", "Please select leave type first ...", "error");
+        swal("Try again!", "Please select leave type first...", "error");
       } 
     },
     saveData(e){

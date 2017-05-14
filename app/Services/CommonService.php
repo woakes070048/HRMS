@@ -277,5 +277,4 @@ trait CommonService
             return WorkShift::all();
         }
     }
-
 }

@@ -6,6 +6,7 @@ use Auth;
 use DB;
 use App\Models\LeaveType;
 use App\Models\Weekend;
+use App\Models\Holiday;
 use App\Models\User;
 use App\Models\UserLeaveTypeMap;
 use App\Models\EmployeeLeave;
@@ -28,9 +29,10 @@ class LeaveController extends Controller
 
     public function index(){
 
-    	// $data['title'] = "HRMS|Leave";
-     //    $data['all_leave_types'] = LeaveType::where('leave_type_status', 1)->get();
-    	// return view('leave.leave', $data);
+    	$data['title'] = "HRMS|Leave";
+        $data['all_leave_types'] = LeaveType::where('leave_type_status', 1)->get();
+    	return view('leave.leave', $data);
+
 
 
         // $mydate = '2016-01-01';
@@ -42,38 +44,114 @@ class LeaveController extends Controller
         // echo date('l', strtotime('2016-01-06'))."<br/>";
         // echo date('l', strtotime('2016-01-07'))."<br/>";
 
-        $all_weekends = Weekend::orderBY('id', 'DESC')->first();
-
-        $weekends_ary = explode(',', $all_weekends->weekend); 
-        $weekends_ary = array_map('trim', $weekends_ary); // triming
-
         
 
-        $date1 = '28/05/2017';
-        $date2 = '2/07/2017';
 
-        function returnDates($fromdate, $todate) {
-            $fromdate = \DateTime::createFromFormat('d/m/Y', $fromdate);
-            $todate = \DateTime::createFromFormat('d/m/Y', $todate);
-            return new \DatePeriod(
-                $fromdate,
-                new \DateInterval('P1D'),
-                $todate->modify('+1 day')
-            );
-        }
+        // $all_weekends = Weekend::orderBY('id', 'DESC')->first();
 
-        $datePeriod = returnDates($date1, $date2);
-        foreach($datePeriod as $date) {
-            $dattt = date('l', strtotime($date->format('d-m-Y')));
-            echo $date->format('d-m-Y')."--".$dattt;
+        // $weekends_ary = explode(',', $all_weekends->weekend); 
+        // $weekends_ary = array_map('trim', $weekends_ary); // triming
+        
 
-            if(in_array($dattt, $weekends_ary)){
-                echo "---- Weekend ---";
+        // $date1 = '28/05/2017';
+        // $date2 = '2/07/2017';
+
+        // function returnDates($fromdate, $todate) {
+        //     $fromdate = \DateTime::createFromFormat('d/m/Y', $fromdate);
+        //     $todate = \DateTime::createFromFormat('d/m/Y', $todate);
+        //     return new \DatePeriod(
+        //         $fromdate,
+        //         new \DateInterval('P1D'),
+        //         $todate->modify('+1 day')
+        //     );
+        // }
+
+        // $datePeriod = returnDates($date1, $date2);
+        // foreach($datePeriod as $date) {
+        //     $dattt = date('l', strtotime($date->format('d-m-Y')));
+        //     echo $date->format('d-m-Y')."--".$dattt;
+
+        //     if(in_array($dattt, $weekends_ary)){
+        //         echo "---- Weekend ---";
+        //     }
+
+        //     echo "<br>";
+        // }
+
+    }
+
+    public function getWeekendHolidays($fromDate, $toDate){
+
+        $weekendsData  = Weekend::orderBY('id', 'DESC')->first();
+        $weekends_ary = explode(',', $weekendsData->weekend); 
+        $weekends_ary = array_map('trim', $weekends_ary); // triming
+
+        $fromDateAry = explode('-', $fromDate);
+
+        //holiday calculation start
+        $holidays_info = Holiday::whereBetween('holiday_from', ["$fromDateAry[0]-1-1", "$fromDateAry[0]-12-31"])->where('holiday_status', 1)->get();
+
+        $holidayAry = [];
+
+        foreach($holidays_info as $info){
+            if($info->holiday_from == $info->holiday_to){
+                $holiDays = date("l", strtotime($info->holiday_from));
+                
+                if(!in_array($holiDays, $weekends_ary)){
+                    $holidayAry[] = $info->holiday_from;
+                }
             }
+            else{
+                $day = 86400; 
+                $format = 'Y-m-d'; 
+                $sTime = strtotime($info->holiday_from);
+                $eTime = strtotime($info->holiday_to); 
+                $numDays = round(($eTime - $sTime) / $day) + 1;  
+                $days = array();  
 
-            echo "<br>";
+                for ($d = 0; $d < $numDays; $d++) {  
+                    $days_value = date($format, ($sTime + ($d * $day)));
+                    $holiDays = date("l", strtotime($days_value));
+                    
+                    if(!in_array($holiDays, $weekends_ary)){
+                        $holidayAry[] = $days_value;
+                    } 
+                } 
+            }
         }
 
+        $applyAry = [];
+        $count_weekend = 0;
+
+        if($fromDate == $toDate){
+            $applyAry[] = $fromDate;
+        }
+        else{
+            $day = 86400;  
+            $format = 'Y-m-d';  
+            $sTime = strtotime($fromDate); 
+            $eTime = strtotime($toDate); 
+            $numDays = round(($eTime - $sTime) / $day) + 1;  
+            $days = array();  
+
+            for ($d = 0; $d < $numDays; $d++) {  
+                $apply_days_value = date($format, ($sTime + ($d * $day)));
+                $apply_holiDays = date("l", strtotime($apply_days_value));
+                $applyAry[] = date($format, ($sTime + ($d * $day)));  
+                
+                if(in_array($apply_holiDays, $weekends_ary)){
+                    $count_weekend++;
+                }
+            } 
+        }
+
+        $compare_apply_n_holiday = array_intersect($holidayAry, $applyAry);
+        
+        //holiday calculation finished
+
+        $data['holidays'] = count($compare_apply_n_holiday);
+        $data['weekend'] = $count_weekend;
+        return $data;
     }
 
     public function userTakenLeave($id){

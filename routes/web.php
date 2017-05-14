@@ -300,6 +300,7 @@ Route::group(['prefix' => '/leave', 'namespace' => 'Leave'],function (){
     Route::get('/index','LeaveController@index');
     Route::get('/get-types','LeaveController@getTypes');
     Route::get('/user-taken-leave/{id}','LeaveController@userTakenLeave');
+    Route::get('/getWeekendHolidays/{fromDate}/{toDate}','LeaveController@getWeekendHolidays');
     // Route::get('/getAllData','LeaveController@getAllData');
     Route::post('/add','LeaveController@create');
     // Route::get('/edit/{id}','LeaveController@edit');
