@@ -19,6 +19,8 @@ class CreateEmployeeLeavesTable extends Migration
             $table->integer('leave_type_id')->unsigned();
             $table->date('employee_leave_from');
             $table->date('employee_leave_to');
+            $table->float('employee_leave_total_days',8,2);
+            $table->integer('employee_leave_application_subject')->nullable();
             $table->text('employee_leave_user_remarks')->nullable();
             $table->tinyInteger('employee_leave_half_or_full')->default(1)->comment='1=full 2=half';
             $table->text('employee_leave_contact_address')->nullable();

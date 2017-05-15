@@ -6,6 +6,16 @@
         .sm-height {
             padding: 4px;
         }
+
+        .btn-custom{
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .btn-custom:hover{
+            color: #ffffff;
+            text-decoration: none;
+        }
     </style>
 @endsection
 
@@ -17,7 +27,7 @@
             <div class="col-md-12">
                 <div class="panel">
                     <div class="panel-heading">
-                        <span class="panel-title"></span>
+                        <span class="panel-title">Leave Application</span>
                         
                         <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".dataAdd" style="margin-top: 12px;">Leave Application</button>
                     
@@ -28,24 +38,64 @@
                                 <thead>
                                     <tr class="success">
                                         <th>sl</th>
-                                        <th>Weekend</th>
+                                        <th>User Name</th>
+                                        <th>Leave Type/Half or Full</th>
+                                        <th>Leave Duration/Total</th>
+                                        <th>Reason</th>
+                                        <th>Contract Address/Number/Passport No.</th>
+                                        <th>Responsible</th>
+                                        <th>Attachment</th>
+                                        <th>Approved By</th>
+                                        <th>Approval Remarks</th>
                                         <th>Status</th>
-                                        <th>Created Time</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- <tr v-for="(info,index) in weekends">
-                                        <td v-text="index+1"></td>
-                                        <td v-text="info.weekend"></td>
-                                        <td v-text="info.status==1?'Active':'Inactive'"></td>
-                                        <td v-text="info.created_at"></td>
-                                        <td>
-                                            <button type="button" @click="editData(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".dataEdit">
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr> --}}
+                                    @if(count($leaves) > 0)
+                                        <?php $sl=1; ?>
+                                        @foreach($leaves as $info)
+                                            <tr>
+                                                <td>{{$sl++}}</td>
+                                                <td>{{$info->userName->first_name." ".$info->userName->last_name}}</td>
+                                                <td>
+                                                    {{$info->leaveType->leave_type_name}}
+                                                    @if($info->employee_leave_half_or_full == 2)
+                                                        <span class="text-primary"> /Half Day</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    {{$info->employee_leave_from." - ".$info->employee_leave_to." / ".$info->employee_leave_total_days}}
+                                                </td>
+                                                <td> {{$info->employee_leave_user_remarks}} </td>
+                                                <td>
+                                                    {{"Address: ". $info->employee_leave_contact_address}}<br/>
+                                                    {{"Contract No.: ". $info->employee_leave_contact_number}}<br/>
+                                                    {{"Passport No.: ". $info->employee_leave_passport_no}}<br/>
+                                                </td>
+                                                <td>{{$info->responsibleUser?$info->responsibleUser->first_name." ".$info->responsibleUser->last_name:'-'}}
+                                                </td>
+                                                <td>{{$info->employee_leave_attachment}}</td>
+                                                <td>{{$info->approvedByUser?$info->approvedByUser->first_name." ".$info->approvedByUser->last_name:'-'}}</td>
+                                                <td> {{$info->employee_leave_approval_remarks}} </td>
+                                                <td>
+                                                    @if($info->employee_leave_status == 1)
+                                                        <button type="button" class="btn btn-warning btn-xs">Pending</button>
+                                                    @elseif($info->employee_leave_status == 2)
+                                                        <button type="button" class="btn btn-success btn-xs">Approved</button>
+                                                    @elseif($info->employee_leave_status == 3)
+                                                        <button type="button" class="btn btn-danger btn-xs">Cancel</button>
+                                                    @else
+                                                        {{"Invalid"}}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-info btn-xs"><a href="{{url("leave/view/$info->id")}}" class="btn-custom">View</a></button>
+                                                    <button type="button" class="btn btn-system btn-xs">Edit</button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>

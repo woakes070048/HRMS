@@ -31,53 +31,11 @@ class LeaveController extends Controller
 
     	$data['title'] = "HRMS|Leave";
         $data['all_leave_types'] = LeaveType::where('leave_type_status', 1)->get();
+        $data['leaves'] = EmployeeLeave::with('leaveType', 'userName', 'responsibleUser', 'approvedByUser')->get();
+
+        // dd($data['leaves']);
+        $data['sidevar_hide'] = 1;
     	return view('leave.leave', $data);
-
-
-
-        // $mydate = '2016-01-01';
-        // echo date('l', strtotime('2016-01-01'))."<br/>";
-        // echo date('l', strtotime('2016-01-02'))."<br/>";
-        // echo date('l', strtotime('2016-01-03'))."<br/>";
-        // echo date('l', strtotime('2016-01-04'))."<br/>";
-        // echo date('l', strtotime('2016-01-05'))."<br/>";
-        // echo date('l', strtotime('2016-01-06'))."<br/>";
-        // echo date('l', strtotime('2016-01-07'))."<br/>";
-
-        
-
-
-        // $all_weekends = Weekend::orderBY('id', 'DESC')->first();
-
-        // $weekends_ary = explode(',', $all_weekends->weekend); 
-        // $weekends_ary = array_map('trim', $weekends_ary); // triming
-        
-
-        // $date1 = '28/05/2017';
-        // $date2 = '2/07/2017';
-
-        // function returnDates($fromdate, $todate) {
-        //     $fromdate = \DateTime::createFromFormat('d/m/Y', $fromdate);
-        //     $todate = \DateTime::createFromFormat('d/m/Y', $todate);
-        //     return new \DatePeriod(
-        //         $fromdate,
-        //         new \DateInterval('P1D'),
-        //         $todate->modify('+1 day')
-        //     );
-        // }
-
-        // $datePeriod = returnDates($date1, $date2);
-        // foreach($datePeriod as $date) {
-        //     $dattt = date('l', strtotime($date->format('d-m-Y')));
-        //     echo $date->format('d-m-Y')."--".$dattt;
-
-        //     if(in_array($dattt, $weekends_ary)){
-        //         echo "---- Weekend ---";
-        //     }
-
-        //     echo "<br>";
-        // }
-
     }
 
     public function getWeekendHolidays($fromDate, $toDate){
@@ -176,12 +134,8 @@ class LeaveController extends Controller
 
         //calculate which type leave taken how many days...
         foreach($data_val as $info){
-            $date1 = $info->employee_leave_from;
-            $date2 = $info->employee_leave_to;
-            $date1Timestamp = strtotime($date1);
-            $date2Timestamp = strtotime($date2);
-            $difference = $date2Timestamp - $date1Timestamp;
-            $diff_days = floor($difference / (60*60*24) )+1;
+            
+            $diff_days = $info->employee_leave_total_days;
 
             if(!in_array($info->leave_type_id, $leave_type_id_ary)){
                 $leave_type_id_ary[] = $info->leave_type_id;
@@ -286,12 +240,35 @@ class LeaveController extends Controller
         $responsible_emp = $request->responsible_emp;
         $leave_half_or_full = $request->leave_half_or_full;
 
+        $weekend_holiday_info = $this->getWeekendHolidays($from_date, $to_date);
+        $leave_type_info = LeaveType::find($emp_leave_type);
+        $chk_include_holiday = $leave_type_info->leave_type_include_holiday;
+
         $leave_type_ary = session()->get('global_leave_type_ary');
 
         $date1Timestamp = strtotime($from_date);
         $date2Timestamp = strtotime($to_date);
         $difference = $date2Timestamp - $date1Timestamp;
         $diff_days = floor($difference / (60*60*24) )+1;
+
+        if($chk_include_holiday != 1){
+            $diff_days = $diff_days - ($weekend_holiday_info['holidays'] + $weekend_holiday_info['weekend']);
+        }
+
+        //check half day or full day start
+        if($leave_half_or_full == 2){
+            //half day leave
+            if($diff_days > 1){
+                $data['title'] = 'error';
+                $data['message'] = "* For half day leave applicable for only one day.";
+
+                return $data;
+            }else{
+                $diff_days = 0.50;
+            }
+        }
+
+        //half day full day end
 
         if($date2Timestamp >= $date1Timestamp){
             foreach($leave_type_ary as $info){
@@ -308,7 +285,9 @@ class LeaveController extends Controller
                             $file = request()->file('file');
                             $exten = $file->extension();
                             $temp_name = date("Ymd_His");
-                            $folder = $emp_name;
+                            $folder = "/leave_doc/$emp_name";
+
+                            //storage/app/public
                             $file_name = $temp_name.".".$exten;
 
                             request()->file('file')->storeAs($folder, $file_name);
@@ -320,6 +299,7 @@ class LeaveController extends Controller
                                 'leave_type_id' => $emp_leave_type, 
                                 'employee_leave_from' => $from_date, 
                                 'employee_leave_to' => $to_date,
+                                'employee_leave_total_days' => $diff_days,
                                 'employee_leave_user_remarks' => $leave_reason,
                                 'employee_leave_half_or_full' => $leave_half_or_full,
                                 'employee_leave_contact_address' => $leave_contact_address,
@@ -352,7 +332,11 @@ class LeaveController extends Controller
             $data['message'] = "* Invalid date entry.";
         }
 
-        // $request->session()->forget('global_leave_type_ary');
         return $data;
+    }
+
+    public function view($id){
+
+        return $id;
     }
 }

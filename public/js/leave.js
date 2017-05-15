@@ -114,7 +114,7 @@ new Vue({
         this.date_diff = Math.ceil((timeDiff / (1000 * 3600 * 24))+1);
         var include_holiday_weekend = 0;
 
-        console.log("dateDIFF: "+ this.date_diff);
+        // console.log("dateDIFF: "+ this.date_diff);
 
         $.each( this.userHaveLeavs, function( key, value ) {
             if(emp_leave_type_js == value.leave_type_id){
@@ -133,43 +133,47 @@ new Vue({
         var year2 = this.returnOnlyYear(date2);
 
         if(year1 == year2){
+          var date_diff_js = this.date_diff;
+          
           axios.get('/leave/getWeekendHolidays/'+dateUrl1+'/'+dateUrl2).then(response => {
 
-            console.log("Hli : "+response.data.holidays);
-            console.log("week : "+response.data.weekend);
+            // console.log("Hli : "+response.data.holidays);
+            // console.log("week : "+response.data.weekend);
             this.holidays = response.data.holidays;
             this.weekends = response.data.weekend;
+
+            if(include_holiday_weekend == 0){
+              var sum = this.holidays + this.weekends;
+              date_diff_js = date_diff_js - sum;
+              // console.log('plus:'+sum);
+              // console.log('total:'+date_diff_js);
+            }
+
+            // console.log("ss:"+date_diff_js);
+            
+            $('#show_date_diff').html(date_diff_js); 
+
+            if(Date.parse($('#to_date').val()) < Date.parse($('#from_date').val()))
+            {
+              $('#show_date_diff').html('Invalid');
+              this.date_diff = "";
+            }
+            else{
+              
+                $.each( this.userLeaveType, function( key, value ) {
+                    if(emp_leave_type_js == value.id){
+                      var chk_day = value.days - date_diff_js;
+                    
+                      if(chk_day < 0 && value.days != null){
+                        $('#show_date_diff_msg').html("* You can only apply for "+value.days+" days or below "+value.days+" days leave.");
+                      }
+                      else{
+                        $('#show_date_diff_msg').html("");
+                      }
+                    }
+                });
+            }
           });
-
-          if(include_holiday_weekend == 0){
-            this.date_diff = this.date_diff - (this.holidays + this.weekends);
-          }
-
-          var date_diff_js = this.date_diff;
-          console.log("ss:"+this.date_diff);
-          $('#show_date_diff').html(this.date_diff); //extra for test
-
-          if(Date.parse($('#to_date').val()) < Date.parse($('#from_date').val()))
-          {
-            $('#show_date_diff').html('Invalid');
-            this.date_diff = "";
-          }
-          else{
-            // $('#show_date_diff').html(this.date_diff);
-
-              $.each( this.userLeaveType, function( key, value ) {
-                  if(emp_leave_type_js == value.id){
-                    var chk_day = value.days - date_diff_js;
-                  
-                    if(chk_day < 0 && value.days != null){
-                      $('#show_date_diff_msg').html("* You can only apply for "+value.days+" days or below "+value.days+" days leave.");
-                    }
-                    else{
-                      $('#show_date_diff_msg').html("");
-                    }
-                  }
-              });
-          }
         }
         else{
           swal("Invalid Date!", "From date and to date must have same year...", "error");
