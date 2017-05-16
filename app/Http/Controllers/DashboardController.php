@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CommonService;
 use App\Services\PermissionService;
+use App\Services\OrganogramService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,11 +45,28 @@ class DashboardController extends Controller
             $data['motherConcern'] = [];
         }
 
+        $data['organogram'] = $this->getOrganogram();
         return view('dashboard')->with($data);
     }
 
-    public function notFound(){
 
+    public function getOrganogram(){
+        $organogram = new OrganogramService();
+        return  $organogram->organogram();
+    }
+
+
+    public function notFound(){
         return view('errors.503');
     }
+
+
+
+
+
+
+
+
+
+
 }

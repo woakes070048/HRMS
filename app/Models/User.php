@@ -83,16 +83,6 @@ class User extends Authenticatable
     }
 
 
-    public function createdBy(){
-        return $this->belongsTo('App\Models\User','created_by','id');
-    }
-
-
-    public function updatedBy(){
-        return $this->belongsTo('App\Models\User','updated_by','id');
-    }
-
-
     public function getJoiningDateFormatAttribute($value){
         return Carbon::parse($value)->format('M d Y');
     }
@@ -113,6 +103,16 @@ class User extends Authenticatable
 
 
     /********** Star Relations ******************/
+
+    public function createdBy(){
+        return $this->belongsTo('App\Models\User','created_by','id');
+    }
+
+
+    public function updatedBy(){
+        return $this->belongsTo('App\Models\User','updated_by','id');
+    }
+
 
     public function employeeType(){
         return $this->belongsTo('App\Models\EmployeeType');
@@ -196,6 +196,15 @@ class User extends Authenticatable
 
     public function languages(){
         return $this->hasMany('App\Models\EmployeeLanguage');
+    }
+
+
+    public function child(){
+        return $this->hasMany('App\Models\User','supervisor_id','id');
+    }
+
+    public function childRecursive(){
+        return $this->child()->with('childRecursive.designation');
     }
 
     /************* end relations ************/
