@@ -44,6 +44,7 @@
             ?>
                 @foreach($moduleShare as $info)
                     @if(in_array($info->id, $userModuleShare))
+
                     <li>
                         <?php 
                             //this calculation to open Module menu
