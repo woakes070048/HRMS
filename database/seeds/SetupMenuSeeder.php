@@ -13,7 +13,9 @@ class SetupMenuSeeder extends Seeder
     {
         DB::table('menus')->insert([
             ['menu_parent_id'=>'0', 'module_id'=>'1',   'menu_name'=>'View', 'menu_url'=>'promotion/index', 'menu_section_name'=>'Transfer / Promotion', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+
             ['menu_parent_id'=>'0', 'module_id'=>'1',   'menu_name'=>'View', 'menu_url'=>'employee/index', 'menu_section_name'=>'Employee', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+
             ['menu_parent_id'=>'0', 'module_id'=>'2',   'menu_name'=>'View', 'menu_url'=>'department/index', 'menu_section_name'=>'Department', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'0', 'module_id'=>'2',   'menu_name'=>'View', 'menu_url'=>'unit/index', 'menu_section_name'=>'Unit', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'0', 'module_id'=>'2',   'menu_name'=>'View', 'menu_url'=>'levels/index', 'menu_section_name'=>'Levels', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
@@ -22,12 +24,15 @@ class SetupMenuSeeder extends Seeder
             ['menu_parent_id'=>'0', 'module_id'=>'2',   'menu_name'=>'View', 'menu_url'=>'bank/index', 'menu_section_name'=>'Bank', 'menu_icon_class'=>'fa fa-money', 'menu_status'=>'1'],
             ['menu_parent_id'=>'0', 'module_id'=>'3',   'menu_name'=>'View', 'menu_url'=>'salaryInfo/index', 'menu_section_name'=>'Salary Info', 'menu_icon_class'=>'glyphicon glyphicon-usd', 'menu_status'=>'1'],
             ['menu_parent_id'=>'0', 'module_id'=>'4',   'menu_name'=>'View', 'menu_url'=>'settings/index', 'menu_section_name'=>'Basic Settings', 'menu_icon_class'=>'glyphicons glyphicons-settings', 'menu_status'=>'1'],
+
             ['menu_parent_id'=>'1', 'module_id'=>'1',   'menu_name'=>'Add', 'menu_url'=>'promotion/add', 'menu_section_name'=>'Transfer / Promotion', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'1', 'module_id'=>'1',   'menu_name'=>'Edit', 'menu_url'=>'promotion/edit', 'menu_section_name'=>'Transfer / Promotion', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'1', 'module_id'=>'1',	'menu_name'=>'Delete', 'menu_url'=>'promotion/delete', 'menu_section_name'=>'Transfer / Promotion', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+
             ['menu_parent_id'=>'2', 'module_id'=>'1',   'menu_name'=>'Add', 'menu_url'=>'employee/add', 'menu_section_name'=>'Employee', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'2', 'module_id'=>'1',   'menu_name'=>'Edit', 'menu_url'=>'employee/edit', 'menu_section_name'=>'Employee', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'2', 'module_id'=>'1',	'menu_name'=>'Delete', 'menu_url'=>'employee/delete', 'menu_section_name'=>'Employee', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
+            
             ['menu_parent_id'=>'3', 'module_id'=>'2',   'menu_name'=>'Add', 'menu_url'=>'department/add', 'menu_section_name'=>'Department', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'3', 'module_id'=>'2',   'menu_name'=>'Edit', 'menu_url'=>'department/edit', 'menu_section_name'=>'Department', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],
             ['menu_parent_id'=>'3', 'module_id'=>'2',	'menu_name'=>'Delete', 'menu_url'=>'department/delete', 'menu_section_name'=>'Department', 'menu_icon_class'=>'fa fa-level-up', 'menu_status'=>'1'],

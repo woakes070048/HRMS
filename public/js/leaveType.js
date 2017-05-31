@@ -10320,7 +10320,7 @@ return jQuery;
     mounted: function mounted() {
         var _this = this;
 
-        axios.get('/leave/type/getAllData').then(function (response) {
+        axios.get('/leaveType/getAllData').then(function (response) {
             return _this.leaveTypes = response.data;
         });
         axios.get('/get-employee-type').then(function (response) {
@@ -10359,7 +10359,7 @@ return jQuery;
         saveData: function saveData(formId) {
             var formData = $('#' + formId).serialize();
 
-            axios.post('/leave/type/add', formData).then(function (response) {
+            axios.post('/leaveType/add', formData).then(function (response) {
 
                 swal({
                     title: response.data.title + "!",
@@ -10391,7 +10391,7 @@ return jQuery;
         editData: function editData(id, index) {
             var _this2 = this;
 
-            axios.get("/leave/type/edit/" + id, {}).then(function (response) {
+            axios.get("/leaveType/edit/" + id, {}).then(function (response) {
 
                 _this2.hdn_id = response.data.hdn_id;
                 _this2.type_name = response.data.leave_type_name;
@@ -10426,7 +10426,7 @@ return jQuery;
 
             var formData = $('#' + updateFormId).serialize();
 
-            axios.post('/leave/type/edit', formData).then(function (response) {
+            axios.post('/leaveType/edit', formData).then(function (response) {
 
                 swal({
                     title: response.data.title + "!",

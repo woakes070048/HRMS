@@ -28,10 +28,12 @@ class CreateEmployeeLeavesTable extends Migration
             $table->string('employee_leave_passport_no')->nullable();
             $table->integer('employee_leave_responsible_person')->nullable();
             $table->string('employee_leave_attachment')->nullable();
+            $table->integer('employee_leave_supervisor')->nullable();
             $table->integer('employee_leave_recommend_to')->nullable();
             $table->integer('employee_leave_approved_by')->nullable();
             $table->text('employee_leave_approval_remarks')->nullable();
-            $table->boolean('employee_leave_status')->default(1)->comment='1=pending 2=approved 3=cancel';
+            $table->date('employee_leaves_approval_date')->nullable();
+            $table->boolean('employee_leave_status')->default(1)->comment='1=pending 2=forward 3=approved 4=cancel';
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');

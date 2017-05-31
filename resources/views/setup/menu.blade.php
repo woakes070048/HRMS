@@ -121,7 +121,7 @@
                         <div class="col-md-9">
                             <select class="form-control input-sm" name="menu_parent_id" v-model="menu_parent_id">
                                 <option value="">Select Menu's Parent</option>
-                                <option v-for="info in activeMenus" v-bind:value="info.id" v-show="info.menu_parent_id == 0"> @{{info.menu_name}} </option>
+                                <option v-for="info in activeMenus" v-bind:value="info.id" v-show="info.menu_parent_id == 0"> @{{info.menu_name+'-'+info.menu_section_name}} </option>
                             </select>
                         </div>
                     </div>

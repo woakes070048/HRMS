@@ -58,7 +58,7 @@ class EmployeeController extends Controller
     public function __construct(Auth $auth,User $user)
     {
         $this->middleware('auth:hrms');
-        $this->middleware('CheckPermissions', ['except' => ['viewEmployeeProfile', 'statusChange', 'permission', 'updatePermission']]);
+        $this->middleware('CheckPermissions', ['except' => ['viewEmployeeProfile', 'statusChange', 'permission', 'updatePermission', 'leave', 'updateLeave']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -78,6 +78,8 @@ class EmployeeController extends Controller
         $data['title'] = 'Employee List';
         $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
+        $data['leave_types'] = LeaveType::where('leave_type_status', 1)->get();
+
         $data['sidevar_hide'] = 1;
         return view('pim.employee.index')->with($data);
     }
@@ -1230,6 +1232,70 @@ class EmployeeController extends Controller
         }
     }
 
+    public function leave($id){
 
+        $currentYear = date('Y');
+        $data['individual_user_leaves'] = UserLeaveTypeMap::where('user_id', $id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get();
 
+        return $data['individual_user_leaves'];
+    }
+
+    public function updateLeave(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required'
+        ]);
+
+        $currentYear = date('Y');
+
+        try {
+            foreach($request->user_leaves as $key=>$value){
+                if($value == 0){
+                    $uncheckedAray[] = $key;
+                }
+                else{
+                    $checkedAray[] = $key;    
+                }
+            }
+
+            if(!empty($uncheckedAray)){
+                UserLeaveTypeMap::where('user_id', $request->hdn_id)->where('status', 1)
+                                ->where('active_from_year', '<=', $currentYear)
+                                ->whereIn('leave_type_id', $uncheckedAray)->delete();
+            }
+
+            if(!empty($checkedAray)){
+
+                $exist_leave_id = UserLeaveTypeMap::select('leave_type_id')->where('user_id', $request->hdn_id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get()->toArray();
+                $exist_leave_id_ary = array_column($exist_leave_id, 'leave_type_id');
+
+                $aryDiff = array_diff($checkedAray,$exist_leave_id_ary);
+                
+                if(!empty($aryDiff)){
+                    $diff_type_value = LeaveType::whereIn('id', $aryDiff)->where('leave_type_status', 1)->where('leave_type_active_from_year', '<=', $currentYear)->where('leave_type_active_to_year', '>=', $currentYear)->get();
+
+                        foreach($diff_type_value as $info){
+                            $diff_arry[] = [
+                                'user_id' => $request->hdn_id,
+                                'leave_type_id' => $info->id,
+                                'number_of_days' => $info->leave_type_number_of_days,
+                                'active_from_year' => $info->leave_type_active_from_year,
+                                'active_to_year' => $info->leave_type_active_to_year,
+                                'status' => 1,
+                            ];
+                        }
+
+                    UserLeaveTypeMap::insert($diff_arry);
+                }   
+            }
+
+            $request->session()->flash('success','Data successfully updatsed!');
+
+        } catch (\Exception $e) {
+        
+            $request->session()->flash('danger','Data not updated!');
+        }
+
+        return redirect('employee/index');
+    }
 }

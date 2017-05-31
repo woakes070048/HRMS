@@ -18,7 +18,7 @@ new Vue({
   },
   mounted(){
 
-    axios.get('/leave/type/getAllData').then(response => this.leaveTypes = response.data);
+    axios.get('/leaveType/getAllData').then(response => this.leaveTypes = response.data);
     axios.get('/get-employee-type').then(response => this.empTypes = response.data);
   },
   methods:{
@@ -52,7 +52,7 @@ new Vue({
     saveData(formId){
         var formData = $('#'+formId).serialize();
 
-        axios.post('/leave/type/add', formData)
+        axios.post('/leaveType/add', formData)
         .then((response) => { 
 
             swal({
@@ -85,7 +85,7 @@ new Vue({
     },
     editData(id, index){
 
-      axios.get("/leave/type/edit/"+id,{
+      axios.get("/leaveType/edit/"+id,{
         
       })
       .then((response) => {
@@ -123,7 +123,7 @@ new Vue({
             
         var formData = $('#'+updateFormId).serialize();
 
-        axios.post('/leave/type/edit', formData)
+        axios.post('/leaveType/edit', formData)
         .then(response => { 
            
           swal({

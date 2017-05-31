@@ -7,7 +7,6 @@
 @section('content')
 <div id="mainDiv">
     <!-- Begin: Content -->
-    @{{msg}}
     <section id="content" class="animated fadeIn">
         <div class="row">
             <div class="col-md-12">

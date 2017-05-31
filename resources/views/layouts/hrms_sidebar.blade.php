@@ -68,6 +68,7 @@
                             <span class="sidebar-title">{{$info->module_name}}</span>
                             <span class="caret"></span>
                         </a>
+                        
                         <ul class="nav sub-nav">
                             @foreach($info->menus as $mInfo)
                                 @if(in_array($mInfo->menu_url, $userMenuShare))
@@ -76,6 +77,7 @@
                                         $strMneuAry = explode("/", $mInfo->menu_url);
                                     ?>
                                     <li class="@if(\Request::segment(1) == $strMneuAry[0]) active @endif">
+
                                         <a href="{{url("$mInfo->menu_url")}}">
                                             <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_section_name}}
                                         </a>
@@ -89,7 +91,7 @@
                 @endforeach  
 
 
-                <li>
+                {{-- <li>
                     <a class="accordion-toggle" href="#">
                         <span class="fa fa-calendar" aria-hidden="true"></span>
                         <span class="sidebar-title">Leave Management</span>
@@ -117,7 +119,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
         </ul>
         <!-- End: Sidebar Menu -->
 

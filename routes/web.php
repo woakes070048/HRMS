@@ -146,6 +146,9 @@ Route::group(['prefix' => '/employee', 'namespace' => 'Pim'],function (){
 
     Route::get('/permission/{id}','EmployeeController@permission');
     Route::post('/updatePermission','EmployeeController@updatePermission');
+
+    Route::get('/leave/{id}','EmployeeController@leave');
+    Route::post('/updateLeave','EmployeeController@updateLeave');
 });
 
 
@@ -285,7 +288,7 @@ Route::group(['prefix' => '/holiday', 'namespace' => 'Leave'],function (){
 });
 
 /*********...HRMS Leave Management - Leave Type...***********/
-Route::group(['prefix' => '/leave/type', 'namespace' => 'Leave'],function (){
+Route::group(['prefix' => '/leaveType', 'namespace' => 'Leave'],function (){
     Route::get('/index','LeaveTypeController@index');
     // Route::get('/get-types','LeaveTypeController@getTypes');
     Route::get('/getAllData','LeaveTypeController@getAllData');
@@ -299,14 +302,18 @@ Route::group(['prefix' => '/leave/type', 'namespace' => 'Leave'],function (){
 Route::group(['prefix' => '/leave', 'namespace' => 'Leave'],function (){
     Route::get('/index','LeaveController@index');
     Route::get('/get-types','LeaveController@getTypes');
-    Route::get('/user-taken-leave/{id}','LeaveController@userTakenLeave');
+    // Route::get('/user-taken-leave/{id}','LeaveController@userTakenLeave');
     Route::get('/getWeekendHolidays/{fromDate}/{toDate}','LeaveController@getWeekendHolidays');
-    // Route::get('/getAllData','LeaveController@getAllData');
     Route::post('/add','LeaveController@create');
-    Route::get('/view/{id}','LeaveController@view');
-    // Route::get('/edit/{id}','LeaveController@edit');
-    // Route::post('/edit','LeaveController@update');
-    // Route::get('/delete/{id}','LeaveController@delete');
+    Route::get('/details/{id?}','LeaveController@details');
+    Route::get('/edit/{id}','LeaveController@edit');
+    Route::post('/edit','LeaveController@update');
+    Route::get('/changeStatus/{id}/{stat}','LeaveController@changeStatus');
+    // Route::get('/view/{id}', 'LeaveController@showIndiReport');
+});
+
+Route::group(['prefix' => '/myLeave', 'namespace' => 'Leave'],function (){
+    Route::get('/details/{id?}','LeaveController@details');
 });
 
 /******************** ...HRMS Common Function Routes... **************/
@@ -340,6 +347,12 @@ Route::group(['prefix' => '/'], function(){
 
     Route::get('get-workshifts/{id?}/{status?}','CommonController@getWorkShift');
 
+    Route::get('/user-taken-leave/{id}','CommonController@userTakenLeave');
+    Route::get('/leaveView/{id}', 'CommonController@showIndiReport');
+
+    Route::get('page-not-available', function(){
+        return view('errors.503');
+    });
 });
 
 

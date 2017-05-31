@@ -24,4 +24,12 @@ class EmployeeLeave extends Model
     public function approvedByUser(){
         return $this->belongsTo('App\Models\User', 'employee_leave_approved_by');
     }
+
+    public function supervisorUser(){
+        return $this->belongsTo('App\Models\User', 'employee_leave_supervisor');
+    }
+
+    public function forwardUser(){
+        return $this->belongsTo('App\Models\User', 'employee_leave_recommend_to');
+    }
 }

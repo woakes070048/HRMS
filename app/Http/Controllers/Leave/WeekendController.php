@@ -14,7 +14,7 @@ class WeekendController extends Controller
     public function __construct()
     {
         $this->middleware('auth:hrms');
-        // $this->middleware('CheckPermissions');
+        $this->middleware('CheckPermissions', ['except' => ['getAllData']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
