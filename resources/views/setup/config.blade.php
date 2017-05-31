@@ -8,7 +8,6 @@
       .wizard .steps .glyphicon {
         display: none;
       }
-
       .error{
         color: red !important;
       }
@@ -20,8 +19,10 @@
 
 @section('content')
 
-    <div class="row">
-        <div class="col-md-9">
+    <div class="row main-div">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading">Config Application</div>
 
@@ -31,8 +32,7 @@
                     <strong>{{ucfirst($msg)}}!</strong> {{Session::get($msg)}}
                 </div>
                 <?php } }?>
-
-                 <div class="panel-body">
+                <div class="panel-body">
                     <div class="admin-form">
 
                         <div id="form-errors">
@@ -46,7 +46,7 @@
                                 <i class="fa fa-user pr5"></i> Details</h4>
                             <section class="wizard-section">
                                 <div class="section">
-                                    <input id="name" type="text" class="form-control" name="company_name" value="{{ old('company_name') }}" placeholder="Company Name" required autofocus>
+                                    <input id="company_name" type="text" class="form-control" name="company_name" value="{{ old('company_name') }}" placeholder="Company Name" required autofocus>
                                 </div>
 
                                 <div class="section">
@@ -71,7 +71,7 @@
                                 </div>
 
                                 <div class="section">
-                                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Eamil Address" required="required">
+                                    <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Email Address" required="required">
                                 </div>
 
                                 <div class="section">
@@ -83,7 +83,7 @@
                                 </div>
 
                                 <div class="section">
-                                    <input id="password-confirm" type="password" class="form-control" placeholder="Confirm Password" name="password_confirmation" required="required">
+                                    <input id="password_confirmation" type="password" class="form-control" placeholder="Confirm Password" name="password_confirmation" required="required">
                                 </div>
 
                                 <div class="section">
@@ -138,7 +138,8 @@
                             
                             <!-- Wizard step 3 -->
                             <h4 class="wizard-section-title">
-                              <i class="fa fa-shopping-cart pr5"></i> Checkout</h4>
+                              <i class="fa fa-shopping-cart pr5"></i> Checkout
+                            </h4>
                             <section class="wizard-section">
                               <div class="section">
                                 <p>
@@ -147,6 +148,7 @@
                               </div>
                               <!-- end section -->
                             </section>
+
                             </div>
                             <!-- End: Wizard -->
                         </form>
@@ -157,6 +159,10 @@
         </div>
     </div>
 
+    {{-- <div align="center" style="margin-top: 60px;" class="loader-cls">
+       <img src="{{URL::asset("/img/ripple.gif")}}"> 
+    </div> --}}
+
 @endsection
 
 @section('script')
@@ -164,49 +170,7 @@
     <script src="{{asset('admin-tools/admin-forms/js/jquery.validate.min.js')}}"></script>
     <script src="{{asset('admin-tools/admin-forms/js/jquery.steps.min.js')}}"></script>
 
-
   <script type="text/javascript">
-
-    $('.wizard').on('change','.package_type',function() {
-        
-        //alert($(this).val());
-
-        if($(this).val() == 1){
-            $('.credit_or_debit_div').show();    
-            $('.internet_banking_div').hide(); 
-            $('#credit_or_debit').attr('required', true);
-            $('#internet_banking').removeAttr('required');
-        }
-        else if($(this).val() == 2){
-            $('.credit_or_debit_div').hide();    
-            $('.internet_banking_div').show();
-            $('#credit_or_debit').removeAttr('required');
-            $('#internet_banking').attr('required', true);
-        }
-        else{
-            $('.credit_or_debit_div').hide();    
-            $('.internet_banking_div').hide();   
-        }
-    });
-
-    $('.wizard').on('change','.package_name',function() {
-
-        var package_name = $(this).val();
-
-        $.ajax({
-            url: '{{url("config/get_package_info")}}',
-            type: 'POST',
-            data: {package_name: package_name},
-        })
-        .done(function(data) {
-            
-            if(data != 'error'){
-                $('#disable_package_amount').val(data['price']);
-                $('#disable_package_months').val(data['duration']);
-            }
-        });
-        
-    });
 
     jQuery(document).ready(function() {
 
@@ -214,7 +178,6 @@
     $('.internet_banking_div').hide(); 
     $('#credit_or_debit').attr('required', true);
     $('#internet_banking').attr('required', true);
-
 
     "use strict";
 
@@ -231,9 +194,19 @@
         element.before(error);
       },
       rules: {
-        confirm: {
+        password_confirmation: {
           equalTo: "#password"
         }
+      },
+      messages:{
+        company_name: "Company name is required.",
+        package_name: "Package name is required.",
+        first_name: "First name is required.",
+        last_name: "Last name is required.",
+        email: "Email address is required.",
+        mobile_number: "Mobile number is required.",
+        password: "Password is required.",
+        company_address: "Company address is required.",
       }
     });
     form.children(".wizard").steps({
@@ -248,6 +221,9 @@
         return form.valid();
       },
       onFinished: function(event, currentIndex) {
+
+        //***loading Overlay
+        $.LoadingOverlay("show");
         
         //************* Post form ************
             $.ajax({
@@ -256,6 +232,8 @@
                 data: form.serialize(),
             })
             .done(function(data) {
+
+                $.LoadingOverlay("hide"); //***loading Overlay
 
                 swal({
                     title: "Success!",
@@ -271,6 +249,9 @@
                 });
             })
             .fail(function(data) {
+
+                $.LoadingOverlay("hide");  //***loading Overlay
+
                 var errors = data.responseJSON;
 
                 errorsHtml = '<div class="alert alert-danger"><ul>';
@@ -326,6 +307,48 @@
       $(this).toggleClass('holder-active');
     });
 
+    });
+
+
+    $('.wizard').on('change','.package_type',function() {
+        
+        //alert($(this).val());
+
+        if($(this).val() == 1){
+            $('.credit_or_debit_div').show();    
+            $('.internet_banking_div').hide(); 
+            $('#credit_or_debit').attr('required', true);
+            $('#internet_banking').removeAttr('required');
+        }
+        else if($(this).val() == 2){
+            $('.credit_or_debit_div').hide();    
+            $('.internet_banking_div').show();
+            $('#credit_or_debit').removeAttr('required');
+            $('#internet_banking').attr('required', true);
+        }
+        else{
+            $('.credit_or_debit_div').hide();    
+            $('.internet_banking_div').hide();   
+        }
+    });
+
+    $('.wizard').on('change','.package_name',function() {
+
+        var package_name = $(this).val();
+
+        $.ajax({
+            url: '{{url("config/get_package_info")}}',
+            type: 'POST',
+            data: {package_name: package_name},
+        })
+        .done(function(data) {
+
+            if(data != 'error'){
+                $('#disable_package_amount').val(data['price']);
+                $('#disable_package_months').val(data['duration']);
+            }
+        });
+        
     });
   </script>
 @endsection

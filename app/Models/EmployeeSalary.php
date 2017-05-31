@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class EmployeeSalary extends Model
 {
 
-    protected $fillable = [];
+//    protected $fillable = [];
 
 
-    public function getSalaryEffectiveDateAttribute($value){
+    public function getSalaryEffectiveFormatDateAttribute($value){
         return Carbon::parse($value)->format('M d Y');
     }
 

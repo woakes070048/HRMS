@@ -9,7 +9,12 @@
                     <div class="panel-heading">
                         <span class="panel-title">All departments</span>
 
-                        <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".depAdd" style="margin-top: 12px;">Add Department</button>
+                        <?php 
+                          $chkUrl = \Request::segment(1);
+                        ?>
+                        @if(in_array($chkUrl."/add", session('userMenuShare')))
+                            <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".depAdd" style="margin-top: 12px;">Add Department</button>
+                        @endif
                     </div>
                     <div class="panel-body">
                         @if($departments->count() > 0)
@@ -18,6 +23,8 @@
                             <tr class="success">
                                 <th>sl</th>
                                 <th>Name</th>
+                                <th>Effective Date</th>
+                                <th>Note</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -28,16 +35,20 @@
                             <tr>
                                 <td>{{ $sl++ }}</td>
                                 <td>{{ $department->department_name }}</td>
+                                <td>{{ $department->department_effective_date }}</td>
+                                <td>{{ $department->department_details }}</td>
                                 <td>{{$department->status==1?"Active":"Inactive"}}</td>
                                 <td>
-                                    <button data-id="{{$department->id}}" type="button" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".depEdit">
+                                    @if(in_array($chkUrl."/edit", session('userMenuShare')))
+                                        <button data-id="{{$department->id}}" type="button" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".depEdit">
                                         <i class="fa fa-edit"></i>
-                                    </button>
-                                    <a onclick="return confirm('Want to delete?');" href="{{url("department/delete/$department->id")}}" title="">
-                                        <button type="button" class="btn btn-sm btn-danger">
-                                            <i class="fa fa-trash-o"></i>
                                         </button>
-                                    </a>
+                                    @endif
+                                    @if(in_array($chkUrl."/delete", session('userMenuShare')))
+                                        <button onclick="wantToDelete({{$department->id}})" class="btn btn-sm btn-danger">
+                                        <i class="fa fa-trash-o"></i>
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -64,7 +75,7 @@
                                         {{ csrf_field() }}
 
                                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                                            <label for="name" class="col-md-3 control-label">Name</label>
+                                            <label for="name" class="col-md-3 control-label">Name<span class="text-danger">*</span> :</label>
 
                                             <div class="col-md-9">
                                                 <input id="name" type="text" class="form-control input-sm" name="name" value="{{ old('name') }}" autofocus>
@@ -74,6 +85,20 @@
                                                         <strong>{{ $errors->first('name') }}</strong>
                                                     </span>
                                                 @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="effective_date" class="col-md-3 control-label">Effective Date :</label>
+                                            <div class="col-md-9">
+                                                <input type="text" name="effective_date" class="gui-input datepicker form-control input-sm" placeholder="Select Effective Date">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="remarks" class="col-md-3 control-label">Note :</label>
+                                            <div class="col-md-9">
+                                                <textarea name="note" class="form-control input-sm" placeholder="Write note"></textarea>
                                             </div>
                                         </div>
 
@@ -141,6 +166,20 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label for="effective_date" class="col-md-3 control-label">Effective Date :</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="effective_date" class="gui-input datepicker form-control input-sm edit_effective_date" placeholder="Select Effective Date">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="edit_note" class="col-md-3 control-label">Note :</label>
+                                        <div class="col-md-9">
+                                            <textarea name="note" class="form-control input-sm edit_note" placeholder="Write note"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
                                         <div class="col-md-9 col-md-offset-3">
                                             <div class="row">
                                                 <div class="col-md-4">
@@ -181,7 +220,44 @@
 
 @section('script')
 <script type="text/javascript">
-    
+
+function wantToDelete(id){
+
+    swal({
+        title: "Are you sure?",
+        text: "You will not be able to recover this data!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        closeOnConfirm: false
+    },
+    function(){
+        $.ajax({
+            url: "{{url('/department/delete')}}/"+id,
+            type: 'GET',
+        })
+        .done(function(data) {
+            swal({
+                title: data.title+"!",
+                text: data.message+"!",
+                type: data.title,
+                showCancelButton: false,
+                confirmButtonColor: "#8cc63d",
+                confirmButtonText: "Done",
+                closeOnConfirm: false
+            },
+            function(){
+                location.href=location.href;
+            });
+        })
+        .fail(function(error){
+            // swal("Error", "Data not removed.", "error");
+            console.log(error.title);
+        });
+    });
+}
+
 jQuery(document).ready(function() {
 
     // Init DataTables
@@ -313,6 +389,8 @@ $('.edit-btn').click(function(event) {
         
         $('.edit-hdn-id').val(data['id']);
         $('.edit-name').val(data['department_name']);
+        $('.edit_effective_date').val(data['department_effective_date']);
+        $('.edit_note').val(data['department_details']);
         $(".edit-status[value=" + data['status'] + "]").prop('checked', true);
     })
     .fail(function() {

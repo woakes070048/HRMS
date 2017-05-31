@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
+use App\Services\CommonService;
+use App\Services\PermissionService;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 
 class DashboardController extends Controller
 {
+    use CommonService, PermissionService;
 
 	protected $auth;
 
-    public function __construct(){
+    public function __construct(Auth $auth){
         $this->middleware('auth:hrms');
 
         $this->middleware(function($request, $next){
@@ -22,6 +27,28 @@ class DashboardController extends Controller
 
 
     public function index(){
-    	return view('dashboard');
+        // dd(Session('permission'));
+
+        if(Session('config_id')){
+            $data['sisterConcern'] = $this->getSisterConcern(Session('config_id'));
+            $data['motherConcern'] = $this->getMotherConcern(Session('config_id'));
+            Artisan::call("db:connect", ['database' => Session('database')]);
+
+            Session([
+                'sisterConcern' => $data['sisterConcern']->toArray(),
+                'motherConcern' => $data['motherConcern']->toArray()
+                ]);
+
+        }else{
+            $data['sisterConcern'] = [];
+            $data['motherConcern'] = [];
+        }
+
+        return view('dashboard')->with($data);
+    }
+
+    public function notFound(){
+
+        return view('errors.503');
     }
 }

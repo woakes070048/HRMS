@@ -19,6 +19,7 @@ class CreateEmployeeEducationsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('institute_id')->unsigned();
             $table->integer('degree_id')->unsigned();
+            $table->string('achievement',200)->nullable();
             $table->boolean('foreign_degree')->default(0)->comment='0=no, 1=yes';
             $table->string('pass_year',4);
             $table->enum('result_type',['cgpa','division']);

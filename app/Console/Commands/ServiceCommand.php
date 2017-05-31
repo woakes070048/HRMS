@@ -13,7 +13,7 @@ class ServiceCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'make:service {name} {--trait}';
+    protected $signature = 'make:service {name} {--trait}? {--t}?';
 
     /**
      * The console command description.
@@ -53,25 +53,25 @@ class ServiceCommand extends GeneratorCommand
      *
      * @return mixed
      */
-    public function handle()
-    {
-//        $name = $this->parseName($this->getNameInput());
-        $name = $this->getNameInput();
+//     public function handle()
+//     {
+// //        $name = $this->parseName($this->getNameInput());
+//         $name = $this->getNameInput();
 
-        $path = $this->getPath($this->type.'/'.$name);
+//         $path = $this->getPath($this->type.'/'.$name);
 
-        if ($this->alreadyExists($this->getNameInput())) {
-            $this->error($this->type.' already exists!');
+//         if ($this->alreadyExists($this->getNameInput())) {
+//             $this->error($this->type.' already exists!');
 
-            return false;
-        }
+//             return false;
+//         }
 
-        $this->makeDirectory($path);
+//         $this->makeDirectory($path);
 
-        $this->files->put($path, $this->buildClass($name));
+//         $this->files->put($path, $this->buildClass($name));
 
-        $this->info($this->type.' created successfully.');
-    }
+//         $this->info($this->type.' created successfully.');
+//     }
 
 
     /**
@@ -81,7 +81,7 @@ class ServiceCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-       if ($this->option('trait')) {
+       if ($this->option('trait') || $this->option('t')) {
             return __DIR__.'/../stubs/service.trait.stub';
         }
         return __DIR__.'/../stubs/service.stub';
@@ -96,7 +96,7 @@ class ServiceCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        // return $rootNamespace.'/Services';
+        return $rootNamespace.'\Services';
         return $rootNamespace;
     }
 

@@ -29,6 +29,13 @@ class DatabaseSeeder extends Seeder
 
         $this->call(HrmsEmployeeTypeCreateSeeder::class);
 
+        $this->call(HrmsBranchCreateSeeder::class);
+        $this->call(HrmsUnitCreateSeeder::class);
+
+        $this->call(HrmsReligionsCreateSeeder::class);
+
         // $this->call(HrmsUserCreateSeeder::class);
+        // $this->call(SetupModuleSeeder::class);
+        // $this->call(SetupMenuSeeder::class);
     }
 }

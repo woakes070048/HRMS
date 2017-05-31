@@ -87,6 +87,7 @@ return [
     'url'                  => 'The :attribute format is invalid.',
 
     'alpha_spaces'  => 'The :attribute may only contain letters and spaces.',
+    'alpha_spaces_dot'  => 'The :attribute may only contain letters spaces and dot.',
 
     /*
     |--------------------------------------------------------------------------

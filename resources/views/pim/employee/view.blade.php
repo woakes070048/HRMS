@@ -6,6 +6,8 @@
 table.tc-med-2 tbody td:first-child{
   font-size:13px;
 }
+.odd{background: #f5f5f5;padding: 20px 15px 0px;margin: -20px -15px -5px;}
+.even{padding: 10px 15px 0px;margin: 0px -15px;}
 </style>
 @endsection
 
@@ -25,15 +27,15 @@ table.tc-med-2 tbody td:first-child{
       </div>                      
       <div class="media-body va-m">
         <h2 class="media-heading">{{$user->fullname}}
-          <small> - Profile (@if($user->status ==1) active @else inactive @endif account)</small>
+          <small> - Profile (@if($user->status ==1) active @else inactive @endif account )</small>
         </h2>
-        <p class="lead">{{$user->designation->designation_name}} ( Joining Date - {{$user->details->joining_date or ''}}, Profile Opening Date - {{$user->created_at}})</p>
-        <h3 class="media-heading">Present Address
+        <p class="lead">{{$user->designation->designation_name}} <small>( Joining Date - {{$user->details->joining_date_format or ''}}, Profile Opening Date - {{$user->created_at}} )</small></p>
+        <h4 class="media-heading">Present Address
           <small> - {{$user->address->present_postoffice or ''}}, {{$user->address->presentPoliceStation->police_station_name or ''}}, {{$user->address->presentDistrict->district_name or ''}}, {{$user->address->presentDivision->division_name or ''}}.</small>
-        </h3>
-        <h3 class="media-heading">Parmanent Address
+        </h4>
+        <h4 class="media-heading">Parmanent Address
           <small> - {{$user->address->permanent_postoffice or ''}}, {{$user->address->permanentPoliceStation->police_station_name or ''}}, {{$user->address->permanentDistrict->district_name or ''}}, {{$user->address->permanentDivision->division_name or ''}}.</small>
-        </h3>
+        </h4>
       </div>
     </div>
 </div>
@@ -80,6 +82,10 @@ table.tc-med-2 tbody td:first-child{
                 <td class="text-right">{{$user->mobile_number}}</td>
               </tr>
               <tr>
+                <td class="text-left">Supervisor :</td>
+                <td class="text-right">@if($user->supervisor){{$user->supervisor->fullname}}@endif</td>
+              </tr>
+              <tr>
                 <td class="text-left">Designation :</td>
                 <td class="text-right">{{$user->designation->designation_name}}</td>
               </tr>
@@ -90,6 +96,10 @@ table.tc-med-2 tbody td:first-child{
               <tr>
                 <td class="text-left">Level :</td>
                 <td class="text-right">{{$user->designation->level->level_name}}</td>
+              </tr>
+              <tr>
+                <td class="text-left">Unit :</td>
+                <td class="text-right">{{$user->unit->unit_name}}</td>
               </tr>
             </tbody>
           </table>
@@ -115,6 +125,10 @@ table.tc-med-2 tbody td:first-child{
               <tr>
                 <td class="text-left">Mother Name :</td>
                 <td class="text-right">{{$user->details->mother_name}}</td>
+              </tr>
+              <tr>
+                <td class="text-left">Spouse Name :</td>
+                <td class="text-right">{{$user->details->spouse_name}}</td>
               </tr>
                <tr>
                 <td class="text-left">Personal Email :</td>
@@ -150,7 +164,7 @@ table.tc-med-2 tbody td:first-child{
               </tr>
                <tr>
                 <td class="text-left">Blood Group :</td>
-                <td class="text-right">{{$user->details->bloodGroup->blood_name}}</td>
+                <td class="text-right">{{$user->details->bloodGroup->blood_name or ''}}</td>
               </tr>
               <tr>
                 <td class="text-left">Gender :</td>
@@ -162,7 +176,7 @@ table.tc-med-2 tbody td:first-child{
               </tr>
               <tr>
                 <td class="text-left">Religion :</td>
-                <td class="text-right">{{$user->details->religion}}</td>
+                <td class="text-right">{{$user->details->religion->religion_name}}</td>
               </tr>
               <tr>
                 <td class="text-left">Nationality :</td>
@@ -171,6 +185,10 @@ table.tc-med-2 tbody td:first-child{
               <tr>
                 <td class="text-left">Emergency Contact Person :</td>
                 <td class="text-right">{{$user->details->emergency_contact_person}}</td>
+              </tr>
+              <tr>
+                <td class="text-left">Emergency Contact Number :</td>
+                <td class="text-right">{{$user->details->emergency_contact_number}}</td>
               </tr>
               <tr>
                 <td class="text-left">Emergency Contact Address :</td>
@@ -203,7 +221,7 @@ table.tc-med-2 tbody td:first-child{
             <a href="#tab5" data-toggle="tab">Training</a>
           </li>
           <li>
-            <a href="#tab6" data-toggle="tab">Referance</a>
+            <a href="#tab6" data-toggle="tab">Reference</a>
           </li>
           <li>
             <a href="#tab7" data-toggle="tab">Children</a>
@@ -220,20 +238,22 @@ table.tc-med-2 tbody td:first-child{
           <div id="tab1" class="tab-pane active">
             <div class="panel">
               <div class="panel-body pb5">
-
                 @forelse($user->educations as $education)
+                <div class="@if($loop->index %2 == 0) even @else odd @endif">
+                <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h6>
                   Education Level : {{$education->institute->educationLevel->education_level_name}} 
-                  @if($education->certificate)
-                  <a target="_blank" href="{{url('files/'.$education->user_id.'/'.$education->certificate)}}" class="pull-right">View Certificate</a>
-                  @else
-                  <span class="pull-right">No certificate file.</span>
-                  @endif
                 </h6>
 
                 <h5>Board/Institute : {{$education->institute->institute_name}}</h5>
 
-                <h4>Degree : {{$education->degree->degree_name}}</h4>
+                <h4>Degree : {{$education->degree->degree_name}}  
+                  @if($education->certificate)
+                    <a target="_blank" href="{{url('files/'.$education->user_id.'/'.$education->certificate)}}" class="pull-right">View Certificate</a>
+                    @else
+                    <span class="pull-right">No certificate file.</span>
+                  @endif
+                </h4>
                 <p class="text-muted">
                 @if($education->result_type == 'cgpa') 
                   Result (cgpa) : {{$education->cgpa}}
@@ -245,7 +265,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -261,6 +281,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->experiences as $experience)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h6>
                   Date/Duration : {{$experience->job_start_date}} - {{$experience->job_end_date}} ( {{$experience->job_duration}} )
                 </h6>
@@ -273,7 +295,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -289,7 +311,8 @@ table.tc-med-2 tbody td:first-child{
             <h4>Salary Information :</h4>
               <div class="panel-body pb5">
                 <h5><span class="text-muted">Employee Job Type : </span> {{$user->employeeType->type_name}}</h5>
-                <h4><span class="text-muted">Basic Salary Amount : </span> {{$user->basic_salary}}</h4>
+                <h4><span class="text-muted">Basic Salary Amount : </span> {{$user->basic_salary or '0.00'}}</h4>
+                <h4><span class="text-muted">Salary In Cache Amount : </span> {{$user->salary_in_cache or '0.00'}}</h4>
                 <h5><span class="text-muted">Salary Effective Date : </span>{{$user->effective_date_format}}</h5>
               </div>
             </div>
@@ -297,13 +320,14 @@ table.tc-med-2 tbody td:first-child{
             <div class="panel">
               <h4>Allowance Information :</h4>
               <div class="panel-body pb5">
-                 <table class="table table-striped table-hover" id="datatable1" cellspacing="0" width="100%">
+                 <table class="table table-striped table-hover" cellspacing="0" width="100%">
                         <thead>
                           <tr class="bg-dark">
                               <th>SL No:</th>
                               <th>Allowance Name</th>
-                              <th>Allowance Amount</th>
                               <th>Allowance Type</th>
+                              <th>Amount Type</th>
+                              <th>Amount</th>
                               <th>Effective Date</th>
                           </tr>
                         </thead>
@@ -312,23 +336,76 @@ table.tc-med-2 tbody td:first-child{
                           <tr class="bg-dark">
                               <th>SL No:</th>
                               <th>Allowance Name</th>
-                              <th>Allowance Amount</th>
                               <th>Allowance Type</th>
+                              <th>Amount Type</th>
+                              <th>Amount</th>
                               <th>Effective Date</th>
                           </tr>
                         </tfoot>
                         <tbody>
-                        <?php $sl=1; ?>
+                        <?php $total_salary = $user->basic_salary; $salary=0;?>
                         @foreach($user->salaries as $sinfo)
                             <tr>
-                              <td>{{$sl}}</td>
-                              <td>{{$sinfo->basicSalaryInfo->name}}</td>
-                              <td>@if($sinfo->salary_amount_type == 'fixed') $ @endif {{$sinfo->salary_amount}} @if($sinfo->salary_amount_type == 'percent') % @endif</td>
+                              <td>{{$loop->iteration}}</td>
+                              <td>{{$sinfo->basicSalaryInfo->salary_info_name}}</td>
+                              <td><span class="@if($sinfo->basicSalaryInfo->salary_info_type == 'allowance') text-success @else text-danger @endif">
+                              {{ucfirst($sinfo->basicSalaryInfo->salary_info_type)}}</span>
+                              </td>
                               <td>{{$sinfo->salary_amount_type}}</td>
+                              <!-- <td class="text-right">@if($sinfo->salary_amount_type == 'fixed') $ @endif {{$sinfo->salary_amount}} @if($sinfo->salary_amount_type == 'percent') % @endif</td> -->
+                              <td class="text-right">{{$sinfo->salary_amount}}</td>
                               <td>{{$sinfo->salary_effective_date}}</td>
                             </tr>
-                            <?php $sl++; ?>
+                            <?php
+                              if($sinfo->basicSalaryInfo->salary_info_type == 'allowance'){
+                                
+                                if($sinfo->salary_amount_type == 'fixed'){
+                                  $salary = $salary + $sinfo->salary_amount;
+                                }
+
+                                if($sinfo->salary_amount_type == 'percent'){
+                                  $temp = $user->basic_salary * $sinfo->salary_amount / 100;
+                                  $salary = $salary + $temp;
+                                }
+                              }
+
+                              if($sinfo->basicSalaryInfo->salary_info_type == 'deduction'){
+                                if($sinfo->salary_amount_type == 'fixed'){
+                                  $salary = $salary - $sinfo->salary_amount;
+                                }
+
+                                if($sinfo->salary_amount_type == 'percent'){
+                                  $temp = $user->basic_salary * $sinfo->salary_amount / 100;
+                                  $salary = $salary - $temp;
+                                }
+                              }
+                            ?>
                         @endforeach
+                        <tr>
+                          <td colspan="4" class="text-right"><strong>Total Salary : </strong></td>
+                          <td class="text-right"><strong>
+                            {{$total_salary + $salary}}
+                          </strong></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td colspan="4" class="text-right"><strong>Salary in Cash : </strong></td>
+                          <td class="text-right"><strong>
+                            {{$user->salary_in_cache}}
+                          </strong></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td colspan="4" class="text-right"><strong>Gross Salary : </strong></td>
+                          <td class="text-right"><strong>
+                          <?php $gross_salary = $total_salary + $salary + $user->salary_in_cache; echo $gross_salary;?>
+                          </strong></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>Gross Salary in words: </strong></td>
+                            <td colspan="2" class="text-right" style="font-weight: bold"><span id="gross_salary"></span></td>
+                        </tr>
                         </tbody>
                     </table>
               </div>
@@ -341,21 +418,25 @@ table.tc-med-2 tbody td:first-child{
             <div class="panel">
               <div class="panel-body pb5">
 
-              @if($user->nominees)
+              @forelse($user->nominees as $nominees)
+              <div class="row @if($loop->index %2 == 0) even @else odd @endif">
               <div class="col-md-10">
-                <h4>Nominee Name : {{$user->nominees->nominee_name}}</h4>
-                <h5>Relation : {{$user->nominees->nominee_relation}}</h5>
-                <h6>Birth Date : {{$user->nominees->nominee_birth_date}}</h6>
-                <p class="text-muted">Nominee Distribution : {{$user->nominees->nominee_distribution}}</p>
-                <p class="text-muted">Nominee Rest Distribution : {{$user->nominees->nominee_rest_distribution}}</p>
+                <h4>Nominee Name : {{$nominees->nominee_name}}</h4>
+                <h5>Relation : {{$nominees->nominee_relation}}</h5>
+                <h6>Birth Date : {{$nominees->nominee_birth_date}}</h6>
+                <p class="text-muted">Nominee Distribution : {{$nominees->nominee_distribution}}</p>
+                <p class="text-muted">Nominee Rest Distribution : {{$nominees->nominee_rest_distribution}}</p>
+                @if(!$loop->last)
+                <hr class="short br-lighter">
+                @endif
               </div>
               <div class="col-md-2">
-                <img src="@if($user->nominees->nominee_photo){{url('files/'.$user->id.'/'.$user->nominees->nominee_photo)}}@else{{url('img/placeholder.png')}}@endif" class="img-responsive">
+                <img src="@if($nominees->nominee_photo){{url('files/'.$user->id.'/'.$nominees->nominee_photo)}}@else{{url('img/placeholder.png')}}@endif" class="img-responsive">
               </div>
-              @else
+              </div>
+              @empty
                 <h5>No Data Available</h5>  
               @endforelse
-
               </div>
             </div>
           </div>
@@ -367,17 +448,19 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->trainings as $training)
-                <h6>
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
+                <h5>
                   Start : {{$training->training_from_date}} - End : {{$training->training_to_date}} - Pass : {{$training->  training_passed_date}} - Participation : {{$training->training_participation_date}}
-                </h6>
-                <h5>Training Code : {{$training->training_code}}</h5>
+                </h5>
+                <!-- <h5>Training Code : {{$training->training_code}}</h5> -->
                 <h4>Title : {{$training->training_title}}</h4>
                 <h6>Institute : {{$training->training_institute}}</h6>
                 <p class="text-muted">Remarks : {{$training->training_remarks}}</p>
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -393,6 +476,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->references as $reference)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h4>Reference Name : {{$reference->reference_name}}</h4>
                 <h5>Department : {{$reference->reference_department}}</h5>
                 <h5>Organization : {{$reference->reference_organization}}</h5>
@@ -402,7 +487,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -418,6 +503,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->childrens as $children)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h4>Children Name: {{$children->children_name}}</h4>
                 <h5>Education Level : {{$children->children_education_level}}</h5>
                 <h6>Children Birth Date : {{$children->children_birth_date}}</h6>
@@ -426,7 +513,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -442,6 +529,8 @@ table.tc-med-2 tbody td:first-child{
               <div class="panel-body pb5">
 
               @forelse($user->languages as $language)
+              <div class="@if($loop->index %2 == 0) even @else odd @endif">
+              <div class="badge" style="position: absolute; right: 40px">{{$loop->iteration}}</div>
                 <h5>Language Name : {{$language->language->language_name}}</h5>
                 <h6>speaking : {{$language->speaking}}</h6>
                 <h6>reading : {{$language->reading}}</h6>
@@ -449,7 +538,7 @@ table.tc-med-2 tbody td:first-child{
                 @if(!$loop->last)
                 <hr class="short br-lighter">
                 @endif
-
+                </div>
               @empty
                 <h5>No Data Available</h5>  
               @endforelse
@@ -465,5 +554,96 @@ table.tc-med-2 tbody td:first-child{
   
 </section>
 <!-- End: Content -->
+
+@section('script')
+
+<script type="text/javascript">
+  var gross_salary = "{{$gross_salary}}";
+
+  function convertNumberToWords(amount) {
+            var words = new Array();
+            words[0] = '';
+            words[1] = 'One';
+            words[2] = 'Two';
+            words[3] = 'Three';
+            words[4] = 'Four';
+            words[5] = 'Five';
+            words[6] = 'Six';
+            words[7] = 'Seven';
+            words[8] = 'Eight';
+            words[9] = 'Nine';
+            words[10] = 'Ten';
+            words[11] = 'Eleven';
+            words[12] = 'Twelve';
+            words[13] = 'Thirteen';
+            words[14] = 'Fourteen';
+            words[15] = 'Fifteen';
+            words[16] = 'Sixteen';
+            words[17] = 'Seventeen';
+            words[18] = 'Eighteen';
+            words[19] = 'Nineteen';
+            words[20] = 'Twenty';
+            words[30] = 'Thirty';
+            words[40] = 'Forty';
+            words[50] = 'Fifty';
+            words[60] = 'Sixty';
+            words[70] = 'Seventy';
+            words[80] = 'Eighty';
+            words[90] = 'Ninety';
+            amount = amount.toString();
+            var atemp = amount.split(".");
+            var number = atemp[0].split(",").join("");
+            var n_length = number.length;
+            var words_string = "";
+            if (n_length <= 9) {
+                var n_array = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+                var received_n_array = new Array();
+                for (var i = 0; i < n_length; i++) {
+                    received_n_array[i] = number.substr(i, 1);
+                }
+                for (var i = 9 - n_length, j = 0; i < 9; i++, j++) {
+                    n_array[i] = received_n_array[j];
+                }
+                for (var i = 0, j = 1; i < 9; i++, j++) {
+                    if (i == 0 || i == 2 || i == 4 || i == 7) {
+                        if (n_array[i] == 1) {
+                            n_array[j] = 10 + parseInt(n_array[j]);
+                            n_array[i] = 0;
+                        }
+                    }
+                }
+                value = "";
+                for (var i = 0; i < 9; i++) {
+                    if (i == 0 || i == 2 || i == 4 || i == 7) {
+                        value = n_array[i] * 10;
+                    } else {
+                        value = n_array[i];
+                    }
+                    if (value != 0) {
+                        words_string += words[value] + " ";
+                    }
+                    if ((i == 1 && value != 0) || (i == 0 && value != 0 && n_array[i + 1] == 0)) {
+                        words_string += "Crores ";
+                    }
+                    if ((i == 3 && value != 0) || (i == 2 && value != 0 && n_array[i + 1] == 0)) {
+                        words_string += "Lakhs ";
+                    }
+                    if ((i == 5 && value != 0) || (i == 4 && value != 0 && n_array[i + 1] == 0)) {
+                        words_string += "Thousand ";
+                    }
+                    if (i == 6 && value != 0 && (n_array[i + 1] != 0 && n_array[i + 2] != 0)) {
+                        words_string += "Hundred and ";
+                    } else if (i == 6 && value != 0) {
+                        words_string += "Hundred ";
+                    }
+                }
+                words_string = words_string.split("  ").join(" ");
+            }
+            document.getElementById('gross_salary').innerHTML = words_string;
+        }
+        convertNumberToWords(gross_salary);
+</script>
+
+@endsection
 
 @endsection

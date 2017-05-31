@@ -5,5 +5,8 @@
   "/js/unit.js": "/js/unit.js",
   "/js/settings.js": "/js/settings.js",
   "/js/salaryInfo.js": "/js/salaryInfo.js",
-  "/js/employee.js": "/js/employee.js"
+  "/js/branch.js": "/js/branch.js",
+  "/js/setupMenu.js": "/js/setupMenu.js",
+  "/js/module.js": "/js/module.js",
+  "/js/leaveType.js": "/js/leaveType.js"
 }

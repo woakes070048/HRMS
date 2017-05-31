@@ -21,3 +21,27 @@ $factory->define(App\Models\Department::class, function (Faker\Generator $faker)
         'created_by' => 1,
     ];
 });
+
+
+$factory->define(App\Models\Attendance::class,function(Faker\Generator $faker){
+	return [
+		'user_id' => 1,
+		'in_time' => $faker->time('H:i'),
+		'out_time' => $faker->time('H:i'),
+		'total_work_hour' => $faker->randomDigit,
+		'date' => date('Y-m-d'),
+	];
+});
+
+
+
+$factory->define(App\Models\AttendanceTimesheet::class,function(Faker\Generator $faker){
+	return [
+		'user_id' => 1,
+		'date' => date('Y-m-d'),
+		'observation' => 1,
+		'in_time' => $faker->time('H:i'),
+		'out_time' => $faker->time('H:i'),
+		'leave_type' => $faker->word,
+	];
+});

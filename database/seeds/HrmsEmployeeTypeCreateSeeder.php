@@ -12,9 +12,10 @@ class HrmsEmployeeTypeCreateSeeder extends Seeder
     public function run()
     {
         DB::table('employee_types')->insert([
-        		['type_name' => 'Part time'],
-        		['type_name' => 'Full time'],
-        		['type_name' => 'Permanent'],
+            ['type_name' => 'Permanent'],
+            ['type_name' => 'Trainee'],
+            ['type_name' => 'Part time'],
+            ['type_name' => 'Special Contract'],
         	]);
     }
 }

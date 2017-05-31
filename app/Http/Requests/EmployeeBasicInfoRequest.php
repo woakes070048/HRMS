@@ -25,27 +25,32 @@ class EmployeeBasicInfoRequest extends FormRequest
     {
 
         if($this->segment(3)){
-             $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
+//             $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
+             $employee_no ='required|regex:/[0-9a-zA-Z][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
              $email = 'required|email|unique:users,email,'.$this->segment(3);
              $password = 'nullable';
              $retype_pass = 'nullable';
         }else{
-             $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users';
+             $employee_no ='required|regex:/[0-9a-zA-Z][\-{1}][0-9]+$/|unique:users';
              $email = 'required|email|unique:users';
-             $password = 'required|digits_between:6,16';
+             $password = 'required|min:6|max:16';
              $retype_pass = 'required|same:password';
         }
 
         return [
             'employee_no' => $employee_no,
-            'designation_id' => 'required|numeric',
             'employee_type_id' => 'required|numeric',
+            'branch_id' => 'required|numeric',
+            'designation_id' => 'required|numeric',
+            'unit_id' => 'required|numeric',
+            // 'supervisor_id' => 'required|numeric',
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
             'email' => $email,
-            'mobile_number' => 'required',
+            'mobile_number' => 'required|max:17|min:11|regex:/\+*[0-9]+$/',
             'password' => $password,
             'retype_password' => $retype_pass,
+            'image' => 'nullable|mimes:jpeg,jpg,png,gif|max:4000',
             'present_division_id' => 'required',
             'present_district_id' => 'required',
             'present_policestation_id' => 'required',
@@ -63,7 +68,9 @@ class EmployeeBasicInfoRequest extends FormRequest
     public function attributes(){
         return [
             'designation_id' => 'employee designation',
+            'unit_id' => 'employee unit',
             'employee_type_id' => 'employee type',
+            'supervisor_id' => 'employee supervisor',
 
             'present_division_id' => 'division',
             'present_district_id' => 'district',
@@ -74,6 +81,15 @@ class EmployeeBasicInfoRequest extends FormRequest
             'permanent_district_id' => 'district',
             'permanent_policestation_id' => 'police station',
             'permanent_postoffice' => 'post office',
+        ];
+    }
+
+
+    public function messages(){
+        return [
+            'designation_id.numeric' => 'The :attribute field is required.',
+            'supervisor_id.numeric' => 'The :attribute field is required.',
+            'image.max' => 'The file size must be less then 4 MB.'
         ];
     }
 }

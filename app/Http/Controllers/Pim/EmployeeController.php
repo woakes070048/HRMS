@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Http\Controllers\Pim;
 
-
-use App\Models\EmployeeSalaryAccount;
 use App\Models\Setup\UserEmails;
 
 use App\Models\User;
@@ -17,8 +14,16 @@ use App\Models\EmployeeTraining;
 use App\Models\EmployeeReference;
 use App\Models\EmployeeChildren;
 use App\Models\EmployeeLanguage;
+use App\Models\EmployeeSalaryAccount;
+use App\Models\Designation;
+use App\Models\LevelPermission;
+use App\Models\UserPermission;
+use App\Models\Module;
+use App\Models\LeaveType;
+use App\Models\UserLeaveTypeMap;
 
 use App\Services\CommonService;
+use App\Jobs\UserEmailUpdate;
 
 use App\Http\Requests\EmployeeBasicInfoRequest;
 use App\Http\Requests\EmployeePersonalInfoRequest;
@@ -32,20 +37,19 @@ use App\Http\Requests\EmployeeChildrenRequest;
 use App\Http\Requests\EmployeeLanguageRequest;
 
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
+
+use App\Http\Controllers\Controller;
 
 class EmployeeController extends Controller
 {
-
     use CommonService;
 
     protected $auth;
-
 
     /**
      * EmployeeController constructor.
@@ -54,6 +58,7 @@ class EmployeeController extends Controller
     public function __construct(Auth $auth,User $user)
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['viewEmployeeProfile', 'statusChange', 'permission', 'updatePermission', 'leave', 'updateLeave']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -70,11 +75,74 @@ class EmployeeController extends Controller
      * @return $this
      */
     public function index(){
-        $data['users'] = User::with('designation','createdBy')->orderBy('id','desc')->get();
+        $data['title'] = 'Employee List';
+        $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
+        $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
+        $data['leave_types'] = LeaveType::where('leave_type_status', 1)->get();
+
         $data['sidevar_hide'] = 1;
         return view('pim.employee.index')->with($data);
     }
 
+    public function permission($id){
+
+        $data['users_per'] = UserPermission::where('user_id', $id)->get();
+
+        return $data['users_per'];
+    }
+
+    public function updatePermission(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required'
+        ]);
+        
+        DB::beginTransaction();
+
+        try {
+            foreach($request->user_menus as $key=>$value){
+                if($value == 0){
+                    $uncheckedAray[] = $key;
+                }
+                else{
+                    $checkedAray[] = $key;    
+                }
+            }
+
+            if(!empty($uncheckedAray)){
+                UserPermission::where('user_id', $request->hdn_id)
+                        ->whereIn('menu_id', $uncheckedAray)->delete();
+            }
+
+            if(!empty($checkedAray)){
+                $exist_menu_obj = UserPermission::select('menu_id')->where('user_id', $request->hdn_id)
+                        ->whereIn('menu_id', $checkedAray)->get()->toArray();
+            }
+
+            $exist_menu_ary = array_column($exist_menu_obj, 'menu_id');
+            $aryDiff = array_diff($checkedAray,$exist_menu_ary);
+
+            if(!empty($aryDiff)){
+                foreach($aryDiff as $info){
+                    $user_permission[] = [
+                                'user_id' => $request->hdn_id,
+                                'menu_id' => $info
+                            ];
+                }
+
+                UserPermission::insert($user_permission);
+            }
+
+            DB::commit();
+            $request->session()->flash('success','Data successfully updatsed!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            $request->session()->flash('danger','Data not updated!');
+        }
+
+        return redirect('employee/index');
+    }
 
     /**
      * @get Show Employee Profile
@@ -82,6 +150,7 @@ class EmployeeController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function viewEmployeeProfile($employee_no=null){
+
         $sidevar_hide = 1;
         if(!empty($employee_no)){
             $user = $this->user->get_profile_info($employee_no);
@@ -106,12 +175,12 @@ class EmployeeController extends Controller
         $data['sidevar_hide'] = 1;
         $data['tab'] = $request->tab;
 
-        if($user = User::find(base64_decode($request->id))){
+        if($user = User::find($request->id)){
             $data['user'] = $user;
             $data['id'] = $user->id;
 
             if($request->ajax()){
-                return $this->user->get_user_data_by_user_tab($user->id, $request->tab);
+                return $this->user->get_user_data_by_user_tab($user->id, $request->tab, 'add');
             }
         }else{
             if($request->ajax()){
@@ -130,12 +199,13 @@ class EmployeeController extends Controller
      * @param EmployeeBasicInfoRequest $request
      * @return $this|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
+
     public function addEmployee(EmployeeBasicInfoRequest $request){
 
         $request->offsetSet('password', bcrypt($request->password));
         $request->offsetSet('created_by',$this->auth->id);
 
-//        try{
+        try{
             Artisan::call('db:connect');
 
             if(UserEmails::where('email',$request->email)->count() <= 0){
@@ -144,8 +214,19 @@ class EmployeeController extends Controller
                     'email' => $request->email,
                 ]);
             }else{
-                $request->session()->flash('danger','Employee Email Already Exits!');
-                return redirect()->back()->withInput();
+               
+                if($request->ajax()){
+                    $data['status'] = 'danger';
+                    $data['statusType'] = 'NotOk';
+                    $data['code'] = 500;
+                    $data['type'] = null;
+                    $data['title'] = 'Error!';
+                    $data['message'] = 'Employee Email Already Exits!';
+                    return response()->json($data,500);
+                }else{
+                    $request->session()->flash('danger','Employee Email Already Exits!');
+                    return redirect()->back()->withInput();
+                }
             }
 
             Artisan::call("db:connect", ['database' => Session('database')]);
@@ -158,16 +239,69 @@ class EmployeeController extends Controller
 
             $user = User::create($request->all());
 
+            //insert menus into user_permisson when user created
+            $desig_info = Designation::find($request->designation_id);
+            $level_id = $desig_info->level_id;
+            $level_permission = LevelPermission::where('level_id', $level_id)->get();
+
+            foreach($level_permission as $info){
+                $user_permission[] = [
+                    'user_id' => $user->id,
+                    'menu_id' => $info->menu_id,
+                ];
+            }
+
+            if(!empty($user_permission)){
+                UserPermission::insert($user_permission);
+            }
+            //end insert menu user_permission
+
+
+            //insert leave info depend on emp type start
+            $emp_type = $request->employee_type_id; 
+            $commonTypeId = [];
+
+            $leaveTypes = LeaveType::where('leave_type_status', 1)->get();
+
+            foreach($leaveTypes as $val){
+                
+                $leaveTypeAry = explode(',', $val->leave_type_effective_for);
+
+                if(in_array($emp_type, $leaveTypeAry)){
+                    $commonTypeId['type_id'][] = $val->id;
+                    $commonTypeId['days'][] = $val->leave_type_number_of_days;
+                    $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
+                    $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
+                }
+            }
+
+            $length = count($commonTypeId['type_id']);
+
+            if(!empty($length)){
+                for($i=0 ; $i < $length; $i++){
+                    $user_leave_type[] = [
+                        'user_id' => $user->id,
+                        'leave_type_id' => $commonTypeId['type_id'][$i],
+                        'number_of_days' => $commonTypeId['days'][$i],
+                        'active_from_year' => $commonTypeId['from_year'][$i],
+                        'active_to_year' => $commonTypeId['to_year'][$i],
+                        'status' => 1,
+                    ];
+                }
+            }
+
+            if(!empty($user_leave_type)){
+                UserLeaveTypeMap::insert($user_leave_type);
+            }
+            //leave end
+
             if($user){
                 if(isset($photo)){
-                    if(!$request->image->storeAs($user->id,$photo)){
+                    if(!$request->image->storeAs(Session('config_id').'/'.$user->id,$photo)){
                         $request->session()->flash('warning','Photo Not Upload.Update photo form edit.');
                     }
                 }
             }
-
-            $userData = $this->user->get_user_data_by_user_tab($user->id, $request->tab);
-            $data['data'] = $userData;
 
             $request->offsetSet('user_id',$user->id);
             EmployeeAddress::create($request->all());
@@ -175,6 +309,8 @@ class EmployeeController extends Controller
             DB::commit();
 
             if($request->ajax()){
+                $userData = $this->user->get_user_data_by_user_tab($user->id, $request->tab);
+                $data['data'] = $userData->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
@@ -187,29 +323,28 @@ class EmployeeController extends Controller
             $request->session()->flash('success','Employee Successfully Added!');
 
             if($request->has('save_next')){
-                return redirect('/employee/add/'.base64_encode($user->id).'/personal');
+                return redirect('/employee/add/'.$user->id.'/personal');
             }
 
-            return redirect('/employee/add/'.base64_encode($user->id));
+            return redirect('/employee/add/'.$user->id);
 
-//        }catch(\Exception $e){
-//            DB::rollback();
-//
-//            if($request->ajax()){
-//                $data['status'] = 'danger';
-//                $data['statusType'] = 'NotOk';
-//                $data['code'] = 500;
-//                $data['type'] = null;
-//                $data['title'] = 'Error!';
-//                $data['message'] = 'Personal Info Not Saved.';
-//                return response()->json($data,500);
-//            }
-//
-//            $request->session()->flash('danger','Employee Not Added!');
-//            return redirect()->back()->withInput();
-//        }
+        }catch(\Exception $e){
+            DB::rollback();
+
+            if($request->ajax()){
+                $data['status'] = 'danger';
+                $data['statusType'] = 'NotOk';
+                $data['code'] = 500;
+                $data['type'] = null;
+                $data['title'] = 'Error!';
+                $data['message'] = 'Personal Info Not Saved.';
+                return response()->json($data,500);
+            }
+
+            $request->session()->flash('danger','Employee Not Added!');
+            return redirect()->back()->withInput();
+        }
     }
-
 
     /**
      * @post Add Employee Personal Info
@@ -220,7 +355,7 @@ class EmployeeController extends Controller
        try {
             $request->offsetSet('created_by',$this->auth->id);
             if(EmployeeDetail::create($request->all())){
-                $data['data'] = User::with('details.bloodGroup')->find($request->user_id);
+                $data['data'] = User::with('details.bloodGroup')->find($request->userId);
             }
 
            if($request->ajax()){
@@ -236,9 +371,9 @@ class EmployeeController extends Controller
             $request->session()->flash('success','Personal Info Successfully Saved.');
 
             if($request->has('save_personal_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/education');
+                return redirect('/employee/add/'.$request->userId.'/education');
             }
-            return redirect('/employee/add/'.base64_encode($request->id).'/personal');
+            return redirect('/employee/add/'.$request->userId.'/personal');
 
        }catch (\Exception $e){
            if($request->ajax()){
@@ -258,46 +393,55 @@ class EmployeeController extends Controller
 
 
     /**
-     * @post Add Employee Education
+     * @post Add And Edit Education Employee Education
      * @param EmployeeEducationRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function addEducation(EmployeeEducationRequest $request){
-
+    public function addEditEducation(EmployeeEducationRequest $request){
         try{
-            $request->offsetSet('created_by', $this->auth->id);
-
+            $message = '';
             if($request->hasFile('certificate_file')){
                 $certificate = time().'.'.$request->certificate_file->extension();
                 $request->offsetSet('certificate',$certificate);
-                $request->certificate_file->storeAs($request->user_id, $certificate);
+                if($request->certificate_file->storeAs(Session('config_id').'/'.$request->userId, $certificate)){
+                    if($request->has('old_image')) {
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$request->old_image);
+                    }
+                }
             }
 
-            if(EmployeeEducation::create($request->all())){
-                $data['data'] = User::with('educations.institute.educationLevel','educations.degree')->find($request->user_id);
+            if($request->id) {
+                $message = 'Education Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                if(!EmployeeEducation::find($request->id)->update($request->all())){
+                    if(isset($certificate)) {
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$certificate);
+                    }
+                }
             }else{
-                if(isset($certificate)) {
-                    File::delete('files/'.$request->user_id.'/'.$certificate);
+                $message = 'Education Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                if(!EmployeeEducation::create($request->all())){
+                    if(isset($certificate)) {
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$certificate);
+                    }
                 }
             }
 
             if($request->ajax()){
+                $education = $this->user->get_user_data_by_user_tab($request->userId,'education');
+                $data['data'] = $education->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = ($request->has('save_education_and_next'))?'experience':null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Education Successfully Saved.';
+                $data['message'] = $message;
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Education Successfully Saved.');
-
-            if($request->has('save_education_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/experience');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/education');
-
+            $request->session()->flash('success',$message);
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -307,11 +451,11 @@ class EmployeeController extends Controller
                 $data['code'] = 500;
                 $data['type'] = null;
                 $data['title'] = 'Error!';
-                $data['message'] = 'Employee Education Not Saved.';
+                $data['message'] = 'Education Successfully Saved.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Education Not Saved.');
+            $request->session()->flash('danger','Education Successfully Saved.');
             return redirect()->back()->withInput();
         }
     }
@@ -322,27 +466,34 @@ class EmployeeController extends Controller
      * @param EmployeeExperienceRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function addExperience(EmployeeExperienceRequest $request){
+    public function addEditExperience(EmployeeExperienceRequest $request){
+        // dd($request->all());
         try{
-            $request->offsetSet('created_by', $this->auth->id);
-            $data['data'] = EmployeeExperience::create($request->all());
+            $message = '';
+            if($request->id) {
+                $message = 'Experience Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeExperience::find($request->id)->update($request->all());
+            }else{
+                $message = 'Experience Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeExperience::create($request->all());
+            }
 
             if($request->ajax()){
+                $experience = $this->user->get_user_data_by_user_tab($request->userId,'experience');
+                $data['data'] = $experience->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = ($request->has('save_experience_and_next'))?'salary':null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Experience Successfully Saved.';
+                $data['message'] = $message;
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Experience Successfully Saved.');
-
-            if($request->has('save_experience_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/salary');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/experience');
+            $request->session()->flash('success',$message);
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -368,33 +519,40 @@ class EmployeeController extends Controller
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function addSalary(EmployeeSalaryRequest $request){
-        //dd($request->all());
+
         DB::beginTransaction();
         try{
             $request->offsetSet('created_by', $this->auth->id);
 
-            User::where('id',$request->user_id)->update([
+            User::where('id',$request->userId)->update([
                 'basic_salary' => $request->basic_salary,
+                'salary_in_cache' => $request->salary_in_cache,
                 'effective_date' => $request->effective_date,
             ]);
 
             if($request->has('salary_info')){
+
                 $salary_info = $request->salary_info;
                 $saveData = [];
+                // dd($salary_info);
                 foreach($salary_info as $sinfo){
-                    if(!empty($sinfo['id']) && !empty($sinfo['amount'])) {
-                        $saveData[] = [
-                            'user_id' => $request->user_id,
-                            'basic_salary_info_id' => $sinfo['id'],
-                            'salary_amount' => $sinfo['amount'],
-                            'salary_amount_type' => $sinfo['type'],
-                            'salary_effective_date' => ($sinfo['effective_date'])?:date('Y-m-d'),
-                            'created_by' => $this->auth->id,
-                            'created_at' => date('Y-m-d')
-                        ];
-                    }
+                    $saveData[] = [
+                        'user_id' => $request->userId,
+                        'basic_salary_info_id' => $sinfo['id'],
+                        'salary_amount' => ($sinfo['amount'])?$sinfo['amount']:'0',
+                        'salary_amount_type' => (isset($sinfo['type']))?$sinfo['type']:'percent',
+                        'salary_effective_date' => ($sinfo['date']) ?: date('Y-m-d'),
+                        'created_by' => $this->auth->id,
+                        'created_at' => date('Y-m-d')
+                    ];
                 }
+
+                EmployeeSalary::where('user_id',$request->userId)->delete();
                 EmployeeSalary::insert($saveData);
+            }else{
+                if(EmployeeSalary::where('user_id',$request->userId)->count() >= 0){
+                    EmployeeSalary::where('user_id',$request->userId)->delete();
+                }
             }
 
             if($request->has('bank_id') && $request->has('bank_account_no')){
@@ -404,7 +562,9 @@ class EmployeeController extends Controller
             DB::commit();
 
             if($request->ajax()){
-                $data['data'] = User::with('salaries.basicSalaryInfo','salaryAccount')->find($request->user_id);
+                // $data['data'] = User::with('salaries.basicSalaryInfo','salaryAccount')->find($request->userId);
+                $salary = $this->user->get_user_data_by_user_tab($request->userId, 'salary','add');
+                $data['data'] = $salary->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
@@ -417,9 +577,9 @@ class EmployeeController extends Controller
             $request->session()->flash('success','Salary Successfully Saved.');
 
             if($request->has('save_salary_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/nominee');
+                return redirect('/employee/add/'.$request->userId.'/nominee');
             }
-            return redirect('/employee/add/'.base64_encode($request->id).'/salary');
+            return redirect('/employee/add/'.$request->userId.'/salary');
 
         }catch(\Exception $e){
             DB::rollback();
@@ -434,7 +594,7 @@ class EmployeeController extends Controller
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Experience Not Saved.');
+            $request->session()->flash('danger','Salary Not Saved.');
             return redirect()->back()->withInput();
         }
     }
@@ -444,29 +604,50 @@ class EmployeeController extends Controller
      * @param EmployeeNomineeRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function addNominee(EmployeeNomineeRequest $request){
+    public function addEditNominee(EmployeeNomineeRequest $request){
          try{
-            $request->offsetSet('created_by', $this->auth->id);
-
+             $message = '';
             if($request->hasFile('image')){
                 $image = time().'.'.$request->image->extension();
                 $request->offsetSet('nominee_photo',$image);
-                $request->image->storeAs($request->user_id, $image);
+                if($request->image->storeAs(Session('config_id').'/'.$request->userId, $image)){
+                    if($request->has('old_image')) {
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$request->old_image);
+                    }
+                }
             }
 
-            $data['data'] = EmployeeNominee::create($request->all());
+             if($request->id) {
+                 $message = 'Nominee Successfully Update.';
+                 $request->offsetSet('updated_by', $this->auth->id);
+                 if(!EmployeeNominee::find($request->id)->update($request->all())){
+                     if(isset($image)) {
+                         File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$image);
+                     }
+                 }
+             }else{
+                 $message = 'Nominee Successfully Saved.';
+                 $request->offsetSet('created_by', $this->auth->id);
+                 if(!EmployeeNominee::create($request->all())){
+                     if(isset($image)) {
+                         File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$image);
+                     }
+                 }
+             }
 
             if($request->ajax()){
+                $nominee = $this->user->get_user_data_by_user_tab($request->userId,'nominee');
+                $data['data'] = $nominee->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = ($request->has('save_nominee_and_next'))?'training':null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Nominee Successfully Added.';
+                $data['message'] = $message;
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Nominee Successfully Added.');
+            $request->session()->flash('success',$message);
             return redirect()->back();
 
          }catch(\Exception $e){
@@ -480,7 +661,7 @@ class EmployeeController extends Controller
                  return response()->json($data,500);
              }
 
-             $request->session()->flash('danger','Nominee Not Added.');
+             $request->session()->flash('danger','Nominee Not Saved.');
              return redirect()->back()->withInput();
          }
     }
@@ -492,37 +673,42 @@ class EmployeeController extends Controller
      * @param EmployeeTrainingRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function addTraining(EmployeeTrainingRequest $request){
+    public function addEditTraining(EmployeeTrainingRequest $request){
         try{
-            $request->offsetSet('created_by', $this->auth->id);
-            $data['data'] = EmployeeTraining::create($request->all());
+            $message = '';
+            if($request->id) {
+                $message = 'Training Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeTraining::find($request->id)->update($request->all());
+            }else{
+                $message = 'Training Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeTraining::create($request->all());
+            }
 
             if($request->ajax()){
+                $training = $this->user->get_user_data_by_user_tab($request->userId,'training');
+                $data['data'] = $training->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = ($request->has('save_training_and_next'))?'reference':null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Experience Successfully Saved.';
+                $data['message'] = $message;
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Training Successfully Saved.');
-
-            if($request->has('save_training_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/reference');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/training');
+            $request->session()->flash('success',$message);
+            return redirect()->back();
 
         }catch(\Exception $e){
-
             if($request->ajax()){
                 $data['status'] = 'danger';
                 $data['statusType'] = 'NotOk';
                 $data['code'] = 500;
                 $data['type'] = null;
                 $data['title'] = 'Error!';
-                $data['message'] = 'Experience Not Saved.';
+                $data['message'] = 'Training Not Saved.';
                 return response()->json($data,500);
             }
 
@@ -532,18 +718,28 @@ class EmployeeController extends Controller
     }
 
 
-
     /**
      * @post Add Employee Reference
      * @param EmployeeReferenceRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function addReference(EmployeeReferenceRequest $request){
+    public function addEditReference(EmployeeReferenceRequest $request){
         try{
-            $request->offsetSet('created_by', $this->auth->id);
-            $data['data'] = EmployeeReference::create($request->all());
+
+            $message = '';
+            if($request->id) {
+                $message = 'Reference Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeReference::find($request->id)->update($request->all());
+            }else{
+                $message = 'Reference Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeReference::create($request->all());
+            }
 
             if($request->ajax()){
+                $reference = $this->user->get_user_data_by_user_tab($request->userId,'reference');
+                $data['data'] = $reference->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
@@ -553,12 +749,8 @@ class EmployeeController extends Controller
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Reference Successfully Saved.');
-
-            if($request->has('save_reference_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/children');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/reference');
+            $request->session()->flash('success',$message);
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -572,7 +764,7 @@ class EmployeeController extends Controller
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Experience Not Saved.');
+            $request->session()->flash('danger','Reference Not Saved.');
             return redirect()->back()->withInput();
         }
     }
@@ -583,27 +775,33 @@ class EmployeeController extends Controller
      * @param EmployeeChildrenRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function addChildren(EmployeeChildrenRequest $request){
+    public function addEditChildren(EmployeeChildrenRequest $request){
         try{
-            $request->offsetSet('created_by', $this->auth->id);
-            $data['data'] = EmployeeChildren::create($request->all());
+            $message = '';
+            if($request->id) {
+                $message = 'Children Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeChildren::find($request->id)->update($request->all());
+            }else{
+                $message = 'Children Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeChildren::create($request->all());
+            }
 
             if($request->ajax()){
+                $children = $this->user->get_user_data_by_user_tab($request->userId,'children');
+                $data['data'] = $children->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = ($request->has('save_children_and_next'))?'language':null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Children Successfully Saved.';
+                $data['message'] = $message;
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Children Successfully Saved.');
-
-            if($request->has('save_children_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/language');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/children');
+            $request->session()->flash('success',$message);
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -617,7 +815,7 @@ class EmployeeController extends Controller
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Experience Not Saved.');
+            $request->session()->flash('danger','Children Not Saved.');
             return redirect()->back()->withInput();
         }
     }
@@ -628,26 +826,34 @@ class EmployeeController extends Controller
      * @param EmployeeLanguageRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function addLanguage(EmployeeLanguageRequest $request){
+    public function addEditLanguage(EmployeeLanguageRequest $request){
         try{
-            $request->offsetSet('created_by', $this->auth->id);
 
-            if(EmployeeLanguage::create($request->all())){
-                $data['data'] = User::with('languages.language')->find($request->id);
+            $message = '';
+            if($request->id) {
+                $message = 'Language Successfully Update.';
+                $request->offsetSet('updated_by', $this->auth->id);
+                EmployeeLanguage::find($request->id)->update($request->all());
+            }else{
+                $message = 'Language Successfully Saved.';
+                $request->offsetSet('created_by', $this->auth->id);
+                EmployeeLanguage::create($request->all());
             }
 
             if($request->ajax()){
+                $language = $this->user->get_user_data_by_user_tab($request->userId,'language');
+                $data['data'] = $language->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['type'] = null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Language Successfully Saved.';
+                $data['message'] = $message;
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Language Successfully Saved.');
-            return redirect('/employee/add/'.base64_encode($request->id).'/language');
+            $request->session()->flash('success',$message);
+            return redirect()->back();
 
         }catch(\Exception $e){
 
@@ -669,18 +875,19 @@ class EmployeeController extends Controller
 
 
 
-/********************************** Edit Employee Information Functions *************************************************/
+/********************** Edit Employee Information Functions ********************************/
 
     public function showEmployeeEditForm(Request $request){
         $data['sidevar_hide'] = 1;
         $data['tab'] = $request->tab;
 
-        if($user = User::find(base64_decode($request->id))){
+        if($user = User::find($request->id)){
             $data['user'] = $user;
             $data['id'] = $user->id;
 
             if($request->ajax()){
-                return $this->user->get_user_data_by_user_tab($user->id, $request->tab);
+                $tabData =  $this->user->get_user_data_by_user_tab($user->id, $request->tab);
+                return $tabData;
             }
         }else{
             return redirect()->back();
@@ -691,7 +898,31 @@ class EmployeeController extends Controller
 
 
     public function getDataByTabAndId(Request $request){
-        return response()->json(["sdfsf"]);
+
+        if($request->data_tab == 'education'){
+            $data = EmployeeEducation::with('institute.educationLevel','degree')->find($request->data_id);
+        }
+        if($request->data_tab == 'experience'){
+            $data = EmployeeExperience::find($request->data_id);
+        }
+        if($request->data_tab == 'nominee'){
+            $data = EmployeeNominee::find($request->data_id);
+        }
+        if($request->data_tab == 'training'){
+            $data = EmployeeTraining::find($request->data_id);
+        }
+        if($request->data_tab == 'reference'){
+            $data = EmployeeReference::find($request->data_id);
+        }
+        if($request->data_tab == 'children'){
+            $data = EmployeeChildren::find($request->data_id);
+        }
+        if($request->data_tab == 'language'){
+            $data = EmployeeLanguage::find($request->data_id);
+        }
+
+
+        return response()->json($data);
     }
 
 
@@ -704,20 +935,23 @@ class EmployeeController extends Controller
     public function editEmployee(EmployeeBasicInfoRequest $request){
 
         try{
-            Artisan::call('db:connect');
+            if($request->old_email != $request->email){
+                Artisan::call('db:connect');
+                UserEmails::where('email',$request->old_email)->where('config_id',Session('config_id'))->update(['email' => $request->email]);
 
-            UserEmails::where('email',$request->email)->where('config_id',Session('config_id'))->update([
-                'email' => $request->email,
-            ]);
+                dispatch(new UserEmailUpdate($request->all()));
+            }
+
+            $request->offsetUnset('old_email');
 
             Artisan::call("db:connect", ['database' => Session('database')]);
             DB::beginTransaction();
 
             if($request->hasFile('image')){
                 $photo = time().'.'.$request->image->extension();
-                if($request->image->storeAs($request->id,$photo)){
+                if($request->image->storeAs(Session('config_id').'/'.$request->userId,$photo)){
                     if($request->has('old_image')) {
-                        File::delete('files/'.$request->id.'/'.$request->old_image);
+                        File::delete('files/'.Session('config_id').'/'.$request->userId.'/'.$request->old_image);
                     }
                 }else{
                     $request->session()->flash('warning','Photo Not Upload.Update photo form edit.');
@@ -726,15 +960,20 @@ class EmployeeController extends Controller
             }
 
             $request->offsetSet('updated_by',$this->auth->id);
-            $user = User::find($request->id);
+            $user = User::find($request->userId);
             $user->update($request->all());
 
-            EmployeeAddress::findUser($request->id)->update($request->all());
+            $address = EmployeeAddress::findUser($request->userId);
+            if($address){
+                $address->update($request->all());
+            }else{
+               EmployeeAddress::create($request->all());
+            }
 
             DB::commit();
 
             if($request->ajax()){
-                $userData = $this->user->get_user_data_by_user_tab($request->id, $request->tab);
+                $userData = $this->user->get_user_data_by_user_tab($request->userId, $request->tab);
                 $data['data'] = $userData->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
@@ -748,10 +987,10 @@ class EmployeeController extends Controller
             $request->session()->flash('success','Employee Successfully Update!');
 
             if($request->has('update_next')){
-                return redirect('/employee/edit/'.base64_encode($request->id).'/personal');
+                return redirect('/employee/edit/'.$request->userId.'/personal');
             }
 
-            return redirect('/employee/edit/'.base64_encode($request->id));
+            return redirect('/employee/edit/'.$request->userId);
 
         }catch(\Exception $e){
             DB::rollback();
@@ -778,14 +1017,14 @@ class EmployeeController extends Controller
     public function editPersonalInfo(EmployeePersonalInfoRequest $request){
         try {
             $request->offsetSet('updated_by',$this->auth->id);
-            if($employeeDetails = EmployeeDetail::findUser($request->user_id)){
+            if($employeeDetails = EmployeeDetail::findUser($request->userId)){
                 $employeeDetails->update($request->all());
             }else{
                 $request->offsetSet('created_by',$this->auth->id);
                 EmployeeDetail::create($request->all());
             }
 
-            $data['data'] = User::with('details.bloodGroup')->find($request->user_id);
+            $data['data'] = User::with('details.bloodGroup')->find($request->userId);
 
             if($request->ajax()){
                 $data['status'] = 'success';
@@ -800,9 +1039,9 @@ class EmployeeController extends Controller
             $request->session()->flash('success','Personal Info Successfully Update.');
 
             if($request->has('save_personal_and_next')){
-                return redirect('/employee/edit/'.base64_encode($request->id).'/education');
+                return redirect('/employee/edit/'.$request->userId.'/education');
             }
-            return redirect('/employee/edit/'.base64_encode($request->id).'/personal');
+            return redirect('/employee/edit/'.$request->userId.'/personal');
 
         }catch (\Exception $e){
             if($request->ajax()){
@@ -822,48 +1061,81 @@ class EmployeeController extends Controller
 
 
     /**
-     * @post Edit Employee Education
-     * @param EmployeeEducationRequest $request
+     * @post Edit Employee Salary
+     * @param EmployeeSalaryRequest $request
      * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function editEducation(EmployeeEducationRequest $request){
-
+    public function editSalary(EmployeeSalaryRequest $request){
+        // dd($request->all());
+        DB::beginTransaction();
         try{
-            $request->offsetSet('created_by', $this->auth->id);
+            $request->offsetSet('updated_by', $this->auth->id);
+            $request->offsetSet('user_id', $request->userId);
 
-            if($request->hasFile('certificate_file')){
-                $certificate = time().'.'.$request->certificate_file->extension();
-                $request->offsetSet('certificate',$certificate);
-                $request->certificate_file->storeAs($request->user_id, $certificate);
-            }
+            User::where('id',$request->userId)->update([
+                'basic_salary' => $request->basic_salary,
+                'salary_in_cache' => $request->salary_in_cache,
+                'effective_date' => $request->effective_date,
+            ]);
 
-            if(EmployeeEducation::create($request->all())){
-                $data['data'] = User::with('educations.institute.educationLevel','educations.degree')->find($request->user_id);
+            
+            if($request->has('salary_info')){
+
+                $salary_info = $request->salary_info;
+                $saveData = [];
+                // dd($salary_info);
+                foreach($salary_info as $sinfo){
+                    $saveData[] = [
+                        'user_id' => $request->userId,
+                        'basic_salary_info_id' => $sinfo['id'],
+                        'salary_amount' => ($sinfo['amount'])?$sinfo['amount']:'0',
+                        'salary_amount_type' => (isset($sinfo['type']))?$sinfo['type']:'percent',
+                        'salary_effective_date' => ($sinfo['date']) ?: date('Y-m-d'),
+                        'created_by' => $this->auth->id,
+                        'created_at' => date('Y-m-d')
+                    ];
+                }
+
+                EmployeeSalary::where('user_id',$request->userId)->delete();
+                EmployeeSalary::insert($saveData);
             }else{
-                if(isset($certificate)) {
-                    File::delete('files/'.$request->user_id.'/'.$certificate);
+                if(EmployeeSalary::where('user_id',$request->userId)->count() >= 0){
+                    EmployeeSalary::where('user_id',$request->userId)->delete();
                 }
             }
 
+            if($request->has('bank_id') && $request->has('bank_account_no')){
+                if($request->salary_account_id && !empty($request->salary_account_id)) {
+                    EmployeeSalaryAccount::find($request->salary_account_id)->update($request->all());
+                }else{
+                    EmployeeSalaryAccount::create($request->all());
+                }
+            }
+
+            DB::commit();
+
             if($request->ajax()){
+                // $data['data'] = User::with('salaries.basicSalaryInfo','salaryAccount')->find($request->userId);
+                $salary = $this->user->get_user_data_by_user_tab($request->userId, 'salary','edit');
+                $data['data'] = $salary->original;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
-                $data['type'] = ($request->has('save_education_and_next'))?'experience':null;
+                $data['type'] = ($request->has('save_salary_and_next'))?'nominee':null;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Education Successfully Saved.';
+                $data['message'] = 'Salary Successfully Update.';
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Education Successfully Saved.');
+            $request->session()->flash('success','Salary Successfully Update.');
 
-            if($request->has('save_education_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/experience');
+            if($request->has('save_salary_and_next')){
+                return redirect('/employee/edit/'.$request->userId.'/nominee');
             }
-            return redirect('/employee/add/'.base64_encode($request->id).'/education');
-
+            return redirect('/employee/edit/'.$request->userId.'/salary');
 
         }catch(\Exception $e){
+            DB::rollback();
 
             if($request->ajax()){
                 $data['status'] = 'danger';
@@ -871,107 +1143,51 @@ class EmployeeController extends Controller
                 $data['code'] = 500;
                 $data['type'] = null;
                 $data['title'] = 'Error!';
-                $data['message'] = 'Employee Education Not Saved.';
+                $data['message'] = 'Salary Not Saved.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Education Not Saved.');
+            $request->session()->flash('danger','Salary Not Update.');
             return redirect()->back()->withInput();
-        }
-    }
-
-
-
-    public function deleteEducation(Request $request){
-        if($request->ajax()){
-            try{
-                EmployeeEducation::where('id',$request->id)->delete();
-
-                $data['status'] = 'success';
-                $data['statusType'] = 'OK';
-                $data['code'] = 200;
-                $data['title'] = 'Success!';
-                $data['message'] = 'Education Successfully Deleted.';
-                return response()->json($data,200);
-
-            }catch(\Exception $e){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
-                $data['message'] = 'Employee Education Not Deleted.';
-                return response()->json($data,500);
-            }
         }
     }
 
 
     /**
-     * @post Edit Experience Education
-     * @param EmployeeExperienceRequest $request
-     * @return $this|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @Delete Employee Data
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function editExperience(EmployeeExperienceRequest $request){
-
-        try{
-            $request->offsetSet('created_by', $this->auth->id);
-
-            if(EmployeeEducation::create($request->all())){
-                $data['data'] = User::with('educations.institute.educationLevel','educations.degree')->find($request->user_id);
-            }else{
-                if(isset($certificate)) {
-                    File::delete('files/'.$request->user_id.'/'.$certificate);
-                }
-            }
-
-            if($request->ajax()){
-                $data['status'] = 'success';
-                $data['statusType'] = 'OK';
-                $data['code'] = 200;
-                $data['type'] = ($request->has('save_education_and_next'))?'experience':null;
-                $data['title'] = 'Success!';
-                $data['message'] = 'Education Successfully Saved.';
-                return response()->json($data,200);
-            }
-
-            $request->session()->flash('success','Education Successfully Saved.');
-
-            if($request->has('save_education_and_next')){
-                return redirect('/employee/add/'.base64_encode($request->id).'/experience');
-            }
-            return redirect('/employee/add/'.base64_encode($request->id).'/education');
-
-
-        }catch(\Exception $e){
-
-            if($request->ajax()){
-                $data['status'] = 'danger';
-                $data['statusType'] = 'NotOk';
-                $data['code'] = 500;
-                $data['type'] = null;
-                $data['title'] = 'Error!';
-                $data['message'] = 'Employee Education Not Saved.';
-                return response()->json($data,500);
-            }
-
-            $request->session()->flash('danger','Education Not Saved.');
-            return redirect()->back()->withInput();
-        }
-    }
-
-
-
-    public function deleteExperience(Request $request){
+    public function deleteEmployeeData(Request $request){
         if($request->ajax()){
             try{
-                EmployeeEducation::where('id',$request->id)->delete();
+                if($request->segment(4) == 'education'){
+                    EmployeeEducation::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'experience'){
+                    EmployeeExperience::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'nominee'){
+                    EmployeeNominee::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'training'){
+                    EmployeeTraining::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'reference'){
+                    EmployeeReference::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'children'){
+                    EmployeeChildren::where('id',$request->id)->delete();
+                }
+                if($request->segment(4) == 'language'){
+                    EmployeeLanguage::where('id',$request->id)->delete();
+                }
 
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Education Successfully Deleted.';
+                $data['message'] = ucfirst($request->segment(4)).' Successfully Deleted.';
                 return response()->json($data,200);
 
             }catch(\Exception $e){
@@ -980,11 +1196,106 @@ class EmployeeController extends Controller
                 $data['code'] = 500;
                 $data['type'] = null;
                 $data['title'] = 'Error!';
-                $data['message'] = 'Employee Education Not Deleted.';
+                $data['message'] = ucfirst($request->segment(4)).' Not Deleted.';
                 return response()->json($data,500);
             }
         }
     }
 
 
+    public function deleteEmployee($employee_id){
+        return redirect()->back();
+    }
+
+
+    public function statusChange(Request $request){
+        try{
+            $status = ($request->status == 'Active')?1:0;
+            $user = User::find($request->id);
+            $user->status = $status;
+            $user->save();
+
+            $data['status'] = 'success';
+            $data['statusType'] = 'OK';
+            $data['code'] = 200;
+            $data['title'] = 'Success!';
+            $data['message'] = "<strong class='text-info'>".$user->first_name.' '.$user->last_name.'</strong> Account Successfully '.$request->status;
+            return response()->json($data,200);
+        }catch(\Exception $e){
+            $data['status'] = 'danger';
+            $data['statusType'] = 'NotOk';
+            $data['code'] = 500;
+            $data['type'] = null;
+            $data['title'] = 'Error!';
+            $data['message'] = "<strong class='text-info'>".$user->first_name.' '.$user->last_name.'</strong> Account Not '.$request->status;
+            return response()->json($data,500);
+        }
+    }
+
+    public function leave($id){
+
+        $currentYear = date('Y');
+        $data['individual_user_leaves'] = UserLeaveTypeMap::where('user_id', $id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get();
+
+        return $data['individual_user_leaves'];
+    }
+
+    public function updateLeave(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required'
+        ]);
+
+        $currentYear = date('Y');
+
+        try {
+            foreach($request->user_leaves as $key=>$value){
+                if($value == 0){
+                    $uncheckedAray[] = $key;
+                }
+                else{
+                    $checkedAray[] = $key;    
+                }
+            }
+
+            if(!empty($uncheckedAray)){
+                UserLeaveTypeMap::where('user_id', $request->hdn_id)->where('status', 1)
+                                ->where('active_from_year', '<=', $currentYear)
+                                ->whereIn('leave_type_id', $uncheckedAray)->delete();
+            }
+
+            if(!empty($checkedAray)){
+
+                $exist_leave_id = UserLeaveTypeMap::select('leave_type_id')->where('user_id', $request->hdn_id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get()->toArray();
+                $exist_leave_id_ary = array_column($exist_leave_id, 'leave_type_id');
+
+                $aryDiff = array_diff($checkedAray,$exist_leave_id_ary);
+                
+                if(!empty($aryDiff)){
+                    $diff_type_value = LeaveType::whereIn('id', $aryDiff)->where('leave_type_status', 1)->where('leave_type_active_from_year', '<=', $currentYear)->where('leave_type_active_to_year', '>=', $currentYear)->get();
+
+                        foreach($diff_type_value as $info){
+                            $diff_arry[] = [
+                                'user_id' => $request->hdn_id,
+                                'leave_type_id' => $info->id,
+                                'number_of_days' => $info->leave_type_number_of_days,
+                                'active_from_year' => $info->leave_type_active_from_year,
+                                'active_to_year' => $info->leave_type_active_to_year,
+                                'status' => 1,
+                            ];
+                        }
+
+                    UserLeaveTypeMap::insert($diff_arry);
+                }   
+            }
+
+            $request->session()->flash('success','Data successfully updatsed!');
+
+        } catch (\Exception $e) {
+        
+            $request->session()->flash('danger','Data not updated!');
+        }
+
+        return redirect('employee/index');
+    }
 }

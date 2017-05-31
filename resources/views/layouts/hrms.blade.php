@@ -10,7 +10,7 @@
 
     <link rel="shortcut icon" href="{{asset('img/logo.png')}}">
     <!-- Font CSS (Via CDN) -->
-    <!-- <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'> -->
+    <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'>
 
     <!-- Glyphicons Pro CSS(font) -->
     <link rel="stylesheet" type="text/css" href="{{asset('fonts/glyphicons-pro/glyphicons-pro.css')}}">
@@ -127,8 +127,15 @@
 
 <!-- BEGIN: PAGE SCRIPTS -->
 <script src="{{asset('js/hrms.js')}}"></script>
+
 <script src="{{asset('vendor/jquery/jquery-1.11.1.min.js')}}"></script>
 <script src="{{asset('vendor/jquery/jquery_ui/jquery-ui.min.js')}}"></script>
+
+<!-- Time/Date Plugin Dependencies -->
+<script src="{{asset('vendor/plugins/globalize/globalize.min.js')}}"></script>
+<script src="{{asset('vendor/plugins/moment/moment.min.js')}}"></script>
+
+<script src="{{asset('js/jquery-overlay.min.js')}}"></script>
 
 <!-- PNotify -->
 <script src="{{asset('vendor/plugins/pnotify/pnotify.js')}}"></script>
@@ -142,16 +149,11 @@
 <!-- Select2 Plugin Plugin -->
 <script src="{{asset('vendor/plugins/select2/select2.min.js')}}"></script>
 
-<!-- Time/Date Plugin Dependencies -->
-<script src="{{asset('vendor/plugins/globalize/globalize.min.js')}}"></script>
-<script src="{{asset('vendor/plugins/moment/moment.min.js')}}"></script>
-
 <!-- DateRange Plugin -->
-<!-- <script src="{{asset('vendor/plugins/daterange/daterangepicker.js')}}"></script> -->
+<script src="{{asset('vendor/plugins/daterange/daterangepicker.js')}}"></script>
 
 <!-- DateTime Plugin -->
 <script src="{{asset('vendor/plugins/datepicker/js/bootstrap-datetimepicker.js')}}"></script>
-
 
 <script src="{{asset('js/utility/utility.js')}}"></script>
 <script src="{{asset('js/demo/demo.js')}}"></script>
@@ -159,7 +161,10 @@
 
 <script src="{{asset('sweet_alert/sweetalert.min.js')}}"></script>
 
+
+
 <script type="text/javascript">
+
     jQuery(document).ready(function() {
         "use strict";
         // Init Theme Core
@@ -168,6 +173,14 @@
         Demo.init();
 
         $('#datatable1').dataTable({
+            "paging":   true,
+            "searching": true,
+            "info": true,
+            "sDom": '<"dt-panelmenu clearfix"lfr>t<"dt-panelfooter clearfix"ip>',
+
+        });
+
+        $('#datatable2').dataTable({
             "paging":   false,
             "searching": true,
             "info": false,
@@ -175,14 +188,14 @@
 
         });
 
-        $('#datatable2').dataTable({
+        $('#datatable3').dataTable({
             "sDom": 't<"dt-panelfooter clearfix"ip>',
             "oTableTools": {
                 "sSwfPath": "vendor/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf"
             }
         });
 
-        $('#datatable3').dataTable({
+        $('#datatable4').dataTable({
             "aoColumnDefs": [{
                 'bSortable': false,
                 'aTargets': [-1]
@@ -226,6 +239,11 @@
             pickTime: false
         });
 
+        $('.mydatepicker').datetimepicker({
+            format: 'YYYY-MM-DD',
+            pickTime: false
+        });
+
         $('#datetimepicker1').datetimepicker();
         $('#datetimepicker2').datetimepicker();
         $('#datetimepicker3').datetimepicker({
@@ -235,6 +253,8 @@
 
     });
 </script>
+
+@yield('script')
 
 <?php $messages= ['success','danger','warning']; foreach($messages as $msg){?>
 @if(Session($msg))
@@ -247,13 +267,13 @@
             addclass: 'stack_top_right',
             type: '{{$msg}}',
             width: '290px',
-            delay: 1500
+            delay: 2000
         });
     </script>
 @endif
 <?php }?>
 
-@yield('script')
+
 <!-- END: PAGE SCRIPTS -->
 
 </body>

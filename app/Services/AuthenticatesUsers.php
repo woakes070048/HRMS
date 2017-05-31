@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Setup\UserEmails;
+use App\Services\CommonService;
+use App\Services\PermissionService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,7 @@ use Illuminate\Support\Facades\Artisan;
 trait AuthenticatesUsers
 {
 	
-	use RedirectsUsers, ThrottlesLogins;
+	use RedirectsUsers, ThrottlesLogins, CommonService, PermissionService;
 
     /**
      * Show the application's login form.
@@ -150,6 +152,10 @@ trait AuthenticatesUsers
         if(Session('database')){
             Artisan::call("db:connect", ['database'=> Session('database')]);
         }
+        $this->settings();
+        //hrmsSideBar from PermissionService
+        $this->hrmsSideBar();
+        $this->userPermission(\Auth::user()->id);
     }
 
     /**

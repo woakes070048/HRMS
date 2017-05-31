@@ -14,6 +14,7 @@ class DepartmentController extends Controller
 	public function __construct()
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions');
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -41,6 +42,8 @@ class DepartmentController extends Controller
         try {
 		$save = new Department;
 		$save->department_name = $request->name;
+        $save->department_effective_date = $request->effective_date;
+        $save->department_details = $request->note;
 		$save->status = $request->status;
 		$save->created_by = Auth::user()->id;
 		$save->save();
@@ -63,6 +66,8 @@ class DepartmentController extends Controller
 
         $data['id'] = $info->id;
         $data['department_name'] = $info->department_name;
+        $data['department_effective_date'] = $info->department_effective_date;
+        $data['department_details'] = $info->department_details;
         $data['status'] = $info->status;
 
         return $data;
@@ -82,6 +87,8 @@ class DepartmentController extends Controller
 
             $save = Department::find($request->id);
             $save->department_name = $request->name;
+            $save->department_effective_date = $request->effective_date;
+            $save->department_details = $request->note;
             $save->status = $request->status;
             $save->updated_by = Auth::user()->id;
             $save->save();
@@ -100,17 +107,19 @@ class DepartmentController extends Controller
 
     public function delete(Request $request,$id){
 
-    	$save = Department::find($id);
-		
-		if(count($save->id) > 0){
-			$save->delete();
-			$request->session()->flash('success','Department removed !');
-		}
-		else{
-			$request->session()->flash('danger','Department not removed !');
-		}
-		
-    	return redirect('department/index');
+        try{
+            Department::find($id)->delete();
+        
+            $data['title'] = 'success';
+            $data['message'] = 'data successfully removed!';
+
+        }catch(\Exception $e){
+            
+            $data['title'] = 'error';
+            $data['message'] = 'data not removed!';
+        }
+
+        return $data;
     }
 
 }

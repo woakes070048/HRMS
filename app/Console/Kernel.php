@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        ServiceCommand::class
+        ServiceCommand::class,
+        Commands\CalculateEarnLeave::class,
     ];
 
     /**
@@ -27,6 +28,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->command('calculate:earnLeave')
+                 ->timezone('Asia/Dhaka')
+                 ->everyMinute();
     }
 
     /**

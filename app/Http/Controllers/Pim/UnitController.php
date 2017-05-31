@@ -13,6 +13,7 @@ class UnitController extends Controller
 	public function __construct()
     {
         $this->middleware('auth:hrms');
+        $this->middleware('CheckPermissions', ['except' => ['getUnits']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -55,11 +56,11 @@ class UnitController extends Controller
         }
 
         try{
-
             $data['data'] = Units::create([
                 'unit_name' => $request->unit_name,
                 'unit_departments_id' => $request->unit_department_id,
                 'unit_details' => empty($request->unit_details)?'No value':$request->unit_details,
+                'unit_effective_date' => $request->unit_effective_date,
                 'unit_status' => $request->unit_status,
                 'unit_parent_id' => $unit_parent_id,
             ]);
@@ -106,6 +107,7 @@ class UnitController extends Controller
                 'unit_name' => $request->edit_unit_name,
                 'unit_departments_id' => $request->edit_unit_department_id,
                 'unit_details' => empty($request->edit_unit_details)?'No value':$request->edit_unit_details,
+                'unit_effective_date' => $request->edit_unit_effective_date,
                 'unit_status' => $request->edit_unit_status,
                 'unit_parent_id' => $edit_unit_parent_id,
             ]);

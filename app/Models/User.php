@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'employee_no','designation_id','employee_type_id','first_name','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
+        'employee_no','employee_type_id','branch_id','designation_id','unit_id','supervisor_id','first_name','status','middle_name','last_name','nick_name','email', 'password','mobile_number','photo','created_by','updated_by',
 
     ];
 
@@ -33,8 +33,8 @@ class User extends Authenticatable
     ];
 
 
-    public function getEffectiveDateFormatAttribute($value){
-        return Carbon::parse($value)->format('M d Y');
+    public function getEffectiveDateFormatAttribute(){
+        return Carbon::parse($this->effective_date)->format('d M Y');
     }
 
 
@@ -52,22 +52,33 @@ class User extends Authenticatable
         return ucfirst($value);
     }
 
+
     public function getNickNameAttribute($value){
         return ucfirst($value);
     }
 
 
+    public function getFirstNameLastNameAttribute(){
+        return ucfirst($this->first_name).' '.ucfirst($this->last_name);
+    }
+
+
     public function getFullNameAttribute(){
-        return ucfirst($this->first_name). ' ' .ucfirst($this->last_name);
+        return ucfirst($this->first_name).' '.ucfirst($this->middle_name).' ' .ucfirst($this->last_name).' '.ucfirst($this->nick_name);
     }
 
 
     public function getFullImageAttribute(){
-        return Storage::disk('public')->url($this->id.'/'.$this->photo);
+        return Storage::disk('public')->url(Session('config_id').'/'.$this->id.'/'.$this->photo);
     }
 
 
     public function getCreatedAtAttribute($value){
+        return Carbon::parse($value)->format('d M Y');
+    }
+
+
+    public function getUpdatedAtAttribute($value){
         return Carbon::parse($value)->format('d M Y');
     }
 
@@ -77,33 +88,55 @@ class User extends Authenticatable
     }
 
 
+    public function updatedBy(){
+        return $this->belongsTo('App\Models\User','updated_by','id');
+    }
+
+
+    public function getJoiningDateFormatAttribute($value){
+        return Carbon::parse($value)->format('M d Y');
+    }
+
+
     public function getNextEmployeeNoAttribute(){
         if($this->employee_no) {
             $employee_no = explode('-', $this->employee_no);
             $next_id_without_zero_prefix = end($employee_no) + 1;
             $zero_perfix_count = strlen(end($employee_no)) - strlen($next_id_without_zero_prefix);
-            $next_employee_no = $employee_no[0] . '-' . str_repeat('0', $zero_perfix_count) . $next_id_without_zero_prefix;
+            $next_employee_no = Session('company_code') . '-' . str_repeat('0', $zero_perfix_count) . $next_id_without_zero_prefix;
             return $next_employee_no;
         }else{
-            Artisan::call('db:connect');
-            $config = Setup\Config::where('id',Session('config_id'))->first();
-            Artisan::call("db:connect", ['database' => Session('database')]);
-            return $config->company_code.'-0000';
+            return Session('company_code').'-0000';
         }
     }
+
+
+
+    /********** Star Relations ******************/
 
     public function employeeType(){
         return $this->belongsTo('App\Models\EmployeeType');
     }
 
+    public function branch(){
+        return $this->belongsTo('App\Models\Branch');
+    }
 
     public function designation(){
         return $this->belongsTo('App\Models\Designation');
+    }
+
+    public function supervisor(){
+        return $this->belongsTo('App\Models\User');
     }
     
 
     public function address(){
         return $this->hasOne('App\Models\EmployeeAddress');
+    }
+
+    public function unit(){
+        return $this->belongsTo('App\Models\Units');
     }
 
 
@@ -133,7 +166,7 @@ class User extends Authenticatable
 
 
     public function nominees(){
-        return $this->hasOne('App\Models\EmployeeNominee');
+        return $this->hasMany('App\Models\EmployeeNominee');
     }
 
 
@@ -158,13 +191,14 @@ class User extends Authenticatable
 
 
     public function get_profile_info($employee_no){
-        return User::with('designation.department','designation.department','details.bloodGroup','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
+        return User::with('supervisor','designation.department','designation.level','branch','unit','details.bloodGroup','details.religion','educations.institute.educationLevel','educations.degree','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation','experiences','nominees','trainings','references','childrens','languages.language')->where('employee_no',$employee_no)->first();
     }
 
 
-    public function get_user_data_by_user_tab($user_id,$tab){
+    public function get_user_data_by_user_tab($user_id,$tab,$flag=null){
+
         if($tab == ''){
-            $basic = User::with('designation','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
+            $basic = User::with('supervisor','designation.department','designation.level','branch','unit','address.presentDivision','address.presentDistrict','address.presentPoliceStation','address.permanentDivision','address.permanentDistrict','address.permanentPoliceStation')->find($user_id);
             return response()->json($basic);
         }
 
@@ -185,6 +219,49 @@ class User extends Authenticatable
 
         if($tab == 'salary'){
             $salaries = User::with('salaries.basicSalaryInfo','salaryAccount')->find($user_id);
+
+            $salaries->added = true;
+            if($flag == 'add'){
+                if(empty($salaries->basic_salary) || $salaries->basic_salary < 1){
+                    $salaries->added = false; 
+                    $levelSalaryInfo = User::with('designation.level.salaryInfo.basicSalaryInfo')->find($user_id);
+                    $salaries->basic_salary = $levelSalaryInfo->designation->level->level_salary_amount;
+                    $salariesData = $levelSalaryInfo->designation->level->salaryInfo;
+                }
+            }
+
+            $empSalary = [];
+            if(isset($salariesData)){
+                // dd($salariesData);
+                foreach($salariesData as $sinfo){
+                    $salary = new \stdClass;
+                    $salary_info_type= 'salary_info_type_'.$sinfo->basic_salary_info_id;
+
+                    $salary->basic_salary_info_id = $sinfo->basic_salary_info_id;
+                    $salary->salary_amount = $sinfo->amount;
+                    $salary->salary_amount_type = ($sinfo->basicSalaryInfo->salary_info_amount_status == 0)?'percent':'fixed';
+                    $salary->salary_info_type = $sinfo->basicSalaryInfo->salary_info_type;
+                    $salary->salary_effective_date = $sinfo->salary_effective_date;
+
+                    $empSalary[] = $salary;
+                }
+                // dd($empSalary);
+            }else{
+                foreach($salaries->salaries as $sinfo){
+                    $salary = new \stdClass;
+                    $salary_info_type= 'salary_info_type_'.$sinfo->basic_salary_info_id;
+
+                    $salary->basic_salary_info_id = $sinfo->basic_salary_info_id;
+                    $salary->salary_amount = $sinfo->salary_amount;
+                    $salary->salary_amount_type = $sinfo->salary_amount_type;
+                    $salary->salary_info_type = $sinfo->basicSalaryInfo->salary_info_type;
+                    $salary->salary_effective_date = $sinfo->salary_effective_date;
+
+                    $empSalary[] = $salary;
+                }
+            }
+
+            $salaries->mySalary = $empSalary;
             return response()->json($salaries);
         }
 
@@ -212,6 +289,21 @@ class User extends Authenticatable
             $languages = User::with('languages.language')->find($user_id);
             return response()->json($languages);
         }
+    }
+
+
+    public function workShifts(){
+        return $this->hasMany('App\Models\WorkShiftEmployeeMap');
+    }
+
+
+    public function attendanceTimesheet(){
+        return $this->hasMany('App\Models\AttendanceTimesheet');
+    }
+
+
+    public function attendanceTimesheetArchive(){
+        return $this->hasMany('App\Models\AttendanceTimesheetArchive');
     }
 
 

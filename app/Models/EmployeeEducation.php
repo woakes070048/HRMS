@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class EmployeeEducation extends Model
 {
 
-    protected $fillable = ['user_id','institute_id','degree_id','pass_year','result_type','cgpa','division','certificate','created_by','updated_by'];
+    protected $fillable = ['user_id','institute_id','degree_id','achievement','pass_year','result_type','cgpa','division','certificate','created_by','updated_by'];
 
 
     public function institute(){

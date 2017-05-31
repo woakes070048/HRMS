@@ -3,7 +3,7 @@
         <div class="panel">
             <div class="panel-heading">
                 <span class="panel-title">
-                    <i class="fa fa-rocket"></i>Add Other Allowance
+                    <i class="fa fa-rocket"></i> Add Other Allowance
                 </span>
             </div>
             <div class="panel-body">
