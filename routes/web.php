@@ -270,6 +270,73 @@ Route::group(['prefix' => 'attendance', 'namespace' => 'Attendance'],function ()
 
 });
 
+
+/******************** .......HRMS PayRoll Routes........ **************/
+
+/******* .......PayRoll Bonus Type Routes........ ******/
+Route::group(['prefix' => 'bonustype', 'namespace' => 'Payroll'],function (){
+    Route::get('/index','BonusTypeController@index');
+    Route::post('/add','BonusTypeController@create');
+    Route::get('/edit/{id}','BonusTypeController@edit');
+    Route::post('/edit','BonusTypeController@update');
+    Route::delete('/delete/{id}','BonusTypeController@delete');
+});
+
+/******* .......PayRoll Bonus Routes........ ******/
+Route::group(['prefix' => 'bonus', 'namespace' => 'Payroll'],function (){
+    Route::get('/index','BonusController@index');
+    Route::post('/add','BonusController@create');
+    Route::get('/edit/{id}','BonusController@edit');
+    Route::post('/edit','BonusController@update');
+    Route::delete('/delete/{id}','BonusController@delete');
+});
+
+/******* .......PayRoll Increment Type Routes........ ******/
+Route::group(['prefix' => 'incrementtype', 'namespace' => 'Payroll'],function (){
+    Route::get('/index','IncrementTypeController@index');
+    Route::post('/add','IncrementTypeController@create');
+    Route::get('/edit/{id}','IncrementTypeController@edit');
+    Route::post('/edit','IncrementTypeController@update');
+    Route::delete('/delete/{id}','IncrementTypeController@delete');
+});
+
+/******* .......PayRoll Increment Routes........ ******/
+Route::group(['prefix' => 'increment', 'namespace' => 'Payroll'],function (){
+    Route::get('/index','IncrementController@index');
+    Route::post('/add','IncrementController@create');
+    Route::get('/edit/{id}','IncrementController@edit');
+    Route::post('/edit','IncrementController@update');
+    Route::delete('/delete/{id}','IncrementController@delete');
+});
+
+/******* .......PayRoll Provident Fund Routes........ ******/
+Route::group(['prefix' => 'providentfund', 'namespace' => 'Payroll'],function (){
+    Route::get('/index','ProvidentFundController@index');
+    Route::post('/add','ProvidentFundController@create');
+    Route::get('/edit/{id}','ProvidentFundController@edit');
+    Route::post('/edit','ProvidentFundController@update');
+    Route::delete('/delete/{id}','ProvidentFundController@delete');
+});
+
+/******* .......PayRoll Loan Type Routes........ ******/
+Route::group(['prefix' => 'loantype', 'namespace' => 'Payroll'],function (){
+    Route::get('/index','LoanTypeController@index');
+    Route::post('/add','LoanTypeController@create');
+    Route::get('/edit/{id}','LoanTypeController@edit');
+    Route::post('/edit','LoanTypeController@update');
+    Route::delete('/delete/{id}','LoanTypeController@delete');
+});
+
+/******* .......PayRoll Loan Routes........ ******/
+Route::group(['prefix' => 'loan', 'namespace' => 'Payroll'],function (){
+    Route::get('/index','LoanController@index');
+    Route::post('/add','LoanController@create');
+    Route::get('/edit/{id}','LoanController@edit');
+    Route::post('/edit','LoanController@update');
+    Route::delete('/delete/{id}','LoanController@delete');
+});
+
+
 /******************* ........HRMS Leave Management System........... ************/
 Route::group(['prefix' => '/weekend', 'namespace' => 'Leave'],function (){
     Route::get('/index','WeekendController@index');
@@ -278,6 +345,7 @@ Route::group(['prefix' => '/weekend', 'namespace' => 'Leave'],function (){
     // Route::post('/edit','WeekendController@update');
     // Route::get('/delete/{id}','WeekendController@delete');
 });
+
 
 /******************** ...HRMS Common Function Routes... **************/
 Route::group(['prefix' => '/'], function(){
@@ -294,7 +362,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
     Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');
     Route::get('get-blood-groups','CommonController@getBloodGroups');
-    Route::get('get-education-levels','CommonController@getEducationLevels');
+    Route::get('get-education-levels','CommononController@getEducationLevels');
     Route::get('get-institute-by-education-level/{id}','CommonController@getInstituteByEducationLevel');
     Route::get('get-degree-by-education-level/{id}','CommonController@getDegreeByEducationLevel');
     Route::get('get-banks','CommonController@getBanks');
@@ -309,6 +377,11 @@ Route::group(['prefix' => '/'], function(){
     Route::post('add-language','CommonController@addLanguage');
 
     Route::get('get-workshifts/{id?}/{status?}','CommonController@getWorkShift');
+    Route::get('get-bonus-type','CommonController@getBonusType');
+    Route::get('get-employee-by-deisgnation-id/{id}','CommonController@getEmployeeByDesignationId');
+    Route::get('get-increment-type','CommonController@getIncrementType');
+    Route::get('get-loan-type','CommonController@getLoanType');
+    Route::get('get-employees','CommonController@getEmployees');
 
 });
 

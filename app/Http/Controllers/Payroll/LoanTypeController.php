@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Attendance;
+namespace App\Http\Controllers\Payroll;
 
-use App\Models\WorkShift;
-
-use App\Http\Requests\WorkShiftRequest;
+use App\Models\LoanType;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
-class WorkShiftController extends Controller
+class LoanTypeController extends Controller
 {
-
 	protected $auth;
 
     /**
-     * EmployeeController constructor.
+     * LoanTypeController constructor.
      * @param Auth $auth
      */
     public function __construct(Auth $auth)
@@ -32,32 +29,33 @@ class WorkShiftController extends Controller
 
 
     public function index(Request $request){
-
     	if($request->ajax()){
-    		return WorkShift::get();
+    		return LoanType::with('createdBy','updatedBy')->orderBy('id','desc')->get();
     	}else{
-	    	return view('attendance.work_shift');
+	    	return view('payroll.loan_type');
     	}
     }
 
 
-    public function create(WorkShiftRequest $request){
+    public function create(Request $request){
+
+    	$this->validate($request,['loan_type_name' => 'required']);
 
     	try{
     		$request->offsetSet('created_by',$this->auth->id);
-    		$work_shift = WorkShift::create($request->all());
+    		$loanType = LoanType::create($request->all());
 
     		if($request->ajax()){
-                $data['data'] = $work_shift;
+    			$data['data'] = LoanType::with('createdBy','updatedBy')->find($loanType->id);
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Work shift Successfully Added!';
+                $data['message'] = 'Loan Type Successfully Added!';
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Work shift Successfully Added!');
+            $request->session()->flash('success','Loan Type Successfully Added!');
             return redirect()->back();
 
     	}catch(\Exception $e){
@@ -66,33 +64,42 @@ class WorkShiftController extends Controller
                 $data['statusType'] = 'NotOk';
                 $data['code'] = 500;
                 $data['title'] = 'Error!';
-                $data['message'] = 'Work shift Not Added.';
+                $data['message'] = 'Loan Type Not Added.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Work shift Not Added!');
+            $request->session()->flash('danger','Loan Type Not Added!');
             return redirect()->back()->withInput();
     	}
     }
-
 
 
     public function edit(Request $request){
 
     	try{
-    		$workShift = WorkShift::findOrFail($request->id);
+    		$loanType = LoanType::find($request->id);
+    		if(!$loanType){
+    			if($request->ajax()){
+	                $data['status'] = 'danger';
+	                $data['statusType'] = 'NotOk';
+	                $data['code'] = 500;
+	                $data['title'] = 'Error!';
+	                $data['message'] = 'Loan Type Not found.';
+	                return response()->json($data,500);
+            	}
+    		}
 
     		if($request->ajax()){
-                $data['data'] = $workShift;
+                $data['data'] = $loanType;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Work shift successfully find!';
+                $data['message'] = 'Loan Type Successfully Find!';
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Work shift not found.');
+            $request->session()->flash('success','Loan Type Not found.');
             return redirect()->back();
 
     	}catch(\Exception $e){
@@ -101,35 +108,37 @@ class WorkShiftController extends Controller
                 $data['statusType'] = 'NotOk';
                 $data['code'] = 500;
                 $data['title'] = 'Error!';
-                $data['message'] = 'Work shift not found.';
+                $data['message'] = 'Bonus Type Not Find.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Work shift not found.');
+            $request->session()->flash('danger','Loan Type Not found.');
             return redirect()->back()->withInput();
     	}
     }
 
 
 
-    public function update(WorkShiftRequest $request){
+    public function update(Request $request){
+    	if(!$request->has('loan_type_status')){
+	    	$this->validate($request,['loan_type_name' => 'required']);
+    	}
 
     	try{
-    		$request->offsetSet('updated_by',$this->auth->id);
-
-    		$work_shift = WorkShift::find($request->id)->update($request->all());
+            $request->offsetSet('updated_by', $this->auth->id);
+    		LoanType::find($request->id)->update($request->all());
 
     		if($request->ajax()){
-                $data['data'] = $work_shift;
+                $data['data'] = LoanType::with('createdBy','updatedBy')->find($request->id);
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Work shift Successfully updated!';
+                $data['message'] = 'Loan Type Successfully updated!';
                 return response()->json($data,200);
             }
 
-            $request->session()->flash('success','Work shift Successfully updated!');
+            $request->session()->flash('success','Loan Type Successfully updated!');
             return redirect()->back();
 
     	}catch(\Exception $e){
@@ -138,47 +147,45 @@ class WorkShiftController extends Controller
                 $data['statusType'] = 'NotOk';
                 $data['code'] = 500;
                 $data['title'] = 'Error!';
-                $data['message'] = 'Work shift not updated.';
+                $data['message'] = 'Loan Type not updated.';
                 return response()->json($data,500);
             }
 
-            $request->session()->flash('danger','Work shift not updated!');
+            $request->session()->flash('danger','Loan Type not updated!');
             return redirect()->back()->withInput();
     	}
     }
+
 
 
     public function delete(Request $request){
     	try{
-    		WorkShift::where('id',$request->id)->delete();
+    		LoanType::where('id',$request->id)->delete();
 
     		if($request->ajax()){
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
                 $data['title'] = 'Success!';
-                $data['message'] = 'Work shift Successfully Deleted!';
+                $data['message'] = 'Loan Type Successfully Deleted!';
                 return response()->json($data,200);
             }
     	}catch(\Exception $e){
-            $code = $e->getCode();
-
-            if($code == '23000'){
-                $message = "Cannot delete a parent row of another table.";
-            }else{
-                $message = "Work shift Not Delete.";
-            }
-
     		if($request->ajax()){
                 $data['status'] = 'danger';
                 $data['statusType'] = 'NotOk';
                 $data['code'] = 500;
                 $data['title'] = 'Error!';
-                $data['message'] = $message;
+                if($e->getCode() == '23000'){
+                    $data['message'] = 'Can not delete Loan Type. Its parent another table data.';
+                }else{
+	                $data['message'] = 'Loan Type Not Delete.';
+	            }
                 return response()->json($data,500);
             }
     	}
     }
+
 
 
 }
