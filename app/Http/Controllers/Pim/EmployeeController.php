@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pim;
 use App\Models\Setup\UserEmails;
 
 use App\Models\User;
+use App\Models\UserEmployeeTypeMap;
 use App\Models\EmployeeDetail;
 use App\Models\EmployeeAddress;
 use App\Models\EmployeeEducation;
@@ -79,8 +80,8 @@ class EmployeeController extends Controller
         $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
         $data['leave_types'] = LeaveType::where('leave_type_status', 1)->get();
-
         $data['sidevar_hide'] = 1;
+
         return view('pim.employee.index')->with($data);
     }
 
@@ -216,7 +217,7 @@ class EmployeeController extends Controller
             }else{
                
                 if($request->ajax()){
-                    $data['status'] = 'danger';
+                    $data['status'] = 'warning';
                     $data['statusType'] = 'NotOk';
                     $data['code'] = 500;
                     $data['type'] = null;
@@ -224,7 +225,7 @@ class EmployeeController extends Controller
                     $data['message'] = 'Employee Email Already Exits!';
                     return response()->json($data,500);
                 }else{
-                    $request->session()->flash('danger','Employee Email Already Exits!');
+                    $request->session()->flash('warning','Employee Email Already Exits!');
                     return redirect()->back()->withInput();
                 }
             }
@@ -305,6 +306,11 @@ class EmployeeController extends Controller
 
             $request->offsetSet('user_id',$user->id);
             EmployeeAddress::create($request->all());
+            
+            if($request->employee_type_id == 2 || $request->employee_type_id == 4){
+                UserEmployeeTypeMap::create($request->all());
+            }
+
 
             DB::commit();
 
@@ -354,6 +360,9 @@ class EmployeeController extends Controller
     public function addPersonalInfo(EmployeePersonalInfoRequest $request){
        try {
             $request->offsetSet('created_by',$this->auth->id);
+            if($request->employee_type_id == 1 || $request->employee_type_id == 3){
+                $request->offsetSet('confirm_date', $request->joining_date);
+            }
             if(EmployeeDetail::create($request->all())){
                 $data['data'] = User::with('details.bloodGroup')->find($request->userId);
             }
@@ -921,7 +930,6 @@ class EmployeeController extends Controller
             $data = EmployeeLanguage::find($request->data_id);
         }
 
-
         return response()->json($data);
     }
 
@@ -947,6 +955,12 @@ class EmployeeController extends Controller
             Artisan::call("db:connect", ['database' => Session('database')]);
             DB::beginTransaction();
 
+            if(!$request->has('password')){
+                $request->offsetUnset('password');
+            }else{
+                $request->offsetSet('password', bcrypt($request->password));
+            }
+
             if($request->hasFile('image')){
                 $photo = time().'.'.$request->image->extension();
                 if($request->image->storeAs(Session('config_id').'/'.$request->userId,$photo)){
@@ -968,6 +982,27 @@ class EmployeeController extends Controller
                 $address->update($request->all());
             }else{
                EmployeeAddress::create($request->all());
+            }
+
+            if($request->employee_type_id == 2 || $request->employee_type_id == 4){
+                if($request->type_status == '1'){
+                    $request->offsetSet('created_by',$this->auth->id);
+                    UserEmployeeTypeMap::create($request->all());
+                }elseif($request->type_status == '0'){
+                    $type_map = UserEmployeeTypeMap::where('user_id',$request->userId)->orderBy('id','desc')->first();
+                    if($type_map){
+                        $type_map->update($request->all());
+                    }else{
+                        $request->offsetSet('created_by',$this->auth->id);
+                        UserEmployeeTypeMap::create($request->all());
+                    }
+                }
+            }elseif($request->employee_type_id == 1){
+                $request->offsetSet('confirm_date',date('Y-m-d'));
+
+                if($employeeDetails = EmployeeDetail::findUser($request->userId)){
+                    $employeeDetails->update($request->all());
+                }
             }
 
             DB::commit();

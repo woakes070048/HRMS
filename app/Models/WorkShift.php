@@ -35,12 +35,6 @@ class WorkShift extends Model
     }
 
 
-    // public function getCreatedByAttribute(){
-    //     return 
-    // }   
-
-
-
     public function setShiftStartTimeAttribute($value){
     	$this->attributes['shift_start_time'] = date('H:i',strtotime($value));
     }

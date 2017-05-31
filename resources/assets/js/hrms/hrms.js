@@ -31,7 +31,7 @@ window.axios.defaults.headers.common = {
 };
 
 
-
+// window.base_url = '';
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

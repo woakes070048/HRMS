@@ -3,6 +3,10 @@
 namespace App\Console;
 
 use App\Console\Commands\ServiceCommand;
+use App\Console\Commands\SalaryIncrementCommand;
+use App\Console\Commands\AttendanceTimesheetCommand;
+use App\Console\Commands\ArchiveAttendanceTimesheetCommand;
+
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -16,6 +20,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         ServiceCommand::class,
         Commands\CalculateEarnLeave::class,
+        SalaryIncrementCommand::class,
+        AttendanceTimesheetCommand::class,
+        ArchiveAttendanceTimesheetCommand::class
     ];
 
     /**
@@ -26,11 +33,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-        $schedule->command('calculate:earnLeave')
-                 ->timezone('Asia/Dhaka')
-                 ->everyMinute();
+        // $schedule->command('calculate:earnLeave')
+        //          ->timezone('Asia/Dhaka')
+        //          ->everyMinute();
+        
+        // \Config::set('database.connections.mysql_hrms.strict',false);
+        // \Artisan::call("db:connect", ['database' => '1489485338_afc_health']);
+        // $schedule->command('attendance:timesheet')->cron('* * * * * *');
+        // $schedule->command('attendance:archive')->everyMinute();
     }
 
     /**

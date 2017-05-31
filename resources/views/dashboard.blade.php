@@ -1,6 +1,12 @@
 @extends('layouts.hrms')
 @section('content')
 
+@section('style')
+    <link rel="stylesheet" href="{{asset('orgChart/dist/css/jquery.orgchart.css')}}">
+    <link rel="stylesheet" href="{{asset('orgChart/dist/css/style.css')}}">
+    <link rel="stylesheet" href="{{asset('orgChart/style.css')}}">
+@endsection
+
 <!-- Begin: Content -->
 <section id="content" class="animated fadeIn">
 
@@ -96,17 +102,37 @@
 @endif
 
 <!-- organogram -->
-<!-- <div class="panel">
+<div class="panel">
   <div class="panel-heading">
     <span class="panel-title">Organogram</span>
   </div>
-  <div class="panel-body panel-scroller scroller-dark scroller-sm scroller-overlay scroller-pn pn">
-
+  <div class="panel-body">
+    <div id="chart-container"></div>
   </div>
-</div> -->
+</div>
 
 
 </section>
 <!-- End: Content -->
+
+
+
+  <script type="text/javascript">
+
+    var data = '<?php echo json_encode($organogram);?>';
+    var datascource = JSON.parse(data);
+    // console.log(datascource);
+
+  </script>
+  <script type="text/javascript" src="{{asset('orgChart/dist/js/jquery-3.1.0.min.js')}}"></script>
+
+  <script type="text/javascript" src="https://cdn.rawgit.com/stefanpenner/es6-promise/master/dist/es6-promise.auto.min.js"></script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/niklasvh/html2canvas/master/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js"></script>
+
+  <script type="text/javascript" src="{{asset('orgChart/dist/js/jquery.orgchart.js')}}"></script>
+  <script type="text/javascript" src="{{asset('orgChart/scripts.js')}}"></script>
+
+
 
 @endsection

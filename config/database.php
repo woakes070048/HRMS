@@ -64,6 +64,10 @@ return [
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'strict' => true,
+            // 'modes' => [
+                // 'ONLY_FULL_GROUP_BY'
+                // 'STRICT_TRANS_TABLES'
+            // ],
             'engine' => null,
         ],
 

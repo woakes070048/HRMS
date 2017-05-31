@@ -24,7 +24,8 @@ table.tc-med-2 tbody td:first-child{
           <img class="media-object mw150" width="165px" src="{{asset('img/placeholder.png')}}" alt="{{$auth->fullname}}">
           @endif
         </a>
-      </div>                      
+      </div>   
+
       <div class="media-body va-m">
         <h2 class="media-heading">{{$user->fullname}}
           <small> - Profile (@if($user->status ==1) active @else inactive @endif account )</small>
@@ -36,6 +37,10 @@ table.tc-med-2 tbody td:first-child{
         <h4 class="media-heading">Parmanent Address
           <small> - {{$user->address->permanent_postoffice or ''}}, {{$user->address->permanentPoliceStation->police_station_name or ''}}, {{$user->address->permanentDistrict->district_name or ''}}, {{$user->address->permanentDivision->division_name or ''}}.</small>
         </h4>
+      </div>
+
+      <div class="media-right pr30 pl50 pull-right">
+        <a href="{{url('/attendance/view/'.$user->employee_no)}}" class="btn btn-dark btn-sm">View Attendance</a>
       </div>
     </div>
 </div>
@@ -56,6 +61,10 @@ table.tc-med-2 tbody td:first-child{
               <tr>
                 <td class="text-left">Employee No :</td>
                 <td class="text-right">{{$user->employee_no}}</td>
+              </tr>
+              <tr>
+                <td class="text-left">Employee Type :</td>
+                <td class="text-right">{{$user->employeeType->type_name}}</td>
               </tr>
               <tr>
                 <td class="text-left">First Name :</td>

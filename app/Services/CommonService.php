@@ -24,6 +24,9 @@ use App\Models\UserLeaveTypeMap;
 use App\Models\EmployeeLeave;
 
 use App\Models\WorkShift;
+use App\Models\BonusType;
+use App\Models\IncrementType;
+use App\Models\LoanType;
 
 use App\Models\Setting;
 
@@ -387,5 +390,37 @@ trait CommonService
         $data['info'] = EmployeeLeave::with('leaveType', 'userName.designation.department', 'responsibleUser.designation.department', 'approvedByUser.designation.department', 'supervisorUser.designation.department', 'forwardUser.designation.department')->find($id);
 
         return view('leave.showIndiReport', $data);
+    }
+
+    public function getBonusType(){
+        return BonusType::where('bonus_type_status',1)->orderBy('id','desc')->get();
+    }
+
+
+    public function getEmployees(){
+        return User::select('users.*',\DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
+            ->where('users.status',1)
+            ->join('designations','designations.id','=','users.designation_id')
+            ->join('levels','levels.id','=','designations.level_id')
+            ->get();
+    }
+
+
+    public function getEmployeeByDesignationId($id){
+        return User::select('users.*',\DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
+            ->where('users.status',1)->where('users.designation_id',$id)
+            ->join('designations','designations.id','=','users.designation_id')
+            ->join('levels','levels.id','=','designations.level_id')
+            ->get();
+    }
+
+
+    public function getIncrementType(){
+        return IncrementType::where('increment_type_status',1)->orderBy('id','desc')->get();
+    }
+
+
+    public function getLoanType(){
+        return LoanType::where('loan_type_status',1)->orderBy('id','desc')->get();
     }
 }

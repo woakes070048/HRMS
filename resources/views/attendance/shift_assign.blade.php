@@ -1,13 +1,6 @@
 @extends('layouts.hrms')
 @section('content')
 
-@section('style')
-    <!-- Admin Forms CSS -->
-    <link rel="stylesheet" type="text/css" href="{{asset('admin-tools/admin-forms/css/admin-forms.css')}}">
-    <!-- Vendor CSS -->
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
-@endsection
-
 <section id="shiftassign" class="p10">
   <div class="row">
 
@@ -57,7 +50,7 @@
                   </table>
                 </td>
                 <td class="text-right">
-                  <button type="button" class="btn btn-dark btn-sm light" v-on:click.prevent="getWorkAssign('#workshiftassign_modal',indexs)">
+                  <button type="button" class="btn btn-dark btn-sm light" v-on:click.prevent="getWorkAssign('#workshiftassign_modal',indexs),deleted=[]">
                     <i class="imoon imoon-loop2"></i>
                   </button>
                 </td>
@@ -195,9 +188,6 @@
 
 
 @section('script')
-
-<!-- Page Plugins -->
-<script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
 
 <script type="text/javascript" src="{{asset('js/shiftassign.js')}}"></script>
 

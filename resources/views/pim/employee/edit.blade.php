@@ -152,7 +152,44 @@
                                     </div>
 
                                     <div class="row">
+                                        <div class="col-md-2" v-if="basics.employee_type_id == 2 || basics.employee_type_id ==4">
+                                            <div class="form-group" :class="{'has-error': errors.from_date}">
+                                                <label class="control-label"><span v-text="basics.employee_type.type_name"></span> From Date : <span class="text-danger">*</span></label>
+                                                <input type="text" name="from_date" :value="(basics.employee_type_map)?basics.employee_type_map.from_date:''" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" placeholder="Enter From Date" readonly="readonly">
+                                                <span v-if="errors.from_date" class="help-block" v-text="errors.from_date[0]"></span>
+                                            </div>
+                                        </div>
 
+                                        <div class="col-md-2" v-if="basics.employee_type_id == 2 || basics.employee_type_id ==4">
+                                            <div class="form-group" :class="{'has-error': errors.to_date}">
+                                                <label class="control-label"><span v-text="basics.employee_type.type_name"></span> To Date : <span class="text-danger">*</span></label>
+                                                <input type="text" name="to_date" :value="(basics.employee_type_map)?basics.employee_type_map.to_date:''" v-on:mouseover="myDatePicker" class="mydatepicker form-control input-sm" placeholder="Enter To Date" readonly="readonly">
+                                                <span v-if="errors.to_date" class="help-block" v-text="errors.to_date[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6" v-if="basics.employee_type_id == 2 || basics.employee_type_id ==4">
+                                            <div class="form-group" :class="{'has-error': errors.remarks}">
+                                                <label class="control-label"><span v-text="basics.employee_type.type_name"></span> Remark :</label>
+                                                <input v-if="basics.employee_type_map" type="text" name="remarks" :value="(basics.employee_type_map)?basics.employee_type_map.remarks:''" class="form-control input-sm">
+                                                <span v-if="errors.remarks" class="help-block" v-text="errors.remarks[0]"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2" v-if="basics.employee_type_id == 2 || basics.employee_type_id ==4">
+                                            <div class="form-group">
+                                                <label class="control-label"> Employee Type Change is?:</label>
+                                                <div class="radio-custom mb5">
+                                                    <input id="history" name="type_status" type="radio" value="1">
+                                                    <label for="history">History</label>
+                                                    <input id="replace" name="type_status" type="radio" value="0" checked="checked">
+                                                    <label for="replace">Replace</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.supervisor_id}">
                                                 <label class="control-label">Employee Supervisor : </label>
@@ -198,9 +235,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="control-label">Nick Name</label>
-                                                <input type="text" name="nick_name"
-                                                       v-model="basics.nick_name"
-                                                       class="form-control input-sm" placeholder="Enter Nick Name">
+                                                <input type="text" name="nick_name" v-model="basics.nick_name" class="form-control input-sm" placeholder="Enter Nick Name">
                                             </div>
                                         </div>
                                     </div>
@@ -208,8 +243,7 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.email}">
-                                                <label class="control-label">Email Address : <span
-                                                            class="text-danger">*</span></label>
+                                                <label class="control-label">Email Address : <span class="text-danger">*</span></label>
                                                 <input type="email" name="email" :value="basics.email" class="form-control input-sm" placeholder="Enter Email Address">
                                                 <input type="hidden" name="old_email" :value="basics.email">
 
@@ -219,37 +253,27 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.mobile_number}">
-                                                <label class="control-label">Mobile Number : <span
-                                                            class="text-danger">*</span></label>
-                                                <input type="number" name="mobile_number"
-                                                       v-model="basics.mobile_number"
-                                                       class="form-control input-sm" placeholder="Enter Mobile Number">
+                                                <label class="control-label">Mobile Number : <span class="text-danger">*</span></label>
+                                                <input type="number" name="mobile_number" v-model="basics.mobile_number" class="form-control input-sm" placeholder="Enter Mobile Number">
                                                 <span v-if="errors.mobile_number" class="help-block" v-text="errors.mobile_number[0]"></span>
                                             </div>
                                         </div>
 
-                                        {{--<div class="col-md-3">--}}
-                                            {{--<div class="form-group {{$errors->has('password')?'has-error':''}}">--}}
-                                                {{--<label class="control-label">Password : <span--}}
-                                                            {{--class="text-danger">*</span></label>--}}
-                                                {{--<input type="password" name="password" value="basics.password"--}}
-                                                       {{--class="form-control input-sm" placeholder="Enter Password">--}}
-                                                {{--@if($errors->has('password'))<span--}}
-                                                        {{--class="help-block">{{$errors->first('password')}}</span>@endif--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.password}">
+                                                <label class="control-label">Password : </label>
+                                                <input type="password" name="password" class="form-control input-sm" placeholder="Enter Password">
+                                                <span v-if="errors.password" class="help-block" v-text="errors.password[0]"></span>
+                                            </div>
+                                        </div>
 
-                                        {{--<div class="col-md-3">--}}
-                                            {{--<div class="form-group {{$errors->has('retype_password')?'has-error':''}}">--}}
-                                                {{--<label class="control-label">Retype Password : <span--}}
-                                                            {{--class="text-danger">*</span></label>--}}
-                                                {{--<input type="password" name="retype_password"--}}
-                                                       {{--class="form-control input-sm"--}}
-                                                       {{--placeholder="Enter Retype Password">--}}
-                                                {{--@if($errors->has('retype_password'))<span--}}
-                                                        {{--class="help-block">{{$errors->first('retype_password')}}</span>@endif--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.retype_password}">
+                                                <label class="control-label">Retype Password : </label>
+                                                <input type="password" name="retype_password" class="form-control input-sm" placeholder="Enter Retype Password">
+                                                <span v-if="errors.retype_password" class="help-block" v-text="errors.retype_password[0]"></span>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="row">
@@ -324,8 +348,7 @@
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="form-group" :class="{'has-error': errors.present_postoffice}">
-                                                        <label class="control-label">Post Office : <span
-                                                                    class="text-danger">*</span></label>
+                                                        <label class="control-label">Post Office : </label>
                                                         <input type="text" name="present_postoffice"
                                                                v-model="basics.address.present_postoffice"
                                                                class="form-control input-sm"
@@ -335,7 +358,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group" :class="{'has-error': errors.present_address}">
-                                                        <label class="control-label">Address : <span class="text-danger">*</span></label>
+                                                        <label class="control-label">Address : </label>
                                                         <textarea name="present_address" class="form-control input-sm"
                                                                   cols="60" rows="1"
                                                                   placeholder="House, Road, Village." v-text="basics.address.present_address"></textarea>
@@ -400,8 +423,7 @@
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="form-group" :class="{'has-error': errors.permanent_postoffice}">
-                                                        <label class="control-label">Post Office : <span
-                                                                    class="text-danger">*</span></label>
+                                                        <label class="control-label">Post Office : </label>
                                                         <input type="text" name="permanent_postoffice"
                                                                v-model="basics.address.permanent_postoffice"
                                                                class="form-control input-sm"
@@ -412,8 +434,7 @@
 
                                                 <div class="col-md-8">
                                                     <div class="form-group" :class="{'has-error': errors.permanent_address}">
-                                                        <label class="control-label">Address : <span
-                                                                    class="text-danger">*</span></label>
+                                                        <label class="control-label">Address : </label>
                                                         <textarea name="permanent_address" class="form-control input-sm"
                                                                   cols="60" rows="1"
                                                                   placeholder="House, Road, Village." v-text="basics.address.permanent_address"></textarea>
@@ -422,9 +443,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        </div>
+                                    </div>
 
-                                        <div v-else>
+                                    <div v-else>
                                         <div class="col-md-10">
                                             <div class="admin-form">
                                                 <div class="section-divider mb40">
@@ -477,8 +498,7 @@
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="form-group" :class="{'has-error': errors.present_postoffice}">
-                                                        <label class="control-label">Post Office : <span
-                                                                    class="text-danger">*</span></label>
+                                                        <label class="control-label">Post Office : </label>
                                                         <input type="text" name="present_postoffice" 
                                                                class="form-control input-sm"
                                                                placeholder="Enter Post Office">
@@ -487,8 +507,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group" :class="{'has-error': errors.present_address}">
-                                                        <label class="control-label">Address : <span
-                                                                    class="text-danger">*</span></label>
+                                                        <label class="control-label">Address : </label>
                                                         <textarea name="present_address" class="form-control input-sm"
                                                                   cols="60" rows="1"
                                                                   placeholder="House, Road, Village."></textarea>
@@ -553,8 +572,7 @@
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="form-group" :class="{'has-error': errors.permanent_postoffice}">
-                                                        <label class="control-label">Post Office : <span
-                                                                    class="text-danger">*</span></label>
+                                                        <label class="control-label">Post Office : </label>
                                                         <input type="text" name="permanent_postoffice"
                                                                class="form-control input-sm"
                                                                placeholder="Enter Post Office">
@@ -563,8 +581,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="form-group" :class="{'has-error': errors.permanent_address}">
-                                                        <label class="control-label">Address : <span
-                                                                    class="text-danger">*</span></label>
+                                                        <label class="control-label">Address : </label>
                                                         <textarea name="permanent_address" class="form-control input-sm"
                                                                   cols="60" rows="1"
                                                                   placeholder="House, Road, Village."></textarea>
@@ -573,8 +590,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        </div>
-
+                                    </div>
 
                                     </div>
 

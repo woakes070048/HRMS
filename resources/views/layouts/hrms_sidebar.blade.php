@@ -89,8 +89,7 @@
                         </ul>
                     </li>
                     @endif
-                @endforeach  
-
+                @endforeach
 
                 {{-- <li>
                     <a class="accordion-toggle" href="#">
@@ -121,6 +120,7 @@
                         </li>
                     </ul>
                 </li> --}}
+
         </ul>
         <!-- End: Sidebar Menu -->
 

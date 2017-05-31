@@ -36,11 +36,11 @@ class CreateUserEmployeeTypeMapsTable extends Migration
      */
     public function down()
     {
-        Schema::table('user_usertype_maps',function(Blueprint $table){
+        Schema::table('user_employee_type_maps',function(Blueprint $table){
             $table->dropForeign('user_employee_type_maps_user_id_foreign');
             $table->dropForeign('user_employee_type_maps_employee_type_id_foreign');
         });
         
-        Schema::dropIfExists('user_usertype_maps');
+        Schema::dropIfExists('user_employee_type_maps');
     }
 }

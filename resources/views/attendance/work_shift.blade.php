@@ -1,14 +1,6 @@
 @extends('layouts.hrms')
 @section('content')
 
-@section('style')
-    <!-- Admin Forms CSS -->
-    <link rel="stylesheet" type="text/css" href="{{asset('admin-tools/admin-forms/css/admin-forms.css')}}">
-    <!-- Vendor CSS -->
-    <link rel="stylesheet" type="text/css" href="{{asset('vendor/plugins/magnific/magnific-popup.css')}}">
-@endsection
-
-
 <section class="p10" id="work_shift">
 <div class="panel">
     <div class="panel-heading">
@@ -206,9 +198,6 @@
 
 
 @section('script')
-
-<!-- Page Plugins -->
-<script src="{{asset('vendor/plugins/magnific/jquery.magnific-popup.js')}}"></script>
 
 <script type="text/javascript" src="{{asset('js/workshift.js')}}"></script>
 
