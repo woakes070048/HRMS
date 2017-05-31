@@ -2,6 +2,10 @@
 
 return [
 
+	// hrms application global cache time in minutes
+
+	'hrms_cache_time' => 5,
+
 	// every day calculate last month data and update attendance timesheet
 	'attendance_calculate_month' => 1, 
 

@@ -235,9 +235,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label class="control-label">Nick Name</label>
-                                                <input type="text" name="nick_name"
-                                                       v-model="basics.nick_name"
-                                                       class="form-control input-sm" placeholder="Enter Nick Name">
+                                                <input type="text" name="nick_name" v-model="basics.nick_name" class="form-control input-sm" placeholder="Enter Nick Name">
                                             </div>
                                         </div>
                                     </div>
@@ -245,8 +243,7 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.email}">
-                                                <label class="control-label">Email Address : <span
-                                                            class="text-danger">*</span></label>
+                                                <label class="control-label">Email Address : <span class="text-danger">*</span></label>
                                                 <input type="email" name="email" :value="basics.email" class="form-control input-sm" placeholder="Enter Email Address">
                                                 <input type="hidden" name="old_email" :value="basics.email">
 
@@ -256,37 +253,27 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group" :class="{'has-error': errors.mobile_number}">
-                                                <label class="control-label">Mobile Number : <span
-                                                            class="text-danger">*</span></label>
-                                                <input type="number" name="mobile_number"
-                                                       v-model="basics.mobile_number"
-                                                       class="form-control input-sm" placeholder="Enter Mobile Number">
+                                                <label class="control-label">Mobile Number : <span class="text-danger">*</span></label>
+                                                <input type="number" name="mobile_number" v-model="basics.mobile_number" class="form-control input-sm" placeholder="Enter Mobile Number">
                                                 <span v-if="errors.mobile_number" class="help-block" v-text="errors.mobile_number[0]"></span>
                                             </div>
                                         </div>
 
-                                        {{--<div class="col-md-3">--}}
-                                            {{--<div class="form-group {{$errors->has('password')?'has-error':''}}">--}}
-                                                {{--<label class="control-label">Password : <span--}}
-                                                            {{--class="text-danger">*</span></label>--}}
-                                                {{--<input type="password" name="password" value="basics.password"--}}
-                                                       {{--class="form-control input-sm" placeholder="Enter Password">--}}
-                                                {{--@if($errors->has('password'))<span--}}
-                                                        {{--class="help-block">{{$errors->first('password')}}</span>@endif--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.password}">
+                                                <label class="control-label">Password : </label>
+                                                <input type="password" name="password" class="form-control input-sm" placeholder="Enter Password">
+                                                <span v-if="errors.password" class="help-block" v-text="errors.password[0]"></span>
+                                            </div>
+                                        </div>
 
-                                        {{--<div class="col-md-3">--}}
-                                            {{--<div class="form-group {{$errors->has('retype_password')?'has-error':''}}">--}}
-                                                {{--<label class="control-label">Retype Password : <span--}}
-                                                            {{--class="text-danger">*</span></label>--}}
-                                                {{--<input type="password" name="retype_password"--}}
-                                                       {{--class="form-control input-sm"--}}
-                                                       {{--placeholder="Enter Retype Password">--}}
-                                                {{--@if($errors->has('retype_password'))<span--}}
-                                                        {{--class="help-block">{{$errors->first('retype_password')}}</span>@endif--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
+                                        <div class="col-md-3">
+                                            <div class="form-group" :class="{'has-error': errors.retype_password}">
+                                                <label class="control-label">Retype Password : </label>
+                                                <input type="password" name="retype_password" class="form-control input-sm" placeholder="Enter Retype Password">
+                                                <span v-if="errors.retype_password" class="help-block" v-text="errors.retype_password[0]"></span>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="row">

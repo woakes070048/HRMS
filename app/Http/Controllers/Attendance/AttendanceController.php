@@ -48,7 +48,7 @@ class AttendanceController extends Controller
         dispatch(new AttendanceTimesheetJob());
         dispatch(new ArchiveAttendanceTimesheetJob());
 
-    	$data['sidevar_hide'] = true;
+    	$data['sidebar_hide'] = true;
     	return view('attendance.attendance')->with($data);
     }
 

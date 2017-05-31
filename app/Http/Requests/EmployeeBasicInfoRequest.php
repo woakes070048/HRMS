@@ -28,13 +28,13 @@ class EmployeeBasicInfoRequest extends FormRequest
 //             $employee_no ='required|regex:/[0-9][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
              $employee_no ='required|regex:/[0-9a-zA-Z][\-{1}][0-9]+$/|unique:users,id,'.$this->segment(3);
              $email = 'required|email|unique:users,email,'.$this->segment(3);
-             $password = 'nullable';
-             $retype_pass = 'nullable';
+             // $password = 'nullable';
+             // $retype_pass = 'nullable';
         }else{
              $employee_no ='required|regex:/[0-9a-zA-Z][\-{1}][0-9]+$/|unique:users';
              $email = 'required|email|unique:users';
-             $password = 'nullable|min:6|max:16';
-             $retype_pass = 'nullable|same:password';
+             // $password = 'nullable|min:6|max:16';
+             // $retype_pass = 'nullable|same:password';
         }
 
         return [
@@ -50,8 +50,8 @@ class EmployeeBasicInfoRequest extends FormRequest
             'last_name' => 'required|alpha_spaces',
             'email' => $email,
             'mobile_number' => 'required|max:17|min:11|regex:/\+*[0-9]+$/',
-            'password' => $password,
-            'retype_password' => $retype_pass,
+            'password' => 'nullable|min:6|max:16',
+            'retype_password' => 'nullable|same:password',
             'image' => 'nullable|mimes:jpeg,jpg,png,gif|max:4000',
             'present_division_id' => 'required',
             'present_district_id' => 'required',

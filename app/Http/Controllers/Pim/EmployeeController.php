@@ -81,7 +81,7 @@ class EmployeeController extends Controller
         $data['title'] = 'Employee List';
         $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
-        $data['sidevar_hide'] = 1;
+        $data['sidebar_hide'] = 1;
         return view('pim.employee.index')->with($data);
     }
 
@@ -206,7 +206,7 @@ class EmployeeController extends Controller
         $request->offsetSet('password', bcrypt($request->password));
         $request->offsetSet('created_by',$this->auth->id);
 
-        // try{
+        try{
             Artisan::call('db:connect');
 
             if(UserEmails::where('email',$request->email)->count() <= 0){
@@ -295,22 +295,22 @@ class EmployeeController extends Controller
 
             return redirect('/employee/add/'.$user->id);
 
-        // }catch(\Exception $e){
-        //     DB::rollback();
+        }catch(\Exception $e){
+            DB::rollback();
 
-        //     if($request->ajax()){
-        //         $data['status'] = 'danger';
-        //         $data['statusType'] = 'NotOk';
-        //         $data['code'] = 500;
-        //         $data['type'] = null;
-        //         $data['title'] = 'Error!';
-        //         $data['message'] = 'Personal Info Not Saved.';
-        //         return response()->json($data,500);
-        //     }
+            if($request->ajax()){
+                $data['status'] = 'danger';
+                $data['statusType'] = 'NotOk';
+                $data['code'] = 500;
+                $data['type'] = null;
+                $data['title'] = 'Error!';
+                $data['message'] = 'Personal Info Not Saved.';
+                return response()->json($data,500);
+            }
 
-        //     $request->session()->flash('danger','Employee Not Added!');
-        //     return redirect()->back()->withInput();
-        // }
+            $request->session()->flash('danger','Employee Not Added!');
+            return redirect()->back()->withInput();
+        }
     }
 
 
@@ -916,6 +916,12 @@ class EmployeeController extends Controller
 
             Artisan::call("db:connect", ['database' => Session('database')]);
             DB::beginTransaction();
+
+            if(!$request->has('password')){
+                $request->offsetUnset('password');
+            }else{
+                $request->offsetSet('password', bcrypt($request->password));
+            }
 
             if($request->hasFile('image')){
                 $photo = time().'.'.$request->image->extension();

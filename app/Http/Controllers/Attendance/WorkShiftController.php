@@ -80,10 +80,10 @@ class WorkShiftController extends Controller
     public function edit(Request $request){
 
     	try{
-    		$bank = WorkShift::findOrFail($request->id);
+    		$workShift = WorkShift::findOrFail($request->id);
 
     		if($request->ajax()){
-                $data['data'] = $bank;
+                $data['data'] = $workShift;
                 $data['status'] = 'success';
                 $data['statusType'] = 'OK';
                 $data['code'] = 200;
