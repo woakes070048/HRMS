@@ -20,6 +20,9 @@
 @endsection
 
 @section('content')
+
+<?php $loggedInEmp = Auth::user()->id;?>
+
 <div id="mainDiv">
     <!-- Begin: Content -->
     <section id="content" class="">
@@ -30,12 +33,19 @@
                     <a href="#tab2_1" data-toggle="tab" aria-expanded="true">Leave Application</a>
                   </li>
                   <li class="">
-                    <a href="#tab2_2" data-toggle="tab" aria-expanded="false">Forward Leave Application</a>
+                    <a href="#tab2_2" data-toggle="tab" aria-expanded="false">Forward: Leave Application</a>
+                  </li>
+                  <li class="">
+                    <a href="#tab2_3" data-toggle="tab" aria-expanded="false">Supervisor: Leave Application</a>
+                  </li>
+                  <li class="">
+                    <a href="#tab2_4" data-toggle="tab" aria-expanded="false">Responsible In Leave</a>
                   </li>
                 </ul>
             </div>
             <div class="panel-body">
                 <div class="tab-content pn br-n">
+                {{-- tab 001 start --}}
                   <div id="tab2_1" class="tab-pane active">
                     <div class="row">
                         <div class="col-md-12">
@@ -71,9 +81,7 @@
                                                                 <?php 
                                                                     $emp_no = $info->userName->employee_no;
                                                                 ?>
-                                                                {{-- <a target="__blank" href="{{url("leave/details/$emp_no")}}"> --}}
                                                                 {{$info->userName->first_name." ".$info->userName->last_name." - ".$info->userName->designation->designation_name}}
-                                                                {{-- </a> --}}
                                                             </td>
                                                             <td>
                                                                 {{$info->leaveType->leave_type_name}}
@@ -84,14 +92,6 @@
                                                             <td>
                                                                 {{$info->employee_leave_from." - ".$info->employee_leave_to." / ".$info->employee_leave_total_days}}
                                                             </td>
-                                                            {{-- <td> {{$info->employee_leave_user_remarks}} </td>
-                                                            <td>
-                                                                {{"Address: ". $info->employee_leave_contact_address}}<br/>
-                                                                {{"Contract No.: ". $info->employee_leave_contact_number}}<br/>
-                                                                {{"Passport No.: ". $info->employee_leave_passport_no}}<br/>
-                                                            </td>
-                                                            <td>{{$info->responsibleUser?$info->responsibleUser->first_name." ".$info->responsibleUser->last_name:'-'}}
-                                                            </td> --}}
                                                             <td>
                                                                 <button type="button" class="btn btn-system btn-xs" data-toggle="modal" data-target=".leaveBalance" @click="showLeaveBalance({{$info->user_id}})">Leave Balance</button>
                                                             </td>
@@ -104,8 +104,6 @@
                                                                     <a target="__blank" href="{{asset("files/leave_doc/$folderName/$fileName")}}" style="cursor: pointer;"><i class="fa fa-file fa-2x" aria-hidden="true"></i></a>
                                                                 @endif
                                                             </td>
-                                                            {{-- <td>{{$info->approvedByUser?$info->approvedByUser->first_name." ".$info->approvedByUser->last_name:'-'}}</td>
-                                                            <td> {{$info->employee_leave_approval_remarks}} </td> --}}
                                                             <td>
                                                                 <div class="btn-group remov-cls-toggle">
                                                                     <button type="button" class="btn btn-xs" :class="leaveStatusBtn({{$info->employee_leave_status}})" v-text="showLeaveStatus({{$info->employee_leave_status}})">
@@ -114,10 +112,8 @@
                                                                     <span class="caret"></span>
                                                                     <span class="sr-only">Toggle Dropdown</span>
                                                                     </button>
-                                                                    <?php 
-                                                                      $chkUrl = "leave/index";
-                                                                    ?>
-                                                                    @if(in_array($chkUrl, session('userMenuShare')))
+                                                                    
+                                                                    @if($loggedInEmp != $info->userName->id)
                                                                     <ul class="dropdown-menu toggle-cls" role="menu">
                                                                         <li>
                                                                           <a @click="changeStatus({{$info->id}}, 1)" v-show="{{$info->employee_leave_status}} != 1 && {{$info->employee_leave_status}} != 2">Pending</a>
@@ -151,6 +147,8 @@
                         </div>
                     </div>
                   </div>
+                {{-- tab 001 finished --}}
+                {{-- tab 002 start --}}
                   <div id="tab2_2" class="tab-pane">
                     <div class="row">
                         <div class="col-md-12">
@@ -194,14 +192,6 @@
                                                         <td>
                                                             {{$info->employee_leave_from." - ".$info->employee_leave_to." / ".$info->employee_leave_total_days}}
                                                         </td>
-                                                        {{-- <td> {{$info->employee_leave_user_remarks}} </td>
-                                                        <td>
-                                                            {{"Address: ". $info->employee_leave_contact_address}}<br/>
-                                                            {{"Contract No.: ". $info->employee_leave_contact_number}}<br/>
-                                                            {{"Passport No.: ". $info->employee_leave_passport_no}}<br/>
-                                                        </td>
-                                                        <td>{{$info->responsibleUser?$info->responsibleUser->first_name." ".$info->responsibleUser->last_name:'-'}}
-                                                        </td> --}}
                                                         <td>
                                                             <button type="button" class="btn btn-system btn-xs" data-toggle="modal" data-target=".leaveBalance" @click="showLeaveBalance({{$info->user_id}})">Leave Balance</button>
                                                         </td>
@@ -214,8 +204,6 @@
                                                                 <a target="__blank" href="{{asset("files/leave_doc/$folderName/$fileName")}}" style="cursor: pointer;"><i class="fa fa-file fa-2x" aria-hidden="true"></i></a>
                                                             @endif
                                                         </td>
-                                                        {{-- <td>{{$info->approvedByUser?$info->approvedByUser->first_name." ".$info->approvedByUser->last_name:'-'}}</td>
-                                                        <td> {{$info->employee_leave_approval_remarks}} </td> --}}
                                                         <td>
                                                             <div class="btn-group remov-cls-toggle">
                                                                 <button type="button" class="btn btn-xs" :class="leaveStatusBtn({{$info->employee_leave_status}})" v-text="showLeaveStatus({{$info->employee_leave_status}})">
@@ -263,6 +251,192 @@
                         </div>
                     </div>
                   </div>
+                {{-- tab 002 finished --}}
+                {{-- tab 003 start --}}
+                  <div id="tab2_3" class="tab-pane">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <span class="panel-title">Supervisor Leave Application</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="showData">
+                                        @if(count($supervisors) > 0)
+                                        <table class="table table-hover" id="datatable">
+                                            <thead>
+                                                <tr class="success">
+                                                    <th>sl</th>
+                                                    <th>User Name</th>
+                                                    <th>Leave Type</th>
+                                                    <th>Leave Duration/Total</th>
+                                                    <th>Balance</th>
+                                                    <th>Attachment</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php $sl=1; ?>
+                                                @foreach($supervisors as $info)
+                                                    <tr>
+                                                        <td>{{$sl++}}</td>
+                                                        <td>
+                                                            <?php 
+                                                                $emp_no = $info->userName->employee_no;
+                                                            ?>
+                                                            {{$info->userName->first_name." ".$info->userName->last_name." - ".$info->userName->designation->designation_name}}
+                                                        </td>
+                                                        <td>
+                                                            {{$info->leaveType->leave_type_name}}
+                                                            @if($info->employee_leave_half_or_full == 2)
+                                                                <span class="text-primary"> /Half Day</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            {{$info->employee_leave_from." - ".$info->employee_leave_to." / ".$info->employee_leave_total_days}}
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-system btn-xs" data-toggle="modal" data-target=".leaveBalance" @click="showLeaveBalance({{$info->user_id}})">Leave Balance</button>
+                                                        </td>
+                                                        <td>
+                                                            <?php 
+                                                                $folderName = $info->userName->id;
+                                                                $fileName = $info->employee_leave_attachment;
+                                                            ?>
+                                                            @if(!empty($fileName))
+                                                                <a target="__blank" href="{{asset("files/leave_doc/$folderName/$fileName")}}" style="cursor: pointer;"><i class="fa fa-file fa-2x" aria-hidden="true"></i></a>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <div class="btn-group remov-cls-toggle">
+                                                                <button type="button" class="btn btn-xs" :class="leaveStatusBtn({{$info->employee_leave_status}})" v-text="showLeaveStatus({{$info->employee_leave_status}})">
+                                                                </button>
+                                                                <button type="button" class="btn btn-primary btn-xs dark dropdown-toggle" :class="leaveStatusBtn({{$info->employee_leave_status}})" data-toggle="dropdown" aria-expanded="false" v-show="{{$info->employee_leave_status}} != 3 && {{$info->employee_leave_status}} != 4">
+                                                                <span class="caret"></span>
+                                                                <span class="sr-only">Toggle Dropdown</span>
+                                                                </button>
+                                                                
+                                                                @if($loggedInEmp != $info->userName->id)
+                                                                <ul class="dropdown-menu toggle-cls" role="menu">
+                                                                    <li>
+                                                                      <a @click="changeStatus({{$info->id}}, 1)" v-show="{{$info->employee_leave_status}} != 1 && {{$info->employee_leave_status}} != 2">Pending</a>
+                                                                    </li>
+                                                                    <li>
+                                                                      <a @click="changeStatus({{$info->id}}, 3)" v-show="{{$info->employee_leave_status}} != 3">Accepted</a>
+                                                                    </li>
+                                                                    <li>
+                                                                      <a @click="changeStatus({{$info->id}}, 4)" v-show="{{$info->employee_leave_status}} != 4">Cancel</a>
+                                                                    </li>
+                                                                </ul>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-info btn-xs"><a target="__blank" href="{{url("leaveView/$info->id")}}" class="btn-custom">View</a></button>
+                                                            @if($info->employee_leave_status != 3 && $info->employee_leave_status != 4)
+                                                                <button type="button" class="btn btn-system btn-xs edit-btn-Cls" data-toggle="modal" data-target=".dataEdit" @click="editData({{$info->id}})">Edit</button>
+                                                            @else
+                                                                <button type="button" disabled="disabled" class="btn btn-system btn-xs">Edit</button>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        @else
+                                            No data available !
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                {{-- tab 003 finished --}}
+                {{-- tab 004 start --}}
+                  <div id="tab2_4" class="tab-pane">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <span class="panel-title">Responsible In Leave Time</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="showData">
+                                        @if(count($responsibles) > 0)
+                                        <table class="table table-hover" id="datatable">
+                                            <thead>
+                                                <tr class="success">
+                                                    <th>sl</th>
+                                                    <th>User Name</th>
+                                                    <th>Leave Type</th>
+                                                    <th>Leave Duration/Total</th>
+                                                    {{-- <th>Balance</th> --}}
+                                                    {{-- <th>Attachment</th> --}}
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php $sl=1; ?>
+                                                @foreach($responsibles as $info)
+                                                    <tr>
+                                                        <td>{{$sl++}}</td>
+                                                        <td>
+                                                            <?php 
+                                                                $emp_no = $info->userName->employee_no;
+                                                            ?>
+                                                            {{$info->userName->first_name." ".$info->userName->last_name." - ".$info->userName->designation->designation_name}}
+                                                        </td>
+                                                        <td>
+                                                            {{$info->leaveType->leave_type_name}}
+                                                            @if($info->employee_leave_half_or_full == 2)
+                                                                <span class="text-primary"> /Half Day</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            {{$info->employee_leave_from." - ".$info->employee_leave_to}}
+                                                        </td>
+                                                        <td>
+                                                            @if($info->employee_leave_responsible_person_status == 0)
+                                                                <div class="btn btn-warning btn-xs edit-btn-Cls">Pending</div>
+                                                            @elseif($info->employee_leave_responsible_person_status == 1)
+                                                                <div class="btn btn-success btn-xs edit-btn-Cls">Accept</div>
+                                                            @elseif($info->employee_leave_responsible_person_status == 2)
+                                                                <div class="btn btn-danger btn-xs edit-btn-Cls">Cancel</div>
+                                                            @else
+                                                                {{"INVALID"}}
+                                                            @endif
+
+                                                            @if($info->employee_leave_responsible_person_status_change_by > 0 && $info->employee_leave_responsible_person_status_change_by != $loggedInEmp)
+                                                            <b>By</b> 
+                                                            {{$info->responsibleUserStatApprove->first_name." ".$info->responsibleUserStatApprove->last_name." - ".$info->responsibleUserStatApprove->designation->designation_name}}
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if($info->employee_leave_responsible_person_status == 0 || in_array("leave/index", session('userMenuShare')))
+                                                                <button type="button" class="btn btn-success btn-xs" @click="chResponsibleStatus({{$info->id}}, 1, {{$loggedInEmp}})">Accept</button>
+                                                                <button type="button" class="btn btn-danger btn-xs" @click="chResponsibleStatus({{$info->id}}, 2, {{$loggedInEmp}})">Cancel</button>
+                                                            @else
+                                                                <button disabled="" class="btn btn-success btn-xs edit-btn-Cls">Accept</button>
+                                                                <button disabled="" class="btn btn-danger btn-xs edit-btn-Cls">Cancel</button>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        @else
+                                            No data available !
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                {{-- tab 004 finished --}}
                 </div>
             </div>
         </div>
@@ -288,10 +462,9 @@
                         <div class="form-group">
                             <label for="emp_name" class="col-md-3 control-label">Employee Name <span class="text-danger">*</span></label>
                             <div class="col-md-9">
-                                <select name="emp_name" disabled="" v-model="emp_name" class="form-control input-sm">
-                                    <option value="">Select Employee Name For Leave</option>
+                                <select name="emp_name" v-model="emp_name" class="form-control input-sm">
                                     <option v-for="(info,index) in users" 
-                                        :value="info.id" 
+                                        :value="info.id" v-if="info.id==emp_name"
                                         v-text="info.first_name+' '+info.last_name+' - '+info.designation.designation_name"
                                     ></option>
                                 </select>
@@ -620,6 +793,7 @@
                             <label for="edit_responsible_emp" class="col-md-3 control-label"></label>
                             <div class="col-md-9">
                                 <input type="checkbox" name="want_to_forward" v-model="want_to_forward" value="1"> Want to forward.
+                                <span class="text-danger"><br/>* Only Supervisor or Hr Can forward leave application.</span>
                             </div>
                         </div>
 
@@ -627,9 +801,9 @@
                             <label for="edit_forward_to" class="col-md-3 control-label">Forward to <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <select name="edit_forward_to" v-model="edit_forward_to" class="form-control input-sm">
-                                    <option value="">Select Forward to Employee</option>
+                                    <option value="" :disabled="{{$loggedInEmp}} == edit_emp_name">Select Forward to Employee</option>
                                     <option v-for="(info,index) in options" v-if="edit_emp_name != info.id" 
-                                        :value="info.id"
+                                        :value="info.id" :disabled="{{$loggedInEmp}} == edit_emp_name"
                                         v-text="info.first_name+' '+info.last_name+' - '+info.designation.designation_name"
                                     ></option>
                                 </select>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Leave;
 use Auth;
 use DB;
 use App\Models\Holiday;
+use App\Models\EmployeeLeave;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -42,7 +43,50 @@ class HolidayController extends Controller
             'holiday_status' => 'required',
         ]);
 
+        $from = $request->from_date;
+        $to = $request->to_date;
+
+        $chkAlreadyExist = DB::select( DB::raw("SELECT * FROM `holidays` where (`holiday_from` <= '$from' and `holiday_to` >= '$to') or (`holiday_from` <= '$from' and `holiday_to` >= '$from') or (`holiday_from` <= '$to' and `holiday_to` >= '$to') or (`holiday_from` >= '$from' and `holiday_from` <= '$to')") );
+
+        if(count($chkAlreadyExist) > 0){
+            
+            $data['title'] = 'error';
+            $data['message'] = 'date already exist!';
+            return response()->json($data);                 
+        }
+
+        DB::beginTransaction();
+
         try{
+            $counter = 0;
+            if($request->holiday_status == 1){
+
+                $val = DB::select( DB::raw("SELECT employee_leaves.*, leave_types.* FROM `employee_leaves` JOIN leave_types ON employee_leaves.leave_type_id=leave_types.id where (`employee_leave_from` <= '$from' and `employee_leave_to` >= '$to') or (`employee_leave_from` <= '$from' and `employee_leave_to` >= '$from') or (`employee_leave_from` <= '$to' and `employee_leave_to` >= '$to') or (`employee_leave_from` >= '$from' and `employee_leave_from` <= '$to') or (`employee_leave_to` >= '$from' and `employee_leave_to` <= '$to')") );   
+
+                if(count($val) > 0){
+                    $date = new \DateTime(null, new \DateTimeZone('Asia/Dhaka'));
+
+                    foreach($val as $info){
+                        if($info->employee_leave_status != 4 && $info->leave_type_include_holiday == 0){
+                            
+                            $counter++;
+                            // echo $info->id."**".$info->employee_leave_from."**".$info->employee_leave_to."**".$info->leave_type_name."**".$info->leave_type_include_holiday."<br/>";
+                            $upd = EmployeeLeave::find($info->id);
+                            $upd->employee_leave_status = 4;
+                            $upd->employee_leave_approved_by = Auth::user()->id; 
+                            $upd->employee_leaves_approval_date = $date->format('Y-m-d'); 
+                            $upd->save();
+                        }
+                    }    
+                }
+            }
+
+            if($counter > 0){
+                $extra_msg = "SORRY! $counter Leave application canceled.";
+            }else{
+                $extra_msg = "No Leave application effected.";
+            }
+            
             Holiday::create([
                 'holiday_name' => $request->holiday_name,
                 'holiday_from' => $request->from_date, 
@@ -51,11 +95,13 @@ class HolidayController extends Controller
                 'holiday_status' => $request->holiday_status,
             ]);
         
+            DB::commit();
             $data['title'] = 'success';
-            $data['message'] = 'data successfully added!';
+            $data['message'] = $extra_msg.' Data successfully added!';
 
         }catch (\Exception $e) {
-            
+           
+           DB::rollback(); 
            $data['title'] = 'error';
            $data['message'] = 'data not added!';
         }
@@ -77,7 +123,7 @@ class HolidayController extends Controller
     }
 
     public function update(Request $request){
-
+        
         $this->validate($request, [
             'edit_holiday_name' => 'required',
             'edit_from_date' => 'required',
@@ -85,7 +131,48 @@ class HolidayController extends Controller
             'edit_holiday_status' => 'required',
         ]);
 
+        $hdn_id = $request->hdn_id;
+        $from = $request->edit_from_date;
+        $to = $request->edit_to_date;
+    
+        $chkAlreadyExist = DB::select( DB::raw("SELECT * FROM `holidays` where `id` != '$hdn_id' and ((`holiday_from` <= '$from' and `holiday_to` >= '$to') or (`holiday_from` <= '$from' and `holiday_to` >= '$from') or (`holiday_from` <= '$to' and `holiday_to` >= '$to') or (`holiday_from` >= '$from' and `holiday_from` <= '$to'))") );
+
+        if(count($chkAlreadyExist) > 0){
+            
+            $data['title'] = 'error';
+            $data['message'] = 'date already exist! update not possible.';
+            return response()->json($data);                 
+        }
+
+        DB::beginTransaction();
+
         try{
+            $counterUpdate = 0;
+
+                $val_edit = DB::select( DB::raw("SELECT employee_leaves.id as empId, employee_leaves.*, leave_types.* FROM `employee_leaves` JOIN leave_types ON employee_leaves.leave_type_id=leave_types.id where (`employee_leave_from` <= '$from' and `employee_leave_to` >= '$to') or (`employee_leave_from` <= '$from' and `employee_leave_to` >= '$from') or (`employee_leave_from` <= '$to' and `employee_leave_to` >= '$to') or (`employee_leave_from` >= '$from' and `employee_leave_from` <= '$to') or (`employee_leave_to` >= '$from' and `employee_leave_to` <= '$to')") );
+
+                if(count($val_edit) > 0){
+                    $date = new \DateTime(null, new \DateTimeZone('Asia/Dhaka'));
+
+                    foreach($val_edit as $info){
+                        if($info->employee_leave_status != 4 && $info->leave_type_include_holiday == 0){
+                            
+                            $counterUpdate++;
+                            echo $info->empId."**stat**".$info->employee_leave_status."**".$info->employee_leave_from."**".$info->employee_leave_to."**".$info->leave_type_name."**".$info->leave_type_include_holiday."<br/>";
+                            $upd = EmployeeLeave::find($info->empId);
+                            $upd->employee_leave_status = 4;
+                            $upd->employee_leave_approved_by = Auth::user()->id; 
+                            $upd->employee_leaves_approval_date = $date->format('Y-m-d'); 
+                            $upd->save();
+                        }
+                    }    
+                }
+
+            if($counterUpdate > 0){
+                $extra_msg = "SORRY! $counterUpdate Leave application canceled.";
+            }else{
+                $extra_msg = "No Leave application effected.";
+            }
 
             $data['data'] = Holiday::where('id',$request->hdn_id)->update([
                 'holiday_name' => $request->edit_holiday_name,
@@ -95,11 +182,13 @@ class HolidayController extends Controller
                 'holiday_status' => $request->edit_holiday_status,
             ]);
         
+            DB::commit();
             $data['title'] = 'success';
-            $data['message'] = 'data successfully updated!';
+            $data['message'] = $extra_msg.'Data successfully updated!';
 
         }catch (\Exception $e) {
             
+            DB::rollback();
             $data['title'] = 'error';
             $data['message'] = 'data not added!';
         }

@@ -54,6 +54,16 @@
 						<b>Responsible Person:</b> 
 						@if($info->employee_leave_responsible_person > 0)
 						{{$info->responsibleUser->first_name." ".$info->responsibleUser->last_name}} - ({{$info->responsibleUser->designation->designation_name}}) - ({{$info->responsibleUser->designation->department->department_name}})
+
+							@if($info->employee_leave_responsible_person_status == 0)
+                                <div class="btn btn-warning btn-xs edit-btn-Cls">Pending</div>
+                            @elseif($info->employee_leave_responsible_person_status == 1)
+                                <div class="btn btn-success btn-xs edit-btn-Cls">Accepted</div>
+                            @elseif($info->employee_leave_responsible_person_status == 2)
+                                <div class="btn btn-danger btn-xs edit-btn-Cls">Canceled</div>
+                            @else
+                                {{"INVALID"}}
+                            @endif
 						@endif
 						<br>
 						<b>Supervisor:</b> 

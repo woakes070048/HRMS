@@ -27,6 +27,8 @@ class CreateEmployeeLeavesTable extends Migration
             $table->string('employee_leave_contact_number')->nullable();
             $table->string('employee_leave_passport_no')->nullable();
             $table->integer('employee_leave_responsible_person')->nullable();
+            $table->tinyInteger('employee_leave_responsible_person_status')->default(0)->comment='0=pending 1=accept 2=cancel';
+            $table->integer('employee_leave_responsible_person_status_change_by')->nullable();
             $table->string('employee_leave_attachment')->nullable();
             $table->integer('employee_leave_supervisor')->nullable();
             $table->integer('employee_leave_recommend_to')->nullable();

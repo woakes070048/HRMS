@@ -59,11 +59,12 @@
                    <td>{{$user->fullname}}</td>
                    <td>{{$user->email}}</td>
                    <td>{{$user->designation->designation_name}}</td>
-                   <td>
+
+                   {{-- <td> --}}
                       {{-- @if($user->created_by > 0) --}}
-                       <button type="button" class="btn btn-xs btn-success" onclick="showData({{$user->id}})" data-toggle="modal" data-target=".showData">Permissions</button>
+                      {{-- <button type="button" class="btn btn-xs btn-success" onclick="showData({{$user->id}})" data-toggle="modal"                data-target=".showData">Permissions</button> --}}
                       {{-- @endif --}}
-                   </td> 
+                   {{-- </td>  --}}
 
                    <td>{{$user->designation->department->department_name}}</td>
               
@@ -158,9 +159,11 @@ function showLeaveData(id){
       type: 'GET',
   })
   .done(function(data){
-   
-      if(data.length > 0){
-          jQuery.each(data, function(index, item) {
+      var bUrl = "{{url('leave/details/')}}";
+      $('.detailsLink').html("<a href='"+bUrl+"/"+data.personalInfo.employee_no+"'>"+data.personalInfo.first_name+" "+data.personalInfo.last_name+"</a>");
+
+      if(data.individual_user_leaves.length > 0){
+          jQuery.each(data.individual_user_leaves, function(index, item) {
               $('input[value='+item.leave_type_id+']').prop("checked", true);
           });
       }else{

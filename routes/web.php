@@ -367,6 +367,8 @@ Route::group(['prefix' => '/leaveType', 'namespace' => 'Leave'],function (){
     Route::get('/edit/{id}','LeaveTypeController@edit');
     Route::post('/edit','LeaveTypeController@update');
     // Route::get('/delete/{id}','LeaveTypeController@delete');
+
+    // Route::get('/calculateEarnLeave','LeaveTypeController@calculateEarnLeave');
 });
 
 /*********...HRMS Leave Management - Leave...***********/
@@ -374,17 +376,20 @@ Route::group(['prefix' => '/leave', 'namespace' => 'Leave'],function (){
     Route::get('/index','LeaveController@index');
     Route::get('/get-types','LeaveController@getTypes');
     // Route::get('/user-taken-leave/{id}','LeaveController@userTakenLeave');
-    Route::get('/getWeekendHolidays/{fromDate}/{toDate}','LeaveController@getWeekendHolidays');
+    Route::get('/getWeekendHolidays/{fromDate}/{toDate}/{id}','LeaveController@getWeekendHolidays');
     Route::post('/add','LeaveController@create');
     Route::get('/details/{id?}','LeaveController@details');
     Route::get('/edit/{id}','LeaveController@edit');
     Route::post('/edit','LeaveController@update');
     Route::get('/changeStatus/{id}/{stat}','LeaveController@changeStatus');
+    Route::get('/chResponsibleStatus/{id}/{stat}/{loginEmp}','LeaveController@chResponsibleStatus');
     // Route::get('/view/{id}', 'LeaveController@showIndiReport');
 });
 
 Route::group(['prefix' => '/myLeave', 'namespace' => 'Leave'],function (){
     Route::get('/details/{id?}','LeaveController@details');
+    Route::get('/edit/{id}','LeaveController@edit');
+    Route::post('/add','LeaveController@create');
 });
 
 
