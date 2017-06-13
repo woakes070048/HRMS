@@ -342,9 +342,11 @@ trait CommonService
             if(in_array($info['id'], $leave_type_id_ary)){
                 $locId = array_search($info['id'], $leave_type_id_ary);
                 $leave_amount_taken_combination[$sl]['taken_days'] = $taken_leave_ary[$locId]['days'];
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'] - $taken_leave_ary[$locId]['days'];
             }
             else{
                 $leave_amount_taken_combination[$sl]['taken_days'] = 0;
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'];
             }
 
             $sl++;

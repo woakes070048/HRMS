@@ -19,6 +19,9 @@
                     </div>
                     <div class="panel-body">
                         <div id="showData">
+                            <?php 
+                              $chkUrl = \Request::segment(1);
+                            ?>
                             <table class="table table-hover" id="datatable">
                                 <thead>
                                     <tr class="success">
@@ -29,7 +32,9 @@
                                         <th>Total Days</th>
                                         <th>Details</th>
                                         <th>Status</th>
+                                        @if(in_array($chkUrl."/edit", session('userMenuShare')))
                                         <th>Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -41,11 +46,13 @@
                                         <td v-text="calculateTotal(info.holiday_from, info.holiday_to)"></td>
                                         <td v-text="info.holiday_details"></td>
                                         <td v-text="info.holiday_status==1?'Active':'Inactive'"></td>
+                                        @if(in_array($chkUrl."/edit", session('userMenuShare')))
                                         <td>
                                             <button type="button" @click="editData(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".dataEdit">
                                                 <i class="fa fa-edit"></i>
                                             </button>
                                         </td>
+                                        @endif
                                     </tr>
                                 </tbody>
                             </table>
@@ -74,14 +81,14 @@
                         {{ csrf_field() }}
 
                         <div class="form-group">
-                            <label for="holiday_name" class="col-md-3 control-label">Name</label>
+                            <label for="holiday_name" class="col-md-3 control-label">Name <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 <input name="holiday_name" class="form-control input-sm" v-model="holiday_name" type="text" placeholder="Holiday name">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="from_date" class="col-md-3 control-label">Select Date</label>
+                            <label for="from_date" class="col-md-3 control-label">Select Date <span class="text-danger">*</span></label>
                             <div class="col-md-3">
                                 <input type="text" id="from_date" name="from_date"  class="gui-input datepicker form-control input-sm jqueryDate" placeholder="From">
                             </div>
@@ -118,6 +125,7 @@
                                 </div>     
                             </div>
                         </div>
+                        <span class="text-danger"><b>** Note: Any Leave Application Previously Included This Date Will Be Canceled Automatically.</b></span>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-default modal-close-btn" id="modal-close-btn" data-dismiss="modal">Close</button>
@@ -192,6 +200,7 @@
                                 </div>     
                             </div>
                         </div>
+                        <span class="text-danger"><b>** Warning: Any Leave Application Previously Included This Date Will Be Canceled Automatically.</b></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default modal-close-btn" id="modal-edit-close-btn" data-dismiss="modal">Close</button>

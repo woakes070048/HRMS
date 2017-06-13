@@ -268,11 +268,22 @@ class EmployeeController extends Controller
                 
                 $leaveTypeAry = explode(',', $val->leave_type_effective_for);
 
+                if($val->leave_type_is_earn_leave == 1){
+                    $num_of_days = 0;
+                    $fromYear = '';
+                    $toYear = '';
+                }
+                else{
+                    $num_of_days = $val->leave_type_number_of_days; 
+                    $fromYear = $val->leave_type_active_from_year;
+                    $toYear = $val->leave_type_active_to_year;
+                }
+
                 if(in_array($emp_type, $leaveTypeAry)){
                     $commonTypeId['type_id'][] = $val->id;
-                    $commonTypeId['days'][] = $val->leave_type_number_of_days;
-                    $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
-                    $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
+                    $commonTypeId['days'][] = $num_of_days;
+                    $commonTypeId['from_year'][] = $fromYear;
+                    $commonTypeId['to_year'][] = $toYear;
                 }
             }
 
@@ -1271,8 +1282,9 @@ class EmployeeController extends Controller
 
         $currentYear = date('Y');
         $data['individual_user_leaves'] = UserLeaveTypeMap::where('user_id', $id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get();
+        $data['personalInfo'] = User::find($id);
 
-        return $data['individual_user_leaves'];
+        return $data;
     }
 
     public function updateLeave(Request $request){
@@ -1302,6 +1314,7 @@ class EmployeeController extends Controller
             if(!empty($checkedAray)){
 
                 $exist_leave_id = UserLeaveTypeMap::select('leave_type_id')->where('user_id', $request->hdn_id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get()->toArray();
+
                 $exist_leave_id_ary = array_column($exist_leave_id, 'leave_type_id');
 
                 $aryDiff = array_diff($checkedAray,$exist_leave_id_ary);
@@ -1310,12 +1323,24 @@ class EmployeeController extends Controller
                     $diff_type_value = LeaveType::whereIn('id', $aryDiff)->where('leave_type_status', 1)->where('leave_type_active_from_year', '<=', $currentYear)->where('leave_type_active_to_year', '>=', $currentYear)->get();
 
                         foreach($diff_type_value as $info){
+
+                            if($info->leave_type_is_earn_leave == 1){
+                                $num_leave_days = 0;
+                                $fromYear = '';
+                                $toYear = '';
+                            }
+                            else{
+                                $num_leave_days = $info->leave_type_number_of_days;
+                                $fromYear = $info->leave_type_active_from_year;
+                                $toYear = $info->leave_type_active_to_year;
+                            }
+                            
                             $diff_arry[] = [
                                 'user_id' => $request->hdn_id,
                                 'leave_type_id' => $info->id,
-                                'number_of_days' => $info->leave_type_number_of_days,
-                                'active_from_year' => $info->leave_type_active_from_year,
-                                'active_to_year' => $info->leave_type_active_to_year,
+                                'number_of_days' => $num_leave_days,
+                                'active_from_year' => $fromYear,
+                                'active_to_year' => $toYear,
                                 'status' => 1,
                             ];
                         }

@@ -21,6 +21,10 @@ class EmployeeLeave extends Model
         return $this->belongsTo('App\Models\User', 'employee_leave_responsible_person');
     }
 
+    public function responsibleUserStatApprove(){
+        return $this->belongsTo('App\Models\User', 'employee_leave_responsible_person_status_change_by');
+    }
+
     public function approvedByUser(){
         return $this->belongsTo('App\Models\User', 'employee_leave_approved_by');
     }

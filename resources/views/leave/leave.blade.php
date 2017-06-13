@@ -117,6 +117,7 @@
                                                         </ul>
                                                         @endif
                                                     </div>
+                                                    <br/>{{ $info->employee_leaves_approval_date }}
                                                 </td>
                                                 <td>
                                                     {{-- <button type="button" class="btn btn-info btn-xs"><a target="_blank" href="{{url("leave/view/$info->id")}}" class="btn-custom">View</a></button> --}}
@@ -192,12 +193,14 @@
                                         <th>Name</th>
                                         <th>Amount(Days)</th>
                                         <th>Taken(Days)</th>
+                                        <th>Balance</th>
                                     </tr>
                                     <tr v-for="(info, index) in show_history">
                                         <td v-text="index+1"></td>
                                         <td v-text="info.name"></td>
                                         <td v-text="info.amount_days == null ? 'Undefined':info.amount_days"></td>
                                         <td v-text="info.taken_days"></td>
+                                        <td v-text="info.balance"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -344,12 +347,14 @@
                                         <th>Name</th>
                                         <th>Amount(Days)</th>
                                         <th>Taken+Pending(Days)</th>
+                                        <th>Balance</th>
                                     </tr>
                                     <tr v-for="(info, index) in show_history">
                                         <td v-text="index+1"></td>
                                         <td v-text="info.name"></td>
                                         <td v-text="info.amount_days == null ? 'Undefined':info.amount_days"></td>
                                         <td v-text="info.taken_days"></td>
+                                        <td v-text="info.balance"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -416,12 +421,14 @@
                                         <th>Name</th>
                                         <th>Amount(Days)</th>
                                         <th>Taken+Pending(Days)</th>
+                                        <th>Balance</th>
                                     </tr>
                                     <tr v-for="(info, index) in show_history">
                                         <td v-text="index+1"></td>
                                         <td v-text="info.name"></td>
                                         <td v-text="info.amount_days == null ? 'Undefined':info.amount_days"></td>
                                         <td v-text="info.taken_days"></td>
+                                        <td v-text="info.balance"></td>
                                     </tr>
                                 </table>
                             </div>
@@ -501,6 +508,7 @@
                             <label for="edit_responsible_emp" class="col-md-3 control-label"></label>
                             <div class="col-md-9">
                                 <input type="checkbox" name="want_to_forward" v-model="want_to_forward" value="1"> Want to forward.
+                                <span class="text-danger"><br/>* Only Supervisor or Hr Can forward leave application.</span>
                             </div>
                         </div>
 

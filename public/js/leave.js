@@ -144,7 +144,7 @@ new Vue({
         if(year1 == year2){
           var date_diff_js = this.date_diff;
           
-          axios.get('/leave/getWeekendHolidays/'+dateUrl1+'/'+dateUrl2).then(response => {
+          axios.get('/leave/getWeekendHolidays/'+dateUrl1+'/'+dateUrl2+'/'+this.emp_name).then(response => {
 
             this.holidays = response.data.holidays;
             this.weekends = response.data.weekend;
@@ -198,8 +198,6 @@ new Vue({
         var date_diff_js = Math.ceil((timeDiff / (1000 * 3600 * 24))+1);
         var include_holiday_weekend = 0;
 
-        console.log('edit date diff:'+ this.edit_date_diff);
-
         $.each( this.userHaveLeavs, function( key, value ) {
             if(emp_leave_type_js == value.leave_type_id){
               if(value.leave_type.leave_type_include_holiday == 1){
@@ -218,7 +216,7 @@ new Vue({
 
         if(year1 == year2){
           
-          axios.get('/leave/getWeekendHolidays/'+dateUrl1+'/'+dateUrl2).then(response => {
+          axios.get('/leave/getWeekendHolidays/'+dateUrl1+'/'+dateUrl2+'/'+this.edit_emp_name).then(response => {
 
             this.holidays = response.data.holidays;
             this.weekends = response.data.weekend;
@@ -263,11 +261,13 @@ new Vue({
     },
     saveData(e){
 
+        var pathArray = window.location.pathname.split( '/' );
+        
         var formData = new FormData(e.target);
 
         formData.append('file', document.getElementById('file').files[0]);
 
-        axios.post('/leave/add', formData, {
+        axios.post("/"+pathArray[1]+"/add", formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -401,64 +401,66 @@ new Vue({
     },
     editData(id){
 
-      axios.get("/leave/edit/"+id,{
-      
-      })
-      .then((response) => {
+        var pathArray = window.location.pathname.split( '/' );
+        // console.log(pathArray[1]+"--"+pathArray[2]);
+        axios.get("/"+pathArray[1]+"/edit/"+id,{
+        
+        })
+        .then((response) => {
 
-        this.edit_emp_name = response.data.user_id;
-        $('#edit_show_date_diff_msg').html("");
-        this.userLeaveType = [];
-        this.userHaveLeavs = [];
-        this.userTakenLeave = [];
-        $('#show_date_diff').html('');
-
-        this.hdn_id = response.data.hdn_id;
-        
-        this.edit_leave_type_id = response.data.leave_type_id;
-        this.edit_from_date =response.data.employee_leave_from;
-        this.edit_to_date =response.data.employee_leave_to;
-        this.edit_date_diff =response.data.employee_leave_total_days;
-        this.edit_leave_reason =response.data.employee_leave_user_remarks;
-        this.edit_leave_half_or_full =response.data.employee_leave_half_or_full;
-        this.edit_leave_contact_address =response.data.employee_leave_contact_address;
-        this.edit_leave_contact_number =response.data.employee_leave_contact_number;
-        this.edit_passport_no =response.data.employee_leave_passport_no;
-        this.edit_responsible_emp =response.data.employee_leave_responsible_person;
-        this.emp_supervisor = response.data.employee_leave_supervisor;
-        this.leaveStatus = response.data.employee_leave_status;
-        if(this.leaveStatus == 2){
-          this.want_to_forward = true;
-          this.edit_forward_to = response.data.employee_leave_recommend_to;
-        }else{
-          this.want_to_forward = false;
-        }
-        
-        this.userLeaveType = response.data.user_leave_type;
-        this.edit_leave_type = response.data.user_leave_type;
-        this.userHaveLeavs = response.data.userHaveLeavs;
-        this.userTakenLeaveId = response.data.taken_leave_type_id;
-        this.userTakenLeaveName = response.data.taken_leave_type_name;
-        this.userTakenLeaveDays = response.data.taken_leave_type_days;
-        this.userTakenLeave = response.data.taken_leave_ary;
-        this.show_history = response.data.show_history;
-        
-        var imgg = response.data.employee_leave_attachment;
-        if(imgg != null){
-          this.edit_file_info = "File already available";
-        }
-        else{
-          this.edit_file_info = '';
-        }
-
-        // edit_file_info: '',
-        // edit_emp_name: '',
-        
-      })
-      .catch(function (error) {
+          this.edit_emp_name = response.data.user_id;
+          $('#edit_show_date_diff_msg').html("");
+          this.userLeaveType = [];
+          this.userHaveLeavs = [];
+          this.userTakenLeave = [];
+          $('#show_date_diff').html('');
           
-          swal('Error:','Edit function not working','error');
-      });
+          this.hdn_id = response.data.hdn_id;
+          
+          this.edit_leave_type_id = response.data.leave_type_id;
+          this.edit_from_date =response.data.employee_leave_from;
+          this.edit_to_date =response.data.employee_leave_to;
+          this.edit_date_diff =response.data.employee_leave_total_days;
+          this.edit_leave_reason =response.data.employee_leave_user_remarks;
+          this.edit_leave_half_or_full =response.data.employee_leave_half_or_full;
+          this.edit_leave_contact_address =response.data.employee_leave_contact_address;
+          this.edit_leave_contact_number =response.data.employee_leave_contact_number;
+          this.edit_passport_no =response.data.employee_leave_passport_no;
+          this.edit_responsible_emp =response.data.employee_leave_responsible_person;
+          this.emp_supervisor = response.data.employee_leave_supervisor;
+          this.leaveStatus = response.data.employee_leave_status;
+          if(this.leaveStatus == 2){
+            this.want_to_forward = true;
+            this.edit_forward_to = response.data.employee_leave_recommend_to;
+          }else{
+            this.want_to_forward = false;
+          }
+          
+          this.userLeaveType = response.data.user_leave_type;
+          this.edit_leave_type = response.data.user_leave_type;
+          this.userHaveLeavs = response.data.userHaveLeavs;
+          this.userTakenLeaveId = response.data.taken_leave_type_id;
+          this.userTakenLeaveName = response.data.taken_leave_type_name;
+          this.userTakenLeaveDays = response.data.taken_leave_type_days;
+          this.userTakenLeave = response.data.taken_leave_ary;
+          this.show_history = response.data.show_history;
+          
+          var imgg = response.data.employee_leave_attachment;
+          if(imgg != null){
+            this.edit_file_info = "File already available";
+          }
+          else{
+            this.edit_file_info = '';
+          }
+
+          // edit_file_info: '',
+          // edit_emp_name: '',
+          
+        })
+        .catch(function (error) {
+            
+            swal('Error:','Edit function not working','error');
+        });
     },
     updateData: function(e){
             
@@ -541,6 +543,31 @@ new Vue({
                 var errors = error.response.data;
                 console.log(error);
             });
+        });
+    },
+    chResponsibleStatus: function(id, stat, loginEmp){
+
+        axios.get("/leave/chResponsibleStatus/"+id+"/"+stat+"/"+loginEmp,{
+      
+        })
+        .then(response => { 
+           
+          swal({
+            title: "Changed !",
+            text: "Status changed successfully.",
+            type: "success",
+            showCancelButton: false,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Done",
+            closeOnConfirm: false
+          },
+          function(){
+              location.href=location.href;
+          });
+        })
+        .catch( (error) => {
+            var errors = error.response.data;
+            console.log(error);
         });
     }
   }

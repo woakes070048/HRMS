@@ -10,6 +10,7 @@ use App\Models\Holiday;
 use App\Models\User;
 use App\Models\UserLeaveTypeMap;
 use App\Models\EmployeeLeave;
+use App\Models\WorkShiftEmployeeMap;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +20,7 @@ class LeaveController extends Controller
     public function __construct()
     {
         $this->middleware('auth:hrms');
-        $this->middleware('CheckPermissions', ['except' => ['changeStatus', 'getWeekendHolidays', 'view', 'details']]);
+        // $this->middleware('CheckPermissions', ['except' => ['changeStatus', 'getWeekendHolidays', 'view', 'details', 'chResponsibleStatus']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -37,26 +38,96 @@ class LeaveController extends Controller
     	return view('leave.leave', $data);
     }
 
-    public function getWeekendHolidays($fromDate, $toDate){
+    public function getWeekendHolidays($fromDate, $toDate, $userId){
+
+        $fromDateAry = explode('-', $fromDate);
+        $shiftDaysAry = [];
+        $shiftDaysAry['days'] = [];
+        $shiftDaysAry['weekends'] = [];
+        $shiftWeekendsAry = [];
+
+        $val = WorkShiftEmployeeMap::where('user_id', $userId)->whereYear('start_date', '=', $fromDateAry[0])->whereYear('end_date', '=', $fromDateAry[0])->get();
+
+        foreach($val as $info){
+            $shiftWeekendsAry = [];
+
+            if($info->start_date == $info->end_date){
+                $shiftDaysAry['days'][] = $info->start_date;
+
+                $shift_temp = explode(',', $info->work_days);
+                $shift_temp = array_map('trim', $shift_temp);
+                $weekend_no = array_diff([1,2,3,4,5,6,7], $shift_temp);
+
+                if(count($weekend_no)>0){
+                    foreach($weekend_no as $w){
+                        $shiftWeekendsAry[] = $this->return_day_from_number($w);
+                    }
+                }
+
+                $shiftDaysAry['weekends'][] = implode(',', $shiftWeekendsAry);
+            }
+            else{
+
+                $shift_temp = explode(',', $info->work_days);
+                $shift_temp = array_map('trim', $shift_temp);
+                $weekend_no = array_diff([1,2,3,4,5,6,7], $shift_temp);
+                
+                if(count($weekend_no)>0){
+                    foreach($weekend_no as $w){
+                        $shiftWeekendsAry[] = $this->return_day_from_number($w);
+                    }
+                }
+
+                $day = 86400;  
+                $format = 'Y-m-d';  
+                $sTime = strtotime($info->start_date); 
+                $eTime = strtotime($info->end_date); 
+                $numDays = round(($eTime - $sTime) / $day) + 1;  
+                $days = array();  
+
+                for ($d = 0; $d < $numDays; $d++) {
+                    $shiftDaysAry['days'][] = date($format, ($sTime + ($d * $day))); 
+                    $shiftDaysAry['weekends'][] = implode(',', $shiftWeekendsAry);
+                }     
+            }
+        }
+
+        $initialApplyAry = [];
+
+        if($fromDate == $toDate){
+            $initialApplyAry[] = $fromDate;
+        }
+        else{
+            $day = 86400;  
+            $format = 'Y-m-d';  
+            $sTime = strtotime($fromDate); 
+            $eTime = strtotime($toDate); 
+            $numDays = round(($eTime - $sTime) / $day) + 1;  
+            $days = array();  
+
+            for ($d = 0; $d < $numDays; $d++) {
+                $initialApplyAry[] = date($format, ($sTime + ($d * $day))); 
+            } 
+        }
+
+        $weekendCounter = 0;
+        $holidayCounter = 0;
+        $forNormalWeekend = array_diff($initialApplyAry, $shiftDaysAry['days']); 
+        $weekendFromShift = array_intersect($initialApplyAry, $shiftDaysAry['days']);
+
+        //common codes ====
 
         $weekendsData  = Weekend::orderBY('id', 'DESC')->first();
         $weekends_ary = explode(',', $weekendsData->weekend); 
         $weekends_ary = array_map('trim', $weekends_ary); // triming
 
-        $fromDateAry = explode('-', $fromDate);
-
-        //holiday calculation start
         $holidays_info = Holiday::whereBetween('holiday_from', ["$fromDateAry[0]-1-1", "$fromDateAry[0]-12-31"])->where('holiday_status', 1)->get();
 
-        $holidayAry = [];
+        $allHolidayAry = [];
 
         foreach($holidays_info as $info){
             if($info->holiday_from == $info->holiday_to){
-                $holiDays = date("l", strtotime($info->holiday_from));
-                
-                if(!in_array($holiDays, $weekends_ary)){
-                    $holidayAry[] = $info->holiday_from;
-                }
+                $allHolidayAry[] = $info->holiday_from;
             }
             else{
                 $day = 86400; 
@@ -67,48 +138,126 @@ class LeaveController extends Controller
                 $days = array();  
 
                 for ($d = 0; $d < $numDays; $d++) {  
-                    $days_value = date($format, ($sTime + ($d * $day)));
-                    $holiDays = date("l", strtotime($days_value));
-                    
-                    if(!in_array($holiDays, $weekends_ary)){
-                        $holidayAry[] = $days_value;
-                    } 
+                    $allHolidayAry[] = date($format, ($sTime + ($d * $day)));
                 } 
             }
         }
 
-        $applyAry = [];
-        $count_weekend = 0;
+        $holidayWithShift = array_intersect($allHolidayAry, $weekendFromShift);
+        $holidayWithNormalWeekend = array_intersect($allHolidayAry, $forNormalWeekend);
 
-        if($fromDate == $toDate){
-            $applyAry[] = $fromDate;
+        //=================
+
+        if(count($weekendFromShift) > 0){
+            $holidayAry = [];
+
+            foreach($weekendFromShift as $info){
+                
+                $index = array_search($info,$shiftDaysAry['days']);
+
+                //check weekend
+                $shiftWeekendDays = date("l", strtotime($info));
+                $weekends_for_shift = explode(',', $shiftDaysAry['weekends'][$index]); 
+                $weekends_for_shift = array_map('trim', $weekends_for_shift); // triming
+
+                if(in_array($shiftWeekendDays, $weekends_for_shift)){
+                    $weekendCounter++;
+                }
+
+                //check Holiday with out Weekend
+                if(in_array($info, $holidayWithShift)){
+                    if(!in_array($shiftWeekendDays, $weekends_for_shift)){
+                        $holidayCounter++;
+                    }
+                }
+            }
+
+            if(count($forNormalWeekend) > 0){
+                foreach($forNormalWeekend as $info){
+                    //check weekend
+                    $nonShiftWeekendDays = date("l", strtotime($info));
+
+                    if(in_array($nonShiftWeekendDays, $weekends_ary)){
+                        $weekendCounter++;
+                    }
+
+                    //check Holiday with out Weekend
+                    if(in_array($info, $holidayWithNormalWeekend)){
+                        if(!in_array($nonShiftWeekendDays, $weekends_ary)){
+                            $holidayCounter++;
+                        }
+                    }
+                }
+            }
+
+            $data['holidays'] = $holidayCounter;
+            $data['weekend'] = $weekendCounter;
         }
         else{
-            $day = 86400;  
-            $format = 'Y-m-d';  
-            $sTime = strtotime($fromDate); 
-            $eTime = strtotime($toDate); 
-            $numDays = round(($eTime - $sTime) / $day) + 1;  
-            $days = array();  
+            //WEEKEND Calculation WITHOUT shift
+            $holidayAry = [];
 
-            for ($d = 0; $d < $numDays; $d++) {  
-                $apply_days_value = date($format, ($sTime + ($d * $day)));
-                $apply_holiDays = date("l", strtotime($apply_days_value));
-                $applyAry[] = date($format, ($sTime + ($d * $day)));  
-                
-                if(in_array($apply_holiDays, $weekends_ary)){
-                    $count_weekend++;
+            foreach($holidays_info as $info){
+                if($info->holiday_from == $info->holiday_to){
+                    $holiDays = date("l", strtotime($info->holiday_from));
+                    
+                    if(!in_array($holiDays, $weekends_ary)){
+                        $holidayAry[] = $info->holiday_from;
+                    }
                 }
-            } 
+                else{
+                    $day = 86400; 
+                    $format = 'Y-m-d'; 
+                    $sTime = strtotime($info->holiday_from);
+                    $eTime = strtotime($info->holiday_to); 
+                    $numDays = round(($eTime - $sTime) / $day) + 1;  
+                    $days = array();  
+
+                    for ($d = 0; $d < $numDays; $d++) {  
+                        $days_value = date($format, ($sTime + ($d * $day)));
+                        $holiDays = date("l", strtotime($days_value));
+                        
+                        if(!in_array($holiDays, $weekends_ary)){
+                            $holidayAry[] = $days_value;
+                        } 
+                    } 
+                }
+            }
+
+            $applyAry = [];
+            $count_weekend = 0;
+
+            if($fromDate == $toDate){
+                $applyAry[] = $fromDate;
+            }
+            else{
+                $day = 86400;  
+                $format = 'Y-m-d';  
+                $sTime = strtotime($fromDate); 
+                $eTime = strtotime($toDate); 
+                $numDays = round(($eTime - $sTime) / $day) + 1;  
+                $days = array();  
+
+                for ($d = 0; $d < $numDays; $d++) {  
+                    $apply_days_value = date($format, ($sTime + ($d * $day)));
+                    $apply_holiDays = date("l", strtotime($apply_days_value));
+                    $applyAry[] = date($format, ($sTime + ($d * $day)));  
+                    
+                    if(in_array($apply_holiDays, $weekends_ary)){
+                        $count_weekend++;
+                    }
+                } 
+            }
+
+            $compare_apply_n_holiday = array_intersect($holidayAry, $applyAry);
+            
+            //holiday calculation finished
+
+            $data['holidays'] = count($compare_apply_n_holiday);
+            $data['weekend'] = $count_weekend;
         }
 
-        $compare_apply_n_holiday = array_intersect($holidayAry, $applyAry);
-        
-        //holiday calculation finished
-
-        $data['holidays'] = count($compare_apply_n_holiday);
-        $data['weekend'] = $count_weekend;
-        return $data;
+        return $data;        
     }
 
     public function userTakenLeave($id){
@@ -170,9 +319,11 @@ class LeaveController extends Controller
             if(in_array($info['id'], $leave_type_id_ary)){
                 $locId = array_search($info['id'], $leave_type_id_ary);
                 $leave_amount_taken_combination[$sl]['taken_days'] = $taken_leave_ary[$locId]['days'];
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'] - $taken_leave_ary[$locId]['days'];
             }
             else{
                 $leave_amount_taken_combination[$sl]['taken_days'] = 0;
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'];
             }
 
             $sl++;
@@ -242,7 +393,7 @@ class LeaveController extends Controller
         $responsible_emp = $request->responsible_emp;
         $leave_half_or_full = $request->leave_half_or_full;
 
-        $weekend_holiday_info = $this->getWeekendHolidays($from_date, $to_date);
+        $weekend_holiday_info = $this->getWeekendHolidays($from_date, $to_date, $emp_name);
         $leave_type_info = LeaveType::find($emp_leave_type);
         $chk_include_holiday = $leave_type_info->leave_type_include_holiday;
 
@@ -414,9 +565,11 @@ class LeaveController extends Controller
             if(in_array($info['id'], $leave_type_id_ary)){
                 $locId = array_search($info['id'], $leave_type_id_ary);
                 $leave_amount_taken_combination[$sl]['taken_days'] = $taken_leave_ary[$locId]['days'];
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'] - $taken_leave_ary[$locId]['days'];
             }
             else{
                 $leave_amount_taken_combination[$sl]['taken_days'] = 0;
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'];
             }
 
             $sl++;
@@ -487,6 +640,8 @@ class LeaveController extends Controller
         $data['all_leave_types'] = LeaveType::where('leave_type_status', 1)->get();
         $data['leaves'] = EmployeeLeave::where('user_id', $user_id)->with('leaveType', 'userName.designation', 'responsibleUser', 'approvedByUser')->orderBy('employee_leave_status')->get();
         $data['forwards'] = EmployeeLeave::where('employee_leave_recommend_to', $user_id)->with('leaveType', 'userName.designation', 'responsibleUser', 'approvedByUser')->orderBy('employee_leave_status')->get();
+        $data['supervisors'] = EmployeeLeave::where('employee_leave_supervisor', $user_id)->with('leaveType', 'userName.designation', 'responsibleUser', 'approvedByUser')->orderBy('employee_leave_status')->get();
+        $data['responsibles'] = EmployeeLeave::where('employee_leave_responsible_person', $user_id)->with('leaveType', 'userName.designation', 'responsibleUser', 'approvedByUser', 'responsibleUserStatApprove')->orderBy('employee_leave_status')->get();
 
         return view('leave.details', $data);
     }
@@ -516,6 +671,8 @@ class LeaveController extends Controller
             'edit_forward_to.required_if' => 'Select employee for forward.',
         ]);
 
+        $emp_user_id = EmployeeLeave::find($request->hdn_id)->user_id;
+
         $emp_leave_type = $request->edit_leave_type_id;
         $from_date = $request->edit_from_date;
         $to_date = $request->edit_to_date;
@@ -534,7 +691,7 @@ class LeaveController extends Controller
         }
 
         //check .... 
-        $weekend_holiday_info = $this->getWeekendHolidays($from_date, $to_date);
+        $weekend_holiday_info = $this->getWeekendHolidays($from_date, $to_date, $emp_user_id);
         $leave_type_info = LeaveType::find($emp_leave_type);
         $chk_include_holiday = $leave_type_info->leave_type_include_holiday;
 
@@ -653,11 +810,39 @@ class LeaveController extends Controller
         $val->save();
     }
 
-    // public function showIndiReport($id){
+    public function chResponsibleStatus($id, $stat, $loginEmp){
 
-    //     $data['title'] = "Leave|Individual Report";
-    //     $data['info'] = EmployeeLeave::with('leaveType', 'userName.designation.department', 'responsibleUser.designation.department', 'approvedByUser.designation.department', 'supervisorUser.designation.department', 'forwardUser.designation.department')->find($id);
+        $val = EmployeeLeave::find($id);
+        $val->employee_leave_responsible_person_status = $stat;
+        $val->employee_leave_responsible_person_status_change_by = Auth::user()->id;
+        $val->save();
+    }
 
-    //     return view('leave.showIndiReport', $data);
-    // }
+
+    public function return_day_from_number($num){
+        
+        if($num == 1){
+            $val = "Saturday";
+        }
+        elseif($num == 2){
+            $val = "Sunday";
+        }
+        elseif($num == 3){
+            $val = "Monday";
+        }
+        elseif($num == 4){
+            $val = "Tuesday";
+        }
+        elseif($num == 5){
+            $val = "Wednesday";
+        }
+        elseif($num == 6){
+            $val = "Thursday";
+        }
+        elseif($num == 7){
+            $val = "Friday";
+        }
+
+        return $val;
+    }
 }
