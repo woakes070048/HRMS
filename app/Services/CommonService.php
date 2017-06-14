@@ -20,6 +20,8 @@ use App\Models\Institute;
 use App\Models\Degree;
 use App\Models\Language;
 use App\Models\Religion;
+use App\Models\UserLeaveTypeMap;
+use App\Models\EmployeeLeave;
 
 use App\Models\WorkShift;
 use App\Models\BonusType;
@@ -50,7 +52,7 @@ trait CommonService
     }
 
     public function getEmployee(){
-        return User::where('status',1)->get();
+        return User::with('designation')->where('status',1)->get();
     }
 
     public function getBranches(){
@@ -287,6 +289,116 @@ trait CommonService
         }
     }
 
+    public function userTakenLeave($id){
+
+        $currentYear = date('Y');
+        $data_map = UserLeaveTypeMap::with('leaveType')->where('user_id', $id)
+                    ->where('active_from_year', '<=', $currentYear)
+                    ->where('active_to_year', '>=', $currentYear)->where('status', 1)->get();
+
+        $leave_amount_ary = [];   //leave total amount
+
+        $sl = 0;
+        foreach($data_map as $mapInfo){
+            $leave_amount_ary[$sl]['id'] = $mapInfo->leave_type_id;
+            $leave_amount_ary[$sl]['name'] = $mapInfo->leaveType->leave_type_name;
+            $leave_amount_ary[$sl]['days'] = $mapInfo->number_of_days;
+            $sl++;
+        }
+
+        $data_val = EmployeeLeave::with('leaveType')->where('user_id', $id)->whereIn('employee_leave_status', [1,2,3])->get();
+        $leave_type_id_ary = [];
+        $leave_type_name_ary = [];
+        $leave_type_days_ary = [];
+        $taken_leave_ary = [];
+
+        //calculate which type leave taken how many days...
+        foreach($data_val as $info){
+            
+            $diff_days = $info->employee_leave_total_days;
+
+            if(!in_array($info->leave_type_id, $leave_type_id_ary)){
+                $leave_type_id_ary[] = $info->leave_type_id;
+                $leave_type_name_ary[] = $info->leaveType->leave_type_name;
+                $leave_type_days_ary[] = $diff_days;
+            }
+            else{
+                $location = array_search($info->leave_type_id, $leave_type_id_ary);
+                $old_days = $leave_type_days_ary[$location];
+                $leave_type_days_ary[$location] = $diff_days + $old_days;
+            }
+        }
+
+        if(count($leave_type_id_ary) > 0){
+            for($i=0 ; $i<count($leave_type_id_ary) ; $i++){
+                $taken_leave_ary[$i]['id'] = $leave_type_id_ary[$i];
+                $taken_leave_ary[$i]['name'] = $leave_type_name_ary[$i];
+                $taken_leave_ary[$i]['days'] = $leave_type_days_ary[$i];
+            }
+        }
+
+        //combined leave amount and taken leave to show leave history
+        $leave_amount_taken_combination = [];
+        $sl = 0;
+        foreach($leave_amount_ary as $info){
+            $leave_amount_taken_combination[$sl]['id'] = $info['id'];
+            $leave_amount_taken_combination[$sl]['name'] = $info['name'];
+            $leave_amount_taken_combination[$sl]['amount_days'] = $info['days'];
+            
+            if(in_array($info['id'], $leave_type_id_ary)){
+                $locId = array_search($info['id'], $leave_type_id_ary);
+                $leave_amount_taken_combination[$sl]['taken_days'] = $taken_leave_ary[$locId]['days'];
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'] - $taken_leave_ary[$locId]['days'];
+            }
+            else{
+                $leave_amount_taken_combination[$sl]['taken_days'] = 0;
+                $leave_amount_taken_combination[$sl]['balance'] = $info['days'];
+            }
+
+            $sl++;
+        }
+
+        //calculate remain leave to show leave type
+        $leave_type_ary = [];
+        $aryIndex = 0;
+        foreach($leave_amount_ary as $amountInfo){
+
+            if(in_array($amountInfo['id'], $leave_type_id_ary)){
+                //find leave taken days using id from taken leave ary days
+                $indexId = array_search($amountInfo['id'], $leave_type_id_ary);
+                $leave_type_ary[$aryIndex]['id'] =  $amountInfo['id'];
+                $leave_type_ary[$aryIndex]['name'] =  $leave_type_name_ary[$indexId];
+                $leave_type_ary[$aryIndex]['days'] =  $amountInfo['days']-$leave_type_days_ary[$indexId];
+            }
+            else{
+                $leave_type_ary[$aryIndex]['id'] =  $amountInfo['id'];
+                $leave_type_ary[$aryIndex]['name'] =  $amountInfo['name'];
+                $leave_type_ary[$aryIndex]['days'] =  $amountInfo['days'];
+            }
+
+            $aryIndex++;
+        }
+        
+        $data['userHaveLeavs'] = $data_map;
+        $data['taken_leave_type_id'] = $leave_type_id_ary;
+        $data['taken_leave_type_name'] = $leave_type_name_ary;
+        $data['taken_leave_type_days'] = $leave_type_days_ary;
+        $data['taken_leave_ary'] = $taken_leave_ary; //leave taken
+        $data['user_leave_type'] = $leave_type_ary; //leave remain
+        $data['show_history'] = $leave_amount_taken_combination;
+
+        session()->put('global_leave_type_ary', $leave_type_ary);
+
+        return $data;
+    }
+
+    public function showIndiReport($id){
+
+        $data['title'] = "Leave|Individual Report";
+        $data['info'] = EmployeeLeave::with('leaveType', 'userName.designation.department', 'responsibleUser.designation.department', 'approvedByUser.designation.department', 'supervisorUser.designation.department', 'forwardUser.designation.department')->find($id);
+
+        return view('leave.showIndiReport', $data);
+    }
 
     public function getBonusType(){
         return BonusType::where('bonus_type_status',1)->orderBy('id','desc')->get();

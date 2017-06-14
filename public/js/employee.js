@@ -150,7 +150,7 @@ var employee = new Vue({
 
         designation_id: function(id){
             $('#employee > .panel > .panel-body').LoadingOverlay("show");
-        	this.getUnitByDesignationId(id);
+            this.getUnitByDesignationId(id);
             this.getSupervisorByDesignationId(id);
             $('#employee > .panel > .panel-body').LoadingOverlay("hide");
         }
@@ -234,7 +234,7 @@ var employee = new Vue({
                 this.getEmployeeType();
                 this.getDesignations();
                 this.getDivisions();
-				this.getBasic();
+                this.getBasic();
             }
 
             if(this.tab == 'personal'){
@@ -375,7 +375,7 @@ var employee = new Vue({
             axios.get(url).then(response => {
                 this.childrens = response.data;
             // console.log(this.childrens);
-        	});
+            });
         },
 
 
@@ -383,16 +383,16 @@ var employee = new Vue({
             var url = this.makeUrl();
             axios.get(url).then(response => {
                 this.languages = response.data;
-            	// console.log(this.languages);
-        	});
+                // console.log(this.languages);
+            });
         },
 
 
-		getBranches(){
+        getBranches(){
             axios.get('/get-branches').then(response => {
                 this.branches = response.data;
-            	// console.log(this.branches);
-        	});
+                // console.log(this.branches);
+            });
         },
 
 
@@ -400,7 +400,7 @@ var employee = new Vue({
             axios.get('/get-employee-type').then(response => {
                 this.employeeTypes = response.data;
                 // console.log(this.employeeTypes);
-        	});
+            });
         },
 
 
@@ -413,7 +413,7 @@ var employee = new Vue({
         getDepartments(){
             axios.get('/get-departments').then(response => {
                 this.departments = response.data;
-        	});
+            });
         },
 
 
@@ -441,7 +441,7 @@ var employee = new Vue({
 
 
         getUnitByDesignationId(id){
-        	// var id = this.designation_id;
+            // var id = this.designation_id;
              axios.get('/get-unit-by-designation-id/'+id).then(response => {
                 this.units = response.data;
                 // console.log(this.units);
@@ -644,8 +644,8 @@ var employee = new Vue({
         // getAllowanceNotinLevel(modal_id){
         //     axios.get('/get-allowance-notin-level/'+this.allow).then(response => {
         //         this.levelSalaryNotinLevels = response.data;
-        //     	setTimeout(this.modal_open(modal_id),5);
-        // 	});
+        //      setTimeout(this.modal_open(modal_id),5);
+        //  });
         // },
 
 
@@ -660,11 +660,11 @@ var employee = new Vue({
         //     }
 
         //     axios.get('/get-allowance-by-ids/'+allowance_ids).then(response => {
-        //     	for(var data in response.data){
-        //     		this.otherAllowance.push(response.data[data]);
-        //     	}
-        //     	jQuery(".mfp-close").trigger("click");
-        // 	});
+        //      for(var data in response.data){
+        //          this.otherAllowance.push(response.data[data]);
+        //      }
+        //      jQuery(".mfp-close").trigger("click");
+        //  });
         // },
 
         getLanguage(){
@@ -1268,7 +1268,7 @@ var employee = new Vue({
                 if(data_tab == 'nominee'){
                     this.singleNominee = response.data;
                 }
-        		setTimeout(this.modal_open(form_id),5);
+                setTimeout(this.modal_open(form_id),5);
                 
             });
         },
@@ -1363,6 +1363,3 @@ var employee = new Vue({
 
 
 });
-
-
-

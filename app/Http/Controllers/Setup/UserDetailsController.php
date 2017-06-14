@@ -55,13 +55,16 @@ class UserDetailsController extends Controller
 
         $moduleData[] = [
                     'id' => $fetchData->id,
+                    'module_icon_class' => $fetchData->module_icon_class,
                     'module_name' => $fetchData->module_name,
                     'module_details' => $fetchData->module_details,
                     'module_status' => $fetchData->module_status,
                 ];
+
         if($fetchData->menus){
             foreach($fetchData->menus as $info){
                 $menuData[] = [
+                        'id' => $info->id,
                         'menu_parent_id' => $info->menu_parent_id,
                         'module_id' => $info->module_id,
                         'menu_name' => $info->menu_name,

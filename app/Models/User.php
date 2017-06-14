@@ -118,16 +118,13 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\EmployeeType');
     }
 
-
     public function employeeTypeMap(){
         return $this->hasOne('App\Models\UserEmployeeTypeMap')->orderBy('id','desc');
     }
 
-
     public function branch(){
         return $this->belongsTo('App\Models\Branch');
     }
-
 
     public function designation(){
         return $this->belongsTo('App\Models\Designation');

@@ -13,10 +13,6 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <span class="panel-title">Weekends</span>
-
-                        <?php 
-                          $chkUrl = \Request::segment(1);
-                        ?>
                         
                         <button type="button" class="btn btn-xs btn-success pull-right" data-toggle="modal" data-target=".dataAdd" style="margin-top: 12px;">Add New Weekend</button>
                    
@@ -28,26 +24,21 @@
                                     <tr class="success">
                                         <th>sl</th>
                                         <th>Weekend</th>
-                                        <th>Created by</th>
-                                        <th>Updated by</th>
                                         <th>Status</th>
+                                        <th>Created Time</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(info,index) in branches">
-                                        <td >@{{ index+1 }}</td>
-                                        <td>@{{ info.branch_name }}</td>
-                                        <td>@{{ info.branch_location }}</td>
-                                        <td>@{{ info.branch_description }}</td>
-                                        <td>@{{ info.branch_status==1?"Active":"Inactive" }}</td>
+                                    <tr v-for="(info,index) in weekends">
+                                        <td v-text="index+1"></td>
+                                        <td v-text="info.weekend"></td>
+                                        <td v-text="info.status==1?'Active':'Inactive'"></td>
+                                        <td v-text="info.created_at"></td>
                                         <td>
                                             <button type="button" @click="editData(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".dataEdit">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            {{-- <button type="button" @click="deleteData(info.id, index)" class="btn btn-sm btn-danger">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button> --}}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -68,7 +59,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">Add Weekend</h4>
                 </div>
-                <form class="form-horizontal" @submit.prevent="saveBranch('addFormData')" id="addFormData">
+                <form class="form-horizontal" @submit.prevent="saveData('addFormData')" id="addFormData">
                     <div class="modal-body">
 
                         <div id="create-form-errors">
@@ -80,25 +71,25 @@
                             <label class="col-md-3">Select Weekend</label>
                             <div class="col-md-9">
                                 <div class="col-md-3">
-                                    <input type="checkbox" value="fri"> Friday
+                                    <input type="checkbox" name="weekend_name[]" value="Friday"> Friday
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="checkbox" value="sat"> Satday
+                                    <input type="checkbox" name="weekend_name[]" value="Saturday"> Saturday
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="checkbox" value="sun"> Sunday
+                                    <input type="checkbox" name="weekend_name[]" value="Sunday"> Sunday
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="checkbox" value="mon"> Monday
+                                    <input type="checkbox" name="weekend_name[]" value="Monday"> Monday
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="checkbox" value="tue"> Tueday
+                                    <input type="checkbox" name="weekend_name[]" value="Tuesday"> Tuesday
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="checkbox" value="wed"> Wednday
+                                    <input type="checkbox" name="weekend_name[]" value="Wednesday"> Wednesday
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="checkbox" value="thu"> Thuday
+                                    <input type="checkbox" name="weekend_name[]" value="Thursday"> Thursday
                                 </div>
                             </div>      
                         </div>
@@ -109,13 +100,13 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="radio-custom radio-success mb5">
-                                            <input type="radio" name="branch_status" id="active" v-model="branch_status" value="1">
+                                            <input type="radio" name="weekend_status" id="active" v-model="weekend_status" value="1">
                                             <label for="active">Active</label>
                                         </div>    
                                     </div>
                                     <div class="col-md-4">
                                         <div class="radio-custom radio-danger mb5">
-                                            <input type="radio" name="branch_status" id="inactive" v-model="branch_status" value="0">
+                                            <input type="radio" name="weekend_status" id="inactive" v-model="weekend_status" value="0">
                                             <label for="inactive">Inactive</label>
                                         </div>    
                                     </div>
@@ -139,7 +130,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Edit Branch</h4>
+                    <h4 class="modal-title">Edit Weekend</h4>
                 </div>
                 
                 <form class="form-horizontal" @submit.prevent="updateData('updateFormData')" id="updateFormData">
@@ -149,67 +140,33 @@
                         </div>
 
                         {{ csrf_field() }}
-                        <input type="hidden" name="hdn_id" data-vv-as="id" v-model="hdn_id">
+                        <input type="hidden" name="hdn_id" v-model="hdn_id">
 
                         <div class="form-group">
-                            <label for="edit_branch_name" class="col-md-3 control-label">Branch Name</label>
+                            <label class="col-md-3">Select Weekend</label>
                             <div class="col-md-9">
-                                <input name="edit_branch_name" class="form-control input-sm" v-model="edit_branch_name" v-validate:edit_branch_name.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_name') }" data-vv-as="branch name" type="text" placeholder="Branch Name">
-                                <div v-show="errors.has('edit_branch_name')" class="help text-danger">
-                                    <i v-show="errors.has('edit_branch_name')" class="fa fa-warning"></i> 
-                                    @{{ errors.first('edit_branch_name') }}
+                                <div class="col-md-3">
+                                    <input type="checkbox" name="edit_weekend_name[]" value="Friday"> Friday
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_branch_email" class="col-md-3 control-label">Email</label>
-                            <div class="col-md-9">
-                                <input name="edit_branch_email" class="form-control input-sm" v-model="edit_branch_email" type="email" placeholder="Branch Email">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_branch_mobile" class="col-md-3 control-label">Mobile</label>
-                            <div class="col-md-9">
-                                <input name="edit_branch_mobile" class="form-control input-sm" v-model="edit_branch_mobile" v-validate:edit_branch_mobile.initial="'required'" :class="{'input': true, 'is-danger': errors.has('edit_branch_mobile') }" data-vv-as="mobile" type="text" placeholder="Branch Mobile Number">
-                                <div v-show="errors.has('edit_branch_mobile')" class="help text-danger">
-                                    <i v-show="errors.has('edit_branch_mobile')" class="fa fa-warning"></i> 
-                                    @{{ errors.first('edit_branch_mobile') }}
+                                <div class="col-md-3">
+                                    <input type="checkbox" name="edit_weekend_name[]" value="Saturday"> Saturday
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_branch_phone" class="col-md-3 control-label">Phone</label>
-                            <div class="col-md-9">
-                                <input name="edit_branch_phone" class="form-control input-sm" v-model="edit_branch_phone" type="text" placeholder="Branch Phone">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_branch_location" class="col-md-3 control-label">Location</label>
-                            <div class="col-md-9">
-                                <textarea name="edit_branch_location" class="form-control input-sm" v-model="edit_branch_location" data-vv-as="branch location" placeholder="Branch Location"></textarea>
-                                <div v-show="errors.has('edit_branch_location')" class="help text-danger">
-                                    <i v-show="errors.has('edit_branch_location')" class="fa fa-warning"></i> 
-                                    @{{ errors.first('edit_branch_location') }}
+                                <div class="col-md-3">
+                                    <input type="checkbox" name="edit_weekend_name[]" value="Sunday"> Sunday
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_branch_effective_date" class="col-md-3 control-label">Effective Date</label>
-                            <div class="col-md-9">
-                                <input type="text" name="edit_branch_effective_date" class="gui-input datepicker form-control input-sm" v-model="edit_branch_effective_date" placeholder="Select Effective Date">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="" class="col-md-3 control-label">Note</label>
-                            <div class="col-md-9">
-                                <textarea name="edit_branch_description" v-model="edit_branch_description" class="form-control input-sm" placeholder="Write note"></textarea>
-                            </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" name="edit_weekend_name[]" value="Monday"> Monday
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" name="edit_weekend_name[]" value="Tuesday"> Tuesday
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" name="edit_weekend_name[]" value="Wednesday"> Wednesday
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" name="edit_weekend_name[]" value="Thursday"> Thursday
+                                </div>
+                            </div>      
                         </div>
 
                         <div class="form-group">
@@ -218,13 +175,13 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="radio-custom radio-success mb5">
-                                            <input type="radio" name="edit_branch_status" id="edit_active" v-model="edit_branch_status" value="1">
+                                            <input type="radio" name="edit_weekend_status" id="edit_active" v-model="edit_weekend_status" value="1">
                                             <label for="edit_active">Active</label>
                                         </div>    
                                     </div>
                                     <div class="col-md-4">
                                         <div class="radio-custom radio-danger mb5">
-                                            <input type="radio" name="edit_branch_status" id="edit_inactive" v-model="edit_branch_status" value="0">
+                                            <input type="radio" name="edit_weekend_status" id="edit_inactive" v-model="edit_weekend_status" value="0">
                                             <label for="edit_inactive">Inactive</label>
                                         </div>    
                                     </div>
@@ -247,6 +204,6 @@
 
 @section('script')
 
-<script src="{{asset('js/branch.js')}}"></script>
+<script src="{{asset('/js/weekend.js')}}"></script>
 
 @endsection

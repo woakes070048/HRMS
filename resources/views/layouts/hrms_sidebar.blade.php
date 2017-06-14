@@ -36,7 +36,7 @@
                   <span class="sidebar-title">Dashboard</span>
                 </a>
             </li>
-            
+
             <?php 
                 $moduleShare = session('moduleShare');
                 $userModuleShare = session('userModuleShare');
@@ -44,6 +44,7 @@
             ?>
                 @foreach($moduleShare as $info)
                     @if(in_array($info->id, $userModuleShare))
+
                     <li>
                         <?php 
                             //this calculation to open Module menu
@@ -68,6 +69,7 @@
                             <span class="sidebar-title">{{$info->module_name}}</span>
                             <span class="caret"></span>
                         </a>
+                        
                         <ul class="nav sub-nav">
                             @foreach($info->menus as $mInfo)
                                 @if(in_array($mInfo->menu_url, $userMenuShare))
@@ -76,6 +78,7 @@
                                         $strMneuAry = explode("/", $mInfo->menu_url);
                                     ?>
                                     <li class="@if(\Request::segment(1) == $strMneuAry[0]) active @endif">
+
                                         <a href="{{url("$mInfo->menu_url")}}">
                                             <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_section_name}}
                                         </a>
@@ -86,7 +89,38 @@
                         </ul>
                     </li>
                     @endif
-                @endforeach  
+                @endforeach
+
+                {{-- <li>
+                    <a class="accordion-toggle" href="#">
+                        <span class="fa fa-calendar" aria-hidden="true"></span>
+                        <span class="sidebar-title">Leave Management</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="nav sub-nav">
+                        <li class="">
+                            <a href="{{url('holiday/index')}}">
+                                <span class="fa fa-level-up"></span> Holidays
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('weekend/index')}}">
+                                <span class="fa fa-level-up"></span> Weekends
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('leave/type/index')}}">
+                                <span class="fa fa-level-up"></span> Leave Type
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('leave/index')}}">
+                                <span class="fa fa-level-up"></span> Leaves
+                            </a>
+                        </li>
+                    </ul>
+                </li> --}}
+
         </ul>
         <!-- End: Sidebar Menu -->
 
