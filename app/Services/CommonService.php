@@ -27,9 +27,10 @@ use App\Models\IncrementType;
 use App\Models\LoanType;
 
 use App\Models\Setting;
+use App\Models\Setup\Config;
 
 use Auth;
-use App\Models\Setup\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 
 trait CommonService
@@ -74,6 +75,11 @@ trait CommonService
 
     public function getUnits(){
         return Units::where('unit_status',1)->get();
+    }
+
+
+    public function getUnitByDepartmentId($id){
+        return Units::where('unit_departments_id',$id)->get();
     }
 
 
@@ -288,7 +294,7 @@ trait CommonService
 
 
     public function getEmployees(){
-        return User::select('users.*',\DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
+        return User::select('users.*',DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
             ->where('users.status',1)
             ->join('designations','designations.id','=','users.designation_id')
             ->join('levels','levels.id','=','designations.level_id')
@@ -297,7 +303,7 @@ trait CommonService
 
 
     public function getEmployeeByDesignationId($id){
-        return User::select('users.*',\DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
+        return User::select('users.*',DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'),'designations.designation_name','levels.level_name')
             ->where('users.status',1)->where('users.designation_id',$id)
             ->join('designations','designations.id','=','users.designation_id')
             ->join('levels','levels.id','=','designations.level_id')
@@ -312,6 +318,28 @@ trait CommonService
 
     public function getLoanType(){
         return LoanType::where('loan_type_status',1)->orderBy('id','desc')->get();
+    }
+
+
+    public function getEmployeeByDepartmentUnitBranch($branch_id, $department_id, $unit_id)
+    {
+        $result = User::select('users.*', DB::raw('CONCAT(users.first_name," ",users.last_name) as fullname'));
+
+        if($branch_id !=0){
+            $result->where('branch_id', $branch_id);
+        }
+
+        if($unit_id !=0){
+            $result->where('unit_id', $unit_id);
+        }
+
+        if($department_id !=0){
+            $result->where('departments.id', $department_id)
+                ->join('units','units.id','=','users.unit_id')
+                ->join('departments','departments.id','=','units.unit_departments_id');
+        }
+
+        return $result->get();
     }
 
 
