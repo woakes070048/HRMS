@@ -250,6 +250,8 @@ Route::group(['prefix' => '/promotion', 'namespace' => 'Pim'],function (){
 
 
 /******************** .......HRMS Time & Attendance Routes........ **************/
+
+/******* .......Work Shift Routes........ ******/
 Route::group(['prefix' => 'workshift', 'namespace' => 'Attendance'],function (){
     Route::get('/index','WorkShiftController@index');
     Route::post('/add','WorkShiftController@create');
@@ -258,11 +260,13 @@ Route::group(['prefix' => 'workshift', 'namespace' => 'Attendance'],function (){
     Route::delete('/delete/{id}','WorkShiftController@delete');
 });
 
+/******* .......Shift Assign Routes........ ******/
 Route::group(['prefix' => 'shiftassign', 'namespace' => 'Attendance'],function (){
     Route::get('/index/{work_shift_id?}','WorkShiftAssignController@index');
     Route::post('/assign','WorkShiftAssignController@assignWorkShift');
 });
 
+/******* .......Attendance Timesheet Routes........ ******/
 Route::group(['prefix' => 'attendance', 'namespace' => 'Attendance'],function (){
     Route::get('/index','AttendanceController@index');
     Route::post('/index','AttendanceController@attendanceTimesheet');
@@ -270,11 +274,10 @@ Route::group(['prefix' => 'attendance', 'namespace' => 'Attendance'],function ()
     
     Route::post('/add','AttendanceController@addAttendance');
     Route::post('/manual','AttendanceController@manualAttendance');
-
 });
 
 
-/******************** .......HRMS PayRoll Routes........ **************/
+/******************** .......Start HRMS PayRoll Module Routes........ **************/
 
 /******* .......PayRoll Bonus Type Routes........ ******/
 Route::group(['prefix' => 'bonustype', 'namespace' => 'Payroll'],function (){
@@ -314,7 +317,7 @@ Route::group(['prefix' => 'increment', 'namespace' => 'Payroll'],function (){
 
 /******* .......PayRoll Provident Fund Routes........ ******/
 Route::group(['prefix' => 'providentfund', 'namespace' => 'Payroll'],function (){
-    Route::get('/index','ProvidentFundController@index');
+    Route::get('/index/{id?}','ProvidentFundController@index');
     Route::post('/add','ProvidentFundController@create');
     Route::get('/edit/{id}','ProvidentFundController@edit');
     Route::post('/edit','ProvidentFundController@update');
@@ -338,6 +341,14 @@ Route::group(['prefix' => 'loan', 'namespace' => 'Payroll'],function (){
     Route::post('/edit','LoanController@update');
     Route::delete('/delete/{id}','LoanController@delete');
 });
+
+/******* .......PayRoll Routes........ ******/
+Route::group(['prefix' => 'payroll', 'namespace' => 'Payroll'],function (){
+    Route::get('/index/{id1?}/{id2?}/{id3?}','PayrollController@index');
+    Route::post('/index','PayrollController@index');
+});
+
+/******************** .......End HRMS PayRoll Module Routes........ **************/
 
 
 /******************* ........HRMS Leave Management System........... ************/
@@ -401,8 +412,9 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-levels','CommonController@getLevels');
     Route::get('get-branches','CommonController@getBranches');
     Route::get('get-units','CommonController@getUnits');
-    Route::get('get-designations','CommonController@getDesignations');
+    Route::get('get-unit-by-department-id/{id}','CommonController@getUnitByDepartmentId');
     Route::get('get-unit-by-designation-id/{id}','CommonController@getUnitByDesignationId');
+    Route::get('get-designations','CommonController@getDesignations');
     Route::get('get-supervisor-by-designation-id/{id}/{user_id?}','CommonController@getSupervisorByDesignationId');
     Route::get('get-divisions','CommonController@getDivisions');
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
@@ -428,6 +440,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-increment-type','CommonController@getIncrementType');
     Route::get('get-loan-type','CommonController@getLoanType');
     Route::get('get-employees','CommonController@getEmployees');
+    // Route::get('get-providentfund-by-user-id/{id}','CommonController@getProvidentFundByUserId');
 
     Route::get('/user-taken-leave/{id}','CommonController@userTakenLeave');
     Route::get('/leaveView/{id}', 'CommonController@showIndiReport');

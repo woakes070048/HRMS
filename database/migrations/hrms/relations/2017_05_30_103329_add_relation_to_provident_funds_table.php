@@ -13,7 +13,11 @@ class AddRelationToProvidentFundsTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('provident_funds',function(Blueprint $table){
+            if(Schema::hasTable('provident_funds')){
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+            }
+        });
     }
 
     /**
@@ -23,6 +27,8 @@ class AddRelationToProvidentFundsTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('provident_funds',function(Blueprint $table){
+            $table->dropForeign('provident_funds_user_id_foreign');
+        });
     }
 }

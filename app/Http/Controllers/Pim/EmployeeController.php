@@ -79,9 +79,8 @@ class EmployeeController extends Controller
         $data['title'] = 'Employee List';
         $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
+        $data['sidebar_hide'] = true;
         $data['leave_types'] = LeaveType::where('leave_type_status', 1)->get();
-        $data['sidevar_hide'] = 1;
-
         return view('pim.employee.index')->with($data);
     }
 
@@ -173,7 +172,7 @@ class EmployeeController extends Controller
      */
     public function showEmployeeAddForm(Request $request){
 
-        $data['sidevar_hide'] = 1;
+        $data['sidebar_hide'] = true;
         $data['tab'] = $request->tab;
 
         if($user = User::find($request->id)){
@@ -898,7 +897,7 @@ class EmployeeController extends Controller
 /********************** Edit Employee Information Functions ********************************/
 
     public function showEmployeeEditForm(Request $request){
-        $data['sidevar_hide'] = 1;
+        $data['sidebar_hide'] = 1;
         $data['tab'] = $request->tab;
 
         if($user = User::find($request->id)){

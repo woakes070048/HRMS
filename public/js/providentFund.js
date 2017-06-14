@@ -22,33 +22,71 @@ Vue.component('select2', {
 
 
 var work = new Vue({
-    el: '#loans',
+    el: '#providentFund',
     data:{
       index:'',
       dataTable:true,
+      user_id:null,
+      pf_user_id:null, //check for edit
       users:[],
-      loanTypes:[],
-      loan:[],
-      loans:[],
+      hasFund:true,
+      providentFund:[],
+      providentFunds:[],
+      user_name:null,
+      providentfundDetails:[],
+      total_debit:0,
+      total_credit:0,
       errors:[]
     },
 
 
     created(){
-      this.getLoanType();
       this.getEmployees();
     },
 
 
     mounted(){
-      this.getLoan();
+      this.getProvidentFund();
+    },
+
+
+    watch:{
+      user_id(id){
+        if(id !=0){
+          if(this.pf_user_id != id){
+            // alert(id + '--' +this.pf_user_id);
+            this.loadinShow('#provident_fund_modal .panel-body');
+            axios.get('/providentfund/index/'+id).then(response => {
+              //console.log(response.data);
+              if(response.data){
+                this.hasFund = true;
+                this.errors.push({'has_fund':[]});
+
+                if(response.data.pf_status == 1){
+                  this.errors.has_fund = ['This employee already have a provident fund.'];
+                }else{
+                  this.errors.has_fund = ['This employee already have a provident fund. Please active that!'];
+                }
+              }else{
+                this.errors = [];
+                this.hasFund = false;
+              }
+            });
+            this.loadinHide('#provident_fund_modal .panel-body');
+          }else{
+            this.errors = [];
+            this.hasFund = false;
+          }
+        }
+      },
+
     },
 
 
     methods:{
 
-      dataTableCall(){
-        $('#datatableCall').dataTable({
+      dataTableCall(id){
+        $(id).dataTable({
           "destroy": true,
           "paging":   true,
           "searching": true,
@@ -58,19 +96,19 @@ var work = new Vue({
       },
       
 
-      dataTableDestroy(){
-        $('#datatableCall').dataTable().fnDestroy(); 
+      dataTableDestroy(id){
+        $(id).dataTable().fnDestroy(); 
       },
 
 
-      dataTableGenerate(){
+      dataTableGenerate(id='#datatableCall'){
         vueThis = this;
         if(this.dataTable){
-            setTimeout(function(){vueThis.dataTableCall();}, 1);
+          setTimeout(function(){vueThis.dataTableCall(id);}, 5);
           this.dataTable = false;
         }else{
-             this.dataTableDestroy();
-             setTimeout(function(){vueThis.dataTableCall();}, 1);
+          this.dataTableDestroy(id);
+          setTimeout(function(){vueThis.dataTableCall(id);}, 5);
         }
       },
 
@@ -138,14 +176,6 @@ var work = new Vue({
       getEmployees(){
            axios.get('/get-employees').then(response => {
               this.users = response.data;
-              // console.log(this.supervisors);
-          });
-      },
-
-
-      getLoanType(){
-        axios.get('/get-loan-type').then(response => {
-          this.loanTypes = response.data;
           });
       },
 
@@ -161,10 +191,10 @@ var work = new Vue({
       },
 
 
-      getLoan(){
+      getProvidentFund(){
         this.loadinShow('#datatableCall');
-        axios.get('/loan/index').then((response) => {
-          this.loans = response.data;
+        axios.get('/providentfund/index').then((response) => {
+          this.providentFunds = response.data;
           this.dataTableGenerate();
           this.loadinHide('#datatableCall');
         }).catch((error)=>{
@@ -174,19 +204,20 @@ var work = new Vue({
       },
 
 
-      addLoan(e){
+      addProvidentFund(e){
         var formData = new FormData(e.target);
-        this.loadinShow('#loan_modal');
+        this.loadinShow('#providentFund_modal');
 
-        axios.post('/loan/add',formData).then((response) => {
-          this.loan.unshift(response.data.data);
+        axios.post('/providentfund/add',formData).then((response) => {
+          //console.log(response.data.data);
+          this.providentFunds.unshift(response.data.data);
           this.dataTableGenerate();
           jQuery(".mfp-close").trigger("click");
           this.showMessage(response.data);
-          this.loadinHide('#loan_modal');
+          this.loadinHide('#providentFund_modal');
 
         }).catch((error)=>{
-          this.loadinHide('#loan_modal');
+          this.loadinHide('#providentFund_modal');
 
           if(error.response.status == 500 || error.response.data.status == 'danger'){
               var error = error.response.data;
@@ -198,13 +229,15 @@ var work = new Vue({
       },
 
 
-      editLoan(id, index, model_id){
+      editProvidentFund(id, index, model_id){
         this.loadinShow(model_id);
         this.index = index;
 
-        axios.get('/loan/edit/'+id).then((response) => {
+        axios.get('/providentfund/edit/'+id).then((response) => {
           this.loadinHide(model_id);
-          this.loan = response.data.data;
+          this.providentFund = response.data.data;
+          this.user_id = this.providentFund.user_id;
+          this.pf_user_id = this.user_id;
           this.modal_open(model_id);
 
         }).catch((error)=>{
@@ -219,18 +252,18 @@ var work = new Vue({
       },
 
 
-      updateLoan(e){
+      updateProvidentFund(e){
         var formData = new FormData(e.target);
-        this.loadinShow('#loan_modal');
+        this.loadinShow('#providentFund_modal');
 
-        axios.post('/loan/edit',formData).then((response) => {
-          this.$set(this.loans,this.index,response.data.data);
+        axios.post('/providentfund/edit',formData).then((response) => {
+          this.$set(this.providentFunds,this.index,response.data.data);
           jQuery(".mfp-close").trigger("click");
           this.showMessage(response.data);
-          this.loadinHide('#loan_modal');
+          this.loadinHide('#providentFund_modal');
 
         }).catch((error)=>{
-          this.loadinHide('#loan_modal');
+          this.loadinHide('#providentFund_modal');
           if(error.response.status == 500 || error.response.data.status == 'danger'){
               var error = error.response.data;
               this.showMessage(error);
@@ -241,7 +274,7 @@ var work = new Vue({
       },
 
 
-      deleteLoan(id,index){
+      deleteProvidentFund(id,index){
        var vueThis = this;
        this.index = index;
        swal({
@@ -254,8 +287,8 @@ var work = new Vue({
           closeOnConfirm: false
         },
         function(){ 
-            axios.delete('/loan/delete/'+id).then((response) => {
-              vueThis.loans.splice(vueThis.index,1);
+            axios.delete('/providentfund/delete/'+id).then((response) => {
+              vueThis.providentFunds.splice(vueThis.index,1);
               vueThis.dataTableGenerate();
               swal("Deleted!", response.data.message, "success");
             }).catch((error)=>{
@@ -266,7 +299,7 @@ var work = new Vue({
       },
 
 
-      approvedLoan(loan_id, index){
+      approvedProvidentFund(providentFund_id, index){
         var vueThis = this;
         this.index = index;
         swal({
@@ -279,8 +312,8 @@ var work = new Vue({
           closeOnConfirm: false
         },
         function(){ 
-            axios.post('/loan/edit',{loan_id:loan_id}).then((response) => {
-              vueThis.$set(vueThis.loans,vueThis.index,response.data.data);
+            axios.post('/providentfund/edit',{providentFund_id:providentFund_id}).then((response) => {
+              vueThis.$set(vueThis.providentFunds,vueThis.index,response.data.data);
               swal(response.data.message, "success");
             }).catch((error)=>{
               // console.log(error);
@@ -301,7 +334,7 @@ var work = new Vue({
           status2 = 1;
         }
         
-        axios.post('/loan/edit',{'id':id,'loan_status':status2}).then((response) => {
+        axios.post('/providentfund/edit',{'id':id,'pf_status':status2}).then((response) => {
           e.target.setAttribute('status',status2);
 
           if(status == 0){
@@ -323,6 +356,20 @@ var work = new Vue({
           this.loadinHide('#datatableCall');
         });
       },
+
+
+      showDetails(providentfund_id, modal_id){
+        this.loadinShow(modal_id);
+        axios.get('/providentfund/index?pf_id='+providentfund_id).then(response => {
+          this.providentfundDetails = response.data.details;
+          this.total_debit = response.data.total_debit;
+          this.total_credit = response.data.total_credit;
+          // alert();
+          this.modal_open(modal_id);
+          this.dataTableGenerate('#datatableCall2');
+          this.loadinHide(modal_id);
+        });
+      }
 
 
 
