@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\LeaveType;
 use App\Models\UserLeaveTypeMap;
 use App\Models\EmployeeDetail;
+use Session;
 
 class CalculateEarnLeave extends Command
 {
@@ -41,6 +42,9 @@ class CalculateEarnLeave extends Command
      */
     public function handle()
     {
+        // \Artisan::call("db:connect", ['database' => Session('database')]);
+        \Artisan::call("db:connect", ['database' => '1496134973_OneConpanyt']);
+
         $currentYear = date('Y');
         $date = new \DateTime(null, new \DateTimeZone('Asia/Dhaka'));
         $current_date = $date->format('Y-m-d'); 

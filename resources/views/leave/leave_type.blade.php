@@ -24,9 +24,13 @@
                                     <tr class="success">
                                         <th>sl</th>
                                         <th>Name</th>
+                                        <th>EL</th>
+                                        <th>Sellable</th>
+                                        <th>Sell Limit</th>
                                         <th>Number of Days</th>
                                         <th>Effective For</th>
                                         <th>Carry To The Next Year</th>
+                                        <th>Max Carray Limit</th>
                                         <th>Including Holiday</th>
                                         <th>Effective Year</th>
                                         <th>Details</th>
@@ -38,9 +42,13 @@
                                     <tr v-for="(info,index) in leaveTypes">
                                         <td v-text="index+1"></td>
                                         <td v-text="info.leave_type_name"></td>
+                                        <td v-text="info.leave_type_is_earn_leave==1?'EL':''"></td>
+                                        <td v-text="info.leave_type_is_sellable==1?'Sellable':''"></td>
+                                        <td v-text="info.leave_type_max_sell_limit"></td>
                                         <td v-text="info.leave_type_number_of_days == null?'Undefined':info.leave_type_number_of_days"></td>
                                         <td v-text="returnEffectedEmpType(info.leave_type_effective_for)"></td>
                                         <td v-text="info.leave_type_is_remain == 1?'Yes':'No'"></td>
+                                        <td v-text="info.leave_type_max_remain_limit"></td>
                                         <td v-text="info.leave_type_include_holiday == 1?'Yes':'No'"></td>
                                         <td v-text="info.leave_type_active_from_year+' - '+info.leave_type_active_to_year"></td>
                                         <td v-text="info.leave_type_details"></td>
@@ -92,6 +100,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="valid_after" class="col-md-3 control-label">Valid after(months)</label>
+                            <div class="col-md-9">
+                                <input name="valid_after" class="form-control input-sm" type="number" placeholder="Leave valid after how many months.">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-md-3 control-label">Effective For <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 @if(count($emp_types) > 0)
@@ -113,7 +128,33 @@
 
                         <div class="form-group">
                             <div class="col-md-9 col-md-offset-3">
+                                <input type="checkbox" name="is_earn" value="1"> Is earn leave.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-9 col-md-offset-3">
+                                <input type="checkbox" name="sellable" value="1"> Leave type is sellable.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_sell_limit" class="col-md-3 control-label">Max sell limit</label>
+                            <div class="col-md-9">
+                                <input name="max_sell_limit" class="form-control input-sm" type="number" placeholder="Max sell limit.">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-9 col-md-offset-3">
                                 <input type="checkbox" name="carry_to_next_year" value="1"> Leave carray to the next year.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_remain_limit" class="col-md-3 control-label">Max remain limit</label>
+                            <div class="col-md-9">
+                                <input name="max_remain_limit" class="form-control input-sm" type="number" placeholder="Max remain limit.">
                             </div>
                         </div>
 
@@ -187,6 +228,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="valid_after" class="col-md-3 control-label">Valid after(months)</label>
+                            <div class="col-md-9">
+                                <input name="valid_after" class="form-control input-sm" v-model="valid_after" type="number" placeholder="Leave valid after how many months.">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-md-3 control-label">Effective For <span class="text-danger">*</span></label>
                             <div class="col-md-9">
                                 @if(count($emp_types) > 0)
@@ -208,7 +256,33 @@
 
                         <div class="form-group">
                             <div class="col-md-9 col-md-offset-3">
+                                <input type="checkbox" name="is_earn" v-model="is_earn" value="1"> Is earn leave.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-9 col-md-offset-3">
+                                <input type="checkbox" name="sellable" v-model="sellable" value="1"> Leave type is sellable.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_sell_limit" class="col-md-3 control-label">Max sell limit</label>
+                            <div class="col-md-9">
+                                <input name="max_sell_limit" v-model="max_sell_limit" class="form-control input-sm" type="number" placeholder="Max sell limit.">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-9 col-md-offset-3">
                                 <input type="checkbox" name="carry_to_next_year" v-model="carry_to_next_year" value="1999"> Leave carray to the next year.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_remain_limit" class="col-md-3 control-label">Max remain limit</label>
+                            <div class="col-md-9">
+                                <input name="max_remain_limit" v-model="max_remain_limit" class="form-control input-sm" type="number" placeholder="Max remain limit.">
                             </div>
                         </div>
 

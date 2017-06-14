@@ -10305,8 +10305,13 @@ return jQuery;
         msg: 'test type',
         leaveTypes: [],
         empTypes: [],
+        valid_after: '',
         //for edit
         hdn_id: '',
+        is_earn: '',
+        sellable: '',
+        max_sell_limit: '',
+        max_remain_limit: '',
         type_name: '',
         duration: '',
         emp_type: [],
@@ -10416,6 +10421,11 @@ return jQuery;
                 _this2.from_year = response.data.leave_type_active_from_year;
                 _this2.to_year = response.data.leave_type_active_to_year;
                 _this2.leave_type_status = response.data.leave_type_status;
+                _this2.valid_after = response.data.leave_type_valid_after_months;
+                _this2.is_earn = response.data.leave_type_is_earn_leave;
+                _this2.sellable = response.data.leave_type_is_sellable;
+                _this2.max_sell_limit = response.data.leave_type_max_sell_limit;
+                _this2.max_remain_limit = response.data.leave_type_max_remain_limit;
             }).catch(function (error) {
 
                 swal('Error:', 'Edit function not working', 'error');

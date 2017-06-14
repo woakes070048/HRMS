@@ -269,20 +269,16 @@ class EmployeeController extends Controller
 
                 if($val->leave_type_is_earn_leave == 1){
                     $num_of_days = 0;
-                    $fromYear = '';
-                    $toYear = '';
                 }
                 else{
                     $num_of_days = $val->leave_type_number_of_days; 
-                    $fromYear = $val->leave_type_active_from_year;
-                    $toYear = $val->leave_type_active_to_year;
                 }
 
                 if(in_array($emp_type, $leaveTypeAry)){
                     $commonTypeId['type_id'][] = $val->id;
                     $commonTypeId['days'][] = $num_of_days;
-                    $commonTypeId['from_year'][] = $fromYear;
-                    $commonTypeId['to_year'][] = $toYear;
+                    $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
+                    $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
                 }
             }
 
@@ -1325,21 +1321,17 @@ class EmployeeController extends Controller
 
                             if($info->leave_type_is_earn_leave == 1){
                                 $num_leave_days = 0;
-                                $fromYear = '';
-                                $toYear = '';
                             }
                             else{
                                 $num_leave_days = $info->leave_type_number_of_days;
-                                $fromYear = $info->leave_type_active_from_year;
-                                $toYear = $info->leave_type_active_to_year;
                             }
                             
                             $diff_arry[] = [
                                 'user_id' => $request->hdn_id,
                                 'leave_type_id' => $info->id,
                                 'number_of_days' => $num_leave_days,
-                                'active_from_year' => $fromYear,
-                                'active_to_year' => $toYear,
+                                'active_from_year' => $info->leave_type_active_from_year,
+                                'active_to_year' => $info->leave_type_active_to_year,
                                 'status' => 1,
                             ];
                         }
