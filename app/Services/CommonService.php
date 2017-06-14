@@ -300,7 +300,8 @@ trait CommonService
             $sl++;
         }
 
-        $data_val = EmployeeLeave::with('leaveType')->where('user_id', $id)->whereIn('employee_leave_status', [1,2,3])->get();
+        $data_val = EmployeeLeave::with('leaveType')->where('user_id', $id)->whereIn('employee_leave_status', [1,2,3])->whereYear('employee_leave_from', $currentYear)->get();
+
         $leave_type_id_ary = [];
         $leave_type_name_ary = [];
         $leave_type_days_ary = [];

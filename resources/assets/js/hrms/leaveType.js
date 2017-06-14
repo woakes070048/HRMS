@@ -4,8 +4,13 @@ new Vue({
     msg: 'test type',
     leaveTypes:[],
     empTypes:[],
+    valid_after: '',
     //for edit
     hdn_id: '',
+    is_earn: '',
+    sellable: '',
+    max_sell_limit: '',
+    max_remain_limit: '',
     type_name: '',
     duration: '',
     emp_type: [],
@@ -113,6 +118,11 @@ new Vue({
         this.from_year = response.data.leave_type_active_from_year;
         this.to_year = response.data.leave_type_active_to_year;
         this.leave_type_status = response.data.leave_type_status;
+        this.valid_after = response.data.leave_type_valid_after_months;
+        this.is_earn = response.data.leave_type_is_earn_leave;
+        this.sellable = response.data.leave_type_is_sellable;
+        this.max_sell_limit = response.data.leave_type_max_sell_limit;
+        this.max_remain_limit = response.data.leave_type_max_remain_limit;
       })
       .catch(function (error) {
           
