@@ -152,7 +152,7 @@ class EmployeeController extends Controller
      */
     public function viewEmployeeProfile($employee_no=null){
 
-        $sidevar_hide = 1;
+        $sidebar_hide = true;
         if(!empty($employee_no)){
             $user = $this->user->get_profile_info($employee_no);
             if(!$user){
@@ -162,7 +162,7 @@ class EmployeeController extends Controller
             $user = $this->user->get_profile_info($this->auth->id);
         }
 
-        return view('pim.employee.view',compact('user','sidevar_hide'));
+        return view('pim.employee.view',compact('user','sidebar_hide'));
     }
 
 
