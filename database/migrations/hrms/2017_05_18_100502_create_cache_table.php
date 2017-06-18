@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserPermissionsTable extends Migration
+class CreateCacheTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateUserPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_permissions', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('menu_id')->unsigned();
-            $table->timestamps();
+        Schema::create('cache', function (Blueprint $table) {
+            $table->string('key',150)->unique();
+            $table->text('value');
+            $table->integer('expiration');
         });
     }
 
@@ -28,6 +27,6 @@ class CreateUserPermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_permissions');
+        Schema::dropIfExists('cache');
     }
 }

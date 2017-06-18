@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModulesTable extends Migration
+class CreateLoanTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateModulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('loan_types', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('module_name',200);
-            $table->boolean('module_status')->default(1);
-            $table->text('module_details')->nullable();
+            $table->string('loan_type_name',100);
+            $table->boolean('loan_type_status')->default(1);
+            $table->text('loan_type_remarks')->nullable();
+            $table->integer('created_by')->default(0);
+            $table->integer('updated_by')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateModulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('loan_types');
     }
 }

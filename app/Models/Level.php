@@ -20,6 +20,14 @@ class Level extends Model
         return $this->parent()->with('parentRecursive');
     }
 
+    public function child(){
+        return $this->hasMany('App\Models\Level','parent_id','id');
+    }
+
+    public function childRecursive(){
+        return $this->child()->with('childRecursive.designation.user');
+    }
+
     public function designation(){
     	return $this->hasMany('App\Models\Designation');
     }

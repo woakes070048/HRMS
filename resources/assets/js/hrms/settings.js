@@ -12,6 +12,7 @@ new Vue({
         edit_field_name: '',
         edit_field_value: '',
         indexValue: null,
+        hdn_id: '',
     },
     mounted(){
     	// axios.get('getSettings').then(response => this.allValues = response.data);

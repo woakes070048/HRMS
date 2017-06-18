@@ -29,126 +29,97 @@
 
         <!-- Start: Sidebar Menu -->
         <ul class="nav sidebar-menu">
-        <li class="sidebar-label pt20"></li>
+            <li class="sidebar-label pt20"></li>
             <li>
                 <a href="{{url('/')}}">
                   <span class="glyphicon glyphicon-home"></span>
                   <span class="sidebar-title">Dashboard</span>
                 </a>
             </li>
-            
+
             <?php 
                 $moduleShare = session('moduleShare');
                 $userModuleShare = session('userModuleShare');
                 $userMenuShare = session('userMenuShare');
             ?>
-            @foreach($moduleShare as $info)
-                @if(in_array($info->id, $userModuleShare))
-                <li>
-                    <?php 
-                        //this calculation to open Module menu
-                        $segmentUrl = \Request::segment(1);
-                        $module_tag = 0;
-                        $menuShare = session('menuShare');
-                    ?>    
-                    @foreach($menuShare as $val)
-                        <?php 
-                            $strAry = explode("/", $val->menu_url);
-                        ?>
-                        @if($strAry[0] == $segmentUrl)
-                            <?php 
-                                $module_tag = $val->module_id;
-                            ?>
-                        @endif
-                    @endforeach
-                    
+                @foreach($moduleShare as $info)
+                    @if(in_array($info->id, $userModuleShare))
 
-                    <a class="accordion-toggle @if($info->id == $module_tag) menu-open @endif" href="#">
-                        <span class="{{$info->module_icon_class}}" aria-hidden="true"></span>
-                        <span class="sidebar-title">{{$info->module_name}}</span>
+                    <li>
+                        <?php 
+                            //this calculation to open Module menu
+                            $segmentUrl = \Request::segment(1);
+                            $module_tag = 0;
+                            $menuShare = session('menuShare');
+                        ?>    
+                        @foreach($menuShare as $val)
+                            <?php 
+                                $strAry = explode("/", $val->menu_url);
+                            ?>
+                            @if($strAry[0] == $segmentUrl)
+                                <?php 
+                                    $module_tag = $val->module_id;
+                                ?>
+                            @endif
+                        @endforeach
+                        
+
+                        <a class="accordion-toggle @if($info->id == $module_tag) menu-open @endif" href="#">
+                            <span class="{{$info->module_icon_class}}" aria-hidden="true"></span>
+                            <span class="sidebar-title">{{$info->module_name}}</span>
+                            <span class="caret"></span>
+                        </a>
+                        
+                        <ul class="nav sub-nav">
+                            @foreach($info->menus as $mInfo)
+                                @if(in_array($mInfo->menu_url, $userMenuShare))
+                                    @if($mInfo->menu_parent_id == 0)
+                                    <?php 
+                                        $strMneuAry = explode("/", $mInfo->menu_url);
+                                    ?>
+                                    <li class="@if(\Request::segment(1) == $strMneuAry[0]) active @endif">
+
+                                        <a href="{{url("$mInfo->menu_url")}}">
+                                            <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_section_name}}
+                                        </a>
+                                    </li>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </ul>
+                    </li>
+                    @endif
+                @endforeach
+
+                {{-- <li>
+                    <a class="accordion-toggle" href="#">
+                        <span class="fa fa-calendar" aria-hidden="true"></span>
+                        <span class="sidebar-title">Leave Management</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="nav sub-nav">
-                        @foreach($info->menus as $mInfo)
-                            @if(in_array($mInfo->menu_url, $userMenuShare))
-                                @if($mInfo->menu_parent_id == 0)
-                                <?php 
-                                    $strMneuAry = explode("/", $mInfo->menu_url);
-                                ?>
-                                <li class="@if(\Request::segment(1) == $strMneuAry[0]) active @endif">
-                                    <a href="{{url("$mInfo->menu_url")}}">
-                                        <span class="{{$mInfo->menu_icon_class}}"></span> {{$mInfo->menu_section_name}}
-                                    </a>
-                                </li>
-                                @endif
-                            @endif
-                        @endforeach
+                        <li class="">
+                            <a href="{{url('holiday/index')}}">
+                                <span class="fa fa-level-up"></span> Holidays
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('weekend/index')}}">
+                                <span class="fa fa-level-up"></span> Weekends
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('leave/type/index')}}">
+                                <span class="fa fa-level-up"></span> Leave Type
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{{url('leave/index')}}">
+                                <span class="fa fa-level-up"></span> Leaves
+                            </a>
+                        </li>
                     </ul>
-                </li>
-                @endif
-            @endforeach  
-
-
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $attendance)) menu-open @endif" href="#">
-                    <span class="icon-stopwatch" aria-hidden="true"></span>
-                    <span class="sidebar-title">Time & Attendance</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'workshift') active @endif">
-                        <a href="{{url('workshift/index')}}">
-                            <span class="fa fa-level-up"></span> Work Shift
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'shiftassign') active @endif">
-                        <a href="{{url('shiftassign/index')}}">
-                            <span class="fa fa-level-up"></span> Work Shift Assign
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'attendance') active @endif">
-                        <a href="{{url('attendance/index')}}">
-                            <span class="fa fa-level-up"></span> Attendance
-                        </a>
-                    </li>
-                    <li class="@if(\Request::segment(1) == 'attendance') active @endif">
-                        <a href="{{url('attendance/index')}}">
-                            <span class="fa fa-level-up"></span> My Attendance
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $PayRoll)) menu-open @endif" href="#">
-                    <span class="fa fa-money" aria-hidden="true"></span>
-                    <span class="sidebar-title">PayRoll Management</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'salaryInfo') active @endif">
-                        <a href="{{url('salaryInfo/index')}}">
-                            <span class="glyphicon glyphicon-usd"></span> Salary Info
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="accordion-toggle @if(in_array(\Request::segment(1), $settings)) menu-open @endif" href="#">
-                    <span class="glyphicons glyphicons-adjust_alt" aria-hidden="true"></span>
-                    <span class="sidebar-title">Application Settings</span>
-                    <span class="caret"></span>
-                </a>
-                <ul class="nav sub-nav">
-                    <li class="@if(\Request::segment(1) == 'settings') active @endif">
-                        <a href="{{url('settings/index')}}">
-                            <span class="glyphicons glyphicons-settings"></span> 
-                            Basic Settings
-                        </a>
-                    </li>
-                </ul>
-            </li>
+                </li> --}}
 
         </ul>
         <!-- End: Sidebar Menu -->

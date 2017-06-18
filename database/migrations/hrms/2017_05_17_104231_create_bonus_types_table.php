@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLevelPermissionsTable extends Migration
+class CreateBonusTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreateLevelPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('level_permissions', function (Blueprint $table) {
+        Schema::create('bonus_types', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('level_id')->unsigned();
-            $table->integer('menu_id')->unsigned();
+            $table->string('bonus_type_name',100);
+            $table->boolean('bonus_type_status')->default(1);
+            $table->text('bonus_type_remarks')->nullable();
+            $table->integer('created_by')->default(0);
+            $table->integer('updated_by')->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ class CreateLevelPermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('level_permissions');
+        Schema::dropIfExists('bonus_types');
     }
 }

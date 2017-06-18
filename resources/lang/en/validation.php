@@ -88,6 +88,9 @@ return [
 
     'alpha_spaces'  => 'The :attribute may only contain letters and spaces.',
     'alpha_spaces_dot'  => 'The :attribute may only contain letters spaces and dot.',
+    'percentage'  => 'The :attribute must be between 0 to 99.99',
+    'less_then'  => 'The :attribute must be less then :other',
+    'greater_then'  => 'The :attribute must be greater then :other',
 
     /*
     |--------------------------------------------------------------------------

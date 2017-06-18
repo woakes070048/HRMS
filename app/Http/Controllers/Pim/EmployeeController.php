@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Pim;
-
 
 use App\Models\Setup\UserEmails;
 
 use App\Models\User;
+use App\Models\UserEmployeeTypeMap;
 use App\Models\EmployeeDetail;
 use App\Models\EmployeeAddress;
 use App\Models\EmployeeEducation;
@@ -21,6 +20,8 @@ use App\Models\Designation;
 use App\Models\LevelPermission;
 use App\Models\UserPermission;
 use App\Models\Module;
+use App\Models\LeaveType;
+use App\Models\UserLeaveTypeMap;
 
 use App\Services\CommonService;
 use App\Jobs\UserEmailUpdate;
@@ -47,11 +48,9 @@ use App\Http\Controllers\Controller;
 
 class EmployeeController extends Controller
 {
-
     use CommonService;
 
     protected $auth;
-
 
     /**
      * EmployeeController constructor.
@@ -60,7 +59,7 @@ class EmployeeController extends Controller
     public function __construct(Auth $auth,User $user)
     {
         $this->middleware('auth:hrms');
-        $this->middleware('CheckPermissions', ['except' => ['viewEmployeeProfile', 'statusChange', 'permission', 'updatePermission']]);
+        $this->middleware('CheckPermissions', ['except' => ['viewEmployeeProfile', 'statusChange', 'permission', 'updatePermission', 'leave', 'updateLeave']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -80,7 +79,8 @@ class EmployeeController extends Controller
         $data['title'] = 'Employee List';
         $data['users'] = User::with('designation','createdBy','updatedBy')->where('status','!=',2)->orderBy('id','desc')->get();
         $data['modules_permission'] = Module::with('menus','menus.child_menu')->where('module_status', 1)->get();
-        $data['sidevar_hide'] = 1;
+        $data['sidebar_hide'] = true;
+        $data['leave_types'] = LeaveType::where('leave_type_status', 1)->get();
         return view('pim.employee.index')->with($data);
     }
 
@@ -172,7 +172,7 @@ class EmployeeController extends Controller
      */
     public function showEmployeeAddForm(Request $request){
 
-        $data['sidevar_hide'] = 1;
+        $data['sidebar_hide'] = true;
         $data['tab'] = $request->tab;
 
         if($user = User::find($request->id)){
@@ -216,7 +216,7 @@ class EmployeeController extends Controller
             }else{
                
                 if($request->ajax()){
-                    $data['status'] = 'danger';
+                    $data['status'] = 'warning';
                     $data['statusType'] = 'NotOk';
                     $data['code'] = 500;
                     $data['type'] = null;
@@ -224,7 +224,7 @@ class EmployeeController extends Controller
                     $data['message'] = 'Employee Email Already Exits!';
                     return response()->json($data,500);
                 }else{
-                    $request->session()->flash('danger','Employee Email Already Exits!');
+                    $request->session()->flash('warning','Employee Email Already Exits!');
                     return redirect()->back()->withInput();
                 }
             }
@@ -256,6 +256,52 @@ class EmployeeController extends Controller
             }
             //end insert menu user_permission
 
+
+            //insert leave info depend on emp type start
+            $emp_type = $request->employee_type_id; 
+            $commonTypeId = [];
+
+            $leaveTypes = LeaveType::where('leave_type_status', 1)->get();
+
+            foreach($leaveTypes as $val){
+                
+                $leaveTypeAry = explode(',', $val->leave_type_effective_for);
+
+                if($val->leave_type_is_earn_leave == 1){
+                    $num_of_days = 0;
+                }
+                else{
+                    $num_of_days = $val->leave_type_number_of_days; 
+                }
+
+                if(in_array($emp_type, $leaveTypeAry)){
+                    $commonTypeId['type_id'][] = $val->id;
+                    $commonTypeId['days'][] = $num_of_days;
+                    $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
+                    $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
+                }
+            }
+
+            $length = count($commonTypeId['type_id']);
+
+            if(!empty($length)){
+                for($i=0 ; $i < $length; $i++){
+                    $user_leave_type[] = [
+                        'user_id' => $user->id,
+                        'leave_type_id' => $commonTypeId['type_id'][$i],
+                        'number_of_days' => $commonTypeId['days'][$i],
+                        'active_from_year' => $commonTypeId['from_year'][$i],
+                        'active_to_year' => $commonTypeId['to_year'][$i],
+                        'status' => 1,
+                    ];
+                }
+            }
+
+            if(!empty($user_leave_type)){
+                UserLeaveTypeMap::insert($user_leave_type);
+            }
+            //leave end
+
             if($user){
                 if(isset($photo)){
                     if(!$request->image->storeAs(Session('config_id').'/'.$user->id,$photo)){
@@ -266,6 +312,11 @@ class EmployeeController extends Controller
 
             $request->offsetSet('user_id',$user->id);
             EmployeeAddress::create($request->all());
+            
+            if($request->employee_type_id == 2 || $request->employee_type_id == 4){
+                UserEmployeeTypeMap::create($request->all());
+            }
+
 
             DB::commit();
 
@@ -307,7 +358,6 @@ class EmployeeController extends Controller
         }
     }
 
-
     /**
      * @post Add Employee Personal Info
      * @param EmployeePersonalInfoRequest $request
@@ -316,6 +366,9 @@ class EmployeeController extends Controller
     public function addPersonalInfo(EmployeePersonalInfoRequest $request){
        try {
             $request->offsetSet('created_by',$this->auth->id);
+            if($request->employee_type_id == 1 || $request->employee_type_id == 3){
+                $request->offsetSet('confirm_date', $request->joining_date);
+            }
             if(EmployeeDetail::create($request->all())){
                 $data['data'] = User::with('details.bloodGroup')->find($request->userId);
             }
@@ -840,7 +893,7 @@ class EmployeeController extends Controller
 /********************** Edit Employee Information Functions ********************************/
 
     public function showEmployeeEditForm(Request $request){
-        $data['sidevar_hide'] = 1;
+        $data['sidebar_hide'] = 1;
         $data['tab'] = $request->tab;
 
         if($user = User::find($request->id)){
@@ -883,7 +936,6 @@ class EmployeeController extends Controller
             $data = EmployeeLanguage::find($request->data_id);
         }
 
-
         return response()->json($data);
     }
 
@@ -909,6 +961,12 @@ class EmployeeController extends Controller
             Artisan::call("db:connect", ['database' => Session('database')]);
             DB::beginTransaction();
 
+            if(!$request->has('password')){
+                $request->offsetUnset('password');
+            }else{
+                $request->offsetSet('password', bcrypt($request->password));
+            }
+
             if($request->hasFile('image')){
                 $photo = time().'.'.$request->image->extension();
                 if($request->image->storeAs(Session('config_id').'/'.$request->userId,$photo)){
@@ -930,6 +988,27 @@ class EmployeeController extends Controller
                 $address->update($request->all());
             }else{
                EmployeeAddress::create($request->all());
+            }
+
+            if($request->employee_type_id == 2 || $request->employee_type_id == 4){
+                if($request->type_status == '1'){
+                    $request->offsetSet('created_by',$this->auth->id);
+                    UserEmployeeTypeMap::create($request->all());
+                }elseif($request->type_status == '0'){
+                    $type_map = UserEmployeeTypeMap::where('user_id',$request->userId)->orderBy('id','desc')->first();
+                    if($type_map){
+                        $type_map->update($request->all());
+                    }else{
+                        $request->offsetSet('created_by',$this->auth->id);
+                        UserEmployeeTypeMap::create($request->all());
+                    }
+                }
+            }elseif($request->employee_type_id == 1){
+                $request->offsetSet('confirm_date',date('Y-m-d'));
+
+                if($employeeDetails = EmployeeDetail::findUser($request->userId)){
+                    $employeeDetails->update($request->all());
+                }
             }
 
             DB::commit();
@@ -1194,6 +1273,80 @@ class EmployeeController extends Controller
         }
     }
 
+    public function leave($id){
 
+        $currentYear = date('Y');
+        $data['individual_user_leaves'] = UserLeaveTypeMap::where('user_id', $id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get();
+        $data['personalInfo'] = User::find($id);
 
+        return $data;
+    }
+
+    public function updateLeave(Request $request){
+
+        $this->validate($request, [
+            'hdn_id' => 'required'
+        ]);
+
+        $currentYear = date('Y');
+
+        try {
+            foreach($request->user_leaves as $key=>$value){
+                if($value == 0){
+                    $uncheckedAray[] = $key;
+                }
+                else{
+                    $checkedAray[] = $key;    
+                }
+            }
+
+            if(!empty($uncheckedAray)){
+                UserLeaveTypeMap::where('user_id', $request->hdn_id)->where('status', 1)
+                                ->where('active_from_year', '<=', $currentYear)
+                                ->whereIn('leave_type_id', $uncheckedAray)->delete();
+            }
+
+            if(!empty($checkedAray)){
+
+                $exist_leave_id = UserLeaveTypeMap::select('leave_type_id')->where('user_id', $request->hdn_id)->where('status', 1)->where('active_from_year', '<=', $currentYear)->where('active_to_year', '>=', $currentYear)->get()->toArray();
+
+                $exist_leave_id_ary = array_column($exist_leave_id, 'leave_type_id');
+
+                $aryDiff = array_diff($checkedAray,$exist_leave_id_ary);
+                
+                if(!empty($aryDiff)){
+                    $diff_type_value = LeaveType::whereIn('id', $aryDiff)->where('leave_type_status', 1)->where('leave_type_active_from_year', '<=', $currentYear)->where('leave_type_active_to_year', '>=', $currentYear)->get();
+
+                        foreach($diff_type_value as $info){
+
+                            if($info->leave_type_is_earn_leave == 1){
+                                $num_leave_days = 0;
+                            }
+                            else{
+                                $num_leave_days = $info->leave_type_number_of_days;
+                            }
+                            
+                            $diff_arry[] = [
+                                'user_id' => $request->hdn_id,
+                                'leave_type_id' => $info->id,
+                                'number_of_days' => $num_leave_days,
+                                'active_from_year' => $info->leave_type_active_from_year,
+                                'active_to_year' => $info->leave_type_active_to_year,
+                                'status' => 1,
+                            ];
+                        }
+
+                    UserLeaveTypeMap::insert($diff_arry);
+                }   
+            }
+
+            $request->session()->flash('success','Data successfully updatsed!');
+
+        } catch (\Exception $e) {
+        
+            $request->session()->flash('danger','Data not updated!');
+        }
+
+        return redirect('employee/index');
+    }
 }

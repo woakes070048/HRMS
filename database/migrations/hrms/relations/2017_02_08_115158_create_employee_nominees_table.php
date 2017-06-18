@@ -20,7 +20,7 @@ class CreateEmployeeNomineesTable extends Migration
             $table->string('nominee_name',20);
             $table->string('nominee_relation',20);
             $table->text('nominee_address')->nullable();
-            $table->date('nominee_birth_date',20)->nullable();
+            $table->date('nominee_birth_date')->nullable();
             $table->string('nominee_distribution')->nullable();
             $table->string('nominee_rest_distribution')->nullable();
             $table->string('nominee_photo')->nullable();

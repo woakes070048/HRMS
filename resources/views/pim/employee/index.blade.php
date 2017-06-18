@@ -25,7 +25,6 @@
                 <th>Employee Name</th>
                 <th>Email Address</th>
                 <th>Designation</th>
-                <th>Permissions</th>
                 <th>Department</th>
                 <th>Image</th>
                 <th>Created By</th>
@@ -42,7 +41,6 @@
                 <th>Employee Name</th>
                 <th>Email Address</th>
                 <th>Designation</th>
-                <th>Permission</th>
                 <th>Department</th>
                 <th>Image</th>
                 <th>Created By</th>
@@ -61,11 +59,13 @@
                    <td>{{$user->fullname}}</td>
                    <td>{{$user->email}}</td>
                    <td>{{$user->designation->designation_name}}</td>
-                   <td>
-                      @if($user->created_by > 0)
-                       <button type="button" class="btn btn-xs btn-success" onclick="showData({{$user->id}})" data-toggle="modal" data-target=".showData">Permissions</button>
-                      @endif
-                   </td> 
+
+                   {{-- <td> --}}
+                      {{-- @if($user->created_by > 0) --}}
+                      {{-- <button type="button" class="btn btn-xs btn-success" onclick="showData({{$user->id}})" data-toggle="modal"                data-target=".showData">Permissions</button> --}}
+                      {{-- @endif --}}
+                   {{-- </td>  --}}
+
                    <td>{{$user->designation->department->department_name}}</td>
               
                    <td>
@@ -80,20 +80,26 @@
                    <td>{{$user->created_at}}</td>
                    <td>{{$user->updated_at}}</td>
                    <td>
-                       <div class="btn-group">
+                       <div class="btn-group pb5">
                            <a href="{{url('/employee/edit/'.$user->id)}}" class="btn btn-sm btn-primary">
                                <i class="glyphicons glyphicons-pencil"></i>
                            </a>
                        </div>
-                       <div class="btn-group">
+                       <div class="btn-group pb5">
                            <a href="{{url('/employee/view/'.$user->employee_no)}}" class="btn btn-sm btn-success">
                                <i class="glyphicons glyphicons-eye_open"></i>
                            </a>
+                       </div>
+                       <div class="btn-group">
+                           <button type="button" class="btn btn-info btn-sm" onclick="showLeaveData({{$user->id}})" data-toggle="modal" data-target=".showLeaveData">Leaves</button>
                        </div>
                        <div class="btn-group pt5">
                           @if(in_array($chkUrl."/delete", session('userMenuShare')))
                            <a class="btn btn-sm {{($user->status == 0)?'text-primary':'text-danger'}}" v-on:click="changeStatus($event,<?php echo $user->id;?>)">{{($user->status == 0)?'Active':'Inactive'}}</a>
                           @endif
+                       </div>
+                       <div class="btn-group">
+                       <button type="button" class="btn btn-sm btn-success" onclick="showData({{$user->id}})" data-toggle="modal" data-target=".showData">Permissions</button>
                        </div>
                    </td>
                 </tr>
@@ -106,6 +112,7 @@
 </section>
 
 @include('pim.employee.modals.permission')
+@include('pim.employee.modals.leave')
 
 @section('script')
 
@@ -138,6 +145,36 @@ function showData(id){
   });
 }
 //js code permission finished
+
+//js code for LEAVE start
+function showLeaveData(id){
+  
+  $('.hdn_id').val('');
+  $('input:checkbox').removeAttr('checked');
+  // first it clean previous data....
+  $('.hdn_id').val(id);
+
+  $.ajax({
+      url: "{{url('/employee/leave')}}/"+id,
+      type: 'GET',
+  })
+  .done(function(data){
+      var bUrl = "{{url('leave/details/')}}";
+      $('.detailsLink').html("<a href='"+bUrl+"/"+data.personalInfo.employee_no+"'>"+data.personalInfo.first_name+" "+data.personalInfo.last_name+"</a>");
+
+      if(data.individual_user_leaves.length > 0){
+          jQuery.each(data.individual_user_leaves, function(index, item) {
+              $('input[value='+item.leave_type_id+']').prop("checked", true);
+          });
+      }else{
+          $('input:checkbox').removeAttr('checked');
+      }
+  })
+  .fail(function(){
+      swal("Error", "Leave Error ...", "error");
+  });
+}
+//js code LEAVE finished
 
 
   new Vue({

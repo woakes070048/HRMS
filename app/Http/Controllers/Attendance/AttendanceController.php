@@ -3,18 +3,25 @@
 namespace App\Http\Controllers\Attendance;
 
 use App\Models\User;
+use App\Models\Attendance;
 use App\Models\AttendanceTimesheet;
 use App\Models\AttendanceTimesheetArchive;
 use App\Models\WorkShiftEmployeeMap;
 
+use App\Jobs\AttendanceTimesheetJob;
+use App\Jobs\ArchiveAttendanceTimesheetJob;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class AttendanceController extends Controller
 {
     protected $auth;
+
+    protected $user;
 
     protected $attendanceTimesheet;
 
@@ -22,7 +29,7 @@ class AttendanceController extends Controller
      * AttendanceController constructor.
      * @param Auth $auth
      */
-    public function __construct(Auth $auth,AttendanceTimesheet $attendanceTimesheet)
+    public function __construct(Auth $auth, User $user, AttendanceTimesheet $attendanceTimesheet)
     {
         $this->middleware('auth:hrms');
 
@@ -32,14 +39,44 @@ class AttendanceController extends Controller
             return $next($request);
         });
 
+        $this->user = $user;
         $this->attendanceTimesheet = $attendanceTimesheet;
     }
 
 
     public function index(){
-    	$data['sidevar_hide'] = true;
+        dispatch(new AttendanceTimesheetJob());
+        dispatch(new ArchiveAttendanceTimesheetJob());
+
+    	$data['sidebar_hide'] = true;
     	return view('attendance.attendance')->with($data);
     }
+
+
+    public function viewAttendance(Request $request){
+
+        if($request->employee_no){
+            $data['employee_no'] = $request->employee_no;
+        }else{
+            $data['employee_no'] = $this->auth->employee_no;
+        }
+
+        if($request->has('from_date')){
+            $data['from_date'] = $request->from_date;
+        }else{
+            $data['from_date'] = Carbon::now()->subMonth(1)->format('Y-m-d');
+        }
+
+        if($request->has('to_date')){
+            $data['to_date'] = $request->to_date;
+        }else{
+            $data['to_date'] = Carbon::now()->format('Y-m-d');
+        }
+
+        $data['user'] = $this->user->get_profile_info($data['employee_no']);
+        return view('attendance.my_attendance')->with($data);
+    }
+
 
 
     public function addAttendance(Request $request){
@@ -49,29 +86,24 @@ class AttendanceController extends Controller
             'out_time' => 'required',
         ]);
 
+        $workShiftMap = new WorkShiftEmployeeMap;
+        $emp_work_shift = $workShiftMap->get_work_shift_by_user_id_and_date($request->user_id,$request->date);
+        if($emp_work_shift){
+            $late_count_time =  $emp_work_shift->late_count_time;
+            $late_hour = date('H.i',strtotime($emp_work_shift->shift_start_time) - strtotime($request->in_time));
+        }else{
+            $late_count_time = 0;
+            $late_hour = 0;
+        }
+
+        $request->offsetSet('late_count_time',$late_count_time);
+        $request->offsetSet('late_hour',$late_hour);
         $total_work_hour = date('H.i',strtotime($request->out_time) - strtotime($request->in_time));
         $request->offsetSet('total_work_hour',$total_work_hour);
 
         try{
-            $observation = $this->attendanceObservation($request->date);
-
-            if($observation == 'present'){
-
-                if($attend = AttendanceTimesheet::find($request->time_sheet_id)){
-                    $attendance = $attend->update($request->all());
-                }else{
-                    $attendance = AttendanceTimesheet::create($request->all());
-                }
-            }
-
-            if($observation == 'archive'){
-
-                if($attend = AttendanceTimesheetArchive::find($request->time_sheet_id)){
-                    $attendance = $attend->update($request->all());
-                }else{
-                    $attendance = AttendanceTimesheetArchive::create($request->all());
-                }
-            }
+            
+            $attendance = $this->saveAttendance($request);
 
             if($request->ajax()){
                 $data['data'] = $attendance;
@@ -102,10 +134,41 @@ class AttendanceController extends Controller
     }
 
 
+    protected function saveAttendance($request){
+
+        $observation = $this->attendanceObservation($request->date);
+
+        if($result = Attendance::where('user_id', $request->user_id)->where('date', $request->date)->first()){
+            $result->update($request->all());
+        }else{
+            Attendance::create($request->all());
+        }
+
+        if($observation == 'present'){
+            if($attend = AttendanceTimesheet::find($request->time_sheet_id)){
+                $attendance = $attend->update($request->all());
+            }else{
+                $attendance = AttendanceTimesheet::create($request->all());
+            }
+        }
+
+        if($observation == 'archive'){
+            if($attend = AttendanceTimesheetArchive::find($request->time_sheet_id)){
+                $attendance = $attend->update($request->all());
+            }else{
+                $attendance = AttendanceTimesheetArchive::create($request->all());
+            }
+        }
+
+        return $attendance;
+    }
+
+
     protected function attendanceObservation($date){
 
-        $last_row = $this->attendanceTimesheet->orderBy('date','asc')->first();
-        $last_date = date('Y-m-d',strtotime($last_row->date));
+        //$last_row = $this->attendanceTimesheet->orderBy('date','asc')->first();
+        //$last_date = date('Y-m-d',strtotime($last_row->date));
+        $last_date = Carbon::now()->subMonths(\Config::get('hrms.attendance_archive_month'))->format('Y-m-d');
 
         if($date >= $last_date){
             return 'present';
@@ -127,12 +190,27 @@ class AttendanceController extends Controller
     	$department_id = $request->department_id;
 
         $timesheet_observation = $this->timesheetObservation($from_date, $to_date);
-		$attendance = $this->attendanceTimesheet->get_attendance_timesheet($from_date, $to_date, $department_id, $timesheet_observation);
+
+        if($request->has('employee_no')){
+    		$attendance = $this->attendanceTimesheet->get_attendance_timesheet($from_date, $to_date, $department_id, $timesheet_observation, $request->employee_no);
+        }else{
+            $attendance = $this->attendanceTimesheet->get_attendance_timesheet($from_date, $to_date, $department_id, $timesheet_observation);
+        }
+
 		$dateData = $this->generateDays($from_date, $to_date);
-
-    	$attendances = ['days' => $dateData['dates'], 'dayList'=> $dateData['date_list'], 'attendance' => $attendance];
-
+    	$attendances = ['days' => $dateData['dates'], 'dayList' => $dateData['date_list'], 'attendance' => $attendance];
     	$attendanceTimesheet = $this->generateAttendanceTimesheet($attendances, $timesheet_observation);
+
+        if($request->has('employee_no')){
+            if(isset($attendanceTimesheet['attendance'][0]->attendanceTimesheets)){
+                $attendanceTimesheet['attendance'] = $attendanceTimesheet['attendance'][0]->attendanceTimesheets;
+                $attendanceTimesheet['report'] = $this->attendanceReport($attendanceTimesheet['attendance']);
+            }else{
+                $attendanceTimesheet['report'] = [];
+                $attendanceTimesheet['attendance'] = [];
+            }
+        }
+
     	return $attendanceTimesheet;
     }
 
@@ -156,11 +234,21 @@ class AttendanceController extends Controller
 
     	$toDate = Carbon::parse($to_date);
     	$day =  $toDate->diffInDays(Carbon::parse($from_date));
+        $weekend = DB::table('weekends')->where('status',1)->first();
+        $weekends = [];
+        if($weekend){
+            $weekends = explode(',', str_replace(' ','',$weekend->weekend));
+        }
 
     	$dates = [];
     	$dateList = [];
     	for($i=0; $i<=$day; $i++){
-    		$dates[] = Carbon::parse($from_date)->format('M d Y');
+            $day_name = Carbon::parse($from_date)->format('l');
+            if(in_array($day_name, $weekends)){
+                $dates[] = '<span style="color:red">'.Carbon::parse($from_date)->format('M d Y')."</span>";
+            }else{
+        		$dates[] = Carbon::parse($from_date)->format('M d Y');
+            }
     		$dateList[] = Carbon::parse($from_date)->format('Y-m-d');
     		$from_date = Carbon::parse($from_date)->addDay(1);
     	}
@@ -184,14 +272,15 @@ class AttendanceController extends Controller
                 $attendanceTimesheet = array_merge($attendanceUser->attendanceTimesheet->toArray(),$attendanceUser->attendanceTimesheetArchive->toArray());
             }
     		
-
     		foreach($attendances['dayList'] as $date){
     			$ck = 0;
 
     			if(count($attendanceTimesheet)>0){
+
 	    			foreach($attendanceTimesheet as $key => $attendance){
 		    			if($attendance['date'] == $date){
 		    				$ck = 1;
+                            $attendance['format_date'] = Carbon::parse($attendance['date'])->format('d M Y'); 
 		    				$timeSheet[] = $attendance;
 		    				unset($attendanceTimesheet[$key]);
 		    			}
@@ -199,15 +288,28 @@ class AttendanceController extends Controller
 		    	}
 
 		    	if($ck==0){
-		    		$attend = new \stdClass;
-    				$attend->id = 0;
-    				$attend->user_id = $attendanceUser->id;
-    				$attend->date = $date;
-    				$attend->observation = 0;
-    				$attend->in_time = null;
-    				$attend->out_time = null;
-    				$attend->leave_type = null;
-    				$attend->created_at = $date;
+		    		// $attend = new \stdClass;
+    				// $attend->id = 0;
+    				// $attend->user_id = $attendanceUser->id;
+    				// $attend->date = $date;
+    				// $attend->observation = 0;
+    				// $attend->in_time = null;
+    				// $attend->out_time = null;
+    				// $attend->leave_type = null;
+    				// $attend->created_at = $date;
+                    $attend = [];
+                    $attend['id'] = 0;
+                    $attend['user_id'] = $attendanceUser->id;
+                    $attend['date'] = $date;
+                    $attend['format_date'] = Carbon::parse($date)->format('d M Y'); 
+                    $attend['observation'] = 0;
+                    $attend['in_time'] = '';
+                    $attend['out_time'] = '';
+                    $attend['total_work_hour'] = '';
+                    $attend['late_count_time'] = '';
+                    $attend['late_hour'] = '';
+                    $attend['leave_type'] = '';
+                    $attend['created_at'] = $date;
     				$timeSheet[] = $attend;
 		    	}
     		}
@@ -218,6 +320,130 @@ class AttendanceController extends Controller
 
     	return $attendances;
     }
+
+
+    public function manualAttendance(Request $request){
+
+        $validation = \Validator::make($request->all(),['csv_file' => 'required']);
+
+        if($validation->fails()){
+            $request->session()->flash('danger','file format is not valid!');
+        }else{
+
+            $employeeNos = User::all()->pluck('id','employee_no')->toArray();
+
+            $csvContent = [];
+            $userIds = [];
+            $dates = [];
+
+            $csv = $request->csv_file;
+            $file = fopen($csv->path(), "r");
+
+            while(!feof($file))
+            {
+                $content = fgetcsv($file);
+
+                $employee_no = $content[0];
+                $employee_no1 = strtolower($content[0]);
+                $employee_no2 = strtolower($content[0]);
+
+                if(isset($employeeNos[$employee_no])){
+                    $user_id = $employeeNos[$employee_no];
+                    
+                }elseif(isset($employeeNos[$employee_no1])){
+                    $user_id = $employeeNos[$employee_no1];
+                    
+                }elseif(isset($employeeNos[$employee_no2])){
+                    $user_id = $employeeNos[$employee_no2];
+                    
+                }else{
+                    $user_id = null;
+                }
+
+                if(!empty($user_id)){
+                    $date = date('Y-m-d',strtotime($content[1]));
+                    $dates[] = $date;
+                    $userIds[] = $user_id;
+
+                    $csvContent[] = [
+                        'user_id' => $user_id,
+                        'date' => $date,
+                        'in_time' => date('h:i',strtotime($content[2])),
+                        'out_time' => date('h:i',strtotime($content[3])),
+                        'total_work_hour' => date('H.i', strtotime($content[3]) - strtotime($content[2])),
+                        'late_count_time' => Null,
+                        'late_hour' => Null,
+                        'created_at' => date('Y-m-d')
+                    ];
+                }
+                
+            }
+
+            fclose($file);
+            Attendance::whereIn('user_id',$userIds)->whereIn('date',$dates)->delete();
+            Attendance::insert($csvContent);
+            // dispatch(new AttendanceTimesheetJob());
+            $request->session()->flash('success','Attendance successfully uploaded!');
+        }
+
+        return redirect()->back();
+    }
+
+
+    protected function attendanceReport($attendance){
+
+        $absent = 0;
+        $present = 0;
+        $leave = 0;
+        $holiday = 0;
+        $weekend = 0;
+        $late = 0;
+
+        foreach($attendance as $info){
+            if($info['observation'] == '0'){
+                $absent++;
+            }elseif($info['observation'] == '1'){
+                $present++;
+            }elseif($info['observation'] == '2'){
+                $leave++;
+            }elseif($info['observation'] == '3'){
+                $holiday++;
+            }elseif($info['observation'] == '4'){
+                $weekend++;
+            }elseif($info['observation'] == '5'){
+                $present++;
+                $holiday++;
+            }elseif($info['observation'] == '6'){
+                $present++;
+                $weekend++;
+            }
+            if($info['late_hour']){
+                $late++;
+            }
+        }
+
+        $total = $present + $absent + $leave + $holiday + $weekend + $late;
+
+        $report = [
+            'total' => $total,
+            'absent' => $absent,
+            'present' => $present,
+            'leave' => $leave,
+            'holiday' => $holiday,
+            'weekend' => $weekend,
+            'late' => $late,
+        ];
+
+        return $report;
+    }
+
+
+
+
+
+
+
+
 
 
 
