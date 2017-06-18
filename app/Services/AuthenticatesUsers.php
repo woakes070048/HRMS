@@ -156,7 +156,6 @@ trait AuthenticatesUsers
 
         //hrmsSideBar from PermissionService
         $this->hrmsSideBar();
-        
         $this->userPermission(\Auth::user()->id);
     }
 
