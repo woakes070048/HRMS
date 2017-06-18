@@ -24,6 +24,7 @@ use App\Models\LeaveType;
 use App\Models\UserLeaveTypeMap;
 
 use App\Services\CommonService;
+use App\Services\PermissionService;
 use App\Jobs\UserEmailUpdate;
 
 use App\Http\Requests\EmployeeBasicInfoRequest;
@@ -48,7 +49,7 @@ use App\Http\Controllers\Controller;
 
 class EmployeeController extends Controller
 {
-    use CommonService;
+    use CommonService, PermissionService;
 
     protected $auth;
 
@@ -135,6 +136,11 @@ class EmployeeController extends Controller
 
             DB::commit();
             $request->session()->flash('success','Data successfully updatsed!');
+
+            //hrmsSideBar from PermissionService
+            //update Session Data After update Permission
+            $this->hrmsSideBar();
+            $this->userPermission(\Auth::user()->id);
 
         } catch (\Exception $e) {
             DB::rollback();
