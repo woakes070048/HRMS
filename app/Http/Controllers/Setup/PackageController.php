@@ -45,9 +45,9 @@ class PackageController extends Controller
         $modules = $request->modules;
         $status = $request->status;
     	
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
-        try {
+        // try {
     		$save = new Package;
             $save->package_name = $package_name;
     		$save->package_price = $package_price;
@@ -72,16 +72,16 @@ class PackageController extends Controller
                 ModulePackageMap::insert($data);
             }
 
-            DB::commit();
+            // DB::commit();
             
             $data['title'] = 'success';
             $data['message'] = 'Data successfully added!';
 
-        } catch (\Exception $e) {
-            DB::rollback();
-            $data['title'] = 'error';
-            $data['message'] = 'Data not added!';
-        }
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     $data['title'] = 'error';
+        //     $data['message'] = 'Data not added!';
+        // }
 
     	return response()->json($data);
     }

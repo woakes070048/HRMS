@@ -18,6 +18,7 @@
                    
                     </div>
                     <div class="panel-body">
+                        <span class="text-danger"><b>** Only active data will be valid. Please ACTIVE only one data.</b></span>
                         <div id="showData">
                             <table class="table table-hover" id="datatable">
                                 <thead>
