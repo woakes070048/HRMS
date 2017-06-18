@@ -117,7 +117,7 @@ class LeaveController extends Controller
 
         //common codes ====
 
-        $weekendsData  = Weekend::orderBY('id', 'DESC')->first();
+        $weekendsData  = Weekend::where('status', 1)->first();
         $weekends_ary = explode(',', $weekendsData->weekend); 
         $weekends_ary = array_map('trim', $weekends_ary); // triming
 

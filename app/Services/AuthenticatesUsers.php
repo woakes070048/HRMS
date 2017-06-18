@@ -153,8 +153,10 @@ trait AuthenticatesUsers
             Artisan::call("db:connect", ['database'=> Session('database')]);
         }
         $this->settings();
+
         //hrmsSideBar from PermissionService
         $this->hrmsSideBar();
+        
         $this->userPermission(\Auth::user()->id);
     }
 

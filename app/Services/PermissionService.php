@@ -15,7 +15,10 @@ trait PermissionService{
         $allMenus = Menu::where('menu_status', 1)->get();
 		session(['menuShare' => $allMenus]);
 
-		$allModules = Module::with('menus')->get();
+		$allModules = Module::with(['menus' => function($query){
+            $query->where('menu_status', 1);
+        }])->where('module_status', 1)->get();
+
 		session(['moduleShare' => $allModules]);
     }
 
