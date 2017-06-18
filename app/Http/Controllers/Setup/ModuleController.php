@@ -21,7 +21,7 @@ class ModuleController extends Controller
 
     public function getModule(){
 
-        return Module::orderBy('id', 'DESC')->get();
+        return Module::orderBy('id')->get();
     }
 
     public function create(Request $request){

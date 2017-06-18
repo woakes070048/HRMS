@@ -14,7 +14,7 @@ class CreateModulesTable extends Migration
     public function up()
     {
         Schema::create('modules', function (Blueprint $table) {
-            $table->integer('id')->unsigned();
+            $table->increments('id')->unsigned();
             $table->string('module_name',150);
             $table->string('module_icon_class',50);
             $table->text('module_details')->nullable();
