@@ -269,42 +269,45 @@ class EmployeeController extends Controller
 
             $leaveTypes = LeaveType::where('leave_type_status', 1)->get();
 
-            foreach($leaveTypes as $val){
+            if(count($leaveTypes) > 0){
                 
-                $leaveTypeAry = explode(',', $val->leave_type_effective_for);
+                foreach($leaveTypes as $val){
+                    
+                    $leaveTypeAry = explode(',', $val->leave_type_effective_for);
 
-                if($val->leave_type_is_earn_leave == 1){
-                    $num_of_days = 0;
+                    if($val->leave_type_is_earn_leave == 1){
+                        $num_of_days = 0;
+                    }
+                    else{
+                        $num_of_days = $val->leave_type_number_of_days; 
+                    }
+
+                    if(in_array($emp_type, $leaveTypeAry)){
+                        $commonTypeId['type_id'][] = $val->id;
+                        $commonTypeId['days'][] = $num_of_days;
+                        $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
+                        $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
+                    }
                 }
-                else{
-                    $num_of_days = $val->leave_type_number_of_days; 
+
+                $length = count($commonTypeId['type_id']);
+
+                if(!empty($length)){
+                    for($i=0 ; $i < $length; $i++){
+                        $user_leave_type[] = [
+                            'user_id' => $user->id,
+                            'leave_type_id' => $commonTypeId['type_id'][$i],
+                            'number_of_days' => $commonTypeId['days'][$i],
+                            'active_from_year' => $commonTypeId['from_year'][$i],
+                            'active_to_year' => $commonTypeId['to_year'][$i],
+                            'status' => 1,
+                        ];
+                    }
                 }
 
-                if(in_array($emp_type, $leaveTypeAry)){
-                    $commonTypeId['type_id'][] = $val->id;
-                    $commonTypeId['days'][] = $num_of_days;
-                    $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
-                    $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
+                if(!empty($user_leave_type)){
+                    UserLeaveTypeMap::insert($user_leave_type);
                 }
-            }
-
-            $length = count($commonTypeId['type_id']);
-
-            if(!empty($length)){
-                for($i=0 ; $i < $length; $i++){
-                    $user_leave_type[] = [
-                        'user_id' => $user->id,
-                        'leave_type_id' => $commonTypeId['type_id'][$i],
-                        'number_of_days' => $commonTypeId['days'][$i],
-                        'active_from_year' => $commonTypeId['from_year'][$i],
-                        'active_to_year' => $commonTypeId['to_year'][$i],
-                        'status' => 1,
-                    ];
-                }
-            }
-
-            if(!empty($user_leave_type)){
-                UserLeaveTypeMap::insert($user_leave_type);
             }
             //leave end
 
