@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 45);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -10511,7 +10511,7 @@ module.exports = g;
 
 /***/ }),
 
-/***/ 33:
+/***/ 36:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10526,50 +10526,47 @@ module.exports = g;
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vee_validate___default.a);
 
 new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
-    el: "#mainDiv",
+    el: "#salaryInfoDiv",
     data: {
-        branches: [],
-        branch_name: '',
-        branch_email: '',
-        branch_mobile: '',
-        branch_phone: '',
-        branch_location: '',
-        branch_effective_date: '',
-        branch_description: '',
-        branch_status: '1',
-        edit_branch_name: '',
-        edit_branch_email: '',
-        edit_branch_mobile: '',
-        edit_branch_phone: '',
-        edit_branch_location: '',
-        edit_branch_description: '',
-        edit_branch_effective_date: '',
-        edit_branch_status: '',
-        indexId: '',
-        hdn_id: null
+        message: 'Hello Vue!',
+        salaryInfo: [],
+        info_name: '',
+        info_status: 0,
+        info_amount: '',
+        info_type: 'Allowance',
+        errorsHtml: '',
+        hdn_id: '',
+        edit_info_name: null,
+        edit_info_status: 0,
+        edit_info_amount: '',
+        edit_info_type: '',
+        edit_errorsHtml: '',
+        salaryInfoIndex: '',
+        testVal: []
     },
     mounted: function mounted() {
         var _this = this;
 
-        axios.get('/branch/getBranch').then(function (response) {
-            return _this.branches = response.data;
+        axios.get('/salaryInfo/getAllInfo').then(function (response) {
+            return _this.salaryInfo = response.data;
         });
     },
 
     methods: {
-        saveBranch: function saveBranch(formId) {
+        saveSalaryInfo: function saveSalaryInfo(event) {
             var _this2 = this;
 
-            var formData = $('#' + formId).serialize();
+            axios.post('/salaryInfo/add', {
+                info_name: this.info_name,
+                info_status: this.info_status,
+                info_amount: this.info_amount,
+                info_type: this.info_type
+            }).then(function (response) {
 
-            axios.post('/branch/add', formData).then(function (response) {
-
-                $('#create-form-errors').html('');
-                _this2.branches.push(response.data.data);
+                _this2.salaryInfo.push(response.data.data);
                 document.getElementById("modal-close-btn").click();
 
-                //empty text field after save data
-                _this2.branch_name = '', _this2.branch_email = '', _this2.branch_mobile = '', _this2.branch_phone = '', _this2.branch_location = '', new PNotify({
+                new PNotify({
                     title: response.data.title + ' Message',
                     text: response.data.message,
                     shadow: true,
@@ -10579,7 +10576,6 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                     delay: 1500
                 });
             }).catch(function (error) {
-
                 if (error.response.status != 200) {
                     //error 422
 
@@ -10594,38 +10590,40 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 }
             });
         },
-        editData: function editData(id, index) {
-
-            this.indexId = index;
-            this.hdn_id = id;
-            this.edit_branch_name = this.branches[index].branch_name;
-            this.edit_branch_email = this.branches[index].branch_email;
-            this.edit_branch_mobile = this.branches[index].branch_mobile;
-            this.edit_branch_phone = this.branches[index].branch_phone;
-            this.edit_branch_location = this.branches[index].branch_location;
-            this.edit_branch_effective_date = this.branches[index].branch_effective_date;
-            this.edit_branch_description = this.branches[index].branch_description;
-            this.edit_branch_status = this.branches[index].branch_status;
-        },
-
-        updateData: function updateData(updateFormId) {
+        editSalaryInfo: function editSalaryInfo(id, index) {
             var _this3 = this;
 
-            var formData = $('#' + updateFormId).serialize();
+            this.salaryInfoIndex = index;
 
-            axios.post('/branch/edit', formData).then(function (response) {
+            axios.get("/salaryInfo/edit/" + id, {}).then(function (response) {
 
-                $('#edit-form-errors').html('');
+                _this3.hdn_id = response.data.id;
+                _this3.edit_info_name = response.data.salary_info_name;
+                _this3.edit_info_amount = response.data.salary_info_amount;
+                _this3.edit_info_status = response.data.salary_info_amount_status;
+                _this3.edit_info_type = response.data.salary_info_type;
+            }).catch(function (error) {
+                swal('Error:', 'Edit function not working', 'error');
+                document.getElementById("modal-edit-close-btn").click();
+            });
+        },
+        updateSalaryInfo: function updateSalaryInfo() {
+            var _this4 = this;
+
+            axios.post('/salaryInfo/edit', {
+                hdn_id: this.hdn_id,
+                edit_info_name: this.edit_info_name,
+                edit_info_status: this.edit_info_status,
+                edit_info_amount: this.edit_info_amount,
+                edit_info_type: this.edit_info_type
+            }).then(function (response) {
+
                 document.getElementById("modal-edit-close-btn").click();
 
-                _this3.branches[_this3.indexId].branch_name = _this3.edit_branch_name;
-                _this3.branches[_this3.indexId].branch_email = _this3.edit_branch_email;
-                _this3.branches[_this3.indexId].branch_mobile = _this3.edit_branch_mobile;
-                _this3.branches[_this3.indexId].branch_phone = _this3.edit_branch_phone;
-                _this3.branches[_this3.indexId].branch_location = _this3.edit_branch_location;
-                _this3.branches[_this3.indexId].branch_effective_date = _this3.edit_branch_effective_date;
-                _this3.branches[_this3.indexId].branch_description = _this3.edit_branch_description;
-                _this3.branches[_this3.indexId].branch_status = _this3.edit_branch_status;
+                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_name = _this4.edit_info_name;
+                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_amount = _this4.edit_info_amount;
+                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_amount_status = _this4.edit_info_status;
+                _this4.salaryInfo[_this4.salaryInfoIndex].salary_info_type = _this4.edit_info_type;
 
                 new PNotify({
                     title: response.data.title + ' Message',
@@ -10647,9 +10645,9 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 $('#edit-form-errors').html(errorsHtml);
             });
         },
-        deleteData: function deleteData(id, index) {
+        deleteSalaryInfo: function deleteSalaryInfo(id, index) {
 
-            var delBranch = this.branches;
+            var delSalaryInfo = this.salaryInfo;
 
             swal({
                 title: "Are you sure?",
@@ -10663,7 +10661,7 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
 
                 swal("Deleted!", "Your imaginary file has been deleted.", "success");
 
-                axios.get("/branch/delete/" + id + "/" + index, {}).then(function (response) {
+                axios.get("/salaryInfo/delete/" + id + "/" + index, {}).then(function (response) {
 
                     new PNotify({
                         title: response.data.title + ' Message',
@@ -10675,9 +10673,10 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                         delay: 1500
                     });
 
-                    delBranch.splice(response.data.indexId, 1);
+                    //console.log("--ok--"+response);
+                    delSalaryInfo.splice(response.data.indexId, 1);
                 }).catch(function (error) {
-
+                    //console.log("--error--"+error);
                     swal('Error:', 'Delete function not working', 'error');
                 });
             });
@@ -19874,10 +19873,10 @@ module.exports = Vue$3;
 
 /***/ }),
 
-/***/ 45:
+/***/ 48:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(33);
+module.exports = __webpack_require__(36);
 
 
 /***/ }),

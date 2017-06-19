@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         ServiceCommand::class,
+        Commands\CalculateEarnLeave::class,
         SalaryIncrementCommand::class,
         AttendanceTimesheetCommand::class,
         ArchiveAttendanceTimesheetCommand::class
@@ -32,8 +33,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // $schedule->command('calculate:earnLeave')
+        //          ->timezone('Asia/Dhaka')
+        //          ->everyMinute();
         
         // \Config::set('database.connections.mysql_hrms.strict',false);
         // \Artisan::call("db:connect", ['database' => '1489485338_afc_health']);

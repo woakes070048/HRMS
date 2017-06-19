@@ -48,6 +48,7 @@
                                         <td>@{{ info.unit_effective_date }}</td>
                                         <td>@{{ info.unit_status==1?"Active":"Inactive" }}</td>
                                         <td>
+                                        <!-- Checking permission -->
                                         @if(in_array($chkUrl."/edit", session('userMenuShare')))
                                             <button type="button" @click="editUnit(info.id, index)" class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target=".unitEdit">
                                                 <i class="fa fa-edit"></i>

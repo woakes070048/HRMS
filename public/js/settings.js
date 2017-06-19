@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "./";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 45);
+/******/ 	return __webpack_require__(__webpack_require__.s = 49);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -10511,7 +10511,7 @@ module.exports = g;
 
 /***/ }),
 
-/***/ 33:
+/***/ 37:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10528,48 +10528,36 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vee_
 new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
     el: "#mainDiv",
     data: {
-        branches: [],
-        branch_name: '',
-        branch_email: '',
-        branch_mobile: '',
-        branch_phone: '',
-        branch_location: '',
-        branch_effective_date: '',
-        branch_description: '',
-        branch_status: '1',
-        edit_branch_name: '',
-        edit_branch_email: '',
-        edit_branch_mobile: '',
-        edit_branch_phone: '',
-        edit_branch_location: '',
-        edit_branch_description: '',
-        edit_branch_effective_date: '',
-        edit_branch_status: '',
-        indexId: '',
-        hdn_id: null
+        field_name: '',
+        field_value: '',
+        allValues: [],
+        edit_field_name: '',
+        edit_field_value: '',
+        indexValue: null,
+        hdn_id: ''
     },
     mounted: function mounted() {
         var _this = this;
 
-        axios.get('/branch/getBranch').then(function (response) {
-            return _this.branches = response.data;
+        // axios.get('getSettings').then(response => this.allValues = response.data);
+        axios.get('/settings/getSettings').then(function (response) {
+            return _this.allValues = response.data;
         });
     },
 
     methods: {
-        saveBranch: function saveBranch(formId) {
+        saveSettings: function saveSettings(formId) {
             var _this2 = this;
 
             var formData = $('#' + formId).serialize();
 
-            axios.post('/branch/add', formData).then(function (response) {
+            axios.post('/settings/add', formData).then(function (response) {
 
                 $('#create-form-errors').html('');
-                _this2.branches.push(response.data.data);
+                _this2.allValues.push(response.data.data);
                 document.getElementById("modal-close-btn").click();
 
-                //empty text field after save data
-                _this2.branch_name = '', _this2.branch_email = '', _this2.branch_mobile = '', _this2.branch_phone = '', _this2.branch_location = '', new PNotify({
+                new PNotify({
                     title: response.data.title + ' Message',
                     text: response.data.message,
                     shadow: true,
@@ -10579,7 +10567,7 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                     delay: 1500
                 });
             }).catch(function (error) {
-
+                //console.log("Errorrr: "+error);
                 if (error.response.status != 200) {
                     //error 422
 
@@ -10594,38 +10582,24 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 }
             });
         },
-        editData: function editData(id, index) {
+        editSettings: function editSettings(id, index) {
 
-            this.indexId = index;
+            this.indexValue = index;
             this.hdn_id = id;
-            this.edit_branch_name = this.branches[index].branch_name;
-            this.edit_branch_email = this.branches[index].branch_email;
-            this.edit_branch_mobile = this.branches[index].branch_mobile;
-            this.edit_branch_phone = this.branches[index].branch_phone;
-            this.edit_branch_location = this.branches[index].branch_location;
-            this.edit_branch_effective_date = this.branches[index].branch_effective_date;
-            this.edit_branch_description = this.branches[index].branch_description;
-            this.edit_branch_status = this.branches[index].branch_status;
+            this.edit_field_name = this.allValues[index].field_name;
+            this.edit_field_value = this.allValues[index].field_value;
         },
-
-        updateData: function updateData(updateFormId) {
+        updateSettings: function updateSettings(updateFormId) {
             var _this3 = this;
 
             var formData = $('#' + updateFormId).serialize();
 
-            axios.post('/branch/edit', formData).then(function (response) {
+            axios.post('/settings/edit', formData).then(function (response) {
 
                 $('#edit-form-errors').html('');
                 document.getElementById("modal-edit-close-btn").click();
 
-                _this3.branches[_this3.indexId].branch_name = _this3.edit_branch_name;
-                _this3.branches[_this3.indexId].branch_email = _this3.edit_branch_email;
-                _this3.branches[_this3.indexId].branch_mobile = _this3.edit_branch_mobile;
-                _this3.branches[_this3.indexId].branch_phone = _this3.edit_branch_phone;
-                _this3.branches[_this3.indexId].branch_location = _this3.edit_branch_location;
-                _this3.branches[_this3.indexId].branch_effective_date = _this3.edit_branch_effective_date;
-                _this3.branches[_this3.indexId].branch_description = _this3.edit_branch_description;
-                _this3.branches[_this3.indexId].branch_status = _this3.edit_branch_status;
+                _this3.allValues[_this3.indexValue].field_value = response.data.field_value;
 
                 new PNotify({
                     title: response.data.title + ' Message',
@@ -10645,41 +10619,6 @@ new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({
                 });
                 errorsHtml += '</ul></di>';
                 $('#edit-form-errors').html(errorsHtml);
-            });
-        },
-        deleteData: function deleteData(id, index) {
-
-            var delBranch = this.branches;
-
-            swal({
-                title: "Are you sure?",
-                text: "You will not be able to recover this information!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete it!",
-                closeOnConfirm: false
-            }, function () {
-
-                swal("Deleted!", "Your imaginary file has been deleted.", "success");
-
-                axios.get("/branch/delete/" + id + "/" + index, {}).then(function (response) {
-
-                    new PNotify({
-                        title: response.data.title + ' Message',
-                        text: response.data.message,
-                        shadow: true,
-                        addclass: 'stack_top_right',
-                        type: response.data.title,
-                        width: '290px',
-                        delay: 1500
-                    });
-
-                    delBranch.splice(response.data.indexId, 1);
-                }).catch(function (error) {
-
-                    swal('Error:', 'Delete function not working', 'error');
-                });
             });
         }
     }
@@ -19874,10 +19813,10 @@ module.exports = Vue$3;
 
 /***/ }),
 
-/***/ 45:
+/***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(33);
+module.exports = __webpack_require__(37);
 
 
 /***/ }),

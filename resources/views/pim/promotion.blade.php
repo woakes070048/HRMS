@@ -15,7 +15,7 @@
 
 <div id="mainDiv">
     <!-- Begin: Content -->
-    <section id="content" class="animated fadeIn">
+    <section id="content">
         <div class="row">
             <div class="col-md-12">
                 <div class="panel">

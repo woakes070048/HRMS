@@ -18,9 +18,11 @@ class CreateUserLeaveTypeMapsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('leave_type_id')->unsigned();
             $table->integer('number_of_days')->nullable();
-            $table->integer('active_from_year');
-            $table->integer('active_to_year');
+            $table->integer('active_from_year')->nullable();
+            $table->integer('active_to_year')->nullable();
+            $table->date('earn_leave_upgrade_date')->nullable();
             $table->boolean('status')->default(1)->comment='1=active 0=inactive';
+            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->foreign('leave_type_id')->references('id')->on('leave_types')->onDelete('restrict');
