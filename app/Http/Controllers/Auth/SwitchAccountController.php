@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-
 use App\Models\User;
 use App\Models\Level;
 use App\Models\Department;

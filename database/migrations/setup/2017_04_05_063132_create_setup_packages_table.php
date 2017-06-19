@@ -21,6 +21,7 @@ class CreateSetupPackagesTable extends Migration
             $table->tinyInteger('package_type')->default(2)->comment='1=free, 2=paid';
             $table->tinyInteger('package_level_limit')->nullable();
             $table->tinyInteger('package_user_limit')->nullable();
+            $table->tinyInteger('package_sister_concern_limit')->nullable();
             $table->boolean('package_status')->default(1)->comment='1=active, 0=inactive';
             $table->integer('package_created_by');
             $table->timestamps();
