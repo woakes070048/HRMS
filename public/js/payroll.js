@@ -32,6 +32,8 @@ var work = new Vue({
       units:[],
       users:[],
       salary_type:'month',
+      payRoll:[],
+      payRolls:[],
       errors:[]
     },
 
@@ -181,7 +183,8 @@ var work = new Vue({
         let formData = new FormData(e.target);
 
         axios.post('/payroll/index', formData).then(response => {
-          console.log(response);
+          console.log(response.data);
+          this.payRolls = response.data;
           this.errors = [];
           this.loadinHide('#payroll');
 

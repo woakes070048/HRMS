@@ -117,21 +117,111 @@
       <div class="panel">
         <div class="panel-heading">
           <span class="panel-title"><i class="fa fa-money"></i></span>
-          <strong>Show Salary Sheet of </strong>
+          <strong>Generate Salary Sheet </strong>
         </div>
 
         <div class="panel-body pn">
           <table class="table table-bordered">
-            <thead>
+            <thead class="bg-dark" style="color: #fff!important">
               <tr>
-                <th>Earnings</th>
-                <th>Deductions</th>
+                <th>SL</th>
+                <th>Employee</th>
+                <th style="min-width: 120px">Attendance Info</th>
+                <th>Salary Month</th>
+                <th>Allowance Details</th>
+                <th>Deduction Details</th>
+                <th style="min-width: 250px">Salary Details</th>
+                <th>Gross Salary</th>
+                <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                <td></td>
+              <tr v-for="(payroll, index) in payRolls">
+                <td v-text="index+1"></td>
+                <td>
+                  <a :href="'/employee/view/'+payroll.employee_no" target="_blank">
+                    <span v-text="payroll.full_name"></span><br>
+                    <span v-text="payroll.employee_no"></span>
+                  </a>
+                </td>
+
+                <td v-if="payroll.attendances !=''" >
+                  Absent : <span class="text-danger" v-text="payroll.attendances.attendance_absent"></span> days<br>
+                  Present : <span class="text-success" v-text="payroll.attendances.attendance_present"></span> days<br>
+                  Leave : <span class="text-info" v-text="payroll.attendances.attendance_leave"></span> days<br>
+                  Holiday : <span class="text-danger" v-text="payroll.attendances.attendance_holiday"></span> days<br>
+                  Weekend : <span class="text-primary" v-text="payroll.attendances.attendance_weekend"></span> days<br>
+                  late : <span class="text-warning" v-text="payroll.attendances.attendance_late"></span> days<br>
+                </td>
+                <td v-else class="text-center">-----</td>
+
+                <td>
+                  <span v-text="payroll.salary_month"></span><br>
+                  Days : <span v-text="payroll.days"></span><br>
+                  Salary Pay : <span v-text="payroll.payment_days"></span> days
+                </td>
+
+                <td v-if="payroll.allowances !=''">
+                  <table class="table table-bordered text-center" style="font-size: 10px!important;">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(allowance, index) in payroll.allowances">
+                        <td v-text="allowance.name"></td>
+                        <td v-text="allowance.amount_type"></td>
+                        <td v-text="allowance.amount"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td v-else class="text-center">-----</td>
+
+                <td v-if="payroll.deductions !=''">
+                  <table class="table table-bordered text-center" style="font-size: 10px!important;">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(deduction, index) in payroll.deductions">
+                        <td v-text="deduction.name"></td>
+                        <td v-text="deduction.amount_type"></td>
+                        <td v-text="deduction.amount"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td v-else class="text-center">-----</td>
+
+                <td>
+                  Basic : <span v-text="payroll.basic_salary"></span><br>
+                  Salary in Cash : <span v-text="payroll.salary_in_cash"></span><br>
+                  Per day Salary : <span v-text="payroll.perday_salary"></span><br>
+                  Salary : <span v-text="payroll.perday_salary+' x '+payroll.payment_days"></span> = <span v-text="payroll.salary"></span><br>
+                  Total : <span v-text="payroll.salary+' + '+payroll.total_allowance+' - '+payroll.total_deduction"></span> = <span v-text="payroll.total_salary"></span><br>
+
+                </td>
+                <td v-text="payroll.gross_salary"></td>
+                <td>
+                  <div class="btn-group mt5">
+                    <a v-on:click="editSalary(payroll.user_id, index, '#payroll_modal'),payRoll=[]" class="btn btn-xs btn-primary"><i class="glyphicons glyphicons-pencil"></i>
+                    </a>
+                  </div>
+                  
+                  <div class="btn-group mt5">
+                    <a v-on:click="comfirmSalary(payroll.user_id, index, '#payroll_modal'),payRoll=[]" class="btn btn-xs btn-success"><i class="glyphicons glyphicons-ok_2"></i>
+                    </a>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
