@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Payroll;
 
 use App\Models\User;
+use App\Models\Salary;
 use App\Models\EmployeeSalary;
 use App\Models\AttendanceTimesheet;
 
@@ -11,6 +12,7 @@ use App\Services\CommonService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class PayrollController extends Controller
@@ -47,6 +49,129 @@ class PayrollController extends Controller
     	$data['departments'] = $this->getDepartments();
     	$data['branches'] = $this->getBranches();
     	return view('payroll.payroll')->with($data);
+    }
+
+
+    public function addSalary(Request $request)
+    {
+    	try{
+
+	    	$salaries = [
+		    	'user_id' => $request->user_id,
+		    	'basic_salary' => floatval(str_replace(',','',$request->basic_salary)),
+		    	'salary_in_cash' => floatval(str_replace(',','',$request->salary_in_cash)),
+		    	'salary_month' => $request->salary_month,
+		    	'salary_days' => $request->payment_days,
+		    	'salary_pay_type' => $request->salary_pay_type,
+		    	'overtime_hour' => 0,
+		    	'overtime_amount' => 0.00,
+		    	'attendance_info' => serialize($request->attendances),
+		    	'total_allowance' => floatval(str_replace(',','',$request->total_allowance)),
+		    	'total_deduction' => floatval(str_replace(',','',$request->total_deduction)),
+		    	'total_salary' => floatval(str_replace(',','',$request->total_salary)),
+		    	'gross_salary' => floatval(str_replace(',','',$request->gross_salary)),
+	    	];
+
+    		// dd($salaries);
+	    	// dd($request->all());
+
+	    	$salarys = Salary::where('user_id', $request->user_id)
+		    		->where('salary_month', $request->salary_month)
+		    		->get();
+
+			DB::beginTransaction();
+
+	    	if($request->salary_pay_type == 'full')
+	    	{
+	    		$salary_partial = $salarys->where('salary_pay_type', 'partial')->count();
+	    		if($salary_partial > 0){
+	    			$data['status'] = 'warning';
+		            $data['statusType'] = 'OK';
+		            $data['code'] = 200;
+		            $data['title'] = 'Warning!';
+		            $data['message'] = "You can't provide full month salary for this employee. Cause this month he/she already taken partial salary.";
+		            return response()->json($data,200);
+	    		}
+
+	    		$salary_full = $salarys->where('salary_pay_type', 'full')->count();
+	    		// return $salary;
+	    		if($salary_full <= 0){
+	    			$salaries['created_by'] = $this->auth->id;
+	    			$salaries['created_at'] = Carbon::now()->format('Y-m-d h:i:s');
+	    			Salary::insert($salaries);
+	    		}
+	    		else
+	    		{
+	    			$salaries['updated_by'] = $this->auth->id;
+	    			$salaries['updated_at'] = Carbon::now()->format('Y-m-d h:i:s');
+
+	    			Salary::where('user_id', $request->user_id)
+			    		->where('salary_month', $request->salary_month)
+			    		->where('salary_pay_type', $request->salary_pay_type)
+			    		->update($salaries);
+	    		}
+	    	}
+	    	elseif($request->salary_pay_type == 'partial')
+	    	{
+	    		$salary = $salarys->where('salary_pay_type', 'full')->count();
+	    		// dd($salary);
+	    		if($salary > 0){
+    				$data['status'] = 'warning';
+		            $data['statusType'] = 'OK';
+		            $data['code'] = 200;
+		            $data['title'] = 'Warning!';
+		            $data['message'] = 'This employee full salary already added.';
+		            return response()->json($data,200);
+    			}
+
+	    		$salary_pay_days = $request->payment_days;
+	    		$already_pay_day = $salarys->where('salary_pay_type', 'partial')->sum('salary_days');
+	    		$present_month_days = Carbon::parse($request->salary_month)->daysInMonth;
+	    	
+	    		if($present_month_days > $already_pay_day ){
+	    			$salary_due_days = $present_month_days - $already_pay_day;
+	    			if($salary_due_days < $salary_pay_days){
+	    				$data['status'] = 'warning';
+			            $data['statusType'] = 'OK';
+			            $data['code'] = 200;
+			            $data['title'] = 'Warning!';
+			            $data['message'] = 'This employee already taken '.$already_pay_day.' days salary.';
+			            return response()->json($data,200);
+	    			}
+	    		}else{
+	    			$data['status'] = 'warning';
+		            $data['statusType'] = 'OK';
+		            $data['code'] = 200;
+		            $data['title'] = 'Warning!';
+		            $data['message'] = 'This employee full salary already added.';
+		            return response()->json($data,200);
+	    		}
+
+	    		$salary = $salarys->where('salary_pay_type', 'full')->count();
+    			$salaries['created_by'] = $this->auth->id;
+    			$salaries['created_at'] = Carbon::now()->format('Y-m-d h:i:s');
+    			Salary::insert($salaries);
+	    	}
+
+	    	DB::commit();
+            $data['status'] = 'success';
+            $data['statusType'] = 'OK';
+            $data['code'] = 200;
+            $data['title'] = 'Success!';
+            $data['message'] = 'Salary Successfully Added!';
+            return response()->json($data,200);
+
+	    }catch(\Exception $e){
+	    	DB::rollback();
+	    	if($request->ajax()){
+                $data['status'] = 'danger';
+                $data['statusType'] = 'NotOk';
+                $data['code'] = 500;
+                $data['title'] = 'Error!';
+                $data['message'] = 'Salary Not Added!';
+                return response()->json($data,500);
+            }
+	    }
     }
 
 
@@ -91,6 +216,7 @@ class PayrollController extends Controller
 
     		if($salary_type == 'month')
     		{
+    			$salary_pay_type = 'full';
     			$all_attendance = $user->attendanceTimesheet;
 	    		$attendance_absent = $all_attendance->where('observation',0)->count();
 	    		$attendance_present = $all_attendance->whereIn('observation',[1,5,6])->count();
@@ -154,8 +280,8 @@ class PayrollController extends Controller
     		}
     		elseif($salary_type == 'day')
     		{
+	    		$salary_pay_type = 'partial';
 	    		$attendances = [];
-
     			$payment_days = $days;
     			$salary = $perday_salary * $days;
     			$total_salary = $salary;
@@ -170,6 +296,7 @@ class PayrollController extends Controller
     			'salary_in_cash' => $user->salary_in_cache,
     			'salary_month' => $salary_month,
     			'days' => $days,
+    			'salary_pay_type' => $salary_pay_type,
     			'payment_days' => $payment_days,
     			'attendances' => $attendances,
     			'allowances'=> $allowances,

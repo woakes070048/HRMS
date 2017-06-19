@@ -177,6 +177,10 @@
                         <td v-text="allowance.amount_type"></td>
                         <td v-text="allowance.amount"></td>
                       </tr>
+                      <tr>
+                        <td colspan="2">Total :</td>
+                        <td v-text="payroll.total_allowance"></td>
+                      </tr>
                     </tbody>
                   </table>
                 </td>
@@ -196,6 +200,10 @@
                         <td v-text="deduction.name"></td>
                         <td v-text="deduction.amount_type"></td>
                         <td v-text="deduction.amount"></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">Total :</td>
+                        <td v-text="payroll.total_deduction"></td>
                       </tr>
                     </tbody>
                   </table>
@@ -218,7 +226,7 @@
                   </div>
                   
                   <div class="btn-group mt5">
-                    <a v-on:click="comfirmSalary(payroll.user_id, index, '#payroll_modal'),payRoll=[]" class="btn btn-xs btn-success"><i class="glyphicons glyphicons-ok_2"></i>
+                    <a v-on:click="comfirmSalary(payroll.user_id, index),payRoll=[]" class="btn btn-xs btn-success"><i class="glyphicons glyphicons-ok_2"></i>
                     </a>
                   </div>
                 </td>
@@ -229,6 +237,38 @@
       </div>
     </div>
   </div>
+
+  <div id="payroll_modal" class="popup-basic mfp-with-anim mfp-hide">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="panel-title">
+                <i class="fa fa-rocket"></i>Edit Salary
+            </span>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <form v-if="payRoll ==''" id="payroll_modal_form" method="post" v-on:submit.prevent="updateSalary">
+        
+
+                      <hr class="short alt">
+
+                      <div class="section row mbn">
+                          <div class="col-sm-6 pull-right">
+                              <p class="text-left">
+                                  <button type="submit" name="edit_salary" class="btn btn-dark btn-gradient dark btn-block"><span class="glyphicons glyphicons-ok_2"></span> &nbsp; Update Salary
+                                  </button>
+                              </p>
+                          </div>
+                      </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </section>
 

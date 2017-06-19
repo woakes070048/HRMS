@@ -17,7 +17,8 @@ class CreateSalaryDetailsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('salary_id')->unsigned();
             $table->string('salary_details_name');
-            $table->enum('salary_details_type',['percent','fixed']);
+            $table->enum('salary_details_type',['allowance','deduction']);
+            $table->enum('salary_details_amount_type',['percent','fixed']);
             $table->decimal('salary_details_amount');
             $table->timestamps();
 
