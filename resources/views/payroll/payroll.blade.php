@@ -144,6 +144,8 @@
                     <span v-text="payroll.full_name"></span><br>
                     <span v-text="payroll.employee_no"></span>
                   </a>
+                  <br>
+                  <span v-text="payroll.employee_type"></span>
                 </td>
 
                 <td v-if="payroll.attendances !=''" >
@@ -174,7 +176,10 @@
                     <tbody>
                       <tr v-for="(allowance, index) in payroll.allowances">
                         <td v-text="allowance.name"></td>
-                        <td v-text="allowance.amount_type"></td>
+                        <td>
+                          <span v-if="allowance.amount_type =='percent'" v-text="allowance.percent+'%'"></span>
+                          <span v-else v-text="allowance.amount_type"></span>
+                        </td>
                         <td v-text="allowance.amount"></td>
                       </tr>
                       <tr>
@@ -198,7 +203,10 @@
                     <tbody>
                       <tr v-for="(deduction, index) in payroll.deductions">
                         <td v-text="deduction.name"></td>
-                        <td v-text="deduction.amount_type"></td>
+                        <td>
+                          <span v-if="deduction.amount_type =='percent'" v-text="deduction.percent+'%'"></span>
+                          <span v-else v-text="deduction.amount_type"></span>
+                        </td>
                         <td v-text="deduction.amount"></td>
                       </tr>
                       <tr>
@@ -213,7 +221,8 @@
                 <td>
                   Basic : <span v-text="payroll.basic_salary"></span><br>
                   Salary in Cash : <span v-text="payroll.salary_in_cash"></span><br>
-                  Per day Salary : <span v-text="payroll.perday_salary"></span><br>
+                  Per hour Salary : <span v-text="payroll.perhour_salary"></span><br>
+                  Per day Salary : <span v-text="payroll.perhour_salary+' x '+payroll.work_hour"></span> = <span v-text="payroll.perday_salary"></span><br>
                   Salary : <span v-text="payroll.perday_salary+' x '+payroll.payment_days"></span> = <span v-text="payroll.salary"></span><br>
                   Total : <span v-text="payroll.salary+' + '+payroll.total_allowance+' - '+payroll.total_deduction"></span> = <span v-text="payroll.total_salary"></span><br>
 
