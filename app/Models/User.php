@@ -200,8 +200,44 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\User','supervisor_id','id');
     }
 
+
     public function childRecursive(){
         return $this->child()->with('childRecursive.designation');
+    }
+
+
+    public function workShifts(){
+        return $this->hasMany('App\Models\WorkShiftEmployeeMap');
+    }
+
+
+    public function attendance(){
+        return $this->hasMany('App\Models\Attendance');
+    }
+
+
+    public function attendanceTimesheet(){
+        return $this->hasMany('App\Models\AttendanceTimesheet');
+    }
+
+
+    public function attendanceTimesheetArchive(){
+        return $this->hasMany('App\Models\AttendanceTimesheetArchive');
+    }
+
+
+    public function leaves(){
+        return $this->hasMany('App\Models\Leave');
+    } 
+
+
+    public function loan(){
+        return $this->hasMany('App\Models\Loan');
+    }
+
+
+    public function providentFund(){
+        return $this->hasMany('App\Models\ProvidentFund');
     }
 
     /************* end relations ************/
@@ -307,31 +343,6 @@ class User extends Authenticatable
             return response()->json($languages);
         }
     }
-
-
-    public function workShifts(){
-        return $this->hasMany('App\Models\WorkShiftEmployeeMap');
-    }
-
-
-    public function attendance(){
-        return $this->hasMany('App\Models\Attendance');
-    }
-
-
-    public function attendanceTimesheet(){
-        return $this->hasMany('App\Models\AttendanceTimesheet');
-    }
-
-
-    public function attendanceTimesheetArchive(){
-        return $this->hasMany('App\Models\AttendanceTimesheetArchive');
-    }
-
-
-    public function leaves(){
-        return $this->hasMany('App\Models\Leave');
-    } 
 
 
 }

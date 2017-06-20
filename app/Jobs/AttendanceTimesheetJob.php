@@ -82,9 +82,16 @@ class AttendanceTimesheetJob implements ShouldQueue
         $AttendanceTimesheet = AttendanceTimesheet::whereBetween('date',[$start_date, $end_date])->pluck('date')->toArray();
         $prev_attendance = collect($prev_attendance);
         // dd($prev_attendance);
+        // disable this when endable previous attendance data
         $prev_attendance_data = $prev_attendance->whereNotIn('date', $AttendanceTimesheet)->all();
         // dd($prev_attendance_data);
         // dd($userIds);
+        // dd($today_attendance);
+
+        /* endable for reset previous attendance data
+        AttendanceTimesheet::whereIn('date', $AttendanceTimesheet)->delete();
+        $prev_attendance_data = $prev_attendance->toArray();
+        */
 
         if(count($userIds) > 0)
             AttendanceTimesheet::where('date',$today_date)->whereIn('user_id',$userIds)->delete();
@@ -109,6 +116,7 @@ class AttendanceTimesheetJob implements ShouldQueue
     {
         
         $days = $this->generateDays($start_date, $end_date);
+        $company_weekend_days = $this->getCompanyWeekend();
         // dd($days);
 
         $users = User::with([
@@ -133,7 +141,7 @@ class AttendanceTimesheetJob implements ShouldQueue
             $attendance_array = $user->attendance->pluck('date')->toArray();
             $attendance_list = $user->attendance;
             $leaves = $this->generateLeaves($user->leaves);
-            $weekends = $this->generateWeekend($user->workShifts);
+            $weekends = $this->generateWeekend($user->workShifts, $days, $company_weekend_days);
             // dd($attendance_array);
             // print_r($weekends);
 
@@ -241,7 +249,7 @@ class AttendanceTimesheetJob implements ShouldQueue
     protected function generateHoliday($holidays){
         $days = [];
         foreach($holidays as $holiday){
-            $day = $this->generateDays($holiday->employee_leave_from, $holiday->employee_leave_to);
+            $day = $this->generateDays($holiday->holiday_from, $holiday->holiday_to);
             $days = array_merge($days,$day);
         }
         // dd($days);
@@ -249,19 +257,69 @@ class AttendanceTimesheetJob implements ShouldQueue
     }
 
 
-    protected function generateWeekend($workShifts){
-        $days = [];
-        foreach($workShifts as $workShift){
-            $dates = $this->generateDays($workShift->start_date, $workShift->end_date);
-            $day = $this->calculateWeekend($dates, $workShift->work_days);
-            $days = array_merge($days,$day);
+    protected function getCompanyWeekend()
+    {
+        $company_weekend = DB::table('weekends')->where('status',1)->first();
+        $company_weekend_day = [];
+        if($company_weekend){
+            $company_weekend_day = explode(',', str_replace(' ','',$company_weekend->weekend));
         }
-        // dd($days);
-        return $days;
+
+       // dd($company_weekend_dates);
+       return $company_weekend_day;
     }
 
 
-    protected function calculateWeekend($dates, $days){
+    protected function generateWeekend($workShifts, $dates, $company_weekend_days)
+    {
+        $weekends = [];
+        $workshift_dates = [];
+        $weekend_dates = [];
+        $company_weekend_dates = [];
+
+        foreach($workShifts as $workShift)
+        {
+            $workshift_date = $this->generateDays($workShift->start_date, $workShift->end_date);
+            $workshift_dates = array_merge($workshift_dates,$workshift_date);
+
+            $weekend_date = $this->calculateWeekend($workshift_date, $workShift->work_days);
+            $weekend_dates = array_merge($weekend_dates,$weekend_date);
+        }
+
+        if(count($workshift_dates) > 0)
+        {
+            $regular_work_dates = collect($dates)->diff($workshift_dates);
+            $company_weekend_dates = $this->calculateCompanyWeekend($company_weekend_days, $regular_work_dates);
+            $weekends = array_merge($company_weekend_dates, $weekend_dates);
+            // dd($dates, $workshift_dates, $regular_work_dates, $company_weekend_dates, $weekend_dates, $weekends);
+        }
+        else
+        {
+            $weekends = $this->calculateCompanyWeekend($company_weekend_days, $dates);
+        }
+
+        return $weekends;
+    }
+
+
+    protected function calculateCompanyWeekend($company_weekend_days, $dates)
+    {
+        $company_weekend_dates = [];
+        foreach($dates as $date)
+        {
+            $day_name = Carbon::parse($date)->format('l');
+            if(in_array($day_name, $company_weekend_days))
+            {
+                $company_weekend_dates[] = $date;
+            }
+       }
+       // dd($company_weekend_dates);
+       return $company_weekend_dates;
+    }
+
+
+    protected function calculateWeekend($dates, $days)
+    {
         $days = explode(',', $days);
         $weekends = [];
 
