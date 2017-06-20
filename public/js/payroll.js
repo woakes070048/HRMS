@@ -32,6 +32,8 @@ var work = new Vue({
       units:[],
       users:[],
       salary_type:'month',
+      payRoll:[],
+      payRolls:[],
       errors:[]
     },
 
@@ -181,12 +183,51 @@ var work = new Vue({
         let formData = new FormData(e.target);
 
         axios.post('/payroll/index', formData).then(response => {
-          console.log(response);
+          // console.log(response.data);
+          this.payRolls = response.data;
           this.errors = [];
           this.loadinHide('#payroll');
 
         }).catch(error => {
-          console.log(error);
+          // console.log(error);
+          this.loadinHide('#payroll');
+          if(error.response.status == 500 || error.response.data.status == 'danger'){
+              var error = error.response.data;
+              this.showMessage(error);
+          }else if(error.response.status == 422){
+              this.errors = error.response.data;
+          }
+        });
+      },
+
+
+      editSalary(user_id, index, model_id){
+        this.loadinShow(model_id);
+        this.index = index;
+        this.payRoll = this.payRolls[index];
+        this.modal_open(model_id);
+        this.loadinHide(model_id);
+      },
+
+
+      updateSalary(){
+
+      },
+
+
+      comfirmSalary(user_id, index){
+        this.loadinShow('#payroll');
+        let formData = this.payRolls[index];
+
+        axios.post('/payroll/add', formData).then(response => {
+          // console.log(response.data);
+          // this.payRolls = response.data;
+          this.errors = [];
+          this.loadinHide('#payroll');
+          this.showMessage(response.data);
+
+        }).catch(error => {
+          // console.log(error);
           this.loadinHide('#payroll');
           if(error.response.status == 500 || error.response.data.status == 'danger'){
               var error = error.response.data;
