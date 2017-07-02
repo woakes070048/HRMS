@@ -28,7 +28,6 @@ class CreateEmployeeDetailsTable extends Migration
             $table->string('official_email',100)->nullable();
             $table->date('birth_date')->nullable();
             $table->date('joining_date');
-            $table->date('confirm_date')->nullable();
             $table->date('resign_date')->nullable();
             $table->string('phone_number',20)->nullable();
             $table->enum('gender',['male','female']);

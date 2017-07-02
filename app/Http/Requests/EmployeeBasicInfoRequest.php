@@ -40,7 +40,7 @@ class EmployeeBasicInfoRequest extends FormRequest
         return [
             'employee_no' => $employee_no,
             'employee_type_id' => 'required|numeric',
-            'from_date' => 'required_if:employee_type_id,2,4',
+            'from_date' => 'required_if:employee_type_id,2,4,1',
             'to_date' => 'required_if:employee_type_id,2,4',
             'branch_id' => 'required|numeric',
             'designation_id' => 'required|numeric',
