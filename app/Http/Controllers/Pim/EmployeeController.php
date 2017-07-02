@@ -245,71 +245,8 @@ class EmployeeController extends Controller
 
             $user = User::create($request->all());
 
-            //insert menus into user_permisson when user created
-            $desig_info = Designation::find($request->designation_id);
-            $level_id = $desig_info->level_id;
-            $level_permission = LevelPermission::where('level_id', $level_id)->get();
-
-            foreach($level_permission as $info){
-                $user_permission[] = [
-                    'user_id' => $user->id,
-                    'menu_id' => $info->menu_id,
-                ];
-            }
-
-            if(!empty($user_permission)){
-                UserPermission::insert($user_permission);
-            }
-            //end insert menu user_permission
-
-
-            //insert leave info depend on emp type start
-            $emp_type = $request->employee_type_id; 
-            $commonTypeId = [];
-
-            $leaveTypes = LeaveType::where('leave_type_status', 1)->get();
-
-            if(count($leaveTypes) > 0){
-                
-                foreach($leaveTypes as $val){
-                    
-                    $leaveTypeAry = explode(',', $val->leave_type_effective_for);
-
-                    if($val->leave_type_is_earn_leave == 1){
-                        $num_of_days = 0;
-                    }
-                    else{
-                        $num_of_days = $val->leave_type_number_of_days; 
-                    }
-
-                    if(in_array($emp_type, $leaveTypeAry)){
-                        $commonTypeId['type_id'][] = $val->id;
-                        $commonTypeId['days'][] = $num_of_days;
-                        $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
-                        $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
-                    }
-                }
-
-                $length = count($commonTypeId['type_id']);
-
-                if(!empty($length)){
-                    for($i=0 ; $i < $length; $i++){
-                        $user_leave_type[] = [
-                            'user_id' => $user->id,
-                            'leave_type_id' => $commonTypeId['type_id'][$i],
-                            'number_of_days' => $commonTypeId['days'][$i],
-                            'active_from_year' => $commonTypeId['from_year'][$i],
-                            'active_to_year' => $commonTypeId['to_year'][$i],
-                            'status' => 1,
-                        ];
-                    }
-                }
-
-                if(!empty($user_leave_type)){
-                    UserLeaveTypeMap::insert($user_leave_type);
-                }
-            }
-            //leave end
+            //Insert Data Into Leave & Permission
+            $this->insertLeavePermission($user, $request->designation_id, $request->employee_type_id);
 
             if($user){
                 if(isset($photo)){
@@ -322,10 +259,10 @@ class EmployeeController extends Controller
             $request->offsetSet('user_id',$user->id);
             EmployeeAddress::create($request->all());
             
-            if($request->employee_type_id == 2 || $request->employee_type_id == 4){
+            if($request->employee_type_id == 1 || $request->employee_type_id == 2 || $request->employee_type_id == 4){
+
                 UserEmployeeTypeMap::create($request->all());
             }
-
 
             DB::commit();
 
@@ -365,6 +302,75 @@ class EmployeeController extends Controller
             $request->session()->flash('danger','Employee Not Added!');
             return redirect()->back()->withInput();
         }
+    }
+
+    public function insertLeavePermission($user, $designation_id, $employee_type_id){
+
+        //insert menus into user_permisson when user created
+        $desig_info = Designation::find($designation_id);
+        $level_id = $desig_info->level_id;
+        $level_permission = LevelPermission::where('level_id', $level_id)->get();
+
+        foreach($level_permission as $info){
+            $user_permission[] = [
+                'user_id' => $user->id,
+                'menu_id' => $info->menu_id,
+            ];
+        }
+
+        if(!empty($user_permission)){
+            UserPermission::insert($user_permission);
+        }
+        //end insert menu user_permission    
+        
+        //insert leave info depend on emp type start
+        $emp_type = $employee_type_id; 
+        $commonTypeId = [];
+
+        $leaveTypes = LeaveType::where('leave_type_status', 1)->get();
+
+        if(count($leaveTypes) > 0){
+            
+            foreach($leaveTypes as $val){
+                
+                $leaveTypeAry = explode(',', $val->leave_type_effective_for);
+
+                if($val->leave_type_is_earn_leave == 1){
+                    $num_of_days = 0;
+                }
+                else{
+                    $num_of_days = $val->leave_type_number_of_days; 
+                }
+
+                if(in_array($emp_type, $leaveTypeAry)){
+                    $commonTypeId['type_id'][] = $val->id;
+                    $commonTypeId['days'][] = $num_of_days;
+                    $commonTypeId['from_year'][] = $val->leave_type_active_from_year;
+                    $commonTypeId['to_year'][] = $val->leave_type_active_to_year;
+                }
+            }
+
+            $length = count($commonTypeId['type_id']);
+
+            if(!empty($length)){
+                for($i=0 ; $i < $length; $i++){
+                    $user_leave_type[] = [
+                        'user_id' => $user->id,
+                        'leave_type_id' => $commonTypeId['type_id'][$i],
+                        'number_of_days' => $commonTypeId['days'][$i],
+                        'active_from_year' => $commonTypeId['from_year'][$i],
+                        'active_to_year' => $commonTypeId['to_year'][$i],
+                        'status' => 1,
+                    ];
+                }
+            }
+
+            if(!empty($user_leave_type)){
+                UserLeaveTypeMap::insert($user_leave_type);
+            }
+        }
+        //leave end
+    
     }
 
     /**
@@ -999,12 +1005,17 @@ class EmployeeController extends Controller
                EmployeeAddress::create($request->all());
             }
 
+            //Insert Data Into Leave & Permission
+            $this->insertLeavePermission($user, $request->designation_id, $request->employee_type_id);
+
             if($request->employee_type_id == 2 || $request->employee_type_id == 4){
                 if($request->type_status == '1'){
                     $request->offsetSet('created_by',$this->auth->id);
                     UserEmployeeTypeMap::create($request->all());
                 }elseif($request->type_status == '0'){
+
                     $type_map = UserEmployeeTypeMap::where('user_id',$request->userId)->orderBy('id','desc')->first();
+                    
                     if($type_map){
                         $type_map->update($request->all());
                     }else{
@@ -1012,11 +1023,20 @@ class EmployeeController extends Controller
                         UserEmployeeTypeMap::create($request->all());
                     }
                 }
-            }elseif($request->employee_type_id == 1){
-                $request->offsetSet('confirm_date',date('Y-m-d'));
+            }
+            elseif($request->employee_type_id == 1){
+                // $request->offsetSet('confirm_date',date('Y-m-d'));
 
-                if($employeeDetails = EmployeeDetail::findUser($request->userId)){
-                    $employeeDetails->update($request->all());
+                // if($employeeDetails = EmployeeDetail::findUser($request->userId)){
+                //     $employeeDetails->update($request->all());
+                // }
+
+                $type_map = UserEmployeeTypeMap::where('user_id',$request->userId)->orderBy('id','desc')->first();
+                if($type_map){
+                    $type_map->update($request->all());
+                }else{
+                    $request->offsetSet('created_by',$this->auth->id);
+                    UserEmployeeTypeMap::create($request->all());
                 }
             }
 

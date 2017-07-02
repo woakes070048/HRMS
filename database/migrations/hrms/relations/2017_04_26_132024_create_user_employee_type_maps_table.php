@@ -17,8 +17,8 @@ class CreateUserEmployeeTypeMapsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('employee_type_id')->unsigned();
-            $table->date('from_date');
-            $table->date('to_date');
+            $table->date('from_date')->comment='from_date n confirm_date are same for permanent emp';
+            $table->date('to_date')->nullable();
             $table->text('remarks')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

@@ -216,10 +216,14 @@ var employee = new Vue({
         TypeDependancey(e){
             var type_id = e.target.value;
             this.type_name = this.employeeTypes[type_id-1].type_name;
-            if(type_id == 2 || type_id == 4){
-                this.type_map = true;
-            }else{
-                this.type_map = false;
+            // if(type_id == 2 || type_id == 4 || type_id == 1){
+            //     this.type_map = true;
+            // }else{
+            //     this.type_map = false;
+            // }
+
+            if(type_id.length > 0){
+                this.type_map = type_id;
             }
         },
 
