@@ -20,7 +20,7 @@ class LeaveController extends Controller
     public function __construct()
     {
         $this->middleware('auth:hrms');
-        // $this->middleware('CheckPermissions', ['except' => ['changeStatus', 'getWeekendHolidays', 'view', 'details', 'chResponsibleStatus']]);
+        $this->middleware('CheckPermissions', ['except' => ['changeStatus', 'getWeekendHolidays', 'view', 'details', 'chResponsibleStatus']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Bonus extends Model
@@ -27,6 +28,14 @@ class Bonus extends Model
 
     public function updatedBy(){
     	return $this->belongsTo('App\Models\User','updated_by','id');
+    }
+
+    public function getCreatedAtAttribute($value){
+        return Carbon::parse($value)->format('d M Y');
+    }
+
+    public function getUpdatedAtAttribute($value){
+        return Carbon::parse($value)->format('d M Y');
     }
     
 }
