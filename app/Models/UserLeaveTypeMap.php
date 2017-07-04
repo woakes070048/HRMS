@@ -13,5 +13,5 @@ class UserLeaveTypeMap extends Model
 
     public function leaveType(){
         return $this->belongsTo('App\Models\LeaveType');
-    }
+    }  
 }

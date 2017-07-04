@@ -1025,11 +1025,12 @@ class EmployeeController extends Controller
                 }
             }
             elseif($request->employee_type_id == 1){
-                // $request->offsetSet('confirm_date',date('Y-m-d'));
+                
+                $request->offsetSet('confirm_date',date('Y-m-d'));
 
-                // if($employeeDetails = EmployeeDetail::findUser($request->userId)){
-                //     $employeeDetails->update($request->all());
-                // }
+                if($employeeDetails = EmployeeDetail::findUser($request->userId)){
+                    $employeeDetails->update($request->all());
+                }
 
                 $type_map = UserEmployeeTypeMap::where('user_id',$request->userId)->orderBy('id','desc')->first();
                 if($type_map){

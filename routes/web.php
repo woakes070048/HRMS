@@ -278,7 +278,6 @@ Route::group(['prefix' => 'attendance', 'namespace' => 'Attendance'],function ()
     Route::post('/manual','AttendanceController@manualAttendance');
 });
 
-
 /******************** .......Start HRMS PayRoll Module Routes........ **************/
 
 /******* .......PayRoll Bonus Type Routes........ ******/
@@ -423,7 +422,7 @@ Route::group(['prefix' => '/'], function(){
     Route::get('get-district-by-division/{id}','CommonController@getDistrictByDivision');
     Route::get('get-police-station-by-district/{id}','CommonController@getPolicStationByDistrict');
     Route::get('get-blood-groups','CommonController@getBloodGroups');
-    Route::get('get-education-levels','CommononController@getEducationLevels');
+    Route::get('get-education-levels','CommonController@getEducationLevels');
     Route::get('get-institute-by-education-level/{id}','CommonController@getInstituteByEducationLevel');
     Route::get('get-degree-by-education-level/{id}','CommonController@getDegreeByEducationLevel');
     Route::get('get-banks','CommonController@getBanks');

@@ -40,8 +40,6 @@
                 <th>Approved By</th>
                 <th>Created By</th>
                 <th>Updated By</th>
-                <th>Created Date</th>
-                <th>Updated Date</th>
                 <th>Action</th>
             </tr>
             </thead>
@@ -57,8 +55,6 @@
                 <th>Approved By</th>
                 <th>Created By</th>
                 <th>Updated By</th>
-                <th>Created Date</th>
-                <th>Updated Date</th>
                 <th>Action</th>
             </tr>
             </tfoot>
@@ -75,10 +71,8 @@
                    <td v-else>
                      <a class="btn btn-sm text-warning" v-on:click="changeStatus(bonus.id, index)">Approved</a>
                    </td>
-                   <td v-html="getFullName(bonus.created_by)"></td>
-                   <td v-html="getFullName(bonus.updated_by)"></td>
-                   <td v-text="bonus.created_at"></td>
-                   <td v-text="bonus.updated_at"></td>
+                   <td v-html="getFullName(bonus.created_by)+'-'+bonus.created_at"></td>
+                   <td v-html="getFullName(bonus.updated_by)+'-'+bonus.updated_at"></td>
                    <td v-if="bonus.approved_by">
                        <span class="text-success">Approved</span>
                    </td>

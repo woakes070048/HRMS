@@ -20,7 +20,7 @@ class CreateSalariesTable extends Migration
             $table->decimal('salary_in_cash',10,2)->default(0.00);
             $table->string('salary_month',10);
             $table->tinyInteger('salary_days')->default(0);
-            $table->enum('salary_pay_type', ['partial','full'])->default(0);
+            $table->enum('salary_pay_type', ['partial','full'])->nullable();
             $table->integer('overtime_hour')->default(0);
             $table->decimal('overtime_amount',8,2)->default(0.00);
             $table->text('attendance_info')->nullable();
