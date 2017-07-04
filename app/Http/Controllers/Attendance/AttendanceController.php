@@ -77,8 +77,6 @@ class AttendanceController extends Controller
         return view('attendance.my_attendance')->with($data);
     }
 
-
-
     public function addAttendance(Request $request){
     	$this->validate($request,[
             'date' => 'required',
@@ -88,9 +86,17 @@ class AttendanceController extends Controller
 
         $workShiftMap = new WorkShiftEmployeeMap;
         $emp_work_shift = $workShiftMap->get_work_shift_by_user_id_and_date($request->user_id,$request->date);
+
         if($emp_work_shift){
             $late_count_time =  $emp_work_shift->late_count_time;
-            $late_hour = date('H.i',strtotime($emp_work_shift->shift_start_time) - strtotime($request->in_time));
+            
+            if(strtotime($request->in_time) > strtotime($late_count_time)){
+                
+                $late_hour = date('H.i',strtotime($request->in_time) - strtotime($emp_work_shift->shift_start_time));
+            }
+            else{
+                $late_hour = null;
+            }
         }else{
             $late_count_time = 0;
             $late_hour = 0;
@@ -102,7 +108,6 @@ class AttendanceController extends Controller
         $request->offsetSet('total_work_hour',$total_work_hour);
 
         try{
-            
             $attendance = $this->saveAttendance($request);
 
             if($request->ajax()){
@@ -422,7 +427,7 @@ class AttendanceController extends Controller
             }
         }
 
-        $total = $present + $absent + $leave + $holiday + $weekend + $late;
+        $total = $present + $absent + $leave + $holiday + $weekend;
 
         $report = [
             'total' => $total,

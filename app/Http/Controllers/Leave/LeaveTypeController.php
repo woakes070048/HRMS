@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Leave;
 
 use Auth;
+use DB;
 use App\Models\EmployeeType;
 use App\Models\LeaveType;
 use App\Models\UserLeaveTypeMap;
@@ -15,7 +16,7 @@ class LeaveTypeController extends Controller
 	public function __construct()
     {
         $this->middleware('auth:hrms');
-        // $this->middleware('CheckPermissions', ['except' => ['getAllData']]);
+        $this->middleware('CheckPermissions', ['except' => ['getAllData']]);
 
         $this->middleware(function($request, $next){
             $this->auth = Auth::guard('hrms')->user();
@@ -47,7 +48,7 @@ class LeaveTypeController extends Controller
         ],
         [
 		    'emp_type.required' => 'Effective for is mendatory.',
-		]);
+		]);     
 
 		$srt_emp_type = implode(', ', $request->emp_type);
 		$is_remain = $request->carry_to_next_year > 0?1:0;
@@ -56,23 +57,23 @@ class LeaveTypeController extends Controller
 		$is_sellable = $request->sellable > 0?1:0;
 
         try{
-            LeaveType::create([
-                'leave_type_name' => $request->type_name,
-                'leave_type_number_of_days' => $request->duration, 
-                'leave_type_effective_for' => $srt_emp_type, 
-                'leave_type_valid_after_months' => $request->valid_after,
-                'leave_type_details' => $request->type_details,
-                'leave_type_is_earn_leave' => $is_earn,
-                'leave_type_is_sellable' => $is_sellable,
-                'leave_type_max_sell_limit' => $request->max_sell_limit,
-                'leave_type_is_remain' => $is_remain,
-                'leave_type_max_remain_limit' => $request->max_remain_limit,
-                'leave_type_include_holiday' => $include_holiday,
-                'leave_type_active_from_year' => $request->from_year,
-                'leave_type_active_to_year' => $request->to_year,
-                'leave_type_created_by' => Auth::user()->id,
-                'leave_type_status' => 1,
-            ]);
+            $sav = new LeaveType;
+            $sav->leave_type_name = $request->type_name;
+            $sav->leave_type_number_of_days = $request->duration;
+            $sav->leave_type_effective_for = $srt_emp_type; 
+            $sav->leave_type_valid_after_months = $request->valid_after;
+            $sav->leave_type_details = $request->type_details;
+            $sav->leave_type_is_earn_leave = $is_earn;
+            $sav->leave_type_is_sellable = $is_sellable;
+            $sav->leave_type_max_sell_limit = $request->max_sell_limit;
+            $sav->leave_type_is_remain = $is_remain;
+            $sav->leave_type_max_remain_limit = $request->max_remain_limit;
+            $sav->leave_type_include_holiday = $include_holiday;
+            $sav->leave_type_active_from_year = $request->from_year;
+            $sav->leave_type_active_to_year = $request->to_year;
+            $sav->leave_type_created_by = Auth::user()->id;
+            $sav->leave_type_status = 1;
+            $sav->save();
         
             $data['title'] = 'success';
             $data['message'] = 'data successfully added!';
@@ -124,14 +125,19 @@ class LeaveTypeController extends Controller
 		$srt_emp_type = implode(', ', $request->emp_type);
 		$is_remain = $request->carry_to_next_year > 0?1:0;
 		$include_holiday = $request->include_holiday > 0?1:0;
+        $is_earn = $request->is_earn > 0?1:0;
+        $is_sellable = $request->sellable > 0?1:0;
+
+        DB::beginTransaction();
 
         try{
-
             $data['data'] = LeaveType::where('id',$request->hdn_id)->update([
                 'leave_type_name' => $request->type_name,
                 'leave_type_number_of_days' => $request->duration, 
                 'leave_type_effective_for' => $srt_emp_type, 
                 'leave_type_details' => $request->type_details,
+                'leave_type_is_earn_leave' => $is_earn,
+                'leave_type_is_sellable' => $is_sellable,
                 'leave_type_is_remain' => $is_remain,
                 'leave_type_include_holiday' => $include_holiday,
                 'leave_type_active_from_year' => $request->from_year,
@@ -139,12 +145,18 @@ class LeaveTypeController extends Controller
                 'leave_type_updated_by' => Auth::user()->id,
                 'leave_type_status' => $request->leave_type_status,
             ]);
-        
+
+            UserLeaveTypeMap::where('leave_type_id', $request->hdn_id)->update([
+                'status' => $request->leave_type_status,
+            ]);
+
+            DB::commit();
             $data['title'] = 'success';
             $data['message'] = 'data successfully updated!';
 
         }catch (\Exception $e) {
-            
+
+            DB::rollback();
             $data['title'] = 'error';
             $data['message'] = 'data not added!';
         }

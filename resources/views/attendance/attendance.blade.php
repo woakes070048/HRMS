@@ -35,7 +35,6 @@
         <div class="panel-body">
           <form v-on:submit.prevent="getAttendance">
             <div class="row">
-
               <div class="col-md-3 col-md-offset-1">
                 <div class="form-group">
                   <label class="control-label">Department :</label>
@@ -288,14 +287,12 @@
         </div>
     </div>
   </div>
-
-
 </section>
 
 
 @section('script')
 
-<script type="text/javascript" src="{{asset('js/attendance.js')}}"></script>
+  <script type="text/javascript" src="{{asset('js/attendance.js')}}"></script>
 
 @endsection
 
